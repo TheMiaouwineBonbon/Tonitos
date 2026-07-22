@@ -3,20 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tonitos - Jeu de cartes fantasy</title>
+    <title>Spellaho - Jeu de cartes fantasy</title>
     <meta
       name="description"
-      content="Tonitos, jeu de cartes fantasy avec decks bicolores, terrains, créatures, sorts, mana et combat tactique."
+      content="Spellaho, jeu de cartes fantasy avec decks bicolores, terrains, créatures, sorts, mana et combat tactique."
     />
-    <link rel="stylesheet" href="./styles.css?v=20260723-2" />
+    <link rel="icon" type="image/png" href="./Images/Logo%20Jeu/Spellaho.png" />
+    <link rel="stylesheet" href="./styles.css?v=20260723-3" />
   </head>
   <body>
     <div id="start-menu" class="start-menu">
       <div class="start-menu-backdrop"></div>
-      <section class="start-panel" aria-label="Menu de lancement de Tonitos">
+      <section class="start-panel" aria-label="Menu de lancement de Spellaho">
         <header class="start-head">
           <p class="eyebrow">Jeu de cartes fantasy</p>
-          <h1 class="start-title">Tonitos</h1>
+          <h1 class="start-title">
+            <img class="start-logo" src="./Images/Logo%20Jeu/Spellaho.png" alt="Spellaho" />
+          </h1>
           <p class="start-tagline">Forge ton deck bicolore, invoque tes champions et brise le héros adverse.</p>
         </header>
 
@@ -82,7 +85,7 @@
 
         <div id="menu-deck-summary" class="menu-deck-summary"></div>
         <p id="online-status" class="online-status" aria-live="polite"></p>
-        <button id="start-game" class="primary-button start-launch" type="button">Lancer Tonitos</button>
+        <button id="start-game" class="primary-button start-launch" type="button">Lancer Spellaho</button>
       </section>
     </div>
 
@@ -90,7 +93,9 @@
       <header class="topbar">
         <div class="topbar-brand">
           <p class="eyebrow">Prototype jouable</p>
-          <h1>Tonitos</h1>
+          <h1 class="topbar-title">
+            <img class="topbar-logo" src="./Images/Logo%20Jeu/Spellaho.png" alt="Spellaho" />
+          </h1>
         </div>
         <div class="topbar-actions">
           <button id="new-game" class="primary-button" type="button">Nouvelle partie</button>
@@ -129,7 +134,7 @@
                 <div class="commander-portrait" aria-hidden="true"></div>
                 <div class="commander-info">
                   <h2 id="enemy-name">Adversaire</h2>
-                  <p id="enemy-caption" class="hero-caption">Choisis un deck pour lancer Tonitos.</p>
+                  <p id="enemy-caption" class="hero-caption">Choisis un deck pour lancer Spellaho.</p>
                   <div class="commander-stats">
                     <span class="stat-orb life-orb"><strong id="enemy-life">20</strong><span>vie</span></span>
                     <span class="stat-orb energy-orb"><strong id="enemy-energy">0</strong><span>mana</span></span>
@@ -182,7 +187,7 @@
                 <div class="commander-portrait" aria-hidden="true"></div>
                 <div class="commander-info">
                   <h2 id="player-name">Joueur</h2>
-                  <p id="player-caption" class="hero-caption">Choisis un deck pour lancer Tonitos.</p>
+                  <p id="player-caption" class="hero-caption">Choisis un deck pour lancer Spellaho.</p>
                   <div class="commander-stats">
                     <span class="stat-orb life-orb"><strong id="player-life">20</strong><span>vie</span></span>
                     <span class="stat-orb energy-orb"><strong id="player-energy">0</strong><span>mana</span></span>
@@ -225,7 +230,7 @@
             <ul class="rules-list">
               <li>Chaque joueur commence à 20 points de vie et pioche 7 cartes.</li>
               <li>Chaque deck construit contient exactement 60 cartes.</li>
-              <li>Structure Tonitos : 24 terrains, 22 à 28 créatures et 8 à 14 sorts selon le deck.</li>
+              <li>Structure Spellaho : 24 terrains, 22 à 28 créatures et 8 à 14 sorts selon le deck.</li>
               <li>Tu peux jouer un seul terrain par tour pendant une phase principale.</li>
               <li>Les terrains s'engagent automatiquement pour payer le mana.</li>
               <li>Les créatures ont le mal d'invocation et attaquent au tour suivant.</li>

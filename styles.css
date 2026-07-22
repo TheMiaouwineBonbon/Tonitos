@@ -1651,7 +1651,7 @@ button.zone-pile:hover {
   }
 }
 
-/* Interface Tonitos : menu, tapis coordonnes et apercu integral des cartes. */
+/* Interface Spellaho : menu, tapis coordonnes et apercu integral des cartes. */
 .start-menu {
   overflow-y: auto;
   place-items: center;
@@ -3874,5 +3874,132 @@ button.mat-zone--exile:focus-visible {
   .card-ability,
   .gallery-card .card-ability {
     font-size: 9px;
+  }
+}
+
+/* ===================================================================== */
+/* Identite Spellaho et fumee magique autour de l'arene.                 */
+/* ===================================================================== */
+
+.start-title,
+.topbar-title {
+  margin: 0;
+  line-height: 0;
+}
+
+.start-logo {
+  display: block;
+  width: min(430px, 82vw);
+  max-height: 230px;
+  margin: -18px auto -8px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.68));
+}
+
+.topbar-brand {
+  min-width: 0;
+}
+
+.topbar-logo {
+  display: block;
+  width: auto;
+  height: clamp(42px, 5.2vw, 58px);
+  max-width: min(220px, 42vw);
+  object-fit: contain;
+  object-position: left center;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.62));
+}
+
+.board-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.board-stage::before,
+.board-stage::after {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  inset: -10%;
+  display: block;
+  pointer-events: none;
+  background: url("./Images/Effets/Fumee%20magique.png") center / 100% 100% no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.34;
+  filter: saturate(1.12) contrast(1.05);
+  will-change: transform, opacity;
+}
+
+.board-stage::before {
+  animation: spellaho-smoke-drift-a 17s ease-in-out infinite alternate;
+}
+
+.board-stage::after {
+  inset: -15%;
+  opacity: 0.2;
+  filter: hue-rotate(18deg) saturate(1.2);
+  animation: spellaho-smoke-drift-b 23s ease-in-out infinite alternate;
+}
+
+.board-stage > .mat-side,
+.board-stage > .centerline {
+  z-index: 1;
+}
+
+@keyframes spellaho-smoke-drift-a {
+  0% {
+    opacity: 0.24;
+    transform: translate3d(-2%, 1%, 0) scale(1.02);
+  }
+  48% {
+    opacity: 0.38;
+    transform: translate3d(1.5%, -1%, 0) scale(1.07);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translate3d(2%, 1.5%, 0) scale(1.04);
+  }
+}
+
+@keyframes spellaho-smoke-drift-b {
+  0% {
+    opacity: 0.14;
+    transform: translate3d(2%, -1%, 0) scaleX(-1) scale(1.06);
+  }
+  52% {
+    opacity: 0.24;
+    transform: translate3d(-1%, 1.5%, 0) scaleX(-1) scale(1.02);
+  }
+  100% {
+    opacity: 0.18;
+    transform: translate3d(-2%, -1%, 0) scaleX(-1) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-stage::before,
+  .board-stage::after {
+    animation: none;
+    opacity: 0.18;
+  }
+}
+
+@media (max-width: 760px) {
+  .start-logo {
+    width: min(330px, 86vw);
+    max-height: 190px;
+  }
+
+  .topbar-logo {
+    height: 44px;
+  }
+
+  .board-stage::before {
+    opacity: 0.22;
+  }
+
+  .board-stage::after {
+    display: none;
   }
 }

@@ -1,4 +1,4 @@
-# Tonitos
+# Spellaho
 
 Prototype de jeu de cartes fantasy (HTML/CSS/JS vanilla) inspiré des duels tactiques
 type Magic / Hearthstone. Aucun framework, aucune dépendance : juste Node pour le
@@ -21,14 +21,14 @@ petit serveur statique et l'API du salon multijoueur.
 
 ## Modes de jeu
 
-Depuis le menu de lancement (nom du jeu : **Tonitos**) :
+Depuis le menu de lancement (nom du jeu : **Spellaho**) :
 
 - **1 joueur contre IA** : tu joues le côté joueur, l'IA joue l'adversaire.
 - **2 joueurs local** : les deux camps se jouent sur le même écran (la main affichée
   suit le joueur actif / le défenseur pendant les blocages).
 - **2 joueurs en ligne** : les deux joueurs saisissent le **code 1234**. Le serveur
   local garde le salon en mémoire et l'état se synchronise par polling (~1 s). Sur
-  un hébergement statique comme GitHub Pages, Tonitos bascule automatiquement sur
+  un hébergement statique comme GitHub Pages, Spellaho bascule automatiquement sur
   une connexion directe WebRTC entre les deux joueurs. Chacun ne contrôle que son
   côté ; les actions du camp adverse sont verrouillées. Le statut d'attente, de
   connexion et de synchronisation est affiché en clair.
@@ -61,7 +61,7 @@ sur mobile, le clic ouvre la fiche complète dans une fenêtre adaptée à l'éc
 Le recto fourni sert de cadre commun aux cartes, le dos apparaît dans les bibliothèques,
 et la carte supérieure est visible directement dans les zones Cimetière et Exil.
 
-## Format construit Tonitos
+## Format construit Spellaho
 
 - Deck construit : **60 cartes exactes**.
 - Répartition : **24 terrains**, puis **22 à 28 créatures** et **8 à 14 sorts** selon les illustrations de sorts autonomes disponibles.

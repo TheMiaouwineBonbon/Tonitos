@@ -6,6 +6,12 @@ const PHASES = {
   MAIN_2: "main2",
   OVER: "over"
 };
+const PLAYER_ID_KEY = "spellaho-player-id";
+const LEGACY_PLAYER_ID_KEY = "tonitos-player-id";
+const storedPlayerId = sessionStorage.getItem(PLAYER_ID_KEY) || sessionStorage.getItem(LEGACY_PLAYER_ID_KEY) || "";
+if (storedPlayerId && !sessionStorage.getItem(PLAYER_ID_KEY)) {
+  sessionStorage.setItem(PLAYER_ID_KEY, storedPlayerId);
+}
 
 const state = {
   cards: [],
@@ -27,7 +33,7 @@ const state = {
   network: {
     enabled: false,
     code: "1234",
-    playerId: sessionStorage.getItem("tonitos-player-id") || "",
+    playerId: storedPlayerId,
     slot: null,
     version: 0,
     transport: null,
@@ -344,7 +350,7 @@ function updateMenuSummary() {
   if (els.enemyDeckSelect) els.enemyDeckSelect.disabled = isOnline;
   updateAvatarPreviews();
   els.menuDeckSummary.innerHTML = `
-    <strong>Format construit Tonitos</strong>
+    <strong>Format construit Spellaho</strong>
     <span>60 cartes exactes, 24 terrains et 4 exemplaires maximum par carte non-terrain.</span>
     <span>${escapeHtml(profileFromMenu("player").name)} : ${escapeHtml(playerDeck.shortName)} · ${playerComposition.creatures} créatures · ${playerComposition.spells} sorts.</span>
     <span>${enemyLabel} : ${escapeHtml(enemyDeck.shortName)} · ${enemyComposition.creatures} créatures · ${enemyComposition.spells} sorts.</span>
@@ -404,7 +410,7 @@ function newGame(config = {}) {
   draw(state.enemy, STARTING_HAND);
   beginTurn(state.player, true);
   const modeLabel = state.mode === "online" ? "2 joueurs en ligne" : state.mode === "pvp" ? "2 joueurs local" : "1 joueur contre IA";
-  logEvent(`Tonitos commence en mode ${modeLabel} : 20 points de vie, 7 cartes, un terrain par tour.`);
+  logEvent(`Spellaho commence en mode ${modeLabel} : 20 points de vie, 7 cartes, un terrain par tour.`);
   render();
 }
 
@@ -474,7 +480,7 @@ async function joinServerRoom(code) {
   state.network.slot = payload.slot;
   state.network.version = payload.room.version || 0;
   state.network.pending = false;
-  sessionStorage.setItem("tonitos-player-id", payload.playerId);
+  sessionStorage.setItem(PLAYER_ID_KEY, payload.playerId);
 
   startOnlinePolling();
   handleOnlineRoom(payload.room);
@@ -484,7 +490,7 @@ async function joinPeerRoom(code) {
   const { default: Peer } = await import(PEERJS_MODULE_URL);
   const profile = profileFromMenu("player");
   const playerId = state.network.playerId || crypto.randomUUID();
-  const hostId = `tonitos-${code}-host`;
+  const hostId = `spellaho-${code}-host`;
   const peerOptions = { debug: 0 };
 
   state.network.enabled = true;
@@ -498,7 +504,7 @@ async function joinPeerRoom(code) {
     players: {},
     state: null
   };
-  sessionStorage.setItem("tonitos-player-id", playerId);
+  sessionStorage.setItem(PLAYER_ID_KEY, playerId);
 
   try {
     const hostPeer = new Peer(hostId, peerOptions);
@@ -638,7 +644,7 @@ function stopOnlineSync(options = {}) {
     state.network.connection?.close();
     state.network.peer?.destroy();
   } catch {}
-  const playerId = options.keepIdentity ? state.network.playerId : sessionStorage.getItem("tonitos-player-id") || "";
+  const playerId = options.keepIdentity ? state.network.playerId : sessionStorage.getItem(PLAYER_ID_KEY) || "";
   state.network = {
     enabled: false,
     code: ONLINE_ROOM_CODE,

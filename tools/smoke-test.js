@@ -43,7 +43,7 @@ async function main() {
   let res = await fetch(`${base}/`);
   const html = await res.text();
   check("GET / -> 200", res.status === 200);
-  check("index.html contient Tonitos", html.includes("Tonitos"));
+  check("index.html contient Spellaho", html.includes("Spellaho") && !html.includes(">Tonitos<"));
   check(
     "index.html référence les cinq zones des tapis",
     ["mat-side", "mat-zone--library", "mat-zone--graveyard", "mat-zone--field", "mat-zone--exile", "mat-zone--commander"]
@@ -55,11 +55,16 @@ async function main() {
     ["Images/Tapis de Jeu/Devant de carte.jpg", "Images/Tapis de Jeu/Carte Dos.png"]
       .every((file) => fs.existsSync(path.join(__dirname, "..", file)))
   );
+  check(
+    "Logo et fumée Spellaho présents",
+    ["Images/Logo Jeu/Spellaho.png", "Images/Effets/Fumee magique.png"]
+      .every((file) => fs.existsSync(path.join(__dirname, "..", file)))
+  );
 
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
   check("GET /game.js -> 200", res.status === 200);
-  check("Identité réseau propre à chaque onglet", gameSource.includes('sessionStorage.getItem("tonitos-player-id")'));
+  check("Identité réseau Spellaho propre à chaque onglet", gameSource.includes('PLAYER_ID_KEY = "spellaho-player-id"'));
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
   check("Main en éventail calculée selon le nombre de cartes", gameSource.includes("--hand-rotation") && gameSource.includes("--hand-overlap"));
@@ -69,6 +74,7 @@ async function main() {
   const styles = await res.text();
   check("Illustrations stables au survol", styles.includes("object-fit: contain") && styles.includes(".game-card:hover .card-art img"));
   check("Plateau responsive sur une colonne", styles.includes("@media (max-width: 1100px)") && styles.includes("grid-template-columns: minmax(0, 1fr)"));
+  check("Fumée magique animée autour de l'arène", styles.includes("spellaho-smoke-drift-a") && styles.includes("Fumee%20magique.png"));
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
