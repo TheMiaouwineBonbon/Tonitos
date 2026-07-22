@@ -44,7 +44,7 @@ sur mobile, le clic ouvre la fiche complète dans une fenêtre adaptée à l'éc
 ## Format construit Tonitos
 
 - Deck construit : **60 cartes exactes**.
-- Répartition : **24 terrains, 22 créatures, 14 sorts**.
+- Répartition : **24 terrains**, puis **22 à 28 créatures** et **8 à 14 sorts** selon les illustrations de sorts autonomes disponibles.
 - Maximum **4 exemplaires** d'une carte non-terrain ; terrains de base illimités.
 - Decks bicolores disponibles : Blanc/Vert, Rouge/Noir, Bleu/Vert, Noir/Blanc, Rouge/Bleu.
 
@@ -67,17 +67,27 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 8                 | 5             | 4                | — équilibré                      |
-| Bleu    | 5                 | 4             | 4                | **1 créature unique**            |
-| Noir    | 7                 | 4             | 6                | — équilibré                      |
-| Rouge   | 6                 | 4             | 4                | — équilibré                      |
-| Vert    | 4                 | 5             | 5                | **2 créatures uniques**          |
+| Blanc   | 8                 | 2             | 4                | **2 sorts uniques**              |
+| Bleu    | 5                 | 1             | 4                | **1 créature + 3 sorts**         |
+| Noir    | 7                 | 0             | 6                | **4 sorts uniques**              |
+| Rouge   | 6                 | 1             | 4                | **3 sorts uniques**              |
+| Vert    | 4                 | 1             | 5                | **2 créatures + 3 sorts**        |
 
 Sorts incolores polyvalents (jouables dans tous les decks) : **1** (Pierre de Norne).
 
 Total à ajouter pour atteindre la base mono-couleur partout : **3 créatures uniques**
-(1 en Bleu, 2 en Vert). Toutes les couleurs disposent d'au moins 4 sorts. Les decks
-bicolores actuels restent tous parfaitement constructibles à 60 cartes.
+(1 en Bleu, 2 en Vert) et **15 sorts avec leur propre illustration** (2 Blancs,
+3 Bleus, 4 Noirs, 3 Rouges, 3 Verts).
+
+Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :
+
+| Deck | Terrains | Créatures | Sorts dédiés |
+| ---- | :------: | :-------: | :-----------: |
+| Blanc / Vert | 24 | 22 | 14 |
+| Rouge / Noir | 24 | 28 | 8 |
+| Bleu / Vert | 24 | 24 | 12 |
+| Noir / Blanc | 24 | 24 | 12 |
+| Rouge / Bleu | 24 | 24 | 12 |
 
 ## Lancer le jeu
 

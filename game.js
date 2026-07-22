@@ -116,7 +116,6 @@ const STARTING_LIFE = 20;
 const STARTING_HAND = 7;
 const DECK_SIZE = 60;
 const DECK_LANDS = 24;
-const DECK_CREATURES = 22;
 const DECK_SPELLS = 14;
 const MAX_NONLAND_COPIES = 4;
 const ONLINE_ROOM_CODE = "1234";
@@ -323,6 +322,8 @@ function updateMenuSummary() {
   const mode = els.modeSelect.value;
   const enemyLabel = mode === "pvp" || mode === "online" ? "Joueur 2" : "Adversaire IA";
   const isOnline = mode === "online";
+  const playerComposition = getDeckComposition(playerDeck);
+  const enemyComposition = getDeckComposition(enemyDeck);
   const roomCodeControl = els.roomCodeInput?.closest("label");
   if (roomCodeControl) roomCodeControl.hidden = !isOnline;
   if (els.enemyNameInput) els.enemyNameInput.disabled = isOnline;
@@ -331,9 +332,9 @@ function updateMenuSummary() {
   updateAvatarPreviews();
   els.menuDeckSummary.innerHTML = `
     <strong>Format construit Tonitos</strong>
-    <span>60 cartes exactes : 24 terrains, 22 créatures, 14 sorts.</span>
-    <span>${escapeHtml(profileFromMenu("player").name)} : ${escapeHtml(playerDeck.shortName)} (${playerDeck.colors.join(" / ")}).</span>
-    <span>${enemyLabel} : ${escapeHtml(enemyDeck.shortName)} (${enemyDeck.colors.join(" / ")}).</span>
+    <span>60 cartes exactes, 24 terrains et 4 exemplaires maximum par carte non-terrain.</span>
+    <span>${escapeHtml(profileFromMenu("player").name)} : ${escapeHtml(playerDeck.shortName)} · ${playerComposition.creatures} créatures · ${playerComposition.spells} sorts.</span>
+    <span>${enemyLabel} : ${escapeHtml(enemyDeck.shortName)} · ${enemyComposition.creatures} créatures · ${enemyComposition.spells} sorts.</span>
     <span>${isOnline ? `Salon en ligne : entre le code ${ONLINE_ROOM_CODE}, puis attends le second joueur.` : "Partie jouée sur cet écran."}</span>
   `;
   setOnlineStatus(isOnline ? "Code provisoire : 1234." : "");
@@ -848,6 +849,16 @@ function getDeckSpec(id) {
   return DECKS.find((deck) => deck.id === id) || DECKS[0];
 }
 
+function getDeckComposition(deckSpec) {
+  const spellPool = state.spells.filter((card) => deckSpec.colors.includes(card.family) || card.family === "Incolore");
+  const spells = Math.min(DECK_SPELLS, spellPool.length * MAX_NONLAND_COPIES);
+  return {
+    lands: DECK_LANDS,
+    creatures: DECK_SIZE - DECK_LANDS - spells,
+    spells
+  };
+}
+
 function makeDeck(side, deckSpec) {
   const lands = [
     ...pickCopies(state.lands.filter((land) => land.family === deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
@@ -855,8 +866,9 @@ function makeDeck(side, deckSpec) {
   ];
   const creaturePool = state.cards.filter((card) => deckSpec.colors.includes(card.family));
   const spellPool = state.spells.filter((card) => deckSpec.colors.includes(card.family) || card.family === "Incolore");
-  const creatures = pickCreatures(creaturePool, DECK_CREATURES);
-  const spells = pickSpells(spellPool, DECK_SPELLS);
+  const composition = getDeckComposition(deckSpec);
+  const creatures = pickCreatures(creaturePool, composition.creatures);
+  const spells = pickSpells(spellPool, composition.spells);
   const deck = [...lands, ...creatures, ...spells];
 
   if (deck.length !== DECK_SIZE) {

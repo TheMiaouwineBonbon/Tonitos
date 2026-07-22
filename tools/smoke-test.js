@@ -68,8 +68,14 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  const byColor = spells.reduce((acc, s) => ((acc[s.family] = (acc[s.family] || 0) + 1), acc), {});
-  check("Au moins 4 sorts par couleur (hors incolore)", ["Blanc", "Bleu", "Noir", "Rouge", "Vert"].every((c) => byColor[c] >= 4));
+  check("6 sorts avec illustrations autonomes", spells.length === 6);
+  check(
+    "Aucun sort ne réutilise une image de créature ou de terrain",
+    spells.every((spell) => spell.image.startsWith("Images/Sort - ") || spell.image === "Images/Artefact - Pierre de Norne.PNG")
+  );
+  check("Colère d'Umi = Bleu", spells.find((s) => s.id === "colere-umi")?.family === "Bleu");
+  check("Malédiction d'Ulgod = Rouge", spells.find((s) => s.id === "malediction-ulgod")?.family === "Rouge");
+  check("Pitié d'Aldia = Blanc", spells.find((s) => s.id === "pitie-aldia")?.family === "Blanc");
   check("Bénédiction du Héros = Blanc", spells.find((s) => s.id === "benediction-du-heros")?.family === "Blanc");
   check("Vengeance d'Uldrid = Vert", spells.find((s) => s.id === "vengeance-uldrid")?.family === "Vert");
 
@@ -85,10 +91,12 @@ async function main() {
     ["Noir", "Blanc"],
     ["Rouge", "Bleu"]
   ];
-  check("Les 5 decks peuvent fournir 22 créatures et 14 sorts avec 4 copies max", deckColors.every((colors) => {
+  check("Les 5 decks restent à 60 cartes avec 4 copies non-terrain maximum", deckColors.every((colors) => {
     const creaturePool = cards.filter((card) => colors.includes(card.family));
     const spellPool = spells.filter((card) => colors.includes(card.family) || card.family === "Incolore");
-    return creaturePool.length * 4 >= 22 && spellPool.length * 4 >= 14;
+    const spellCount = Math.min(14, spellPool.length * 4);
+    const creatureCount = 60 - 24 - spellCount;
+    return spellCount >= 8 && spellPool.length * 4 >= spellCount && creaturePool.length * 4 >= creatureCount;
   }));
 
   await fetch(`${base}/api/room/reset`, json({ code: "1234" }));
