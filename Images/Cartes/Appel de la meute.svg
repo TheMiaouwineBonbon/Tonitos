@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="744" height="1038" viewBox="0 0 744 1038">
+  <defs>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a9d778"/>
+      <stop offset="42%" stop-color="#3f8a45"/>
+      <stop offset="100%" stop-color="#112513"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff8e6"/>
+      <stop offset="100%" stop-color="#d7c3a0"/>
+    </linearGradient>
+    <clipPath id="artClip">
+      <rect x="48" y="118" width="648" height="486" rx="8"/>
+    </clipPath>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <rect width="744" height="1038" rx="18" fill="#100c0a"/>
+  <rect x="20" y="20" width="704" height="998" rx="14" fill="url(#frame)" filter="url(#softShadow)"/>
+  <rect x="34" y="34" width="676" height="970" rx="10" fill="#1a1110" opacity="0.92"/>
+
+  <rect x="48" y="48" width="648" height="54" rx="8" fill="#f7ead0"/>
+  <text x="70" y="84" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" fill="#20120e">Appel de la meute</text>
+  <circle cx="660" cy="75" r="34" fill="#112513" stroke="#a9d778" stroke-width="5"/>
+  <text x="660" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#fff7df">3</text>
+
+  <image href="../Prot%C3%A9cteurs%20de%20la%20nature.PNG" x="48" y="118" width="648" height="486" preserveAspectRatio="xMidYMid slice" clip-path="url(#artClip)"/>
+  <rect x="48" y="118" width="648" height="486" rx="8" fill="none" stroke="#a9d778" stroke-width="4"/>
+
+  <rect x="48" y="622" width="648" height="48" rx="8" fill="#f3e1bf"/>
+  <text x="70" y="654" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#24130d">Rituel - Amélioration</text>
+
+  <rect x="48" y="688" width="648" height="212" rx="8" fill="url(#panel)" stroke="#4a2b1a" stroke-width="3"/>
+  <text x="70" y="728" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#21130e">Renfort naturel</text>
+  <text x="70" y="760" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#3f8a45">Soutien</text>
+  <text x="70" y="802" font-size="21" font-weight="500" fill="#241812">Crée un Gardien 2/2 avec portée.</text>
+  <line x1="70" y1="872" x2="674" y2="872" stroke="#8f7250" stroke-width="2" opacity="0.65"/>
+  <text x="70" y="902" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-style="italic" fill="#4c3628">La forêt a toujours quelqu'un à envoyer.</text>
+  <text x="70" y="928" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-style="italic" fill="#4c3628"></text>
+
+  <rect x="48" y="920" width="228" height="58" rx="8" fill="#112513" stroke="#a9d778" stroke-width="4"/>
+  <text x="70" y="957" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#fff4d2">Vert</text>
+
+  <rect x="538" y="912" width="158" height="76" rx="8" fill="#f9ead0" stroke="#112513" stroke-width="5"/>
+  <text x="616" y="962" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="900" fill="#20120e">Sort</text>
+</svg>

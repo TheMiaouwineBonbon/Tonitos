@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tonitos - Jeu de cartes fantasy</title>
+    <meta
+      name="description"
+      content="Tonitos, jeu de cartes fantasy avec decks bicolores, terrains, créatures, sorts, mana et combat tactique."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="start-menu" class="start-menu">
+      <div class="start-menu-backdrop"></div>
+      <section class="start-panel" aria-label="Menu de lancement de Tonitos">
+        <header class="start-head">
+          <p class="eyebrow">Jeu de cartes fantasy</p>
+          <h1 class="start-title">Tonitos</h1>
+          <p class="start-tagline">Forge ton deck bicolore, invoque tes champions et brise le héros adverse.</p>
+        </header>
+
+        <div class="start-body">
+          <label class="menu-field menu-field--mode">
+            <span class="menu-field-label">Mode de jeu</span>
+            <select id="mode-select">
+              <option value="pve">1 joueur contre l'IA</option>
+              <option value="pvp">2 joueurs en local</option>
+              <option value="online">2 joueurs en ligne</option>
+            </select>
+          </label>
+
+          <div class="menu-players">
+            <fieldset class="menu-player menu-player--one">
+              <legend>Joueur 1</legend>
+              <div class="menu-player-body">
+                <div class="menu-avatar-preview" id="player-avatar-preview" aria-hidden="true"></div>
+                <div class="menu-player-fields">
+                  <label class="menu-field">
+                    <span class="menu-field-label">Nom</span>
+                    <input id="player-name-input" type="text" maxlength="24" value="Joueur 1" autocomplete="off" />
+                  </label>
+                  <label class="menu-field">
+                    <span class="menu-field-label">Portrait</span>
+                    <select id="player-avatar-select"></select>
+                  </label>
+                  <label class="menu-field">
+                    <span class="menu-field-label">Deck</span>
+                    <select id="player-deck-select"></select>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="menu-player menu-player--two">
+              <legend id="enemy-legend">Joueur 2 / IA</legend>
+              <div class="menu-player-body">
+                <div class="menu-avatar-preview" id="enemy-avatar-preview" aria-hidden="true"></div>
+                <div class="menu-player-fields">
+                  <label class="menu-field">
+                    <span class="menu-field-label">Nom</span>
+                    <input id="enemy-name-input" type="text" maxlength="24" value="Joueur 2" autocomplete="off" />
+                  </label>
+                  <label class="menu-field">
+                    <span class="menu-field-label">Portrait</span>
+                    <select id="enemy-avatar-select"></select>
+                  </label>
+                  <label class="menu-field">
+                    <span class="menu-field-label">Deck</span>
+                    <select id="enemy-deck-select"></select>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <label class="menu-field room-code-control">
+            <span class="menu-field-label">Code du salon en ligne</span>
+            <input id="room-code-input" type="text" inputmode="numeric" maxlength="4" value="1234" autocomplete="off" />
+          </label>
+        </div>
+
+        <div id="menu-deck-summary" class="menu-deck-summary"></div>
+        <p id="online-status" class="online-status" aria-live="polite"></p>
+        <button id="start-game" class="primary-button start-launch" type="button">Lancer Tonitos</button>
+      </section>
+    </div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <p class="eyebrow">Prototype jouable</p>
+          <h1>Tonitos</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="new-game" class="primary-button" type="button">Nouvelle partie</button>
+          <a class="ghost-button" href="./cartes.html" target="_blank" rel="noreferrer">Cartes SVG</a>
+        </div>
+      </header>
+
+      <main class="game-layout">
+        <section class="arena" aria-label="Plateau de jeu">
+          <div class="board-stage">
+            <!-- Tapis adverse (rouge) : zones calées sur les cadres imprimés -->
+            <section class="mat-side enemy-mat enemy-hero" aria-label="Tapis de l'adversaire">
+              <div class="mat-zone mat-zone--library" title="Bibliothèque adverse">
+                <span class="mat-zone-count"><strong id="enemy-deck">0</strong><span>cartes</span></span>
+              </div>
+              <button
+                class="mat-zone mat-zone--graveyard"
+                type="button"
+                data-pile="enemy:graveyard"
+                aria-label="Voir le cimetière adverse"
+              >
+                <span class="mat-zone-count"><strong id="enemy-graveyard">0</strong><span>cartes</span></span>
+              </button>
+              <button
+                class="mat-zone mat-zone--exile"
+                type="button"
+                data-pile="enemy:exile"
+                aria-label="Voir l'exil adverse"
+              >
+                <span class="mat-zone-count"><strong id="enemy-exile">0</strong><span>cartes</span></span>
+              </button>
+              <div class="mat-zone mat-zone--commander" aria-label="Adversaire">
+                <div class="commander-portrait" aria-hidden="true"></div>
+                <div class="commander-info">
+                  <h2 id="enemy-name">Adversaire</h2>
+                  <p id="enemy-caption" class="hero-caption">Choisis un deck pour lancer Tonitos.</p>
+                  <div class="commander-stats">
+                    <span class="stat-orb life-orb"><strong id="enemy-life">20</strong><span>vie</span></span>
+                    <span class="stat-orb energy-orb"><strong id="enemy-energy">0</strong><span>mana</span></span>
+                    <span class="stat-orb land-orb"><strong id="enemy-lands-count">0</strong><span>terrains</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="mat-zone mat-zone--field" aria-label="Champ de bataille adverse">
+                <div id="enemy-lands" class="land-row opponent-lands" aria-label="Terrains adverses (mana)"></div>
+                <div id="enemy-board" class="board-row opponent" aria-label="Plateau adverse"></div>
+              </div>
+            </section>
+
+            <div class="centerline">
+              <button id="attack-hero" class="danger-button" type="button">Attaquer le héros</button>
+              <div class="turn-pill" id="turn-pill">Tour du joueur</div>
+              <button id="end-turn" class="primary-button" type="button">Fin du tour</button>
+            </div>
+            <div id="effect-layer" class="effect-layer" aria-hidden="true"></div>
+
+            <!-- Tapis du joueur (bleu) -->
+            <section class="mat-side player-mat player-hero" aria-label="Ton tapis">
+              <div class="mat-zone mat-zone--field" aria-label="Ton champ de bataille">
+                <div id="player-board" class="board-row player" aria-label="Ton plateau"></div>
+                <div id="player-lands" class="land-row player-lands" aria-label="Tes terrains (mana)"></div>
+              </div>
+              <div class="mat-zone mat-zone--library" title="Ta bibliothèque">
+                <span class="mat-zone-count"><strong id="player-deck">0</strong><span>cartes</span></span>
+              </div>
+              <button
+                class="mat-zone mat-zone--graveyard"
+                type="button"
+                data-pile="player:graveyard"
+                aria-label="Voir ton cimetière"
+              >
+                <span class="mat-zone-count"><strong id="player-graveyard">0</strong><span>cartes</span></span>
+              </button>
+              <button
+                class="mat-zone mat-zone--exile"
+                type="button"
+                data-pile="player:exile"
+                aria-label="Voir ton exil"
+              >
+                <span class="mat-zone-count"><strong id="player-exile">0</strong><span>cartes</span></span>
+              </button>
+              <div class="mat-zone mat-zone--commander" aria-label="Toi">
+                <div class="commander-portrait" aria-hidden="true"></div>
+                <div class="commander-info">
+                  <h2 id="player-name">Joueur</h2>
+                  <p id="player-caption" class="hero-caption">Choisis un deck pour lancer Tonitos.</p>
+                  <div class="commander-stats">
+                    <span class="stat-orb life-orb"><strong id="player-life">20</strong><span>vie</span></span>
+                    <span class="stat-orb energy-orb"><strong id="player-energy">0</strong><span>mana</span></span>
+                    <span class="stat-orb land-orb"><strong id="player-lands-count">0</strong><span>terrains</span></span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="hand-wrap">
+            <div class="section-heading">
+              <h2 id="hand-title">Main</h2>
+              <span id="hand-count">0 carte</span>
+            </div>
+            <p id="action-hint" class="hand-help">Pose un terrain pendant tes phases principales, puis lance tes créatures avec le mana de tes terrains dégagés.</p>
+            <div id="player-hand" class="hand-row" aria-label="Ta main"></div>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section>
+            <div class="section-heading">
+              <h2>Cartes créées</h2>
+              <span id="card-count-summary">Chargement</span>
+            </div>
+            <div id="card-gallery" class="gallery-grid"></div>
+          </section>
+
+          <section>
+            <div class="section-heading">
+              <h2>Équilibre cartes</h2>
+              <span>Objectif 60</span>
+            </div>
+            <div id="deck-audit" class="deck-audit"></div>
+          </section>
+
+          <section>
+            <h2>Règles maison</h2>
+            <ul class="rules-list">
+              <li>Chaque joueur commence à 20 points de vie et pioche 7 cartes.</li>
+              <li>Chaque deck construit contient exactement 60 cartes.</li>
+              <li>Structure Tonitos : 24 terrains, 22 créatures, 14 sorts.</li>
+              <li>Tu peux jouer un seul terrain par tour pendant une phase principale.</li>
+              <li>Les terrains s'engagent automatiquement pour payer le mana.</li>
+              <li>Les créatures ont le mal d'invocation et attaquent au tour suivant.</li>
+              <li>Le combat passe par attaquants, bloqueurs, puis blessures.</li>
+              <li>En ligne, deux joueurs entrent le code 1234 pour partager la même partie.</li>
+              <li>Réduis le héros adverse à 0 vie pour gagner.</li>
+            </ul>
+          </section>
+
+          <section>
+            <div class="section-heading">
+              <h2>Journal</h2>
+              <button id="clear-log" class="small-button" type="button">Vider</button>
+            </div>
+            <ol id="combat-log" class="combat-log"></ol>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Calque de prévisualisation fixe : jamais rogné par un overflow parent -->
+    <div id="card-preview" class="card-preview" hidden aria-hidden="true"></div>
+
+    <div id="card-modal" class="card-modal" hidden>
+      <div class="card-modal-backdrop" data-close-card-modal></div>
+      <section class="card-modal-panel" role="dialog" aria-modal="true" aria-labelledby="card-modal-title">
+        <button id="card-modal-close" class="modal-close" type="button" aria-label="Fermer">×</button>
+        <div id="card-modal-card" class="card-modal-card"></div>
+        <div class="card-modal-copy">
+          <p id="card-modal-family" class="eyebrow"></p>
+          <h2 id="card-modal-title"></h2>
+          <p id="card-modal-type" class="detail-type"></p>
+          <p id="card-modal-stats" class="detail-stats"></p>
+          <p id="card-modal-ability" class="detail-ability"></p>
+          <p id="card-modal-flavor" class="detail-flavor"></p>
+          <button id="card-modal-action" class="primary-button" type="button">Lecture seulement</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="pile-modal" class="pile-modal" hidden>
+      <div class="card-modal-backdrop" data-close-pile-modal></div>
+      <section class="pile-modal-panel" role="dialog" aria-modal="true" aria-labelledby="pile-modal-title">
+        <button id="pile-modal-close" class="modal-close" type="button" aria-label="Fermer">×</button>
+        <h2 id="pile-modal-title">Cimetière</h2>
+        <p id="pile-modal-empty" class="pile-modal-empty" hidden>Cette zone est vide pour le moment.</p>
+        <div id="pile-modal-grid" class="pile-modal-grid"></div>
+      </section>
+    </div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+[
+  {
+    "id": "eclair-toukamon",
+    "kind": "spell",
+    "name": "Éclair de Toukamon",
+    "subtitle": "Rituel des eaux brûlantes",
+    "family": "Rouge",
+    "type": "Rituel - Sort offensif",
+    "cost": 2,
+    "slot": "offense",
+    "keywords": ["Dégâts"],
+    "abilityName": "Frappe incandescente",
+    "abilityText": "Inflige 3 blessures au héros adverse.",
+    "flavor": "La rivière porte parfois la colère du volcan.",
+    "image": "Images/Terrain rouge - Rivière de Toukamon.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "dealHero3"
+  },
+  {
+    "id": "flammes-infernales",
+    "kind": "spell",
+    "name": "Flammes infernales",
+    "subtitle": "Rituel de fournaise",
+    "family": "Rouge",
+    "type": "Rituel - Sort offensif",
+    "cost": 4,
+    "slot": "offense",
+    "keywords": ["Dégâts", "Zone"],
+    "abilityName": "Brasier de masse",
+    "abilityText": "Inflige 2 blessures à toutes les créatures adverses.",
+    "flavor": "Le feu d'Ulgod ne choisit pas ses ennemis longtemps.",
+    "image": "Images/Ulgod Dieu de l'enfer.PNG",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "dealAllEnemies2"
+  },
+  {
+    "id": "pacte-braises",
+    "kind": "spell",
+    "name": "Pacte de braises",
+    "subtitle": "Enchantement de rage courte",
+    "family": "Rouge",
+    "type": "Enchantement - Amélioration",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": ["Amélioration"],
+    "abilityName": "Armes chauffées",
+    "abilityText": "Tes créatures gagnent +1 force.",
+    "flavor": "La lame devient plus persuasive quand elle rougit.",
+    "image": "Images/Terrain rouge - Volcan.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "buffTeamAttack1"
+  },
+  {
+    "id": "siphon-funeste",
+    "kind": "spell",
+    "name": "Siphon funeste",
+    "subtitle": "Rituel de sang froid",
+    "family": "Noir",
+    "type": "Rituel - Sort offensif",
+    "cost": 3,
+    "slot": "offense",
+    "keywords": ["Drain"],
+    "abilityName": "Dette de vie",
+    "abilityText": "Le héros adverse perd 2 points de vie et tu gagnes 2 points de vie.",
+    "flavor": "La mort n'aime pas les comptes ouverts.",
+    "image": "Images/VALERIUS DRACUL.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "effect": "drainHero2"
+  },
+  {
+    "id": "exil-funeste",
+    "kind": "spell",
+    "name": "Exil funeste",
+    "subtitle": "Rituel d'ombre",
+    "family": "Noir",
+    "type": "Rituel - Sort défensif",
+    "cost": 5,
+    "slot": "defense",
+    "keywords": ["Destruction"],
+    "abilityName": "Ombre terminale",
+    "abilityText": "Détruis la créature adverse la plus puissante.",
+    "flavor": "Un nom rayé suffit parfois à vider un champ de bataille.",
+    "image": "Images/Noxis Drathis_sans_watermark.jpg",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "effect": "destroyStrongest"
+  },
+  {
+    "id": "releve-tombes",
+    "kind": "spell",
+    "name": "Relève des tombes",
+    "subtitle": "Rituel de nécromancie",
+    "family": "Noir",
+    "type": "Rituel - Amélioration",
+    "cost": 4,
+    "slot": "upgrade",
+    "keywords": ["Horde"],
+    "abilityName": "Deux pas de plus",
+    "abilityText": "Crée deux Zombies 1/1 si ton champ de bataille a de la place.",
+    "flavor": "Les tombes n'ont jamais été de très bonnes serrures.",
+    "image": "Images/Zombie villageois.PNG",
+    "palette": {
+      "primary": "#566048",
+      "secondary": "#a4b37c",
+      "deep": "#151a12"
+    },
+    "effect": "createTwoZombies"
+  },
+  {
+    "id": "prison-glace",
+    "kind": "spell",
+    "name": "Prison de glace",
+    "subtitle": "Éphémère des flots figés",
+    "family": "Bleu",
+    "type": "Éphémère - Sort défensif",
+    "cost": 2,
+    "slot": "defense",
+    "keywords": ["Gel"],
+    "abilityName": "Entrave froide",
+    "abilityText": "Engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
+    "flavor": "Le mouvement devient une idée lointaine.",
+    "image": "Images/Terrain bleu -Tempête.PNG",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    },
+    "effect": "freezeStrongest"
+  },
+  {
+    "id": "etude-marees",
+    "kind": "spell",
+    "name": "Étude des marées",
+    "subtitle": "Rituel de divination",
+    "family": "Bleu",
+    "type": "Rituel - Pioche",
+    "cost": 3,
+    "slot": "draw",
+    "keywords": ["Pioche"],
+    "abilityName": "Courants de savoir",
+    "abilityText": "Pioche deux cartes.",
+    "flavor": "Chaque vague revient avec une réponse différente.",
+    "image": "Images/Umi Dieu des océans.PNG",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    },
+    "effect": "drawTwo"
+  },
+  {
+    "id": "raz-de-maree",
+    "kind": "spell",
+    "name": "Raz-de-marée",
+    "subtitle": "Rituel des abysses",
+    "family": "Bleu",
+    "type": "Rituel - Sort offensif",
+    "cost": 4,
+    "slot": "offense",
+    "keywords": ["Gel", "Zone"],
+    "abilityName": "Vague écrasante",
+    "abilityText": "Engage jusqu'à deux créatures adverses.",
+    "flavor": "La mer ne pousse pas. Elle prend.",
+    "image": "Images/Kraken.PNG",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "effect": "freezeTwo"
+  },
+  {
+    "id": "benediction-aldia",
+    "kind": "spell",
+    "name": "Bénédiction d'Aldia",
+    "subtitle": "Éphémère de lumière",
+    "family": "Blanc",
+    "type": "Éphémère - Sort défensif",
+    "cost": 2,
+    "slot": "defense",
+    "keywords": ["Soin"],
+    "abilityName": "Main radieuse",
+    "abilityText": "Tu gagnes 4 points de vie.",
+    "flavor": "La lumière sait aussi recoudre.",
+    "image": "Images/Aldia déesse de lumière.PNG",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "effect": "gainLife4"
+  },
+  {
+    "id": "exil-lumineux",
+    "kind": "spell",
+    "name": "Exil lumineux",
+    "subtitle": "Rituel de justice",
+    "family": "Blanc",
+    "type": "Rituel - Sort défensif",
+    "cost": 4,
+    "slot": "defense",
+    "keywords": ["Exil"],
+    "abilityName": "Jugement clair",
+    "abilityText": "Détruis la créature adverse engagée la plus puissante, sinon la plus faible.",
+    "flavor": "Tout ce qui fuit la lumière finit par projeter une ombre.",
+    "image": "Images/Chevalier Errant.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "effect": "destroyTappedOrWeakest"
+  },
+  {
+    "id": "appel-meute",
+    "kind": "spell",
+    "name": "Appel de la meute",
+    "subtitle": "Rituel de sentier",
+    "family": "Vert",
+    "type": "Rituel - Amélioration",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": ["Soutien"],
+    "abilityName": "Renfort naturel",
+    "abilityText": "Crée un Gardien 2/2 avec portée.",
+    "flavor": "La forêt a toujours quelqu'un à envoyer.",
+    "image": "Images/Protécteurs de la nature.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "createGuardian"
+  },
+  {
+    "id": "croissance-feerique",
+    "kind": "spell",
+    "name": "Croissance féerique",
+    "subtitle": "Éphémère de sève vive",
+    "family": "Vert",
+    "type": "Éphémère - Amélioration",
+    "cost": 2,
+    "slot": "upgrade",
+    "keywords": ["Amélioration"],
+    "abilityName": "Pollen vigoureux",
+    "abilityText": "Tes créatures gagnent +1/+1.",
+    "flavor": "Un battement d'ailes peut suffire à réveiller la terre.",
+    "image": "Images/Fée.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "buffTeam1"
+  },
+  {
+    "id": "pierre-norne",
+    "kind": "spell",
+    "name": "Pierre de Norne",
+    "subtitle": "Artefact de présage",
+    "family": "Incolore",
+    "type": "Artefact - Pioche",
+    "cost": 2,
+    "slot": "draw",
+    "keywords": ["Artefact", "Pioche"],
+    "abilityName": "Vision gravée",
+    "abilityText": "Pioche une carte et gagne 1 point de vie.",
+    "flavor": "La pierre ne parle pas. Elle insiste.",
+    "image": "Images/Artefact - Pierre de Norne.PNG",
+    "palette": {
+      "primary": "#7f7662",
+      "secondary": "#d8c596",
+      "deep": "#17140f"
+    },
+    "effect": "drawOneGainOne"
+  },
+  {
+    "id": "lumiere-restauratrice",
+    "kind": "spell",
+    "name": "Lumière restauratrice",
+    "subtitle": "Éphémère de guérison",
+    "family": "Blanc",
+    "type": "Éphémère - Soin",
+    "cost": 3,
+    "slot": "defense",
+    "keywords": ["Soin"],
+    "abilityName": "Aube apaisante",
+    "abilityText": "Restaure tous les points de vie de tes créatures.",
+    "flavor": "La lumière recoud ce que la guerre déchire.",
+    "image": "Images/Aldia déesse de lumière.PNG",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "effect": "restoreTeam"
+  },
+  {
+    "id": "serment-du-griffon",
+    "kind": "spell",
+    "name": "Serment du Griffon",
+    "subtitle": "Enchantement de bannière",
+    "family": "Blanc",
+    "type": "Enchantement - Amélioration",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": ["Amélioration"],
+    "abilityName": "Ailes jurées",
+    "abilityText": "Tes créatures gagnent +1/+1.",
+    "flavor": "Un serment partagé porte plus haut que deux ailes.",
+    "image": "Images/Griffon_sans_watermark.jpg",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "effect": "buffTeam1"
+  },
+  {
+    "id": "ronces-etouffantes",
+    "kind": "spell",
+    "name": "Ronces étouffantes",
+    "subtitle": "Rituel de sylve",
+    "family": "Vert",
+    "type": "Rituel - Sort défensif",
+    "cost": 3,
+    "slot": "defense",
+    "keywords": ["Entrave"],
+    "abilityName": "Étreinte des racines",
+    "abilityText": "Engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
+    "flavor": "La forêt referme ses doigts sans jamais se presser.",
+    "image": "Images/Terrain vert- Sentier.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "freezeStrongest"
+  },
+  {
+    "id": "poussee-vitale",
+    "kind": "spell",
+    "name": "Poussée vitale",
+    "subtitle": "Enchantement de sève",
+    "family": "Vert",
+    "type": "Enchantement - Amélioration",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": ["Amélioration"],
+    "abilityName": "Écorce nourricière",
+    "abilityText": "Tes créatures gagnent +0/+2.",
+    "flavor": "Ce qui plonge ses racines profond ploie sans rompre.",
+    "image": "Images/Uldrid le sage arbre.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "toughTeam"
+  },
+  {
+    "id": "salve-de-braises",
+    "kind": "spell",
+    "name": "Salve de braises",
+    "subtitle": "Éphémère de fournaise",
+    "family": "Rouge",
+    "type": "Éphémère - Sort offensif",
+    "cost": 2,
+    "slot": "offense",
+    "keywords": ["Dégâts"],
+    "abilityName": "Volée ardente",
+    "abilityText": "Inflige 2 blessures au héros adverse.",
+    "flavor": "Une poignée d'étincelles suffit à ouvrir la marche.",
+    "image": "Images/Terrain rouge - Volcan Infinie.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "damageHero2"
+  },
+  {
+    "id": "malediction-rampante",
+    "kind": "spell",
+    "name": "Malédiction rampante",
+    "subtitle": "Rituel de déclin",
+    "family": "Noir",
+    "type": "Rituel - Sort offensif",
+    "cost": 3,
+    "slot": "offense",
+    "keywords": ["Affaiblissement"],
+    "abilityName": "Souffle vicié",
+    "abilityText": "Les créatures adverses perdent 1 force jusqu'à la fin de la partie.",
+    "flavor": "La peur ronge les bras avant les lames.",
+    "image": "Images/Terrain noir - Lac Putride.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "effect": "weakenAllEnemies"
+  },
+  {
+    "id": "deferlante-glaciale",
+    "kind": "spell",
+    "name": "Déferlante glaciale",
+    "subtitle": "Rituel des abysses",
+    "family": "Bleu",
+    "type": "Rituel - Sort défensif",
+    "cost": 5,
+    "slot": "defense",
+    "keywords": ["Gel", "Zone"],
+    "abilityName": "Marée figée",
+    "abilityText": "Engage toutes les créatures adverses. Elles ne se dégagent pas au prochain tour.",
+    "flavor": "Quand la mer se glace, plus rien ne rame.",
+    "image": "Images/Terrain bleu - Ruines sous marine.jpg",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    },
+    "effect": "freezeAll"
+  }
+]

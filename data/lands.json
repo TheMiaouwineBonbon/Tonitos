@@ -1,0 +1,462 @@
+[
+  {
+    "id": "chateau-bordeciel",
+    "kind": "land",
+    "name": "Château de Bordeciel",
+    "subtitle": "Plaine fortifiée",
+    "family": "Blanc",
+    "type": "Terrain - Plaine",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana blanc"],
+    "abilityName": "Source blanche",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "Ses hautes tours gardent les serments lumineux.",
+    "image": "Images/Terrain blanc - Chateau de Bordeciel.jpg",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "chateau-luxurieux",
+    "kind": "land",
+    "name": "Château Luxurieux",
+    "subtitle": "Plaine des jardins dorés",
+    "family": "Blanc",
+    "type": "Terrain - Plaine",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana blanc"],
+    "abilityName": "Source blanche",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "Même les remparts y semblent fleurir.",
+    "image": "Images/Terrain blanc - chateau Luxurieux.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "monde-au-dessus",
+    "kind": "land",
+    "name": "Le monde d'au dessus",
+    "subtitle": "Plaine céleste",
+    "family": "Blanc",
+    "type": "Terrain - Plaine",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana blanc"],
+    "abilityName": "Source blanche",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "Un horizon où les cités marchent avec les nuages.",
+    "image": "Images/Terrain blanc - Le monde d'au dessus.jpg",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "monde-celeste-azure",
+    "kind": "land",
+    "name": "Monde céleste azure",
+    "subtitle": "Plaine suspendue",
+    "family": "Blanc",
+    "type": "Terrain - Plaine",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana blanc"],
+    "abilityName": "Source blanche",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "La lumière y tombe comme une eau calme.",
+    "image": "Images/Terrain blanc - Monde céleste azure.jpg",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "oceania-cite-sous-marine",
+    "kind": "land",
+    "name": "Océania, Cité sous Marine",
+    "subtitle": "Île engloutie",
+    "family": "Bleu",
+    "type": "Terrain - Île",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana bleu"],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "Ses palais chantent sous la pression des abysses.",
+    "image": "Images/Terrain bleu - Océania Cité sous Marine.jpg",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "ruines-sous-marine",
+    "kind": "land",
+    "name": "Ruines sous marine",
+    "subtitle": "Île noyée",
+    "family": "Bleu",
+    "type": "Terrain - Île",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana bleu"],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "Les courants y déplacent encore les souvenirs.",
+    "image": "Images/Terrain bleu - Ruines sous marine.jpg",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "lac-bleu",
+    "kind": "land",
+    "name": "Lac des songes",
+    "subtitle": "Île silencieuse",
+    "family": "Bleu",
+    "type": "Terrain - Île",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana bleu"],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "Les reflets y montrent parfois demain.",
+    "image": "Images/Terrain bleu - Lac.png",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "tempete-bleue",
+    "kind": "land",
+    "name": "Tempête d'Azur",
+    "subtitle": "Île des vents chargés",
+    "family": "Bleu",
+    "type": "Terrain - Île",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana bleu"],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "L'orage y pense avant les mages.",
+    "image": "Images/Terrain bleu -Tempête.PNG",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "cimetiere",
+    "kind": "land",
+    "name": "Cimetière des pactes",
+    "subtitle": "Marais des voix basses",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "Chaque pierre sait un nom que personne ne prononce.",
+    "image": "Images/Terrain noir - Cimetière.jpg",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "lac-putride",
+    "kind": "land",
+    "name": "Lac Putride",
+    "subtitle": "Marais stagnant",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "La surface bouge parfois sans vent.",
+    "image": "Images/Terrain noir - Lac Putride.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "manoir-dracul",
+    "kind": "land",
+    "name": "Manoir Dracul",
+    "subtitle": "Marais de sang froid",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "Chaque fenêtre attend une invitation.",
+    "image": "Images/Terrain Noir - Dracul Manoire.PNG",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "laboratoire-noir",
+    "kind": "land",
+    "name": "Laboratoire noir",
+    "subtitle": "Marais d'alchimie maudite",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "Les fioles y murmurent plus bas que les morts.",
+    "image": "Images/Terrain Noir - Labo.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "royaume-noxis",
+    "kind": "land",
+    "name": "Royaume de Noxis",
+    "subtitle": "Marais du trône sanglant",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "Ici, même la pierre se souvient des batailles.",
+    "image": "Images/Terrain Noir - Royaume de Noxis.PNG",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "village-demoniaque",
+    "kind": "land",
+    "name": "Village Démoniaque",
+    "subtitle": "Marais des pactes mineurs",
+    "family": "Noir",
+    "type": "Terrain - Marais",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana noir"],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "On y troque des secrets contre des ombres.",
+    "image": "Images/Terrain Noir - Village Démoniaque.PNG",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "forge-elfique-volcanique",
+    "kind": "land",
+    "name": "Forge Elfique Volcanique",
+    "subtitle": "Montagne des braises",
+    "family": "Rouge",
+    "type": "Terrain - Montagne",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana rouge"],
+    "abilityName": "Source rouge",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "La lave y garde la mémoire des marteaux.",
+    "image": "Images/Terrain rouge - Forge Elfique Volcanique.jpg",
+    "palette": {
+      "primary": "#a95d29",
+      "secondary": "#e3a55c",
+      "deep": "#28140a"
+    }
+  },
+  {
+    "id": "volcan-infinie",
+    "kind": "land",
+    "name": "Volcan Infinie",
+    "subtitle": "Montagne sans sommeil",
+    "family": "Rouge",
+    "type": "Terrain - Montagne",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana rouge"],
+    "abilityName": "Source rouge",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "Le ciel y brûle avant même l'aube.",
+    "image": "Images/Terrain rouge - Volcan Infinie.png",
+    "palette": {
+      "primary": "#a95d29",
+      "secondary": "#e3a55c",
+      "deep": "#28140a"
+    }
+  },
+  {
+    "id": "riviere-toukamon",
+    "kind": "land",
+    "name": "Rivière de Toukamon",
+    "subtitle": "Montagne aux eaux brûlantes",
+    "family": "Rouge",
+    "type": "Terrain - Montagne",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana rouge"],
+    "abilityName": "Source rouge",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "L'eau y court avec la mémoire du feu.",
+    "image": "Images/Terrain rouge - Rivière de Toukamon.jpg",
+    "palette": {
+      "primary": "#a95d29",
+      "secondary": "#e3a55c",
+      "deep": "#28140a"
+    }
+  },
+  {
+    "id": "volcan-rouge",
+    "kind": "land",
+    "name": "Volcan rouge",
+    "subtitle": "Montagne ouverte",
+    "family": "Rouge",
+    "type": "Terrain - Montagne",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana rouge"],
+    "abilityName": "Source rouge",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "Chaque cratère y garde une colère neuve.",
+    "image": "Images/Terrain rouge - Volcan.jpg",
+    "palette": {
+      "primary": "#a95d29",
+      "secondary": "#e3a55c",
+      "deep": "#28140a"
+    }
+  },
+  {
+    "id": "paradis-uldrid",
+    "kind": "land",
+    "name": "Paradis d'Uldrid",
+    "subtitle": "Forêt primordiale",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana vert"],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Les racines y savent retrouver le chemin du monde.",
+    "image": "Images/terrain vert - Paradis d'Uldrid.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "riviere-manhil",
+    "kind": "land",
+    "name": "Rivière de Manhil",
+    "subtitle": "Forêt vive",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana vert"],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "L'eau y nourrit les racines les plus anciennes.",
+    "image": "Images/Terrain vert - Rivière de Manhil.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "sentier-uldrid",
+    "kind": "land",
+    "name": "Sentier d'Uldrid",
+    "subtitle": "Forêt des pas oubliés",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana vert"],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Le sentier change pour guider ceux qu'il accepte.",
+    "image": "Images/Terrain vert- Sentier.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "champ-coquelicots",
+    "kind": "land",
+    "name": "Champ de coquelicots",
+    "subtitle": "Forêt fleurie",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana vert"],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "La paix y pousse avec une force têtue.",
+    "image": "Images/Terrain vert - Champ de coquelicots.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "prairie-verte",
+    "kind": "land",
+    "name": "Prairie verte",
+    "subtitle": "Forêt claire",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": ["Terrain", "Mana vert"],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Le vent y rend les batailles moins pressées.",
+    "image": "Images/Terrain vert - Plaine.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  }
+]

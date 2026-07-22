@@ -1,0 +1,602 @@
+[
+  {
+    "id": "marinehote",
+    "name": "Marinéhote de Elturel",
+    "subtitle": "Invocatrice aux familiers ailés",
+    "family": "Blanc",
+    "type": "Créature légendaire - Invocatrice",
+    "cost": 3,
+    "attack": 1,
+    "life": 5,
+    "keywords": ["Invocation", "Vol"],
+    "abilityName": "Lien ailé",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, crée un Familier ailé 1/1 avec le vol.",
+    "flavor": "Ses compagnons répondent avant même que le danger ait un nom.",
+    "image": "Images/Marinéhote de Elturel.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "familliers",
+    "name": "Familiers d'Elturel",
+    "subtitle": "Petite nuée protectrice",
+    "family": "Blanc",
+    "type": "Créature - Familier",
+    "cost": 2,
+    "attack": 1,
+    "life": 3,
+    "keywords": ["Vol", "Soutien"],
+    "abilityName": "Garde-plumes",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 2 points de vie.",
+    "flavor": "Ils arrivent toujours avant la chute.",
+    "image": "Images/Familliers.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "griffon",
+    "name": "Griffon de Bordeciel",
+    "subtitle": "Gardien des hautes routes",
+    "family": "Blanc",
+    "type": "Créature - Griffon",
+    "cost": 4,
+    "attack": 3,
+    "life": 3,
+    "keywords": ["Vol", "Vigilance"],
+    "abilityName": "Patrouille céleste",
+    "abilityText": "La vigilance permet au Griffon d'attaquer sans s'engager.",
+    "flavor": "Son cri fend les nuages comme une bannière.",
+    "image": "Images/Griffon_sans_watermark.jpg",
+    "palette": {
+      "primary": "#c69a4d",
+      "secondary": "#f1d88a",
+      "deep": "#2e2112"
+    }
+  },
+  {
+    "id": "johanna",
+    "name": "Johanna Bordeciel",
+    "subtitle": "Magicienne des sceaux liquides",
+    "family": "Blanc",
+    "type": "Créature légendaire - Magicienne",
+    "cost": 4,
+    "attack": 2,
+    "life": 5,
+    "keywords": ["Mage", "Gel"],
+    "abilityName": "Sceau des flots",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
+    "flavor": "Le ciel n'est jamais loin lorsqu'elle ouvre le cercle.",
+    "image": "Images/Johanna Bordeciel.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "terreur-mers-iguis",
+    "name": "Terreur des mers Iguis",
+    "subtitle": "Monstre des abysses",
+    "family": "Bleu",
+    "type": "Créature - Léviathan",
+    "cost": 6,
+    "attack": 5,
+    "life": 7,
+    "keywords": ["Gel", "Imposant"],
+    "abilityName": "Marée d'effroi",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage jusqu'à deux créatures adverses.",
+    "flavor": "La mer ne rugit pas. Elle avale.",
+    "image": "Images/Terreur des mers Iguis.jpg",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    }
+  },
+  {
+    "id": "valerius",
+    "name": "Valerius Dracul",
+    "subtitle": "Comte vampire lié à la Mort",
+    "family": "Noir",
+    "type": "Créature légendaire - Vampire Noble",
+    "cost": 5,
+    "attack": 4,
+    "life": 6,
+    "keywords": ["Lien de vie", "Pacte"],
+    "abilityName": "Pacte de minuit",
+    "abilityText": "Les blessures infligées par Valerius te font gagner autant de points de vie.",
+    "flavor": "Il ne promet pas l'éternité. Il l'exige.",
+    "image": "Images/VALERIUS DRACUL.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "noxis",
+    "name": "Noxis Drathis",
+    "subtitle": "Incarnation du dieu Bhaal",
+    "family": "Noir",
+    "type": "Créature légendaire - Avatar Divin",
+    "cost": 7,
+    "attack": 7,
+    "life": 6,
+    "keywords": ["Massacre", "Ascension"],
+    "abilityName": "Moisson sanglante",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à toutes les créatures adverses. Chaque mort lui donne +1 force.",
+    "flavor": "Le silence après son passage est encore une menace.",
+    "image": "Images/Noxis Drathis_sans_watermark.jpg",
+    "palette": {
+      "primary": "#9d201c",
+      "secondary": "#ff6f4a",
+      "deep": "#18090a"
+    }
+  },
+  {
+    "id": "amrin",
+    "name": "Premier Roi de l'enfer Amrin",
+    "subtitle": "Souverain des cendres",
+    "family": "Rouge",
+    "type": "Créature légendaire - Démon",
+    "cost": 6,
+    "attack": 6,
+    "life": 5,
+    "keywords": ["Contact mortel", "Pacte"],
+    "abilityName": "Tribut infernal",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, détruis la créature adverse la plus faible.",
+    "flavor": "Il ne règne pas sur l'enfer. Il le fait payer.",
+    "image": "Images/Premier Roi de l'enfer Amrin.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "dyklanne",
+    "name": "Dyklanne de Mirthodil",
+    "subtitle": "Nain guerrier des tavernes de pierre",
+    "family": "Blanc",
+    "type": "Créature légendaire - Nain Guerrier",
+    "cost": 2,
+    "attack": 3,
+    "life": 4,
+    "keywords": ["Vigilance", "Tenace"],
+    "abilityName": "Rempart de Mirthodil",
+    "abilityText": "La vigilance permet à Dyklanne d'attaquer sans s'engager.",
+    "flavor": "Il rit plus fort quand la salle commence à trembler.",
+    "image": "Images/Dyklanne de Mirthodil_sans_watermark.jpg",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "bebe-dragon",
+    "name": "Bébé Dragon",
+    "subtitle": "Étincelle des volcans",
+    "family": "Rouge",
+    "type": "Créature - Dragon",
+    "cost": 3,
+    "attack": 2,
+    "life": 2,
+    "keywords": ["Vol", "Célérité"],
+    "abilityName": "Souffle naissant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 1 blessure au héros adverse.",
+    "flavor": "Petit, oui. Déjà dangereux, absolument.",
+    "image": "Images/Bébé Dragon.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "uldrid",
+    "name": "Uldrid le sage arbre",
+    "subtitle": "Ancien du paradis vert",
+    "family": "Vert",
+    "type": "Créature légendaire - Sylve Ancien",
+    "cost": 5,
+    "attack": 2,
+    "life": 7,
+    "keywords": ["Portée", "Croissance"],
+    "abilityName": "Racines profondes",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, mets un terrain depuis ton deck sur le champ de bataille engagé.",
+    "flavor": "Il parle lentement parce que les forêts savent attendre.",
+    "image": "Images/Uldrid le sage arbre.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "chevalier-sans-espoir",
+    "name": "Chevalier sans espoir",
+    "subtitle": "Lame jurée aux ténèbres",
+    "family": "Noir",
+    "type": "Créature - Chevalier",
+    "cost": 4,
+    "attack": 4,
+    "life": 3,
+    "keywords": ["Contact mortel", "Pacte"],
+    "abilityName": "Serment brisé",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, le héros adverse perd 1 point de vie et tu gagnes 1 point de vie.",
+    "flavor": "Il avance encore parce que son serment refuse de mourir.",
+    "image": "Images/Chevalier sans éspoir.PNG",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "nilith",
+    "name": "Déesse des ombres Nilith",
+    "subtitle": "Souveraine du voile noir",
+    "family": "Noir",
+    "type": "Créature légendaire - Déesse",
+    "cost": 7,
+    "attack": 5,
+    "life": 7,
+    "keywords": ["Vol", "Contact mortel"],
+    "abilityName": "Voile de Néant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, détruis la créature adverse la plus puissante.",
+    "flavor": "Son ombre tombe avant son nom.",
+    "image": "Images/Déesse des ombres Nilith.png",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    }
+  },
+  {
+    "id": "diablotins",
+    "name": "Diablotins",
+    "subtitle": "Essaim de braises hurlantes",
+    "family": "Rouge",
+    "type": "Créature - Diablotin",
+    "cost": 2,
+    "attack": 2,
+    "life": 1,
+    "keywords": ["Célérité"],
+    "abilityName": "Petites flammes",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 1 blessure au héros adverse.",
+    "flavor": "Un seul est pénible. Trois deviennent un incendie.",
+    "image": "Images/Diablotins.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "golem-pierre",
+    "name": "Golem de pierre",
+    "subtitle": "Gardien des vieux sanctuaires",
+    "family": "Vert",
+    "type": "Créature - Golem",
+    "cost": 4,
+    "attack": 3,
+    "life": 6,
+    "keywords": ["Défenseur", "Portée"],
+    "abilityName": "Mur de basalte",
+    "abilityText": "Cette créature ne peut pas attaquer, mais elle peut bloquer les créatures avec le vol.",
+    "flavor": "Il ne poursuit personne. Il attend que le monde le heurte.",
+    "image": "Images/Golem de pierre.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "magiciens-exiles",
+    "name": "Magicien exilé",
+    "subtitle": "Savant banni par les vivants",
+    "family": "Noir",
+    "type": "Créature - Magicien",
+    "cost": 3,
+    "attack": 2,
+    "life": 3,
+    "keywords": ["Mage", "Pioche"],
+    "abilityName": "Savoir interdit",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte.",
+    "flavor": "Ils ont perdu leur cité, pas leur mémoire.",
+    "image": "Images/Magicien éxilé.PNG",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    }
+  },
+  {
+    "id": "morts-vivants",
+    "name": "Morts vivants",
+    "subtitle": "Marche des tombes ouvertes",
+    "family": "Noir",
+    "type": "Créature - Zombie",
+    "cost": 3,
+    "attack": 3,
+    "life": 2,
+    "keywords": ["Horde"],
+    "abilityName": "Relève impie",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, crée un Zombie 1/1.",
+    "flavor": "Une tombe vide est rarement une bonne nouvelle.",
+    "image": "Images/Morts vivants.PNG",
+    "palette": {
+      "primary": "#566048",
+      "secondary": "#a4b37c",
+      "deep": "#151a12"
+    }
+  },
+  {
+    "id": "orcs",
+    "name": "Orcs",
+    "subtitle": "Bande de pillards écarlates",
+    "family": "Rouge",
+    "type": "Créature - Orc Guerrier",
+    "cost": 3,
+    "attack": 4,
+    "life": 2,
+    "keywords": ["Célérité"],
+    "abilityName": "Charge brutale",
+    "abilityText": "Cette créature peut attaquer dès le tour où elle arrive.",
+    "flavor": "Leur stratégie commence à la hache et finit au cri.",
+    "image": "Images/Orcs.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "roi-des-mers",
+    "name": "Roi des mers",
+    "subtitle": "Monarque des abysses",
+    "family": "Bleu",
+    "type": "Créature légendaire - Noble Léviathan",
+    "cost": 5,
+    "attack": 4,
+    "life": 6,
+    "keywords": ["Gel", "Imposant"],
+    "abilityName": "Décret des marées",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante.",
+    "flavor": "La mer obéit mieux aux couronnes qu'aux prières.",
+    "image": "Images/Roi des mer.jpg",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    }
+  },
+  {
+    "id": "ragast",
+    "name": "Second roi des enfers Ragast",
+    "subtitle": "Héritier de la fournaise",
+    "family": "Rouge",
+    "type": "Créature légendaire - Démon Noble",
+    "cost": 6,
+    "attack": 6,
+    "life": 4,
+    "keywords": ["Célérité", "Massacre"],
+    "abilityName": "Couronne de braise",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à chaque créature adverse déjà blessée.",
+    "flavor": "Il règne sur ce qui reste après l'incendie.",
+    "image": "Images/Second roi des enfer Ragast.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "trios-heros",
+    "name": "Trios des Héros",
+    "subtitle": "Serment de trois maisons",
+    "family": "Blanc",
+    "type": "Créature légendaire - Héros",
+    "cost": 5,
+    "attack": 4,
+    "life": 5,
+    "keywords": ["Vigilance", "Soutien"],
+    "abilityName": "Serment des trois",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +1/+1.",
+    "flavor": "Trois voix suffisent à relever une armée.",
+    "image": "Images/Trios des Héros.PNG",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "aldia",
+    "name": "Aldia déesse de lumière",
+    "subtitle": "Divinité des serments solaires",
+    "family": "Blanc",
+    "type": "Créature légendaire - Déesse",
+    "cost": 6,
+    "attack": 4,
+    "life": 7,
+    "keywords": ["Vol", "Lien de vie"],
+    "abilityName": "Aurore sacrée",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 4 points de vie.",
+    "flavor": "Sa lumière ne pardonne pas l'ombre, elle la dissout.",
+    "image": "Images/Aldia déesse de lumière.PNG",
+    "palette": {
+      "primary": "#d3a241",
+      "secondary": "#fff0a6",
+      "deep": "#2d220d"
+    }
+  },
+  {
+    "id": "chevalier-errant",
+    "name": "Chevalier Errant",
+    "subtitle": "Protecteur sans bannière",
+    "family": "Blanc",
+    "type": "Créature - Chevalier",
+    "cost": 2,
+    "attack": 2,
+    "life": 3,
+    "keywords": ["Vigilance"],
+    "abilityName": "Serment mobile",
+    "abilityText": "La vigilance permet au Chevalier Errant d'attaquer sans s'engager.",
+    "flavor": "Il marche là où une promesse a été oubliée.",
+    "image": "Images/Chevalier Errant.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "fee",
+    "name": "Fée",
+    "subtitle": "Messagère de la forêt vive",
+    "family": "Vert",
+    "type": "Créature - Fée",
+    "cost": 2,
+    "attack": 1,
+    "life": 2,
+    "keywords": ["Vol", "Pioche"],
+    "abilityName": "Pollen de Manhil",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte.",
+    "flavor": "Elle transporte les secrets trop légers pour les livres.",
+    "image": "Images/Fée.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "protecteurs-nature",
+    "name": "Protécteurs de la nature",
+    "subtitle": "Gardiens du sentier ancien",
+    "family": "Vert",
+    "type": "Créature - Gardien",
+    "cost": 3,
+    "attack": 3,
+    "life": 4,
+    "keywords": ["Portée", "Soutien"],
+    "abilityName": "Rempart vivant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +0/+1.",
+    "flavor": "La forêt sait très bien fermer une route.",
+    "image": "Images/Protécteurs de la nature.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    }
+  },
+  {
+    "id": "kraken",
+    "name": "Kraken",
+    "subtitle": "Fléau des profondeurs",
+    "family": "Bleu",
+    "type": "Créature - Kraken",
+    "cost": 7,
+    "attack": 7,
+    "life": 8,
+    "keywords": ["Gel", "Imposant"],
+    "abilityName": "Étreinte abyssale",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage toutes les créatures adverses.",
+    "flavor": "Quand la mer se referme, même les prières coulent.",
+    "image": "Images/Kraken.PNG",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    }
+  },
+  {
+    "id": "pirates",
+    "name": "Pirates",
+    "subtitle": "Équipage des courants troubles",
+    "family": "Bleu",
+    "type": "Créature - Pirate",
+    "cost": 3,
+    "attack": 3,
+    "life": 2,
+    "keywords": ["Pioche"],
+    "abilityName": "Butin rapide",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte puis perds 1 point de vie.",
+    "flavor": "Ils savent toujours où la marée cache les coffres.",
+    "image": "Images/Pirates.PNG",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "umi",
+    "name": "Umi Dieu des océans",
+    "subtitle": "Divinité des marées premières",
+    "family": "Bleu",
+    "type": "Créature légendaire - Dieu",
+    "cost": 6,
+    "attack": 4,
+    "life": 7,
+    "keywords": ["Gel", "Pioche"],
+    "abilityName": "Oracle des marées",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche deux cartes.",
+    "flavor": "Ses réponses ont la patience des abysses.",
+    "image": "Images/Umi Dieu des océans.PNG",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    }
+  },
+  {
+    "id": "ulgod",
+    "name": "Ulgod Dieu de l'enfer",
+    "subtitle": "Divinité de la fournaise",
+    "family": "Rouge",
+    "type": "Créature légendaire - Dieu",
+    "cost": 7,
+    "attack": 7,
+    "life": 6,
+    "keywords": ["Célérité", "Massacre"],
+    "abilityName": "Jugement de braise",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 3 blessures au héros adverse.",
+    "flavor": "Il ne menace pas. Il arrive.",
+    "image": "Images/Ulgod Dieu de l'enfer.PNG",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "zombie-villageois",
+    "name": "Zombie villageois",
+    "subtitle": "Habitant relevé par la nuit",
+    "family": "Noir",
+    "type": "Créature - Zombie",
+    "cost": 2,
+    "attack": 2,
+    "life": 2,
+    "keywords": ["Horde"],
+    "abilityName": "Dernier râle",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, le héros adverse perd 1 point de vie.",
+    "flavor": "Il rentre chez lui, même si le village ne veut plus de lui.",
+    "image": "Images/Zombie villageois.PNG",
+    "palette": {
+      "primary": "#566048",
+      "secondary": "#a4b37c",
+      "deep": "#151a12"
+    }
+  }
+]
