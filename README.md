@@ -4,6 +4,8 @@ Prototype de jeu de cartes fantasy (HTML/CSS/JS vanilla) inspiré des duels tact
 type Magic / Hearthstone. Aucun framework, aucune dépendance : juste Node pour le
 petit serveur statique et l'API du salon multijoueur.
 
+**Jouer en ligne :** https://themiaouwinebonbon.github.io/Tonitos/
+
 ## Contenu
 
 - `index.html` : menu de lancement + plateau jouable.
