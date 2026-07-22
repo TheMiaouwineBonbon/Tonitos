@@ -49,12 +49,19 @@ async function main() {
     ["mat-side", "mat-zone--library", "mat-zone--graveyard", "mat-zone--field", "mat-zone--exile", "mat-zone--commander"]
       .every((className) => html.includes(className))
   );
+  check("Les piles visibles sont présentes sur le tapis", html.includes("library-card-back") && html.includes("pile-card-mini"));
+  check(
+    "Les nouveaux recto et verso de carte existent",
+    ["Images/Tapis de Jeu/Devant de carte.jpg", "Images/Tapis de Jeu/Carte Dos.png"]
+      .every((file) => fs.existsSync(path.join(__dirname, "..", file)))
+  );
 
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
   check("GET /game.js -> 200", res.status === 200);
   check("Identité réseau propre à chaque onglet", gameSource.includes('sessionStorage.getItem("tonitos-player-id")'));
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
+  check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();

@@ -36,10 +36,30 @@ Depuis le menu de lancement (nom du jeu : **Tonitos**) :
 Chaque joueur choisit son **nom**, son **portrait/avatar** (affiché dans la zone
 Commandant du tapis, sans activer les règles Commander) et son **deck** bicolore.
 
+## Règles de combat
+
+- Pendant la phase de combat, **clique directement tes créatures** pour les déclarer
+  attaquantes ; pendant le blocage, clique un bloqueur puis un attaquant (reclique un
+  bloqueur pour annuler son blocage).
+- **Plusieurs bloqueurs** peuvent se liguer contre un même attaquant : l'attaquant
+  répartit ses blessures dans l'ordre des blocages, tous les bloqueurs ripostent.
+- Si le défenseur n'a **aucun bloqueur légal**, le combat se résout automatiquement.
+- Mots-clés gérés : Vol, Portée, Vigilance, Célérité, Défenseur, Contact mortel,
+  Lien de vie.
+- La vie est **plafonnée à 30**. Piocher sans bibliothèque coûte 1 point de vie par
+  carte manquante, et peut faire perdre la partie.
+- Un **écran de fin de partie** annonce le vainqueur et propose une revanche
+  immédiate (mêmes decks et profils, y compris en ligne).
+- L'IA ne lance plus de sorts sans cible utile, choisit ses blocages (échanges
+  favorables, sacrifices seulement quand sa vie est menacée) et évite les attaques
+  suicidaires, sauf si l'attaque est létale.
+
 Les cinq zones interactives suivent les cadres imprimés des tapis : Bibliothèque,
 Cimetière, Champ de bataille, Exil et Commandant. Le survol affiche une copie complète
 de la carte dans un calque indépendant, sans découpe par la main ou le panneau latéral ;
 sur mobile, le clic ouvre la fiche complète dans une fenêtre adaptée à l'écran.
+Le recto fourni sert de cadre commun aux cartes, le dos apparaît dans les bibliothèques,
+et la carte supérieure est visible directement dans les zones Cimetière et Exil.
 
 ## Format construit Tonitos
 

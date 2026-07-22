@@ -104,6 +104,7 @@
             <!-- Tapis adverse (rouge) : zones calées sur les cadres imprimés -->
             <section class="mat-side enemy-mat enemy-hero" aria-label="Tapis de l'adversaire">
               <div class="mat-zone mat-zone--library" title="Bibliothèque adverse">
+                <span class="library-card-back" aria-hidden="true"></span>
                 <span class="mat-zone-count"><strong id="enemy-deck">0</strong><span>cartes</span></span>
               </div>
               <button
@@ -112,6 +113,7 @@
                 data-pile="enemy:graveyard"
                 aria-label="Voir le cimetière adverse"
               >
+                <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="enemy-graveyard">0</strong><span>cartes</span></span>
               </button>
               <button
@@ -120,6 +122,7 @@
                 data-pile="enemy:exile"
                 aria-label="Voir l'exil adverse"
               >
+                <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="enemy-exile">0</strong><span>cartes</span></span>
               </button>
               <div class="mat-zone mat-zone--commander" aria-label="Adversaire">
@@ -154,6 +157,7 @@
                 <div id="player-lands" class="land-row player-lands" aria-label="Tes terrains (mana)"></div>
               </div>
               <div class="mat-zone mat-zone--library" title="Ta bibliothèque">
+                <span class="library-card-back" aria-hidden="true"></span>
                 <span class="mat-zone-count"><strong id="player-deck">0</strong><span>cartes</span></span>
               </div>
               <button
@@ -162,6 +166,7 @@
                 data-pile="player:graveyard"
                 aria-label="Voir ton cimetière"
               >
+                <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="player-graveyard">0</strong><span>cartes</span></span>
               </button>
               <button
@@ -170,6 +175,7 @@
                 data-pile="player:exile"
                 aria-label="Voir ton exil"
               >
+                <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="player-exile">0</strong><span>cartes</span></span>
               </button>
               <div class="mat-zone mat-zone--commander" aria-label="Toi">
@@ -223,7 +229,9 @@
               <li>Tu peux jouer un seul terrain par tour pendant une phase principale.</li>
               <li>Les terrains s'engagent automatiquement pour payer le mana.</li>
               <li>Les créatures ont le mal d'invocation et attaquent au tour suivant.</li>
-              <li>Le combat passe par attaquants, bloqueurs, puis blessures.</li>
+              <li>Le combat passe par attaquants, bloqueurs, puis blessures. Plusieurs bloqueurs peuvent se liguer contre un même attaquant.</li>
+              <li>Pendant le combat, clique directement tes créatures pour attaquer ou bloquer.</li>
+              <li>La vie est plafonnée à 30. Piocher sans bibliothèque coûte 1 point de vie par carte.</li>
               <li>En ligne, deux joueurs entrent le code 1234 pour partager la même partie.</li>
               <li>Réduis le héros adverse à 0 vie pour gagner.</li>
             </ul>
@@ -238,6 +246,20 @@
           </section>
         </aside>
       </main>
+    </div>
+
+    <!-- Écran de fin de partie -->
+    <div id="game-over" class="game-over" hidden>
+      <div class="game-over-backdrop"></div>
+      <section class="game-over-panel" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+        <p class="eyebrow">Fin de partie</p>
+        <h2 id="game-over-title">Victoire !</h2>
+        <p id="game-over-text" class="game-over-text"></p>
+        <div class="game-over-actions">
+          <button id="game-over-rematch" class="primary-button" type="button">Rejouer</button>
+          <button id="game-over-menu" class="ghost-button" type="button">Retour au menu</button>
+        </div>
+      </section>
     </div>
 
     <!-- Calque de prévisualisation fixe : jamais rogné par un overflow parent -->

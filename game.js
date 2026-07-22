@@ -17,6 +17,7 @@ const state = {
   currentTurn: "player",
   phase: PHASES.MAIN_1,
   turn: 1,
+  winner: null,
   log: [],
   detailContext: null,
   mode: "pve",
@@ -108,11 +109,17 @@ const els = {
   pileModalTitle: document.querySelector("#pile-modal-title"),
   pileModalEmpty: document.querySelector("#pile-modal-empty"),
   pileModalClose: document.querySelector("#pile-modal-close"),
-  cardPreview: document.querySelector("#card-preview")
+  cardPreview: document.querySelector("#card-preview"),
+  gameOver: document.querySelector("#game-over"),
+  gameOverTitle: document.querySelector("#game-over-title"),
+  gameOverText: document.querySelector("#game-over-text"),
+  gameOverRematch: document.querySelector("#game-over-rematch"),
+  gameOverMenu: document.querySelector("#game-over-menu")
 };
 
 const MAX_BOARD = 7;
 const STARTING_LIFE = 20;
+const MAX_LIFE = 30;
 const STARTING_HAND = 7;
 const DECK_SIZE = 60;
 const DECK_LANDS = 24;
@@ -222,6 +229,11 @@ function bindEvents() {
   });
   els.cardModalClose?.addEventListener("click", closeCardDetail);
   els.cardModalAction?.addEventListener("click", runDetailAction);
+  els.gameOverRematch?.addEventListener("click", rematch);
+  els.gameOverMenu?.addEventListener("click", () => {
+    if (els.gameOver) els.gameOver.hidden = true;
+    openStartMenu();
+  });
   els.cardModal?.addEventListener("click", (event) => {
     if (event.target.matches("[data-close-card-modal]")) closeCardDetail();
   });
@@ -241,7 +253,7 @@ function bindEvents() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    if (!els.cardModal.hidden) closeCardDetail();
+    if (els.cardModal && !els.cardModal.hidden) closeCardDetail();
     else if (els.pileModal && !els.pileModal.hidden) closePileViewer();
   });
   window.addEventListener("resize", hideCardPreview);
@@ -382,6 +394,7 @@ function newGame(config = {}) {
   state.currentTurn = "player";
   state.phase = PHASES.MAIN_1;
   state.turn = 1;
+  state.winner = null;
   state.log = [];
   state.started = true;
   closeCardDetail();
@@ -739,6 +752,7 @@ function serializeGameState() {
     currentTurn: state.currentTurn,
     phase: state.phase,
     turn: state.turn,
+    winner: state.winner,
     log: state.log,
     publishedBy: state.network.playerId,
     publishedAt: Date.now()
@@ -757,6 +771,7 @@ function applyOnlineState(snapshot, version, room) {
   state.currentTurn = snapshot.currentTurn || "player";
   state.phase = snapshot.phase || PHASES.MAIN_1;
   state.turn = snapshot.turn || 1;
+  state.winner = snapshot.winner || null;
   state.log = Array.isArray(snapshot.log) ? snapshot.log : [];
   state.network = network;
   syncProfilesFromRoom(room);
@@ -1003,11 +1018,12 @@ function draw(side, amount) {
     const next = side.deck.shift();
     if (!next) {
       side.life -= 1;
-      logEvent(`${side.side === "player" ? "Tu n'as" : "L'adversaire n'a"} plus de bibliotheque et perd 1 point de vie.`);
+      logEvent(`${sideDisplayName(side.side)} n'a plus de cartes en bibliothèque et perd 1 point de vie.`);
       continue;
     }
     side.hand.push(next);
   }
+  checkVictory();
 }
 
 function playCardFromHand(side, uid) {
@@ -1033,7 +1049,7 @@ function playCardFromHand(side, uid) {
 function playLand(side, cardIndex) {
   const land = side.hand[cardIndex];
   if (side.landPlayed) {
-    logEvent(`${side.side === "player" ? "Tu as" : "L'adversaire a"} deja joue un terrain ce tour-ci.`);
+    logEvent(`${sideDisplayName(side.side)} a déjà joué un terrain ce tour-ci.`);
     render();
     return;
   }
@@ -1046,7 +1062,7 @@ function playLand(side, cardIndex) {
     enteredTurn: state.turn
   });
   side.landPlayed = true;
-  logEvent(`${side.side === "player" ? "Tu poses" : "L'adversaire pose"} ${land.name}.`);
+  logEvent(`${sideDisplayName(side.side)} pose ${land.name}.`);
   render();
 }
 
@@ -1060,7 +1076,7 @@ function playCreature(side, cardIndex) {
   }
 
   if (!canPay(side, card)) {
-    logEvent(`Pas assez de mana degage pour lancer ${card.name}.`);
+    logEvent(`Pas assez de mana dégagé pour lancer ${card.name}.`);
     render();
     return;
   }
@@ -1071,7 +1087,7 @@ function playCreature(side, cardIndex) {
   const unit = createUnit(card, side.side);
   side.board.push(unit);
   pushVisualEffect("summon", side.side, "Invocation");
-  logEvent(`${side.side === "player" ? "Tu lances" : "L'adversaire lance"} ${unit.name}.`);
+  logEvent(`${sideDisplayName(side.side)} lance ${unit.name}.`);
   triggerOnPlay(unit, side);
   cleanupBoards();
   checkVictory();
@@ -1082,7 +1098,7 @@ function playSpell(side, cardIndex) {
   const card = side.hand[cardIndex];
 
   if (!canPay(side, card)) {
-    logEvent(`Pas assez de mana degage pour lancer ${card.name}.`);
+    logEvent(`Pas assez de mana dégagé pour lancer ${card.name}.`);
     render();
     return;
   }
@@ -1164,7 +1180,7 @@ function createToken(owner) {
     currentLife: 1,
     keywords: ["Vol"],
     abilityName: "Ailes gardiennes",
-    abilityText: "Cette creature ne peut etre bloquee que par une creature avec le vol.",
+    abilityText: "Cette créature ne peut être bloquée que par une créature avec le vol ou la portée.",
     flavor: "",
     image: familiarImage,
     palette: source.palette,
@@ -1257,12 +1273,12 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "buffTeamAttack1") {
     for (const ally of side.board) ally.attack += 1;
-    logEvent(`${card.name} donne +1 force à tes créatures.`);
+    logEvent(`${card.name} donne +1 force aux créatures alliées.`);
   }
 
   if (card.effect === "drainHero2") {
     opponent.life -= 2;
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 2);
+    side.life = Math.min(MAX_LIFE, side.life + 2);
     logEvent(`${card.name} draine 2 points de vie.`);
   }
 
@@ -1301,7 +1317,7 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "gainLife4") {
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 4);
+    side.life = Math.min(MAX_LIFE, side.life + 4);
     logEvent(`${card.name} rend 4 points de vie.`);
   }
 
@@ -1323,12 +1339,12 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "buffTeam1") {
     buffTeam(side.board, 1, 1);
-    logEvent(`${card.name} donne +1/+1 à tes créatures.`);
+    logEvent(`${card.name} donne +1/+1 aux créatures alliées.`);
   }
 
   if (card.effect === "drawOneGainOne") {
     draw(side, 1);
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 1);
+    side.life = Math.min(MAX_LIFE, side.life + 1);
     logEvent(`${card.name} fait piocher une carte et rend 1 point de vie.`);
   }
 
@@ -1341,13 +1357,13 @@ function applySpellEffect(card, side) {
       }
     }
     pushVisualEffect("buff", side.side, "Soin");
-    logEvent(`${card.name} soigne ${healed} creature(s).`);
+    logEvent(`${card.name} soigne ${healed} créature(s).`);
   }
 
   if (card.effect === "toughTeam") {
     buffTeam(side.board, 0, 2);
     pushVisualEffect("buff", side.side, "+0/+2");
-    logEvent(`${card.name} donne +0/+2 à tes créatures.`);
+    logEvent(`${card.name} donne +0/+2 aux créatures alliées.`);
   }
 
   if (card.effect === "damageHero2") {
@@ -1382,8 +1398,8 @@ function applySpellEffect(card, side) {
     if (target) pushVisualEffect("hit", opponent.side, "-3");
     logEvent(
       target
-        ? `${card.name} renforce tes créatures et inflige 3 blessures à ${target.name}.`
-        : `${card.name} donne +1 force à tes créatures.`
+        ? `${card.name} renforce les créatures alliées et inflige 3 blessures à ${target.name}.`
+        : `${card.name} donne +1 force aux créatures alliées.`
     );
   }
 }
@@ -1397,8 +1413,8 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "familliers") {
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 2);
-    logEvent("Les Familiers d'Elturel te font gagner 2 points de vie.");
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    logEvent(`Les Familiers d'Elturel font gagner 2 points de vie à ${sideDisplayName(side.side)}.`);
   }
 
   if (unit.id === "bebe-dragon") {
@@ -1425,7 +1441,7 @@ function triggerOnPlay(unit, side) {
       target.stunTurns = Math.max(target.stunTurns, 1);
     }
     if (targets.length > 0) {
-      logEvent(`Terreur des mers Iguis engloutit ${targets.length} creature(s) dans la maree.`);
+      logEvent(`Terreur des mers Iguis engloutit ${targets.length} créature(s) dans la marée.`);
     }
   }
 
@@ -1439,7 +1455,7 @@ function triggerOnPlay(unit, side) {
 
   if (unit.id === "chevalier-sans-espoir") {
     opponent.life -= 1;
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 1);
+    side.life = Math.min(MAX_LIFE, side.life + 1);
     logEvent(`${unit.name} draine 1 point de vie au héros adverse.`);
   }
 
@@ -1458,7 +1474,7 @@ function triggerOnPlay(unit, side) {
 
   if (unit.id === "magiciens-exiles") {
     draw(side, 1);
-    logEvent(`${unit.name} exhument un savoir interdit : ${side.side === "player" ? "tu pioches" : "l'adversaire pioche"} une carte.`);
+    logEvent(`${unit.name} exhume un savoir interdit : ${sideDisplayName(side.side)} pioche une carte.`);
   }
 
   if (unit.id === "morts-vivants" && side.board.length < MAX_BOARD) {
@@ -1481,7 +1497,7 @@ function triggerOnPlay(unit, side) {
       target.currentLife -= 2;
     }
     if (targets.length > 0) {
-      logEvent(`Ragast ravive les plaies et inflige 2 blessures à ${targets.length} creature(s) blessée(s).`);
+      logEvent(`Ragast ravive les plaies et inflige 2 blessures à ${targets.length} créature(s) blessée(s).`);
     }
   }
 
@@ -1489,24 +1505,24 @@ function triggerOnPlay(unit, side) {
     const allies = side.board.filter((ally) => ally.uid !== unit.uid);
     buffTeam(allies, 1, 1);
     if (allies.length > 0) {
-      logEvent("Le Trios des Héros donne +1/+1 à tes autres créatures.");
+      logEvent("Le Trios des Héros donne +1/+1 aux autres créatures alliées.");
     }
   }
 
   if (unit.id === "aldia") {
-    side.life = Math.min(STARTING_LIFE + 10, side.life + 4);
+    side.life = Math.min(MAX_LIFE, side.life + 4);
     logEvent("Aldia rend 4 points de vie.");
   }
 
   if (unit.id === "fee") {
     draw(side, 1);
-    logEvent("La Fée rapporte un secret de la forêt : pioche une carte.");
+    logEvent(`La Fée rapporte un secret de la forêt : ${sideDisplayName(side.side)} pioche une carte.`);
   }
 
   if (unit.id === "protecteurs-nature") {
     const allies = side.board.filter((ally) => ally.uid !== unit.uid);
     buffTeam(allies, 0, 1);
-    if (allies.length > 0) logEvent("Les Protécteurs de la nature donnent +0/+1 à tes autres créatures.");
+    if (allies.length > 0) logEvent("Les Protécteurs de la nature donnent +0/+1 aux autres créatures alliées.");
   }
 
   if (unit.id === "kraken") {
@@ -1541,7 +1557,7 @@ function triggerOnPlay(unit, side) {
       land.tapped = true;
       land.enteredTurn = state.turn;
       side.lands.push(land);
-      logEvent(`${side.side === "player" ? "Uldrid enracine" : "L'Uldrid adverse enracine"} ${land.name} depuis ${side.side === "player" ? "ton" : "son"} deck, engagé.`);
+      logEvent(`Uldrid enracine ${land.name} depuis le deck de ${sideDisplayName(side.side)}, engagé.`);
     }
   }
 
@@ -1555,7 +1571,7 @@ function triggerOnPlay(unit, side) {
     if (deaths > 0) {
       logEvent(`Noxis inflige 2 blessures partout et grandit avec ${deaths} mort(s).`);
     } else {
-      logEvent("Noxis inflige 2 blessures aux creatures adverses.");
+      logEvent("Noxis inflige 2 blessures aux créatures adverses.");
     }
   }
 
@@ -1585,7 +1601,7 @@ function advancePhase() {
   if (state.phase === PHASES.COMBAT) {
     state.phase = PHASES.MAIN_2;
     clearCombatFlags();
-    logEvent("Deuxieme phase principale.");
+    logEvent("Deuxième phase principale.");
     render();
     return;
   }
@@ -1629,7 +1645,7 @@ function resolveAttackDeclaration() {
   markOnlineDirty();
   if (attackers.length === 0) {
     state.phase = PHASES.MAIN_2;
-    logEvent("Aucun attaquant declare. Deuxieme phase principale.");
+    logEvent("Aucun attaquant déclaré. Deuxième phase principale.");
     render();
     return;
   }
@@ -1643,12 +1659,24 @@ function resolveAttackDeclaration() {
     cleanupBoards();
     checkVictory();
     if (state.phase !== PHASES.OVER) state.phase = PHASES.MAIN_2;
+  } else if (!defenderHasLegalBlock(attackers, defendingSide)) {
+    logEvent(`${sideDisplayName(defendingSide.side)} n'a aucun bloqueur disponible : les blessures passent.`);
+    resolveCombatDamage(attackers, attackingSide, defendingSide);
+    clearCombatFlags();
+    cleanupBoards();
+    checkVictory();
+    if (state.phase !== PHASES.OVER) state.phase = PHASES.MAIN_2;
   } else {
     state.phase = PHASES.BLOCK;
     state.selectedBlockerId = null;
     logEvent(`${sideDisplayName(defendingSide.side)} choisit ses bloqueurs.`);
   }
   render();
+}
+
+function defenderHasLegalBlock(attackers, defendingSide) {
+  const available = defendingSide.board.filter((unit) => !unit.tapped && !unit.blocking);
+  return attackers.some((attacker) => available.some((blocker) => canBlock(attacker, blocker)));
 }
 
 function endCurrentTurn() {
@@ -1680,8 +1708,21 @@ function enemyTurn() {
   }
 
   tapAttackers(attackers);
+  if (!defenderHasLegalBlock(attackers, state.player)) {
+    logEvent(`${sideDisplayName("enemy")} attaque avec ${attackers.length} créature(s) : aucun bloqueur disponible.`);
+    resolveCombatDamage(attackers, state.enemy, state.player);
+    clearCombatFlags();
+    cleanupBoards();
+    checkVictory();
+    if (state.phase !== PHASES.OVER) {
+      finishEnemyTurn();
+      return;
+    }
+    render();
+    return;
+  }
   state.phase = PHASES.BLOCK;
-  logEvent(`L'adversaire declare ${attackers.length} attaquant(s). Choisis tes bloqueurs.`);
+  logEvent(`${sideDisplayName("enemy")} déclare ${attackers.length} attaquant(s). Choisis tes bloqueurs.`);
   render();
 }
 
@@ -1708,7 +1749,12 @@ function enemyPlaySpells() {
   while (played) {
     played = false;
     const affordable = state.enemy.hand
-      .filter((card) => !isLand(card) && canPay(state.enemy, card) && (isSpell(card) || state.enemy.board.length < MAX_BOARD))
+      .filter(
+        (card) =>
+          !isLand(card) &&
+          canPay(state.enemy, card) &&
+          (isSpell(card) ? isSpellWorthCasting(card, state.enemy, state.player) : state.enemy.board.length < MAX_BOARD)
+      )
       .sort((a, b) => scoreAiPlay(b) - scoreAiPlay(a))[0];
 
     if (affordable) {
@@ -1720,12 +1766,59 @@ function enemyPlaySpells() {
   }
 }
 
+// Évite que l'IA gaspille un sort sans aucune cible ni effet utile.
+function isSpellWorthCasting(card, side, opponent) {
+  switch (card.effect) {
+    case "dealAllEnemies2":
+    case "weakenAllEnemies":
+    case "freezeAll":
+      return opponent.board.length > 0;
+    case "freezeStrongest":
+    case "freezeTwo":
+      return opponent.board.some((unit) => !unit.tapped);
+    case "destroyStrongest":
+    case "destroyTappedOrWeakest":
+      return opponent.board.length > 0;
+    case "restoreTeam":
+      return side.board.some((unit) => unit.currentLife < unit.maxLife);
+    case "buffTeam1":
+    case "buffTeamAttack1":
+    case "toughTeam":
+    case "vengeanceUldrid":
+      return side.board.length > 0;
+    case "createTwoZombies":
+    case "createGuardian":
+      return side.board.length < MAX_BOARD;
+    case "gainLife4":
+      return side.life <= MAX_LIFE - 4;
+    default:
+      return true;
+  }
+}
+
 function scoreAiPlay(card) {
   return card.cost * 10 + (card.attack || 0) + (isSpell(card) ? 8 : 0);
 }
 
 function chooseEnemyAttackers() {
-  const attackers = state.enemy.board.filter(canAttack);
+  const candidates = state.enemy.board.filter(canAttack);
+  const availableBlockers = state.player.board.filter((unit) => !unit.tapped);
+  const totalPower = candidates.reduce((sum, unit) => sum + unit.attack, 0);
+  const lethalPush = totalPower >= state.player.life;
+
+  const attackers = candidates.filter((unit) => {
+    if (lethalPush) return true;
+    // N'attaque pas si un bloqueur peut tuer la créature sans mourir.
+    const suicidalBlock = availableBlockers.some(
+      (blocker) =>
+        canBlock(unit, blocker) &&
+        (blocker.attack >= unit.currentLife || hasKeyword(blocker, "Contact mortel")) &&
+        unit.attack < blocker.currentLife &&
+        !hasKeyword(unit, "Contact mortel")
+    );
+    return !suicidalBlock;
+  });
+
   for (const attacker of attackers) {
     attacker.attacking = true;
   }
@@ -1738,6 +1831,21 @@ function selectBlocker(uid) {
   if (!blocker || blocker.tapped || blocker.blocking) return;
   markOnlineDirty();
   state.selectedBlockerId = state.selectedBlockerId === uid ? null : uid;
+  render();
+}
+
+function unassignBlocker(uid) {
+  if (state.phase !== PHASES.BLOCK || !isDefendingSideHuman()) return;
+  const defender = getDefendingSide();
+  const blocker = defender.board.find((unit) => unit.uid === uid);
+  if (!blocker?.blocking) return;
+  const attacker = getCurrentSide().board.find((unit) => unit.uid === blocker.blocking);
+  blocker.blocking = null;
+  if (attacker) {
+    attacker.blockedBy = defender.board.find((unit) => unit.blocking === attacker.uid)?.uid || null;
+  }
+  markOnlineDirty();
+  logEvent(`${blocker.name} ne bloque plus.`);
   render();
 }
 
@@ -1787,15 +1895,31 @@ function finishEnemyTurn() {
 
 function aiDeclareBlockers(attackers, defenderSide) {
   const blockers = defenderSide.board.filter((unit) => !unit.tapped);
-  for (const attacker of attackers) {
-    const blocker = blockers
-      .filter((candidate) => !candidate.blocking && canBlock(attacker, candidate))
-      .sort((a, b) => Math.abs(a.currentLife - attacker.attack) - Math.abs(b.currentLife - attacker.attack))[0];
+  const incomingDamage = attackers.reduce((sum, attacker) => sum + attacker.attack, 0);
+  const desperate = incomingDamage >= defenderSide.life;
+
+  // Bloque en priorité les plus gros attaquants, avec le meilleur échange possible.
+  for (const attacker of [...attackers].sort((a, b) => b.attack - a.attack)) {
+    const candidates = blockers.filter((candidate) => !candidate.blocking && canBlock(attacker, candidate));
+    if (candidates.length === 0) continue;
+
+    const killsAttacker = (candidate) =>
+      candidate.attack >= attacker.currentLife || hasKeyword(candidate, "Contact mortel");
+    const survives = (candidate) =>
+      attacker.attack < candidate.currentLife && !hasKeyword(attacker, "Contact mortel");
+
+    const perfect = candidates.filter((candidate) => killsAttacker(candidate) && survives(candidate));
+    const trades = candidates.filter(killsAttacker);
+    const blocker =
+      perfect.sort((a, b) => a.attack - b.attack)[0] ||
+      (desperate
+        ? candidates.sort((a, b) => a.attack - b.attack)[0]
+        : trades.sort((a, b) => a.cost - b.cost)[0]);
 
     if (blocker) {
       blocker.blocking = attacker.uid;
       attacker.blockedBy = blocker.uid;
-      logEvent(`L'adversaire bloque ${attacker.name} avec ${blocker.name}.`);
+      logEvent(`${sideDisplayName(defenderSide.side)} bloque ${attacker.name} avec ${blocker.name}.`);
     }
   }
 }
@@ -1809,27 +1933,46 @@ function resolveCombatDamage(attackers, attackingSide, defendingSide) {
       defendingSide.life -= attacker.attack;
       gainLifeFromDamage(attacker, attackingSide, attacker.attack);
       pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
-      logEvent(`${attacker.name} inflige ${attacker.attack} blessures au heros adverse.`);
+      logEvent(`${attacker.name} inflige ${attacker.attack} blessure${attacker.attack > 1 ? "s" : ""} à ${sideDisplayName(defendingSide.side)}.`);
       continue;
     }
 
-    const blocker = blockers[0];
-    blocker.currentLife -= attacker.attack;
-    attacker.currentLife -= blocker.attack;
-    if (attacker.attack > 0 && hasKeyword(attacker, "Contact mortel")) blocker.currentLife = 0;
-    if (blocker.attack > 0 && hasKeyword(blocker, "Contact mortel")) attacker.currentLife = 0;
-    gainLifeFromDamage(attacker, attackingSide, attacker.attack);
-    gainLifeFromDamage(blocker, defendingSide, blocker.attack);
-    pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
-    pushVisualEffect("hit", attackingSide.side, `-${blocker.attack}`);
-    logEvent(`${attacker.name} et ${blocker.name} s'infligent leurs blessures.`);
+    // L'attaquant répartit ses dégâts sur ses bloqueurs dans l'ordre ;
+    // chaque bloqueur riposte de toute sa force.
+    const attackerDeathtouch = hasKeyword(attacker, "Contact mortel");
+    let remaining = attacker.attack;
+    let dealtTotal = 0;
+    for (const blocker of blockers) {
+      if (remaining <= 0) break;
+      const lethalNeeded = attackerDeathtouch ? 1 : blocker.currentLife;
+      const dealt = Math.min(remaining, Math.max(1, lethalNeeded));
+      blocker.currentLife -= dealt;
+      if (dealt > 0 && attackerDeathtouch) blocker.currentLife = 0;
+      remaining -= dealt;
+      dealtTotal += dealt;
+    }
+
+    const counterDamage = blockers.reduce((sum, blocker) => sum + blocker.attack, 0);
+    attacker.currentLife -= counterDamage;
+    if (blockers.some((blocker) => blocker.attack > 0 && hasKeyword(blocker, "Contact mortel"))) {
+      attacker.currentLife = 0;
+    }
+
+    gainLifeFromDamage(attacker, attackingSide, dealtTotal);
+    for (const blocker of blockers) {
+      gainLifeFromDamage(blocker, defendingSide, blocker.attack);
+    }
+    pushVisualEffect("hit", defendingSide.side, `-${dealtTotal}`);
+    pushVisualEffect("hit", attackingSide.side, `-${counterDamage}`);
+    const blockerNames = blockers.map((blocker) => blocker.name).join(" et ");
+    logEvent(`${attacker.name} et ${blockerNames} s'infligent leurs blessures.`);
   }
 }
 
 function gainLifeFromDamage(unit, side, amount) {
-  if (!hasKeyword(unit, "Lien de vie")) return;
-  side.life = Math.min(STARTING_LIFE + 10, side.life + amount);
-  logEvent(`${unit.name} te fait gagner ${amount} points de vie.`);
+  if (amount <= 0 || !hasKeyword(unit, "Lien de vie")) return;
+  side.life = Math.min(MAX_LIFE, side.life + amount);
+  logEvent(`${sideDisplayName(side.side)} gagne ${amount} point${amount > 1 ? "s" : ""} de vie grâce à ${unit.name}.`);
 }
 
 function tapAttackers(attackers) {
@@ -1919,7 +2062,7 @@ function cleanupBoards() {
         uid: `${side.side}-${unit.exiled ? "exile" : "grave"}-${unit.id}-${crypto.randomUUID()}`
       });
       pushVisualEffect(unit.exiled ? "exile" : "death", side.side, unit.exiled ? "Exil" : "Cimetière");
-      logEvent(`${unit.name} va ${unit.exiled ? "en exil" : "au cimetiere"}.`);
+      logEvent(`${unit.name} va ${unit.exiled ? "en exil" : "au cimetière"}.`);
     }
   }
 
@@ -1965,14 +2108,18 @@ function isCreature(card) {
 }
 
 function checkVictory() {
-  if (state.player.life <= 0) {
-    state.phase = PHASES.OVER;
-    logEvent(`${sideDisplayName("player")} tombe à 0 point de vie.`);
-  }
+  if (state.phase === PHASES.OVER || !state.player || !state.enemy) return;
+  const playerDead = state.player.life <= 0;
+  const enemyDead = state.enemy.life <= 0;
+  if (!playerDead && !enemyDead) return;
 
-  if (state.enemy.life <= 0) {
-    state.phase = PHASES.OVER;
-    logEvent(`${sideDisplayName("enemy")} tombe à 0 point de vie.`);
+  state.phase = PHASES.OVER;
+  state.winner = playerDead && enemyDead ? "draw" : playerDead ? "enemy" : "player";
+  if (state.winner === "draw") {
+    logEvent("Les deux héros tombent en même temps : égalité !");
+  } else {
+    const loser = state.winner === "player" ? "enemy" : "player";
+    logEvent(`${sideDisplayName(loser)} tombe à 0 point de vie. ${sideDisplayName(state.winner)} remporte la partie !`);
   }
 }
 
@@ -2001,6 +2148,7 @@ function render() {
   els.enemyGraveyard.textContent = state.enemy.graveyard.length;
   els.playerExile.textContent = state.player.exile.length;
   els.enemyExile.textContent = state.enemy.exile.length;
+  renderPilePreviews();
   els.playerLandsCount.textContent = state.player.lands.length;
   els.enemyLandsCount.textContent = state.enemy.lands.length;
   els.handTitle.textContent = `Main - ${sideDisplayName(handSide.side)}`;
@@ -2015,26 +2163,86 @@ function render() {
   renderBoard(els.playerBoard, state.player.board, "player");
   renderBoard(els.enemyBoard, state.enemy.board, "enemy");
   renderLog();
+  updateGameOver();
   if (state.network.dirty) {
     state.network.dirty = false;
     scheduleOnlinePublish(true);
   }
 }
 
+function renderPilePreviews() {
+  for (const zone of document.querySelectorAll("[data-pile]")) {
+    const [sideName, pileName] = zone.dataset.pile.split(":");
+    const pile = state[sideName]?.[pileName] || [];
+    const card = pile.at(-1);
+    const preview = zone.querySelector(".pile-card-mini");
+    const art = preview?.querySelector(".pile-card-mini-art");
+    if (!preview || !art) continue;
+    preview.hidden = !card;
+    art.style.setProperty("--pile-card-art", card ? cssUrl(card.image) : "none");
+  }
+}
+
+function updateGameOver() {
+  if (!els.gameOver) return;
+  const over = state.started && state.phase === PHASES.OVER;
+  els.gameOver.hidden = !over;
+  if (!over) return;
+
+  const localSlot = state.mode === "online" ? state.network.slot : state.mode === "pve" ? "player" : null;
+  let title;
+  let text;
+  if (state.winner === "draw" || !state.winner) {
+    title = "Égalité";
+    text = "Les deux héros tombent en même temps.";
+  } else {
+    const winnerName = sideDisplayName(state.winner);
+    const loserName = sideDisplayName(state.winner === "player" ? "enemy" : "player");
+    if (localSlot) {
+      title = state.winner === localSlot ? "Victoire !" : "Défaite...";
+    } else {
+      title = `Victoire de ${winnerName}`;
+    }
+    text = `${winnerName} triomphe de ${loserName} au tour ${state.turn}.`;
+  }
+  els.gameOverTitle.textContent = title;
+  els.gameOverText.textContent = text;
+}
+
+function rematch() {
+  if (!state.started) return;
+  const config = {
+    mode: state.mode,
+    playerDeckId: state.playerDeckId,
+    enemyDeckId: state.enemyDeckId,
+    playerProfile: state.player?.profile,
+    enemyProfile: state.enemy?.profile,
+    preserveNetwork: state.mode === "online"
+  };
+  if (state.mode === "online" && !state.network.enabled) {
+    openStartMenu();
+    return;
+  }
+  newGame(config);
+  logEvent("Revanche lancée !");
+  if (state.mode === "online") publishOnlineState();
+  render();
+}
+
 function updateButtons() {
   els.attackHero.disabled = true;
   els.endTurn.disabled = state.phase === PHASES.OVER || !isCurrentSideHuman();
   els.endTurn.textContent = state.phase === PHASES.MAIN_2 ? "Fin du tour" : "Phase suivante";
-  els.attackHero.textContent = "Declarer les attaquants";
+  els.attackHero.textContent = "Déclarer les attaquants";
 
   if (isCurrentSideHuman() && state.phase === PHASES.COMBAT) {
     els.attackHero.disabled = false;
-    els.attackHero.textContent = "Declarer les attaquants";
+    els.attackHero.textContent = "Déclarer les attaquants";
   }
 
   if (isDefendingSideHuman() && state.phase === PHASES.BLOCK) {
     els.attackHero.disabled = false;
-    els.attackHero.textContent = "Resoudre le combat";
+    els.attackHero.textContent = "Résoudre le combat";
     els.endTurn.disabled = true;
   }
 }
@@ -2099,10 +2307,41 @@ function renderBoard(container, board, sideName) {
     if (unit.uid === state.selectedBlockerId) node.classList.add("is-selected");
 
     const control = node.querySelector(".card-content");
-    control.addEventListener("click", () => openCardDetail(unit, { zone: "board", side: sideName }));
+    control.addEventListener("click", () => handleBoardCardClick(unit, sideName));
     fragment.append(node);
   }
   container.append(fragment);
+}
+
+// Pendant les phases de combat, un clic sur une créature agit directement
+// (déclaration d'attaquant, choix ou annulation de bloqueur). Hors combat,
+// le clic ouvre la fiche détaillée de la carte.
+function handleBoardCardClick(unit, sideName) {
+  if (state.phase === PHASES.COMBAT && isCurrentSideHuman() && state.currentTurn === sideName) {
+    if (unit.attacking || canAttack(unit)) {
+      toggleAttacker(unit.uid);
+      return;
+    }
+  }
+
+  if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
+    if (getDefendingSide().side === sideName) {
+      if (unit.blocking) {
+        unassignBlocker(unit.uid);
+        return;
+      }
+      if (!unit.tapped) {
+        selectBlocker(unit.uid);
+        return;
+      }
+    }
+    if (getCurrentSide().side === sideName && state.selectedBlockerId && unit.attacking) {
+      assignBlocker(unit.uid);
+      return;
+    }
+  }
+
+  openCardDetail(unit, { zone: "board", side: sideName });
 }
 
 function renderGallery() {
@@ -2227,8 +2466,8 @@ function renderCard(card, options = {}) {
     </div>
     <div class="card-art">
       <img src="${encodeURI(card.image)}" alt="${escapeHtml(card.name)}" loading="${loading}" decoding="async" />
-      <span class="family-ribbon">${escapeHtml(card.family)}</span>
     </div>
+    <span class="family-ribbon">${escapeHtml(card.family)}</span>
     <div class="card-scroll">
       <p class="card-ability"><strong>${escapeHtml(card.abilityName)}</strong> - ${escapeHtml(card.abilityText)}</p>
       <p class="card-keywords">${card.keywords.map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}</p>
@@ -2428,29 +2667,29 @@ function availableMana(side) {
 }
 
 function phaseLabel() {
-  if (state.phase === PHASES.OVER) return "Partie terminee";
-  if (state.phase === PHASES.BLOCK) return `${sideDisplayName(getDefendingSide().side)} bloque`;
-  if (state.currentTurn === "enemy" && state.mode === "pve") return "Tour adverse";
-  if (state.phase === PHASES.MAIN_1) return "Phase principale 1";
-  if (state.phase === PHASES.COMBAT) return "Combat";
-  if (state.phase === PHASES.MAIN_2) return "Phase principale 2";
+  if (state.phase === PHASES.OVER) return "Partie terminée";
+  if (state.phase === PHASES.BLOCK) return `Tour ${state.turn} · ${sideDisplayName(getDefendingSide().side)} bloque`;
+  if (state.currentTurn === "enemy" && state.mode === "pve") return `Tour ${state.turn} · Tour adverse`;
+  if (state.phase === PHASES.MAIN_1) return `Tour ${state.turn} · Phase principale 1`;
+  if (state.phase === PHASES.COMBAT) return `Tour ${state.turn} · Combat`;
+  if (state.phase === PHASES.MAIN_2) return `Tour ${state.turn} · Phase principale 2`;
   return `Tour de ${sideDisplayName(state.currentTurn)}`;
 }
 
 function getActionHint() {
-  if (state.phase === PHASES.OVER) return "La partie est terminee. Lance une nouvelle partie.";
+  if (state.phase === PHASES.OVER) return "La partie est terminée. Lance une nouvelle partie.";
   if (state.mode === "online" && !isLocalOnlineController()) {
     if (state.phase === PHASES.BLOCK) return `${sideDisplayName(getDefendingSide().side)} choisit ses bloqueurs sur son écran.`;
     return `${sideDisplayName(state.currentTurn)} joue sur son écran.`;
   }
   if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
-    if (state.selectedBlockerId) return "Clique un attaquant adverse pour assigner ton bloqueur.";
-    return "Clique une creature degagee, puis un attaquant adverse pour bloquer.";
+    if (state.selectedBlockerId) return "Clique un attaquant adverse pour lui assigner ton bloqueur.";
+    return "Clique une créature dégagée pour la choisir, puis un attaquant adverse pour bloquer. Reclique un bloqueur pour annuler.";
   }
   if (!isCurrentSideHuman()) return "L'adversaire joue son tour.";
-  if (state.phase === PHASES.COMBAT) return "Clique tes creatures degagees pour les declarer attaquantes.";
-  if (state.phase === PHASES.MAIN_2) return "Tu peux encore jouer un terrain ou des creatures avant de finir le tour.";
-  return "Pose un terrain, puis lance tes creatures avec le mana de tes terrains.";
+  if (state.phase === PHASES.COMBAT) return "Clique tes créatures dégagées pour les déclarer attaquantes, puis valide.";
+  if (state.phase === PHASES.MAIN_2) return "Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
+  return "Pose un terrain, puis lance tes créatures avec le mana de tes terrains.";
 }
 
 function renderLog() {
@@ -2512,10 +2751,6 @@ function sideDisplayName(sideName) {
   if (state.mode === "online") return sideName === "player" ? "Joueur 1" : "Joueur 2";
   if (state.mode === "pvp") return sideName === "player" ? "Joueur 1" : "Joueur 2";
   return sideName === "player" ? "Joueur" : "Adversaire";
-}
-
-function label(side) {
-  return sideDisplayName(side.side);
 }
 
 function escapeHtml(value) {

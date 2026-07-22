@@ -2448,3 +2448,551 @@ button.mat-zone--exile:focus-visible {
     width: 58%;
   }
 }
+
+.game-over {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.game-over[hidden] {
+  display: none;
+}
+
+.game-over-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 210, 126, 0.16), transparent 32%),
+    rgba(7, 4, 3, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+.game-over-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(460px, 100%);
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+  border: 1px solid rgba(255, 216, 133, 0.38);
+  border-radius: 8px;
+  padding: 32px 28px;
+  background:
+    linear-gradient(135deg, rgba(67, 39, 21, 0.96), rgba(19, 13, 9, 0.98)),
+    var(--panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 30px 90px rgba(0, 0, 0, 0.68);
+  animation: game-over-pop 0.35s ease;
+}
+
+.game-over-panel h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1;
+  text-shadow: 0 3px 0 #3a2110;
+}
+
+.game-over-text {
+  margin: 0;
+  color: rgba(255, 239, 204, 0.78);
+  line-height: 1.4;
+}
+
+.game-over-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@keyframes game-over-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tapis et cartes : coordonnées mesurées sur les illustrations 1483 x 1050. */
+.mat-side {
+  aspect-ratio: 1483 / 1050;
+}
+
+.mat-zone--library,
+.mat-zone--graveyard {
+  left: 8.5%;
+  width: 16.6%;
+  height: 35.75%;
+}
+
+.mat-zone--library,
+.mat-zone--exile {
+  top: 11.05%;
+}
+
+.mat-zone--graveyard,
+.mat-zone--commander {
+  top: 50.75%;
+}
+
+.mat-zone--exile,
+.mat-zone--commander {
+  left: 75.05%;
+  width: 16.65%;
+  height: 35.4%;
+}
+
+.mat-zone--field {
+  top: 16.57%;
+  left: 27.44%;
+  width: 45.45%;
+  height: 64.48%;
+}
+
+.mat-zone-count {
+  z-index: 4;
+  bottom: 5.5%;
+}
+
+.library-card-back,
+.pile-card-mini {
+  position: absolute;
+  z-index: 2;
+  top: 31%;
+  left: 50%;
+  display: block;
+  width: 47%;
+  aspect-ratio: 2 / 3;
+  border: 1px solid rgba(239, 204, 126, 0.74);
+  border-radius: 5%;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.library-card-back {
+  background: #080914 url("./Images/Tapis%20de%20Jeu/Carte%20Dos.png") center / 100% 100% no-repeat;
+  box-shadow:
+    3px 3px 0 rgba(17, 10, 29, 0.96),
+    5px 5px 0 rgba(221, 181, 94, 0.48),
+    0 9px 18px rgba(0, 0, 0, 0.56);
+}
+
+.pile-card-mini {
+  overflow: hidden;
+  background: #080914 url("./Images/Tapis%20de%20Jeu/Devant%20de%20carte.jpg") center / 100% 100% no-repeat;
+  box-shadow: 0 9px 18px rgba(0, 0, 0, 0.58);
+}
+
+.pile-card-mini[hidden] {
+  display: none;
+}
+
+.pile-card-mini-art {
+  position: absolute;
+  top: 31.7%;
+  left: 26.2%;
+  width: 47.6%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #080914 var(--pile-card-art, none) center / cover no-repeat;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.mat-zone--commander {
+  overflow: hidden;
+}
+
+.commander-portrait {
+  top: 31%;
+  width: 48%;
+}
+
+.commander-info {
+  right: 8%;
+  bottom: 6.5%;
+  left: 8%;
+  width: auto;
+}
+
+.commander-info h2 {
+  font-size: 14px;
+}
+
+.commander-stats {
+  width: 100%;
+  gap: 3px;
+}
+
+.stat-orb {
+  min-width: 0;
+  padding: 3px 4px;
+  white-space: nowrap;
+}
+
+.mat-zone--field .board-row {
+  height: 42%;
+}
+
+.mat-zone--field .land-row {
+  height: 24%;
+}
+
+.mat-zone--field .board-row,
+.mat-zone--field .land-row {
+  right: 2.5%;
+  left: 2.5%;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 4px;
+}
+
+.mat-zone--field .board-row .game-card {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 2 / 3;
+}
+
+.mat-zone--field .board-row .card-content {
+  width: 100%;
+  height: 100%;
+}
+
+.hand-row {
+  min-height: 340px;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 18px 10px 24px;
+}
+
+.hand-row .game-card {
+  width: 198px;
+  min-width: 198px;
+}
+
+.game-card,
+.gallery-card {
+  box-sizing: border-box;
+}
+
+.game-card .card-content,
+.gallery-card .card-content,
+.game-card.spell-card .card-content,
+.gallery-card.spell-card .card-content,
+.game-card.land-card .card-content,
+.gallery-card.land-card .card-content {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 682 / 1024;
+  overflow: hidden;
+  border: 0;
+  border-radius: 3.4%;
+  padding: 0;
+  background:
+    linear-gradient(color-mix(in srgb, var(--family-accent) 7%, transparent), transparent 42%),
+    #080914 url("./Images/Tapis%20de%20Jeu/Devant%20de%20carte.jpg") center / 100% 100% no-repeat;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--family-accent) 58%, #e7c276),
+    0 14px 30px rgba(0, 0, 0, 0.56);
+}
+
+.game-card .card-content::before,
+.gallery-card .card-content::before {
+  display: none;
+}
+
+.card-frame-top {
+  position: static;
+  display: block;
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+}
+
+.card-title-lockup {
+  position: absolute;
+  z-index: 4;
+  top: 9.4%;
+  right: 24%;
+  left: 24%;
+  display: grid;
+  height: 6.5%;
+  min-width: 0;
+  place-items: center;
+  text-align: center;
+}
+
+.card-name,
+.compact .card-name,
+.gallery-card .card-name,
+.card-preview .card-name,
+.card-modal-card .card-name {
+  display: -webkit-box;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0;
+  color: #fff8e8;
+  font-size: 11px;
+  line-height: 0.96;
+  text-align: center;
+  text-shadow: 0 1px 2px #13071d;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.card-type {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: -20%;
+  left: -20%;
+  overflow: hidden;
+  color: rgba(242, 223, 180, 0.86);
+  font-size: 7px;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cost-badge {
+  position: absolute;
+  z-index: 5;
+  top: 19.2%;
+  left: 14.1%;
+  width: 11.8%;
+  height: auto;
+  aspect-ratio: 1;
+  border-color: rgba(241, 208, 132, 0.78);
+  font-size: 12px;
+}
+
+.family-ribbon {
+  position: absolute;
+  z-index: 5;
+  top: 19.4%;
+  right: 13.1%;
+  left: auto;
+  bottom: auto;
+  width: 13.4%;
+  min-height: 0;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-color: rgba(241, 208, 132, 0.7);
+  border-radius: 34%;
+  padding: 0 2px;
+  font-size: 6px;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-art {
+  position: absolute;
+  z-index: 3;
+  top: 31.7%;
+  left: 26.2%;
+  width: 47.6%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  background: #090711;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.66);
+}
+
+.card-art img,
+.game-card:hover .card-art img,
+.gallery-card:hover .card-art img,
+.game-card:focus-within .card-art img,
+.card-modal-card .card-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #090711;
+  transform: none;
+}
+
+.card-scroll {
+  position: absolute;
+  z-index: 4;
+  top: 72.9%;
+  right: 15.4%;
+  bottom: 9.8%;
+  left: 15.4%;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  border: 0;
+  border-radius: 3px;
+  padding: 7px 8px 5px;
+  color: #25152d;
+  background: rgba(232, 210, 241, 0.08);
+}
+
+.card-ability {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #25152d;
+  font-size: 9px;
+  line-height: 1.12;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.card-keywords {
+  display: flex;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  gap: 3px;
+  margin-top: auto;
+}
+
+.tag {
+  min-height: 15px;
+  flex: 0 1 auto;
+  overflow: hidden;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-stats,
+.land-card .card-stats,
+.spell-card .card-stats {
+  position: static;
+  min-height: 0;
+}
+
+.stat-badge {
+  position: absolute;
+  z-index: 6;
+  bottom: 3.6%;
+  width: 11.6%;
+  height: auto;
+  aspect-ratio: 1;
+  font-size: 13px;
+}
+
+.attack-stat {
+  left: 8.2%;
+}
+
+.life-stat {
+  right: 8.2%;
+}
+
+.mana-stat,
+.spell-stat {
+  left: 44.2%;
+}
+
+.compact .card-scroll,
+.compact .card-type,
+.compact .family-ribbon {
+  display: none;
+}
+
+.compact .card-title-lockup {
+  right: 21%;
+  left: 21%;
+}
+
+.compact .card-name {
+  font-size: 7px;
+}
+
+.compact .cost-badge {
+  width: 13%;
+  height: auto;
+  font-size: 7px;
+}
+
+.compact .card-art {
+  top: 29.5%;
+  left: 24%;
+  width: 52%;
+}
+
+.compact .stat-badge {
+  display: inline-flex;
+  width: 15%;
+  min-width: 0;
+  height: auto;
+  font-size: 8px;
+}
+
+.gallery-card .card-content,
+.card-preview .card-content,
+.card-modal-card .card-content {
+  min-height: 0;
+  aspect-ratio: 682 / 1024;
+}
+
+.card-modal-card .game-card {
+  width: min(390px, 100%);
+}
+
+@media (max-width: 760px) {
+  .hand-row {
+    min-height: 280px;
+    padding-top: 12px;
+  }
+
+  .hand-row .game-card {
+    width: 158px;
+    min-width: 158px;
+  }
+
+  .gallery-card {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  .commander-info {
+    right: 6%;
+    bottom: 5%;
+    left: 6%;
+  }
+
+  .commander-info h2 {
+    font-size: 9px;
+  }
+
+  .commander-portrait {
+    top: 32%;
+  }
+}
+
+@media (max-width: 430px) {
+  .library-card-back,
+  .pile-card-mini {
+    width: 52%;
+  }
+
+  .commander-portrait {
+    top: 37%;
+    width: 52%;
+  }
+}
