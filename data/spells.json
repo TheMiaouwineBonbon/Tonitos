@@ -439,5 +439,47 @@
       "deep": "#0d2231"
     },
     "effect": "freezeAll"
+  },
+  {
+    "id": "benediction-du-heros",
+    "kind": "spell",
+    "name": "Bénédiction du Héros",
+    "subtitle": "Grâce des champions",
+    "family": "Blanc",
+    "type": "Enchantement - Amélioration",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": ["Bénédiction", "Vaillance"],
+    "abilityName": "Armes consacrées",
+    "abilityText": "Tes créatures gagnent +1/+1.",
+    "flavor": "La lumière ne choisit pas le héros ; elle révèle celui qui se lève.",
+    "image": "Images/Sort - Bénédiction du Héro.jpg",
+    "palette": {
+      "primary": "#d2b96d",
+      "secondary": "#fff1b5",
+      "deep": "#3d3520"
+    },
+    "effect": "buffTeam1"
+  },
+  {
+    "id": "vengeance-uldrid",
+    "kind": "spell",
+    "name": "Vengeance d'Uldrid",
+    "subtitle": "Soulèvement de la sylve",
+    "family": "Vert",
+    "type": "Rituel - Sort offensif",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": ["Nature", "Vengeance"],
+    "abilityName": "Révolte des anciens",
+    "abilityText": "Tes créatures gagnent +1 force. Inflige 3 blessures à la créature adverse la plus puissante.",
+    "flavor": "Quand Uldrid se souvient, les racines arrachent jusqu'aux fondations.",
+    "image": "Images/Sort - vengeance de Uldrid.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "vengeanceUldrid"
   }
 ]

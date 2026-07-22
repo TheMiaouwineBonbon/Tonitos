@@ -1360,6 +1360,19 @@ function applySpellEffect(card, side) {
       logEvent(`${card.name} engage toutes les créatures adverses.`);
     }
   }
+
+  if (card.effect === "vengeanceUldrid") {
+    for (const ally of side.board) ally.attack += 1;
+    const target = strongestCreature(opponent.board);
+    if (target) target.currentLife -= 3;
+    pushVisualEffect("buff", side.side, "+1 force");
+    if (target) pushVisualEffect("hit", opponent.side, "-3");
+    logEvent(
+      target
+        ? `${card.name} renforce tes créatures et inflige 3 blessures à ${target.name}.`
+        : `${card.name} donne +1 force à tes créatures.`
+    );
+  }
 }
 
 function triggerOnPlay(unit, side) {

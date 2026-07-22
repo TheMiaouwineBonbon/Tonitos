@@ -69,7 +69,9 @@ async function main() {
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
   const byColor = spells.reduce((acc, s) => ((acc[s.family] = (acc[s.family] || 0) + 1), acc), {});
-  check("4 sorts par couleur (hors incolore)", ["Blanc", "Bleu", "Noir", "Rouge", "Vert"].every((c) => byColor[c] >= 4));
+  check("Au moins 4 sorts par couleur (hors incolore)", ["Blanc", "Bleu", "Noir", "Rouge", "Vert"].every((c) => byColor[c] >= 4));
+  check("Bénédiction du Héros = Blanc", spells.find((s) => s.id === "benediction-du-heros")?.family === "Blanc");
+  check("Vengeance d'Uldrid = Vert", spells.find((s) => s.id === "vengeance-uldrid")?.family === "Vert");
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();

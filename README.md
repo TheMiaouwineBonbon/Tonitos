@@ -67,16 +67,16 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 8                 | 4             | 4                | — équilibré                      |
+| Blanc   | 8                 | 5             | 4                | — équilibré                      |
 | Bleu    | 5                 | 4             | 4                | **1 créature unique**            |
 | Noir    | 7                 | 4             | 6                | — équilibré                      |
 | Rouge   | 6                 | 4             | 4                | — équilibré                      |
-| Vert    | 4                 | 4             | 5                | **2 créatures uniques**          |
+| Vert    | 4                 | 5             | 5                | **2 créatures uniques**          |
 
 Sorts incolores polyvalents (jouables dans tous les decks) : **1** (Pierre de Norne).
 
 Total à ajouter pour atteindre la base mono-couleur partout : **3 créatures uniques**
-(1 en Bleu, 2 en Vert). Les sorts sont désormais équilibrés (4 par couleur). Les decks
+(1 en Bleu, 2 en Vert). Toutes les couleurs disposent d'au moins 4 sorts. Les decks
 bicolores actuels restent tous parfaitement constructibles à 60 cartes.
 
 ## Lancer le jeu

@@ -27,7 +27,7 @@
   <circle cx="660" cy="75" r="34" fill="#112513" stroke="#a9d778" stroke-width="5"/>
   <text x="660" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#fff7df">1</text>
 
-  <image href="../Terrain%20vert%20-%20Rivi%C3%A8re%20de%20Manhil.jpg" x="48" y="118" width="648" height="486" preserveAspectRatio="xMidYMid slice" clip-path="url(#artClip)"/>
+  <image href="../Terrain%20vert%20-%20Rivi%C3%A8re%20de%20Manhil.jpg" x="48" y="118" width="648" height="486" preserveAspectRatio="xMidYMid meet" clip-path="url(#artClip)"/>
   <rect x="48" y="118" width="648" height="486" rx="8" fill="none" stroke="#a9d778" stroke-width="4"/>
 
   <rect x="48" y="622" width="648" height="48" rx="8" fill="#f3e1bf"/>
