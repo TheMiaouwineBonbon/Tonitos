@@ -2610,6 +2610,7 @@ button.mat-zone--exile:focus-visible {
 }
 
 .mat-zone--commander {
+  container: commander / inline-size;
   overflow: hidden;
 }
 
@@ -2638,6 +2639,20 @@ button.mat-zone--exile:focus-visible {
   min-width: 0;
   padding: 3px 4px;
   white-space: nowrap;
+}
+
+@container commander (max-width: 160px) {
+  .commander-stats {
+    gap: 2px;
+  }
+
+  .commander-stats .stat-orb {
+    padding: 3px 5px;
+  }
+
+  .commander-stats .stat-orb span {
+    display: none;
+  }
 }
 
 .mat-zone--field .board-row {
