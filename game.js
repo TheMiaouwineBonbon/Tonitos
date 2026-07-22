@@ -177,10 +177,11 @@ init();
 
 async function init() {
   if (!els.startMenu) return;
+  const dataVersion = Date.now();
   const [cardsResponse, landsResponse, spellsResponse] = await Promise.all([
-    fetch("./data/cards.json"),
-    fetch("./data/lands.json"),
-    fetch("./data/spells.json")
+    fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }),
+    fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }),
+    fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" })
   ]);
   state.cards = (await cardsResponse.json()).map((card) => ({ ...card, kind: "creature" }));
   state.lands = await landsResponse.json();

@@ -59,10 +59,11 @@
     </main>
 
     <script type="module">
+      const dataVersion = Date.now();
       const [cards, lands, spells] = await Promise.all([
-        fetch("./data/cards.json").then((response) => response.json()),
-        fetch("./data/lands.json").then((response) => response.json()),
-        fetch("./data/spells.json").then((response) => response.json())
+        fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json()),
+        fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json()),
+        fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json())
       ]);
       const list = document.querySelector("#svg-list");
 
