@@ -2233,11 +2233,12 @@ function updateButtons() {
   els.attackHero.disabled = true;
   els.endTurn.disabled = state.phase === PHASES.OVER || !isCurrentSideHuman();
   els.endTurn.textContent = state.phase === PHASES.MAIN_2 ? "Fin du tour" : "Phase suivante";
-  els.attackHero.textContent = "Déclarer les attaquants";
+  els.attackHero.textContent = "Attaquer le commandant";
 
   if (isCurrentSideHuman() && state.phase === PHASES.COMBAT) {
     els.attackHero.disabled = false;
-    els.attackHero.textContent = "Déclarer les attaquants";
+    const chosen = getCurrentSide().board.filter((unit) => unit.attacking).length;
+    els.attackHero.textContent = chosen > 0 ? `Attaquer avec ${chosen} 🗡` : "Passer le combat";
   }
 
   if (isDefendingSideHuman() && state.phase === PHASES.BLOCK) {
@@ -2256,8 +2257,15 @@ function renderHand() {
   }
 
   const fragment = document.createDocumentFragment();
-  for (const card of side.hand) {
+  const handCenter = (side.hand.length - 1) / 2;
+  const overlap = side.hand.length > 9 ? -30 : side.hand.length > 7 ? -20 : -7;
+  for (const [index, card] of side.hand.entries()) {
     const node = renderCard(card, { mode: "hand" });
+    const offset = index - handCenter;
+    node.style.setProperty("--hand-rotation", `${offset * 2.2}deg`);
+    node.style.setProperty("--hand-drop", `${Math.pow(Math.abs(offset), 1.45) * 2.6}px`);
+    node.style.setProperty("--hand-layer", `${20 + index}`);
+    node.style.setProperty("--hand-overlap", `${overlap}px`);
     if (!isPlayableFromHand(side, card)) node.classList.add("is-unplayable");
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => openCardDetail(card, { zone: "hand", side: side.side }));
@@ -2306,6 +2314,21 @@ function renderBoard(container, board, sideName) {
     if (unit.stunTurns > 0) node.classList.add("is-frozen");
     if (unit.uid === state.selectedBlockerId) node.classList.add("is-selected");
 
+    // Repères de combat : surbrillance des créatures prêtes à attaquer et
+    // marqueur « mal d'invocation » pour celles qui ne peuvent pas encore.
+    const myCombat =
+      state.phase === PHASES.COMBAT && isCurrentSideHuman() && state.currentTurn === sideName;
+    if (myCombat && !unit.attacking && canAttack(unit)) node.classList.add("can-attack");
+    const summoningSick =
+      sideName === state.currentTurn &&
+      !unit.tapped &&
+      unit.stunTurns === 0 &&
+      unit.createdTurn >= state.turn &&
+      !hasKeyword(unit, "Célérité") &&
+      !hasKeyword(unit, "Défenseur");
+    if (summoningSick) node.classList.add("is-summoning-sick");
+    if (hasKeyword(unit, "Défenseur")) node.classList.add("is-defender");
+
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => handleBoardCardClick(unit, sideName));
     fragment.append(node);
@@ -2322,6 +2345,15 @@ function handleBoardCardClick(unit, sideName) {
       toggleAttacker(unit.uid);
       return;
     }
+    // Créature qui ne peut pas attaquer : explique pourquoi plutôt que d'ouvrir la fiche.
+    const reason = unit.tapped || unit.stunTurns > 0
+      ? "est engagée et ne peut pas attaquer ce tour-ci."
+      : hasKeyword(unit, "Défenseur")
+        ? "a Défenseur : elle ne peut pas attaquer."
+        : "a le mal d'invocation 💤 : elle pourra attaquer au prochain tour.";
+    logEvent(`${unit.name} ${reason}`);
+    render();
+    return;
   }
 
   if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
@@ -2475,7 +2507,7 @@ function renderCard(card, options = {}) {
     <div class="card-stats">${statBlock}</div>
   `;
   article.append(wrapper);
-  if (interactive) bindCardPreview(article, card);
+  if (interactive && options.mode !== "hand") bindCardPreview(article, card);
   return article;
 }
 
@@ -2496,14 +2528,27 @@ function showCardPreview(card, anchor) {
 
   const anchorRect = anchor.getBoundingClientRect();
   const previewRect = els.cardPreview.getBoundingClientRect();
-  const gutter = 14;
+  const gutter = 12;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Horizontal : à droite de la carte si possible, sinon à gauche.
   let left = anchorRect.right + gutter;
-  if (left + previewRect.width > window.innerWidth - gutter) {
+  if (left + previewRect.width > vw - gutter) {
     left = anchorRect.left - previewRect.width - gutter;
   }
-  left = Math.max(gutter, Math.min(left, window.innerWidth - previewRect.width - gutter));
-  const centeredTop = anchorRect.top + anchorRect.height / 2 - previewRect.height / 2;
-  const top = Math.max(gutter, Math.min(centeredTop, window.innerHeight - previewRect.height - gutter));
+  // Si aucun des deux côtés ne tient (carte large / petit écran), on centre
+  // horizontalement sur la carte.
+  if (left < gutter) {
+    left = anchorRect.left + anchorRect.width / 2 - previewRect.width / 2;
+  }
+  left = Math.max(gutter, Math.min(left, vw - previewRect.width - gutter));
+
+  // Vertical : on aligne le centre de l'aperçu sur celui de la carte, borné à
+  // l'écran. L'aperçu reste ainsi collé à la carte plutôt que de sauter au centre.
+  let top = anchorRect.top + anchorRect.height / 2 - previewRect.height / 2;
+  top = Math.max(gutter, Math.min(top, vh - previewRect.height - gutter));
+
   els.cardPreview.style.left = `${left}px`;
   els.cardPreview.style.top = `${top}px`;
 }
@@ -2523,9 +2568,11 @@ function renderLandPermanent(land) {
   node.style.setProperty("--tone", land.palette.primary);
   node.style.setProperty("--tone-2", land.palette.secondary);
   node.style.setProperty("--tone-deep", land.palette.deep);
+  node.style.setProperty("--land-art", cssUrl(land.image));
   node.innerHTML = `
+    <span class="land-permanent-art" aria-hidden="true"></span>
     <span class="land-gem"></span>
-    <span>${escapeHtml(land.name)}</span>
+    <span class="land-name">${escapeHtml(land.name)}</span>
   `;
   return node;
 }
@@ -2687,8 +2734,19 @@ function getActionHint() {
     return "Clique une créature dégagée pour la choisir, puis un attaquant adverse pour bloquer. Reclique un bloqueur pour annuler.";
   }
   if (!isCurrentSideHuman()) return "L'adversaire joue son tour.";
-  if (state.phase === PHASES.COMBAT) return "Clique tes créatures dégagées pour les déclarer attaquantes, puis valide.";
-  if (state.phase === PHASES.MAIN_2) return "Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
+  if (state.phase === PHASES.COMBAT) {
+    const ready = getCurrentSide().board.filter((unit) => unit.attacking || canAttack(unit));
+    const chosen = getCurrentSide().board.filter((unit) => unit.attacking).length;
+    if (ready.length === 0) return "Aucune créature prête à attaquer ce tour-ci (mal d'invocation 💤). Clique « Passer le combat ».";
+    if (chosen > 0) return `${chosen} attaquant(s) choisi(s). Clique « Déclarer les attaquants » pour frapper le commandant adverse.`;
+    return "Clique les créatures en surbrillance verte ⚔ pour les envoyer à l'assaut du commandant adverse, puis « Déclarer les attaquants ».";
+  }
+  const canAttackNow = state.started && getCurrentSide().board.some((unit) => canAttack(unit));
+  if (state.phase === PHASES.MAIN_2) {
+    if (canAttackNow) return "Tu as déjà combattu. Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
+    return "Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
+  }
+  if (canAttackNow) return "Pose tes cartes, puis clique « Phase suivante » pour passer au combat et attaquer le commandant adverse.";
   return "Pose un terrain, puis lance tes créatures avec le mana de tes terrains.";
 }
 

@@ -2053,9 +2053,20 @@ button.mat-zone--exile:focus-visible {
 
 .mat-zone--field .land-permanent {
   min-height: 32px;
-  flex: 0 0 clamp(72px, 7vw, 110px);
-  padding: 4px 7px;
+  min-width: 0;
+  flex: 1 1 0;
+  max-width: 96px;
+  gap: 5px;
+  padding: 4px 6px;
   font-size: 10px;
+  overflow: hidden;
+}
+
+.mat-zone--field .land-permanent span:last-child {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mat-zone--field .empty-slot {
@@ -2387,7 +2398,7 @@ button.mat-zone--exile:focus-visible {
 
   .mat-zone--field .land-permanent {
     min-height: 24px;
-    flex-basis: 58px;
+    max-width: 64px;
     padding: 2px 4px;
     font-size: 8px;
   }
@@ -2668,8 +2679,14 @@ button.mat-zone--exile:focus-visible {
   right: 2.5%;
   left: 2.5%;
   box-sizing: border-box;
+  justify-content: center;
   align-items: center;
+  gap: 4px;
   padding: 4px;
+}
+
+.mat-zone--field .land-row {
+  overflow: hidden;
 }
 
 .mat-zone--field .board-row .game-card {
@@ -2677,7 +2694,7 @@ button.mat-zone--exile:focus-visible {
   min-width: 0;
   height: 100%;
   max-height: 100%;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   aspect-ratio: 2 / 3;
 }
 
@@ -2822,72 +2839,89 @@ button.mat-zone--exile:focus-visible {
 .card-art {
   position: absolute;
   z-index: 3;
-  top: 31.7%;
-  left: 26.2%;
-  width: 47.6%;
+  top: 31.4%;
+  left: 26%;
+  width: 48%;
   aspect-ratio: 1;
   overflow: hidden;
   border: 0;
   border-radius: 50%;
-  background: #090711;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.66);
+  background:
+    radial-gradient(circle at 50% 34%, #1a1330, #090711 78%);
+  box-shadow:
+    inset 0 0 0 2px rgba(236, 201, 132, 0.62),
+    inset 0 0 16px rgba(0, 0, 0, 0.72),
+    0 0 0 1px rgba(9, 7, 17, 0.9);
 }
 
 .card-art img,
-.game-card:hover .card-art img,
-.gallery-card:hover .card-art img,
 .game-card:focus-within .card-art img,
 .card-modal-card .card-art img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
-  background: #090711;
-  transform: none;
+  object-fit: cover;
+  object-position: center 36%;
+  background: transparent;
+  transform: scale(1.02);
+  transition: transform 0.28s ease;
+}
+
+.game-card:hover .card-art img,
+.gallery-card:hover .card-art img,
+.game-card:focus-within .card-art img {
+  transform: scale(1.1);
 }
 
 .card-scroll {
   position: absolute;
   z-index: 4;
-  top: 72.9%;
-  right: 15.4%;
-  bottom: 9.8%;
-  left: 15.4%;
+  top: 73.4%;
+  right: 15%;
+  bottom: 8.4%;
+  left: 15%;
   display: flex;
   overflow: hidden;
   flex-direction: column;
+  gap: 3px;
   border: 0;
-  border-radius: 3px;
-  padding: 7px 8px 5px;
-  color: #25152d;
-  background: rgba(232, 210, 241, 0.08);
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: #221037;
+  background: linear-gradient(180deg, rgba(245, 240, 251, 0.9), rgba(228, 218, 242, 0.86));
+  box-shadow: inset 0 0 0 1px rgba(120, 92, 150, 0.4);
 }
 
 .card-ability {
   display: -webkit-box;
   overflow: hidden;
-  color: #25152d;
-  font-size: 9px;
-  line-height: 1.12;
+  color: #221037;
+  font-size: 8.6px;
+  line-height: 1.16;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 5;
+}
+
+.card-ability strong {
+  color: #3c1c63;
 }
 
 .card-keywords {
   display: flex;
   overflow: hidden;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 3px;
   margin-top: auto;
+  max-height: 32%;
 }
 
 .tag {
-  min-height: 15px;
+  min-height: 14px;
   flex: 0 1 auto;
   overflow: hidden;
   border-radius: 4px;
-  padding: 0 4px;
+  padding: 0 5px;
+  color: #fdeecb;
   font-size: 7px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3009,5 +3043,836 @@ button.mat-zone--exile:focus-visible {
   .commander-portrait {
     top: 37%;
     width: 52%;
+  }
+}
+
+/* ===================================================================== */
+/* Mise à l'écran : tout le jeu tient dans la hauteur du viewport,       */
+/* sans défilement pour voir les deux tapis + la main.                   */
+/* ===================================================================== */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 8px 12px;
+  overflow: hidden;
+}
+
+.topbar {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+}
+
+.topbar h1 {
+  font-size: clamp(20px, 2.4vw, 30px);
+}
+
+.topbar .eyebrow {
+  display: none;
+}
+
+.game-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) clamp(232px, 21vw, 320px);
+}
+
+.arena {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.board-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  gap: 6px;
+  padding: 8px;
+}
+
+.board-stage::before {
+  display: none;
+}
+
+.mat-side {
+  aspect-ratio: 1928 / 816;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  min-height: 0;
+  margin-inline: auto;
+}
+
+.centerline {
+  flex: 0 0 auto;
+  padding: 2px 10px;
+}
+
+.turn-pill {
+  min-width: 150px;
+  font-size: 13px;
+}
+
+.hand-wrap {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin-top: 0;
+  padding: 5px 10px 7px;
+}
+
+.hand-wrap .section-heading {
+  margin-bottom: 2px;
+}
+
+.hand-wrap .section-heading h2 {
+  font-size: 15px;
+}
+
+.hand-help {
+  margin: 0 0 2px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: rgba(255, 239, 204, 0.62);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.hand-row {
+  min-height: 0;
+  height: clamp(104px, 16vh, 158px);
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.hand-row .game-card {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 682 / 1024;
+}
+
+.hand-row .game-card .card-content {
+  height: 100%;
+}
+
+/* Pas de « saut » vertical au survol dans la main (évite le rognage) */
+.hand-row .game-card:hover,
+.hand-row .game-card:focus-within,
+.board-row .game-card:hover,
+.board-row .game-card:focus-within {
+  transform: none;
+}
+
+.side-panel {
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  gap: 12px;
+  padding: 10px 12px;
+  scrollbar-width: thin;
+}
+
+/* ===================================================================== */
+/* Repères de combat : rendre l'attaque du commandant évidente.          */
+/* ===================================================================== */
+.game-card.can-attack .card-content {
+  box-shadow:
+    0 0 0 2px #74e69a,
+    0 0 16px rgba(116, 230, 154, 0.75),
+    0 12px 26px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  animation: ready-attack-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ready-attack-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.16) saturate(1.08); }
+}
+
+.game-card.can-attack::before {
+  content: "⚔";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  z-index: 9;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #0c1f12;
+  background: radial-gradient(circle at 35% 30%, #b8ffcf, #4fce77 60%, #2c8f4c);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.game-card.is-summoning-sick .card-art {
+  filter: grayscale(0.32) brightness(0.8);
+}
+
+.game-card.is-summoning-sick::after {
+  content: "💤";
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  z-index: 9;
+  font-size: 12px;
+  filter: drop-shadow(0 1px 2px #000);
+  pointer-events: none;
+}
+
+/* La pastille de tour clignote doucement quand c'est à toi de déclarer/résoudre */
+.centerline .danger-button:not(:disabled) {
+  animation: combat-cta 1.5s ease-in-out infinite;
+}
+
+@keyframes combat-cta {
+  0%, 100% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36), 0 8px 18px rgba(0, 0, 0, 0.3); }
+  50% { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36), 0 0 16px rgba(255, 120, 90, 0.75); }
+}
+
+/* ===================================================================== */
+/* Cadrage du commandant dans sa case (petite, sur tapis mis à l'écran)  */
+/* ===================================================================== */
+.mat-zone--commander {
+  padding: 0;
+}
+
+.mat-zone--commander .commander-portrait {
+  top: 5%;
+  left: 50%;
+  width: auto;
+  height: 46%;
+  aspect-ratio: 1;
+  max-width: none;
+  border-width: 2px;
+  transform: translateX(-50%);
+}
+
+.mat-zone--commander .commander-info {
+  right: 4%;
+  bottom: 5%;
+  left: 4%;
+  gap: 2px;
+}
+
+.mat-zone--commander .commander-info h2 {
+  font-size: clamp(8px, 1.1vw, 12px);
+  line-height: 1;
+}
+
+.mat-zone--commander .hero-caption {
+  display: none;
+}
+
+.mat-zone--commander .commander-stats {
+  gap: 2px;
+}
+
+.mat-zone--commander .stat-orb {
+  padding: 1px 4px;
+  font-size: 9px;
+}
+
+.mat-zone--commander .stat-orb span {
+  display: none;
+}
+
+/* Aperçu au survol : plus compact et collé à la carte (moins envahissant) */
+.card-preview {
+  width: min(226px, 40vw);
+}
+
+/* ===================================================================== */
+/* Recalage des zones sur les nouveaux tapis 1928x816 (ratio 2.36:1).    */
+/* Les deux illustrations ont des cadres à des positions différentes,    */
+/* d'où des réglages distincts joueur / adversaire.                      */
+/* ===================================================================== */
+
+/* -- Tapis du joueur -- */
+.player-mat .mat-zone--library,
+.player-mat .mat-zone--graveyard {
+  left: 15.4%;
+  width: 11.2%;
+}
+.player-mat .mat-zone--exile,
+.player-mat .mat-zone--commander {
+  left: 73.4%;
+  width: 11.4%;
+}
+.player-mat .mat-zone--library,
+.player-mat .mat-zone--exile {
+  top: 11%;
+  height: 38.5%;
+}
+.player-mat .mat-zone--graveyard,
+.player-mat .mat-zone--commander {
+  top: 51%;
+  height: 37%;
+}
+.player-mat .mat-zone--field {
+  left: 28.8%;
+  width: 42.3%;
+  top: 11.2%;
+  height: 76.8%;
+}
+
+/* -- Tapis de l'adversaire -- */
+.enemy-mat .mat-zone--library,
+.enemy-mat .mat-zone--graveyard {
+  left: 11.2%;
+  width: 10.4%;
+}
+.enemy-mat .mat-zone--exile,
+.enemy-mat .mat-zone--commander {
+  left: 78.5%;
+  width: 10.3%;
+}
+.enemy-mat .mat-zone--library,
+.enemy-mat .mat-zone--exile {
+  top: 11.5%;
+  height: 38.5%;
+}
+.enemy-mat .mat-zone--graveyard,
+.enemy-mat .mat-zone--commander {
+  top: 52%;
+  height: 36%;
+}
+.enemy-mat .mat-zone--field {
+  left: 32.4%;
+  width: 35.2%;
+  top: 20%;
+  height: 56%;
+}
+
+/* ===================================================================== */
+/* Main en eventail, cartes lisibles et zones recalees sur les tapis v2. */
+/* ===================================================================== */
+
+.game-layout {
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 22vw, 340px);
+}
+
+.hand-wrap {
+  z-index: 12;
+  padding: 6px 10px 8px;
+  background:
+    radial-gradient(ellipse at 50% 118%, rgba(116, 72, 29, 0.34), transparent 58%),
+    linear-gradient(180deg, rgba(32, 21, 14, 0.96), rgba(15, 11, 9, 0.97));
+}
+
+.hand-wrap .section-heading {
+  position: absolute;
+  z-index: 130;
+  top: 6px;
+  right: 10px;
+  left: 10px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.hand-wrap .section-heading h2 {
+  font-size: 13px;
+}
+
+.hand-wrap .section-heading .counter {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.hand-help {
+  display: none;
+}
+
+.hand-row {
+  position: relative;
+  height: clamp(142px, 15vh, 154px);
+  min-height: 142px;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0;
+  overflow: visible;
+  padding: 0 34px 8px;
+  perspective: 1200px;
+}
+
+.hand-row .game-card {
+  z-index: var(--hand-layer, 20);
+  width: clamp(114px, 8.8vw, 134px);
+  min-width: clamp(114px, 8.8vw, 134px);
+  height: auto;
+  margin-inline: calc(var(--hand-overlap, -7px) / 2);
+  aspect-ratio: 2 / 3;
+  transform: translateY(var(--hand-drop, 0px)) rotate(var(--hand-rotation, 0deg));
+  transform-origin: 50% 118%;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.hand-row .game-card:hover,
+.hand-row .game-card:focus-within {
+  z-index: 120;
+  filter: brightness(1.08) saturate(1.04);
+  transform: translateY(-72px) rotate(0deg) scale(1.5);
+}
+
+.board-row .game-card:hover,
+.board-row .game-card:focus-within {
+  z-index: 80;
+  transform: translateY(-16px) scale(1.2);
+}
+
+.game-card .card-content,
+.gallery-card .card-content,
+.game-card.spell-card .card-content,
+.gallery-card.spell-card .card-content,
+.game-card.land-card .card-content,
+.gallery-card.land-card .card-content {
+  aspect-ratio: 2 / 3;
+  text-rendering: optimizeLegibility;
+}
+
+.card-title-lockup {
+  top: 9.2%;
+  right: 16%;
+  left: 16%;
+  height: 8%;
+}
+
+.card-name,
+.compact .card-name,
+.gallery-card .card-name,
+.card-preview .card-name,
+.card-modal-card .card-name {
+  font-size: 13px;
+  line-height: 1.02;
+  -webkit-line-clamp: 2;
+}
+
+.card-type {
+  top: calc(100% + 3px);
+  right: -10%;
+  left: -10%;
+  font-size: 8.5px;
+}
+
+.cost-badge {
+  top: 18.2%;
+  left: 10.2%;
+  width: 13.2%;
+  font-size: 13px;
+}
+
+.family-ribbon {
+  top: 18.4%;
+  right: 9.6%;
+  width: 14.2%;
+  padding: 0 3px;
+  font-size: 7.5px;
+}
+
+.card-art,
+.compact .card-art {
+  top: 25%;
+  left: 14%;
+  width: 72%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(238, 207, 139, 0.72);
+  border-radius: 8%;
+  background: #06060b;
+  box-shadow:
+    inset 0 0 0 1px rgba(20, 8, 31, 0.86),
+    0 0 12px rgba(5, 3, 10, 0.72);
+}
+
+.card-art img,
+.game-card:hover .card-art img,
+.gallery-card:hover .card-art img,
+.game-card:focus-within .card-art img,
+.card-modal-card .card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #06060b;
+  transform: none;
+  transition: none;
+}
+
+.card-scroll {
+  top: 64.5%;
+  right: 12.5%;
+  bottom: 8.2%;
+  left: 12.5%;
+  gap: 3px;
+  padding: 5px 6px;
+  background: linear-gradient(180deg, rgba(249, 245, 253, 0.94), rgba(225, 215, 239, 0.92));
+}
+
+.card-ability {
+  font-size: 10.5px;
+  line-height: 1.2;
+  -webkit-line-clamp: 6;
+}
+
+.card-keywords {
+  gap: 3px;
+}
+
+.tag {
+  min-height: 15px;
+  padding: 1px 5px;
+  font-size: 8px;
+}
+
+.stat-badge {
+  bottom: 2.8%;
+  width: 12.8%;
+  font-size: 14px;
+}
+
+.attack-stat {
+  left: 7.4%;
+}
+
+.life-stat {
+  right: 7.4%;
+}
+
+.mana-stat,
+.spell-stat {
+  left: 43.6%;
+}
+
+.gallery-card .card-name {
+  font-size: 12px;
+}
+
+.gallery-card .card-ability {
+  font-size: 9.5px;
+}
+
+.card-preview {
+  width: min(300px, 46vw);
+}
+
+.card-preview .card-name,
+.card-modal-card .card-name {
+  font-size: 19px;
+}
+
+.card-preview .card-type,
+.card-modal-card .card-type {
+  font-size: 11px;
+}
+
+.card-preview .card-ability,
+.card-modal-card .card-ability {
+  font-size: 13px;
+  line-height: 1.28;
+}
+
+.card-preview .tag,
+.card-modal-card .tag {
+  min-height: 19px;
+  font-size: 10px;
+}
+
+.card-modal-card .game-card {
+  width: min(420px, 100%);
+}
+
+/* Les illustrations v2 ont leurs cadres a ces coordonnees exactes. */
+.player-mat .mat-zone--library,
+.player-mat .mat-zone--graveyard {
+  left: 15.3%;
+  width: 11.2%;
+}
+
+.player-mat .mat-zone--exile,
+.player-mat .mat-zone--commander {
+  left: 73.5%;
+  width: 11.2%;
+}
+
+.player-mat .mat-zone--library,
+.player-mat .mat-zone--exile {
+  top: 11.4%;
+  height: 36.8%;
+}
+
+.player-mat .mat-zone--graveyard,
+.player-mat .mat-zone--commander {
+  top: 51.8%;
+  height: 37.9%;
+}
+
+.player-mat .mat-zone--field {
+  top: 13.25%;
+  left: 28.55%;
+  width: 42.82%;
+  height: 73.4%;
+}
+
+.enemy-mat .mat-zone--library,
+.enemy-mat .mat-zone--graveyard {
+  left: 11.25%;
+  width: 10.25%;
+}
+
+.enemy-mat .mat-zone--exile,
+.enemy-mat .mat-zone--commander {
+  left: 78.4%;
+  width: 10.35%;
+}
+
+.enemy-mat .mat-zone--library,
+.enemy-mat .mat-zone--exile {
+  top: 11.75%;
+  height: 35.7%;
+}
+
+.enemy-mat .mat-zone--graveyard,
+.enemy-mat .mat-zone--commander {
+  top: 53.2%;
+  height: 35.65%;
+}
+
+.enemy-mat .mat-zone--field {
+  top: 20.6%;
+  left: 32.17%;
+  width: 35.4%;
+  height: 56.4%;
+}
+
+.mat-zone--field .board-row {
+  height: 57%;
+}
+
+.mat-zone--field .land-row {
+  height: 32%;
+}
+
+.enemy-mat .mat-zone--field .land-row,
+.player-mat .mat-zone--field .board-row {
+  top: 2%;
+}
+
+.enemy-mat .mat-zone--field .board-row,
+.player-mat .mat-zone--field .land-row {
+  bottom: 2%;
+}
+
+.mat-zone--field .board-row,
+.mat-zone--field .land-row {
+  right: 2%;
+  left: 2%;
+  gap: 5px;
+  padding: 5px;
+}
+
+.mat-zone--field .board-row {
+  overflow: visible;
+}
+
+.mat-zone--field .land-row {
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.mat-zone--field .board-row .game-card {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  flex: 0 1 auto;
+  aspect-ratio: 2 / 3;
+}
+
+.mat-zone--field .compact .card-name {
+  font-size: 9px;
+}
+
+.mat-zone--field .compact .cost-badge {
+  width: 15%;
+  height: auto;
+  font-size: 9px;
+}
+
+.mat-zone--field .compact .card-art {
+  top: 25%;
+  left: 12%;
+  width: 76%;
+}
+
+.mat-zone--field .compact .stat-badge {
+  width: 16%;
+  min-width: 0;
+  height: auto;
+  font-size: 9px;
+}
+
+.mat-zone--field .land-permanent {
+  position: relative;
+  display: block;
+  width: auto;
+  min-width: 86px;
+  max-width: 126px;
+  height: 100%;
+  min-height: 0;
+  flex: 0 0 38%;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--tone-2) 70%, #f5d88c);
+  border-radius: 5px;
+  padding: 0;
+  background: #08090c;
+  box-shadow:
+    inset 0 0 0 1px rgba(8, 7, 10, 0.8),
+    0 4px 9px rgba(0, 0, 0, 0.42);
+  transform-origin: center;
+}
+
+.land-permanent-art {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02) 38%, rgba(0, 0, 0, 0.9) 100%),
+    var(--land-art, none) center / cover no-repeat;
+}
+
+.mat-zone--field .land-gem {
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  left: 4px;
+  width: 17px;
+  height: 17px;
+}
+
+.land-name {
+  position: absolute;
+  z-index: 2;
+  right: 3px;
+  bottom: 3px;
+  left: 3px;
+  overflow: hidden;
+  color: #fff4d5;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 10px;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px #000, 0 0 4px #000;
+  white-space: nowrap;
+}
+
+.mat-zone--field .land-permanent:hover,
+.mat-zone--field .land-permanent:focus-visible {
+  z-index: 20;
+  filter: brightness(1.14);
+  transform: translateY(-4px) scale(1.12);
+}
+
+.mat-zone--field .land-permanent.is-tapped {
+  filter: saturate(0.62) brightness(0.76);
+  transform: rotate(5deg) scale(0.95);
+}
+
+@media (max-width: 1100px) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .game-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .arena {
+    overflow: visible;
+  }
+
+  .board-stage {
+    flex: none;
+    grid-template-rows: auto auto auto;
+  }
+
+  .mat-side {
+    width: 100%;
+    height: auto;
+  }
+
+  .side-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: auto;
+    overflow: visible;
+  }
+
+  .hand-row {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-inline: 14px;
+  }
+
+  .hand-row .game-card {
+    width: 118px;
+    min-width: 118px;
+    margin-inline: -5px;
+    transform: none;
+  }
+
+  .hand-row .game-card:hover,
+  .hand-row .game-card:focus-within {
+    transform: translateY(-10px) scale(1.08);
+  }
+}
+
+@media (max-width: 760px) {
+  .side-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hand-row {
+    height: 174px;
+    min-height: 174px;
+  }
+
+  .hand-row .game-card {
+    width: 110px;
+    min-width: 110px;
+  }
+
+  .card-name,
+  .gallery-card .card-name {
+    font-size: 11px;
+  }
+
+  .card-ability,
+  .gallery-card .card-ability {
+    font-size: 9px;
   }
 }

@@ -62,6 +62,13 @@ async function main() {
   check("Identité réseau propre à chaque onglet", gameSource.includes('sessionStorage.getItem("tonitos-player-id")'));
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
+  check("Main en éventail calculée selon le nombre de cartes", gameSource.includes("--hand-rotation") && gameSource.includes("--hand-overlap"));
+  check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
+
+  res = await fetch(`${base}/styles.css`);
+  const styles = await res.text();
+  check("Illustrations stables au survol", styles.includes("object-fit: contain") && styles.includes(".game-card:hover .card-art img"));
+  check("Plateau responsive sur une colonne", styles.includes("@media (max-width: 1100px)") && styles.includes("grid-template-columns: minmax(0, 1fr)"));
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
