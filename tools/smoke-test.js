@@ -69,6 +69,13 @@ async function main() {
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
   check("Main en éventail calculée selon le nombre de cartes", gameSource.includes("--hand-rotation") && gameSource.includes("--hand-overlap"));
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
+  check("Vigilance reste limitée à une attaque par tour", gameSource.includes("!unit.hasAttacked"));
+  check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
+  const reanimateSource = gameSource.slice(
+    gameSource.indexOf("function reanimateBestCreatures"),
+    gameSource.indexOf("function triggerOnPlay")
+  );
+  check("Les capacités d'arrivée se déclenchent après réanimation", reanimateSource.includes("triggerOnPlay(unit, side)"));
 
   res = await fetch(`${base}/styles.css`);
   const styles = await res.text();
@@ -78,31 +85,44 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 30 créatures", Array.isArray(cards) && cards.length === 30);
+  check("cards.json = 37 créatures", Array.isArray(cards) && cards.length === 37);
   check("Golem de pierre = Vert", cards.find((c) => c.id === "golem-pierre")?.family === "Vert");
   check("Amrin = Rouge", cards.find((c) => c.id === "amrin")?.family === "Rouge");
   check("Roi des mers = Bleu", cards.find((c) => c.id === "roi-des-mers")?.family === "Bleu");
   check("Magicien exilé = Noir", cards.find((c) => c.id === "magiciens-exiles")?.family === "Noir");
   check("Fée = Vert", cards.find((c) => c.id === "fee")?.family === "Vert");
+  check("Ours-hibou = Vert", cards.find((c) => c.id === "ours-hibou")?.family === "Vert");
   check("Valerius = Noir", cards.find((c) => c.id === "valerius")?.family === "Noir");
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("6 sorts avec illustrations autonomes", spells.length === 6);
+  check("16 sorts avec illustrations autonomes", spells.length === 16);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
-    spells.every((spell) => spell.image.startsWith("Images/Sort - ") || spell.image === "Images/Artefact - Pierre de Norne.PNG")
+    spells.every((spell) => !cards.some((c) => c.image === spell.image))
   );
   check("Colère d'Umi = Bleu", spells.find((s) => s.id === "colere-umi")?.family === "Bleu");
   check("Malédiction d'Ulgod = Rouge", spells.find((s) => s.id === "malediction-ulgod")?.family === "Rouge");
   check("Pitié d'Aldia = Blanc", spells.find((s) => s.id === "pitie-aldia")?.family === "Blanc");
   check("Bénédiction du Héros = Blanc", spells.find((s) => s.id === "benediction-du-heros")?.family === "Blanc");
   check("Vengeance d'Uldrid = Vert", spells.find((s) => s.id === "vengeance-uldrid")?.family === "Vert");
+  check("Abysses = Bleu", spells.find((s) => s.id === "abysses")?.family === "Bleu");
+  check("Amour de Rena = Vert", spells.find((s) => s.id === "amour-rena")?.family === "Vert");
+  check("Repos du héros = Blanc", spells.find((s) => s.id === "repos-heros")?.family === "Blanc");
+  check("Réincarnation divine = Noir", spells.find((s) => s.id === "reincarnation-divine")?.family === "Noir");
+  check("Damnation = Rouge", spells.find((s) => s.id === "damnation")?.family === "Rouge");
+
+  const implementedEffects = new Set([
+    ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
+    ...gameSource.matchAll(/case "([^"]+)":/g)
+  ].map((match) => match[1]));
+  check("Tous les effets de sorts sont pris en charge par le moteur", spells.every((spell) => implementedEffects.has(spell.effect)));
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
   const allCards = [...cards, ...lands, ...spells];
   check("Toutes les illustrations existent", allCards.every((card) => fs.existsSync(path.join(__dirname, "..", card.image))));
+  check("Tous les identifiants de cartes sont uniques", new Set(allCards.map((card) => card.id)).size === allCards.length);
 
   const deckColors = [
     ["Blanc", "Vert"],

@@ -8,7 +8,10 @@
     "type": "Terrain - Plaine",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana blanc"],
+    "keywords": [
+      "Terrain",
+      "Mana blanc"
+    ],
     "abilityName": "Source blanche",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
     "flavor": "Ses hautes tours gardent les serments lumineux.",
@@ -28,7 +31,10 @@
     "type": "Terrain - Plaine",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana blanc"],
+    "keywords": [
+      "Terrain",
+      "Mana blanc"
+    ],
     "abilityName": "Source blanche",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
     "flavor": "Même les remparts y semblent fleurir.",
@@ -48,7 +54,10 @@
     "type": "Terrain - Plaine",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana blanc"],
+    "keywords": [
+      "Terrain",
+      "Mana blanc"
+    ],
     "abilityName": "Source blanche",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
     "flavor": "Un horizon où les cités marchent avec les nuages.",
@@ -68,7 +77,10 @@
     "type": "Terrain - Plaine",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana blanc"],
+    "keywords": [
+      "Terrain",
+      "Mana blanc"
+    ],
     "abilityName": "Source blanche",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
     "flavor": "La lumière y tombe comme une eau calme.",
@@ -77,6 +89,10 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "58% 46%"
     }
   },
   {
@@ -88,7 +104,10 @@
     "type": "Terrain - Île",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana bleu"],
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
     "abilityName": "Source bleue",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
     "flavor": "Ses palais chantent sous la pression des abysses.",
@@ -108,7 +127,10 @@
     "type": "Terrain - Île",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana bleu"],
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
     "abilityName": "Source bleue",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
     "flavor": "Les courants y déplacent encore les souvenirs.",
@@ -128,7 +150,10 @@
     "type": "Terrain - Île",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana bleu"],
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
     "abilityName": "Source bleue",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
     "flavor": "Les reflets y montrent parfois demain.",
@@ -148,7 +173,10 @@
     "type": "Terrain - Île",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana bleu"],
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
     "abilityName": "Source bleue",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
     "flavor": "L'orage y pense avant les mages.",
@@ -168,7 +196,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "Chaque pierre sait un nom que personne ne prononce.",
@@ -188,7 +219,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "La surface bouge parfois sans vent.",
@@ -208,7 +242,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "Chaque fenêtre attend une invitation.",
@@ -228,7 +265,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "Les fioles y murmurent plus bas que les morts.",
@@ -248,7 +288,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "Ici, même la pierre se souvient des batailles.",
@@ -268,7 +311,10 @@
     "type": "Terrain - Marais",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana noir"],
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
     "abilityName": "Source noire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
     "flavor": "On y troque des secrets contre des ombres.",
@@ -288,7 +334,10 @@
     "type": "Terrain - Montagne",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana rouge"],
+    "keywords": [
+      "Terrain",
+      "Mana rouge"
+    ],
     "abilityName": "Source rouge",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
     "flavor": "La lave y garde la mémoire des marteaux.",
@@ -308,7 +357,10 @@
     "type": "Terrain - Montagne",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana rouge"],
+    "keywords": [
+      "Terrain",
+      "Mana rouge"
+    ],
     "abilityName": "Source rouge",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
     "flavor": "Le ciel y brûle avant même l'aube.",
@@ -328,7 +380,10 @@
     "type": "Terrain - Montagne",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana rouge"],
+    "keywords": [
+      "Terrain",
+      "Mana rouge"
+    ],
     "abilityName": "Source rouge",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
     "flavor": "L'eau y court avec la mémoire du feu.",
@@ -348,7 +403,10 @@
     "type": "Terrain - Montagne",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana rouge"],
+    "keywords": [
+      "Terrain",
+      "Mana rouge"
+    ],
     "abilityName": "Source rouge",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
     "flavor": "Chaque cratère y garde une colère neuve.",
@@ -368,7 +426,10 @@
     "type": "Terrain - Forêt",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana vert"],
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
     "abilityName": "Source verte",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
     "flavor": "Les racines y savent retrouver le chemin du monde.",
@@ -388,7 +449,10 @@
     "type": "Terrain - Forêt",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana vert"],
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
     "abilityName": "Source verte",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
     "flavor": "L'eau y nourrit les racines les plus anciennes.",
@@ -408,7 +472,10 @@
     "type": "Terrain - Forêt",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana vert"],
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
     "abilityName": "Source verte",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
     "flavor": "Le sentier change pour guider ceux qu'il accepte.",
@@ -428,7 +495,10 @@
     "type": "Terrain - Forêt",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana vert"],
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
     "abilityName": "Source verte",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
     "flavor": "La paix y pousse avec une force têtue.",
@@ -448,7 +518,10 @@
     "type": "Terrain - Forêt",
     "cost": 0,
     "energy": 1,
-    "keywords": ["Terrain", "Mana vert"],
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
     "abilityName": "Source verte",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
     "flavor": "Le vent y rend les batailles moins pressées.",

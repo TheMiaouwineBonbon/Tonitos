@@ -20,6 +20,7 @@ const state = {
   player: null,
   enemy: null,
   selectedBlockerId: null,
+  selectedAttackerId: null,
   currentTurn: "player",
   phase: PHASES.MAIN_1,
   turn: 1,
@@ -227,7 +228,11 @@ function bindEvents() {
   els.enemyAvatarSelect?.addEventListener("change", updateMenuSummary);
   els.roomCodeInput?.addEventListener("input", updateMenuSummary);
   els.endTurn?.addEventListener("click", advancePhase);
-  els.attackHero?.addEventListener("click", primaryCombatAction);
+  els.attackHero?.addEventListener("click", attackHero);
+  // Le commandant adverse est une cible cliquable quand un attaquant est choisi.
+  els.enemyHero?.querySelector(".mat-zone--commander")?.addEventListener("click", () => {
+    if (state.selectedAttackerId) attackHero();
+  });
   els.clearLog?.addEventListener("click", () => {
     state.log = [];
     markOnlineDirty();
@@ -264,6 +269,9 @@ function bindEvents() {
   });
   window.addEventListener("resize", hideCardPreview);
   window.addEventListener("scroll", hideCardPreview, true);
+  window.addEventListener("pointermove", onDragPointerMove);
+  window.addEventListener("pointerup", onDragPointerUp);
+  window.addEventListener("pointercancel", () => resetDrag());
 }
 
 function populateDeckMenu() {
@@ -397,6 +405,7 @@ function newGame(config = {}) {
   state.player = createSide("player", getDeckSpec(state.playerDeckId), config.playerProfile);
   state.enemy = createSide("enemy", getDeckSpec(state.enemyDeckId), config.enemyProfile);
   state.selectedBlockerId = null;
+  state.selectedAttackerId = null;
   state.currentTurn = "player";
   state.phase = PHASES.MAIN_1;
   state.turn = 1;
@@ -755,6 +764,7 @@ function serializeGameState() {
     player: state.player,
     enemy: state.enemy,
     selectedBlockerId: state.selectedBlockerId,
+    selectedAttackerId: state.selectedAttackerId,
     currentTurn: state.currentTurn,
     phase: state.phase,
     turn: state.turn,
@@ -774,6 +784,7 @@ function applyOnlineState(snapshot, version, room) {
   state.player = snapshot.player;
   state.enemy = snapshot.enemy;
   state.selectedBlockerId = snapshot.selectedBlockerId || null;
+  state.selectedAttackerId = snapshot.selectedAttackerId || null;
   state.currentTurn = snapshot.currentTurn || "player";
   state.phase = snapshot.phase || PHASES.MAIN_1;
   state.turn = snapshot.turn || 1;
@@ -863,7 +874,6 @@ function setOnlineStatus(message, isError = false) {
 function isLocalOnlineController() {
   if (state.mode !== "online") return true;
   if (!state.network.slot) return false;
-  if (state.phase === PHASES.BLOCK) return state.network.slot === getDefendingSide().side;
   return state.network.slot === state.currentTurn;
 }
 
@@ -1014,6 +1024,7 @@ function untapPermanents(side) {
       creature.tapped = false;
     }
     creature.attacking = false;
+    creature.hasAttacked = false;
     creature.blocking = null;
     creature.blockedBy = null;
   }
@@ -1033,7 +1044,7 @@ function draw(side, amount) {
 }
 
 function playCardFromHand(side, uid) {
-  if (!canActInMain(side)) return;
+  if (isAnimating || !canActInMain(side)) return;
   if (state.mode === "online" && state.network.slot !== side.side) return;
   const cardIndex = side.hand.findIndex((card) => card.uid === uid);
   if (cardIndex < 0) return;
@@ -1075,6 +1086,12 @@ function playLand(side, cardIndex) {
 function playCreature(side, cardIndex) {
   const card = side.hand[cardIndex];
 
+  if (!isDivineUnlocked(side, card)) {
+    logEvent(`${card.name} reste verrouillé : sa condition d'invocation divine n'est pas remplie.`);
+    render();
+    return;
+  }
+
   if (side.board.length >= MAX_BOARD) {
     logEvent("Le champ de bataille est plein.");
     render();
@@ -1082,7 +1099,7 @@ function playCreature(side, cardIndex) {
   }
 
   if (!canPay(side, card)) {
-    logEvent(`Pas assez de mana dégagé pour lancer ${card.name}.`);
+    logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
     return;
   }
@@ -1104,7 +1121,7 @@ function playSpell(side, cardIndex) {
   const card = side.hand[cardIndex];
 
   if (!canPay(side, card)) {
-    logEvent(`Pas assez de mana dégagé pour lancer ${card.name}.`);
+    logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
     return;
   }
@@ -1121,33 +1138,35 @@ function playSpell(side, cardIndex) {
   render();
 }
 
+// Style Hearthstone : pendant tout ton tour tu peux poser des cartes.
 function canActInMain(side) {
-  return (
-    state.currentTurn === side.side &&
-    (state.phase === PHASES.MAIN_1 || state.phase === PHASES.MAIN_2)
-  );
+  return state.currentTurn === side.side && state.phase !== PHASES.OVER;
+}
+
+// Mana coloré : une carte d'une couleur exige autant de terrains DE CETTE
+// COULEUR que son coût. Seules les cartes incolores acceptent n'importe quel
+// terrain.
+function untappedLandsFor(side, card) {
+  const untapped = side.lands.filter((land) => !land.tapped);
+  if (card.family === "Incolore") return untapped;
+  return untapped.filter((land) => land.family === card.family);
 }
 
 function canPay(side, card) {
   if (isLand(card)) return canActInMain(side) && !side.landPlayed;
-  const untapped = side.lands.filter((land) => !land.tapped);
-  const matching = card.family === "Incolore" || untapped.some((land) => land.family === card.family);
-  return untapped.length >= card.cost && matching;
+  return untappedLandsFor(side, card).length >= card.cost;
 }
 
 function payMana(side, card) {
-  const landsToTap = [];
-  const matching = side.lands.find((land) => !land.tapped && land.family === card.family);
-  if (matching) landsToTap.push(matching);
-
-  for (const land of side.lands) {
-    if (landsToTap.length >= card.cost) break;
-    if (!land.tapped && !landsToTap.includes(land)) landsToTap.push(land);
-  }
-
+  const landsToTap = untappedLandsFor(side, card).slice(0, card.cost);
   for (const land of landsToTap) {
     land.tapped = true;
   }
+}
+
+// Mana disponible dans la couleur de la carte (pour les messages d'aide).
+function manaShortfall(side, card) {
+  return Math.max(0, card.cost - untappedLandsFor(side, card).length);
 }
 
 function createUnit(card, owner) {
@@ -1277,6 +1296,11 @@ function applySpellEffect(card, side) {
     logEvent(`${card.name} inflige 2 blessures à toutes les créatures adverses.`);
   }
 
+  if (card.effect === "dealAllEnemies3") {
+    for (const target of opponent.board) target.currentLife -= 3;
+    logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses.`);
+  }
+
   if (card.effect === "buffTeamAttack1") {
     for (const ally of side.board) ally.attack += 1;
     logEvent(`${card.name} donne +1 force aux créatures alliées.`);
@@ -1325,6 +1349,13 @@ function applySpellEffect(card, side) {
   if (card.effect === "gainLife4") {
     side.life = Math.min(MAX_LIFE, side.life + 4);
     logEvent(`${card.name} rend 4 points de vie.`);
+  }
+
+  if (card.effect === "restHero") {
+    side.life = Math.min(MAX_LIFE, side.life + 3);
+    draw(side, 1);
+    pushVisualEffect("buff", side.side, "Repos");
+    logEvent(`${card.name} rend 3 points de vie et fait piocher une carte.`);
   }
 
   if (card.effect === "destroyTappedOrWeakest") {
@@ -1408,6 +1439,37 @@ function applySpellEffect(card, side) {
         : `${card.name} donne +1 force aux créatures alliées.`
     );
   }
+
+  if (card.effect === "reanimate" || card.effect === "reanimateTwo") {
+    const amount = card.effect === "reanimateTwo" ? 2 : 1;
+    const returned = reanimateBestCreatures(side, amount);
+    if (returned.length === 0) {
+      const reason = side.board.length >= MAX_BOARD ? "le champ de bataille est plein" : "aucune créature n'attend au cimetière";
+      logEvent(`${card.name} échoue : ${reason}.`);
+      return;
+    }
+    pushVisualEffect("summon", side.side, "Réanimation");
+    logEvent(`${card.name} ramène ${returned.map((unit) => unit.name).join(" et ")} d'entre les morts.`);
+  }
+}
+
+function reanimateBestCreatures(side, amount) {
+  const returned = [];
+  while (returned.length < amount && side.board.length < MAX_BOARD) {
+    const buried = (side.graveyard || []).filter((entry) => entry.kind === "creature");
+    if (buried.length === 0) break;
+    const best = [...buried].sort(
+      (a, b) => (b.cost || 0) - (a.cost || 0) || (b.attack || 0) - (a.attack || 0)
+    )[0];
+    const index = side.graveyard.indexOf(best);
+    if (index >= 0) side.graveyard.splice(index, 1);
+    const source = state.cards.find((entry) => entry.id === best.id) || best;
+    const unit = createUnit(source, side.side);
+    side.board.push(unit);
+    returned.push(unit);
+    triggerOnPlay(unit, side);
+  }
+  return returned;
 }
 
 function triggerOnPlay(unit, side) {
@@ -1516,8 +1578,11 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "aldia") {
-    side.life = Math.min(MAX_LIFE, side.life + 4);
-    logEvent("Aldia rend 4 points de vie.");
+    side.life = Math.min(MAX_LIFE, side.life + 6);
+    const allies = side.board.filter((ally) => ally.uid !== unit.uid);
+    buffTeam(allies, 1, 1);
+    pushVisualEffect("buff", side.side, "Aurore");
+    logEvent("Aldia rend 6 points de vie et donne +1/+1 aux autres créatures.");
   }
 
   if (unit.id === "fee") {
@@ -1543,13 +1608,14 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "umi") {
-    draw(side, 2);
-    logEvent("Umi fait piocher deux cartes.");
+    draw(side, 3);
+    logEvent("Umi fait piocher trois cartes.");
   }
 
   if (unit.id === "ulgod") {
-    opponent.life -= 3;
-    logEvent("Ulgod inflige 3 blessures au héros adverse.");
+    opponent.life -= 5;
+    pushVisualEffect("hit", opponent.side, "-5");
+    logEvent("Ulgod inflige 5 blessures au héros adverse.");
   }
 
   if (unit.id === "zombie-villageois") {
@@ -1581,6 +1647,47 @@ function triggerOnPlay(unit, side) {
     }
   }
 
+  if (unit.id === "rena") {
+    const allies = side.board.filter((ally) => ally.uid !== unit.uid);
+    buffTeam(allies, 2, 2);
+    side.life = Math.min(MAX_LIFE, side.life + 5);
+    pushVisualEffect("buff", side.side, "+2/+2");
+    logEvent(`Rena éveille la canopée : +2/+2 aux autres créatures et 5 points de vie pour ${sideDisplayName(side.side)}.`);
+  }
+
+  if (unit.id === "bhaal") {
+    const target = strongestCreature(opponent.board);
+    if (target) {
+      target.currentLife = 0;
+      logEvent(`Bhaal fauche ${target.name}.`);
+    }
+    opponent.life -= 3;
+    pushVisualEffect("hit", opponent.side, "-3");
+    logEvent("Bhaal inflige 3 blessures au héros adverse.");
+  }
+
+  if (unit.id === "chevalier-froussard") {
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    logEvent(`Le Chevalier Froussard se met à l'abri : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
+  }
+
+  if (unit.id === "tigre-zombie") {
+    for (const enemy of opponent.board) enemy.currentLife -= 1;
+    if (opponent.board.length > 0) {
+      pushVisualEffect("hit", opponent.side, "-1");
+      logEvent(`Le Tigre Zombie griffe ${opponent.board.length} créature(s) adverse(s).`);
+    }
+  }
+
+  if (unit.id === "homme-flammes") {
+    const target = [...opponent.board].sort((a, b) => a.currentLife - b.currentLife || a.attack - b.attack)[0];
+    if (target) {
+      target.currentLife -= 2;
+      pushVisualEffect("hit", opponent.side, "-2");
+      logEvent(`L'Homme des flammes brûle ${target.name} pour 2 blessures.`);
+    }
+  }
+
   checkVictory();
 }
 
@@ -1592,97 +1699,170 @@ function pullLandFromDeck(side, preferredFamily) {
   return land;
 }
 
+// Combat façon Hearthstone : pas de phase de combat séparée ni de bloqueurs.
+// Pendant ton tour tu poses tes cartes et tu attaques librement : tu cliques une
+// créature prête (surbrillance verte) puis sa cible (créature adverse ou commandant).
 function advancePhase() {
-  if (state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
-  markOnlineDirty();
-
-  if (state.phase === PHASES.MAIN_1) {
-    state.phase = PHASES.COMBAT;
-    clearCombatFlags();
-    logEvent(`Phase de combat : ${sideDisplayName(state.currentTurn)} sélectionne ses attaquants.`);
-    render();
-    return;
-  }
-
-  if (state.phase === PHASES.COMBAT) {
-    state.phase = PHASES.MAIN_2;
-    clearCombatFlags();
-    logEvent("Deuxième phase principale.");
-    render();
-    return;
-  }
-
-  if (state.phase === PHASES.MAIN_2) {
-    endCurrentTurn();
-  }
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
+  endCurrentTurn();
 }
 
-function primaryCombatAction() {
-  if (state.phase === PHASES.COMBAT && isCurrentSideHuman()) {
-    resolveAttackDeclaration();
-    return;
-  }
-
-  if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
-    resolveBlockingCombat();
-  }
+// Une créature « Défenseur » agit comme une Provocation : elle doit être frappée
+// en premier. Le vol permet de l'ignorer.
+function hasTaunt(unit) {
+  return hasKeyword(unit, "Défenseur");
 }
 
-function toggleAttacker(uid) {
-  if (state.phase !== PHASES.COMBAT || !isCurrentSideHuman()) return;
+function tauntGuards(side) {
+  return side.board.filter((unit) => hasTaunt(unit) && unit.currentLife > 0);
+}
+
+function canTargetUnit(attacker, target, defendingSide) {
+  if (!target || target.currentLife <= 0) return false;
+  const guards = tauntGuards(defendingSide);
+  if (guards.length === 0 || hasKeyword(attacker, "Vol")) return true;
+  return guards.includes(target);
+}
+
+function canTargetHero(attacker, defendingSide) {
+  const guards = tauntGuards(defendingSide);
+  return guards.length === 0 || hasKeyword(attacker, "Vol");
+}
+
+function selectAttacker(uid) {
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
   const attacker = getCurrentSide().board.find((unit) => unit.uid === uid);
   if (!attacker) return;
 
   if (!canAttack(attacker)) {
-    logEvent(`${attacker.name} ne peut pas attaquer ce tour-ci.`);
+    const reason = attacker.tapped || attacker.stunTurns > 0
+      ? "a déjà agi ou est engagée."
+      : hasTaunt(attacker)
+        ? "a Défenseur : elle protège mais n'attaque pas."
+        : "a le mal d'invocation 💤 : elle pourra attaquer au prochain tour.";
+    logEvent(`${attacker.name} ${reason}`);
     render();
     return;
   }
 
   markOnlineDirty();
-  attacker.attacking = !attacker.attacking;
+  state.selectedAttackerId = state.selectedAttackerId === uid ? null : uid;
   render();
 }
 
-function resolveAttackDeclaration() {
+function attackUnit(targetUid) {
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) return;
   const attackingSide = getCurrentSide();
   const defendingSide = getDefendingSide();
-  const attackers = attackingSide.board.filter((unit) => unit.attacking && canAttack(unit));
-  markOnlineDirty();
-  if (attackers.length === 0) {
-    state.phase = PHASES.MAIN_2;
-    logEvent("Aucun attaquant déclaré. Deuxième phase principale.");
+  const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
+  const target = defendingSide.board.find((unit) => unit.uid === targetUid);
+  if (!attacker || !target) return;
+
+  if (!canTargetUnit(attacker, target, defendingSide)) {
+    logEvent(`${target.name} est protégé : frappe d'abord une créature avec Défenseur.`);
     render();
     return;
   }
 
-  tapAttackers(attackers);
-  pushVisualEffect("attack", attackingSide.side, `${attackers.length} attaque${attackers.length > 1 ? "s" : ""}`);
-  if (state.mode === "pve" && defendingSide.side === "enemy") {
-    aiDeclareBlockers(attackers, defendingSide);
-    resolveCombatDamage(attackers, attackingSide, defendingSide);
-    clearCombatFlags();
-    cleanupBoards();
-    checkVictory();
-    if (state.phase !== PHASES.OVER) state.phase = PHASES.MAIN_2;
-  } else if (!defenderHasLegalBlock(attackers, defendingSide)) {
-    logEvent(`${sideDisplayName(defendingSide.side)} n'a aucun bloqueur disponible : les blessures passent.`);
-    resolveCombatDamage(attackers, attackingSide, defendingSide);
-    clearCombatFlags();
-    cleanupBoards();
-    checkVictory();
-    if (state.phase !== PHASES.OVER) state.phase = PHASES.MAIN_2;
-  } else {
-    state.phase = PHASES.BLOCK;
-    state.selectedBlockerId = null;
-    logEvent(`${sideDisplayName(defendingSide.side)} choisit ses bloqueurs.`);
-  }
-  render();
+  markOnlineDirty();
+  const attackerNode = boardCardNode(attacker.uid, attackingSide.side);
+  const targetRect = boardCardNode(target.uid, defendingSide.side)?.getBoundingClientRect();
+  playLunge(attackerNode, targetRect, () => {
+    flashImpact(defendingSide.side);
+    resolveSingleAttack(attacker, target, attackingSide, defendingSide);
+  });
 }
 
-function defenderHasLegalBlock(attackers, defendingSide) {
-  const available = defendingSide.board.filter((unit) => !unit.tapped && !unit.blocking);
-  return attackers.some((attacker) => available.some((blocker) => canBlock(attacker, blocker)));
+function attackHero() {
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) return;
+  const attackingSide = getCurrentSide();
+  const defendingSide = getDefendingSide();
+  const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
+  if (!attacker) return;
+
+  if (!canTargetHero(attacker, defendingSide)) {
+    logEvent(`${sideDisplayName(defendingSide.side)} est protégé par une créature avec Défenseur.`);
+    render();
+    return;
+  }
+
+  markOnlineDirty();
+  const attackerNode = boardCardNode(attacker.uid, attackingSide.side);
+  const targetRect = commanderNode(defendingSide.side)?.getBoundingClientRect();
+  playLunge(attackerNode, targetRect, () => {
+    flashImpact(defendingSide.side);
+    resolveSingleAttack(attacker, null, attackingSide, defendingSide);
+  });
+}
+
+// --- Animations de combat (charge de l'attaquant + secousse d'impact) ---
+let isAnimating = false;
+
+function boardCardNode(uid, sideName) {
+  const container = sideName === "player" ? els.playerBoard : els.enemyBoard;
+  return container?.querySelector(`.game-card[data-uid="${cssAttr(uid)}"]`) || null;
+}
+
+function commanderNode(sideName) {
+  return document.querySelector(`.${sideName}-mat .mat-zone--commander`);
+}
+
+function playLunge(attackerNode, targetRect, done) {
+  if (!attackerNode || !targetRect) { done(); return; }
+  const a = attackerNode.getBoundingClientRect();
+  const dx = targetRect.left + targetRect.width / 2 - (a.left + a.width / 2);
+  const dy = targetRect.top + targetRect.height / 2 - (a.top + a.height / 2);
+  isAnimating = true;
+  attackerNode.style.setProperty("--lunge-x", `${Math.round(dx * 0.6)}px`);
+  attackerNode.style.setProperty("--lunge-y", `${Math.round(dy * 0.6)}px`);
+  attackerNode.classList.add("is-lunging");
+  let finished = false;
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    isAnimating = false;
+    done();
+  };
+  attackerNode.addEventListener("animationend", finish, { once: true });
+  setTimeout(finish, 380);
+}
+
+function flashImpact(sideName) {
+  const mat = document.querySelector(`.${sideName}-mat`);
+  if (!mat) return;
+  mat.classList.remove("is-hit-shake");
+  void mat.offsetWidth;
+  mat.classList.add("is-hit-shake");
+  setTimeout(() => mat.classList.remove("is-hit-shake"), 360);
+}
+
+// Résolution immédiate d'une attaque : l'attaquant frappe, la cible riposte.
+function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
+  if (!hasKeyword(attacker, "Vigilance")) attacker.tapped = true;
+  attacker.hasAttacked = true;
+  state.selectedAttackerId = null;
+
+  if (!target) {
+    defendingSide.life -= attacker.attack;
+    gainLifeFromDamage(attacker, attackingSide, attacker.attack);
+    pushVisualEffect("attack", attackingSide.side, "Assaut");
+    pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
+    logEvent(`${attacker.name} frappe ${sideDisplayName(defendingSide.side)} pour ${attacker.attack} blessure(s).`);
+  } else {
+    target.currentLife -= attacker.attack;
+    if (attacker.attack > 0 && hasKeyword(attacker, "Contact mortel")) target.currentLife = 0;
+    attacker.currentLife -= target.attack;
+    if (target.attack > 0 && hasKeyword(target, "Contact mortel")) attacker.currentLife = 0;
+    gainLifeFromDamage(attacker, attackingSide, attacker.attack);
+    gainLifeFromDamage(target, defendingSide, target.attack);
+    pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
+    if (target.attack > 0) pushVisualEffect("hit", attackingSide.side, `-${target.attack}`);
+    logEvent(`${attacker.name} attaque ${target.name} : ${attacker.attack} contre ${target.attack}.`);
+  }
+
+  cleanupBoards();
+  checkVictory();
+  render();
 }
 
 function endCurrentTurn() {
@@ -1706,30 +1886,54 @@ function enemyTurn() {
   if (state.mode !== "pve") return;
   beginTurn(state.enemy);
   enemyPlayMainPhase();
-  const attackers = chooseEnemyAttackers();
+  render();
+  setTimeout(enemyAttackStep, 350);
+}
 
-  if (attackers.length === 0) {
+// L'IA attaque une créature à la fois, avec animation, puis enchaîne — comme
+// un vrai tour Hearthstone. Échanges favorables privilégiés, provocations gérées.
+function enemyAttackStep() {
+  if (state.phase === PHASES.OVER) {
+    render();
+    return;
+  }
+  const me = state.enemy;
+  const foe = state.player;
+  const attacker = me.board.find((unit) => canAttack(unit));
+  if (!attacker) {
     finishEnemyTurn();
     return;
   }
 
-  tapAttackers(attackers);
-  if (!defenderHasLegalBlock(attackers, state.player)) {
-    logEvent(`${sideDisplayName("enemy")} attaque avec ${attackers.length} créature(s) : aucun bloqueur disponible.`);
-    resolveCombatDamage(attackers, state.enemy, state.player);
-    clearCombatFlags();
-    cleanupBoards();
-    checkVictory();
-    if (state.phase !== PHASES.OVER) {
-      finishEnemyTurn();
-      return;
-    }
-    render();
+  const guards = tauntGuards(foe);
+  const ignoresTaunt = hasKeyword(attacker, "Vol");
+  const targets = guards.length > 0 && !ignoresTaunt ? guards : foe.board;
+  const kills = (t) => attacker.attack >= t.currentLife || hasKeyword(attacker, "Contact mortel");
+  const survives = (t) => t.attack < attacker.currentLife && !hasKeyword(t, "Contact mortel");
+  const lethalTrade = targets.find((t) => kills(t) && survives(t)) || targets.find(kills);
+  const canHitHero = guards.length === 0 || ignoresTaunt;
+
+  let target;
+  if (canHitHero && attacker.attack >= foe.life) target = null;
+  else if (lethalTrade) target = lethalTrade;
+  else if (canHitHero) target = null;
+  else target = [...targets].sort((a, b) => a.currentLife - b.currentLife)[0] || null;
+
+  // Rien à frapper (bloqué par une provocation sans cible atteignable).
+  if (target === null && !canHitHero) {
+    finishEnemyTurn();
     return;
   }
-  state.phase = PHASES.BLOCK;
-  logEvent(`${sideDisplayName("enemy")} déclare ${attackers.length} attaquant(s). Choisis tes bloqueurs.`);
+
+  state.selectedAttackerId = attacker.uid;
   render();
+  const attackerNode = boardCardNode(attacker.uid, "enemy");
+  const targetRect = (target ? boardCardNode(target.uid, "player") : commanderNode("player"))?.getBoundingClientRect();
+  playLunge(attackerNode, targetRect, () => {
+    flashImpact("player");
+    resolveSingleAttack(attacker, target, me, foe);
+    setTimeout(enemyAttackStep, 280);
+  });
 }
 
 function enemyPlayMainPhase() {
@@ -1759,7 +1963,9 @@ function enemyPlaySpells() {
         (card) =>
           !isLand(card) &&
           canPay(state.enemy, card) &&
-          (isSpell(card) ? isSpellWorthCasting(card, state.enemy, state.player) : state.enemy.board.length < MAX_BOARD)
+          (isSpell(card)
+            ? isSpellWorthCasting(card, state.enemy, state.player)
+            : state.enemy.board.length < MAX_BOARD && isDivineUnlocked(state.enemy, card))
       )
       .sort((a, b) => scoreAiPlay(b) - scoreAiPlay(a))[0];
 
@@ -1776,6 +1982,7 @@ function enemyPlaySpells() {
 function isSpellWorthCasting(card, side, opponent) {
   switch (card.effect) {
     case "dealAllEnemies2":
+    case "dealAllEnemies3":
     case "weakenAllEnemies":
     case "freezeAll":
       return opponent.board.length > 0;
@@ -1795,8 +2002,16 @@ function isSpellWorthCasting(card, side, opponent) {
     case "createTwoZombies":
     case "createGuardian":
       return side.board.length < MAX_BOARD;
+    case "reanimate":
+    case "reanimateTwo":
+      return (
+        side.board.length < MAX_BOARD &&
+        (side.graveyard || []).some((entry) => entry.kind === "creature")
+      );
     case "gainLife4":
       return side.life <= MAX_LIFE - 4;
+    case "restHero":
+      return side.life < MAX_LIFE || side.deck.length > 0;
     default:
       return true;
   }
@@ -1806,173 +2021,8 @@ function scoreAiPlay(card) {
   return card.cost * 10 + (card.attack || 0) + (isSpell(card) ? 8 : 0);
 }
 
-function chooseEnemyAttackers() {
-  const candidates = state.enemy.board.filter(canAttack);
-  const availableBlockers = state.player.board.filter((unit) => !unit.tapped);
-  const totalPower = candidates.reduce((sum, unit) => sum + unit.attack, 0);
-  const lethalPush = totalPower >= state.player.life;
-
-  const attackers = candidates.filter((unit) => {
-    if (lethalPush) return true;
-    // N'attaque pas si un bloqueur peut tuer la créature sans mourir.
-    const suicidalBlock = availableBlockers.some(
-      (blocker) =>
-        canBlock(unit, blocker) &&
-        (blocker.attack >= unit.currentLife || hasKeyword(blocker, "Contact mortel")) &&
-        unit.attack < blocker.currentLife &&
-        !hasKeyword(unit, "Contact mortel")
-    );
-    return !suicidalBlock;
-  });
-
-  for (const attacker of attackers) {
-    attacker.attacking = true;
-  }
-  return attackers;
-}
-
-function selectBlocker(uid) {
-  if (state.phase !== PHASES.BLOCK || !isDefendingSideHuman()) return;
-  const blocker = getDefendingSide().board.find((unit) => unit.uid === uid);
-  if (!blocker || blocker.tapped || blocker.blocking) return;
-  markOnlineDirty();
-  state.selectedBlockerId = state.selectedBlockerId === uid ? null : uid;
-  render();
-}
-
-function unassignBlocker(uid) {
-  if (state.phase !== PHASES.BLOCK || !isDefendingSideHuman()) return;
-  const defender = getDefendingSide();
-  const blocker = defender.board.find((unit) => unit.uid === uid);
-  if (!blocker?.blocking) return;
-  const attacker = getCurrentSide().board.find((unit) => unit.uid === blocker.blocking);
-  blocker.blocking = null;
-  if (attacker) {
-    attacker.blockedBy = defender.board.find((unit) => unit.blocking === attacker.uid)?.uid || null;
-  }
-  markOnlineDirty();
-  logEvent(`${blocker.name} ne bloque plus.`);
-  render();
-}
-
-function assignBlocker(attackerUid) {
-  if (state.phase !== PHASES.BLOCK || !isDefendingSideHuman() || !state.selectedBlockerId) return;
-  const defender = getDefendingSide();
-  const attackerSide = getCurrentSide();
-  const blocker = defender.board.find((unit) => unit.uid === state.selectedBlockerId);
-  const attacker = attackerSide.board.find((unit) => unit.uid === attackerUid && unit.attacking);
-  if (!blocker || !attacker) return;
-
-  if (!canBlock(attacker, blocker)) {
-    logEvent(`${blocker.name} ne peut pas bloquer ${attacker.name}.`);
-    render();
-    return;
-  }
-
-  markOnlineDirty();
-  for (const unit of defender.board) {
-    if (unit.uid === blocker.uid) unit.blocking = attacker.uid;
-  }
-  attacker.blockedBy = blocker.uid;
-  state.selectedBlockerId = null;
-  logEvent(`${blocker.name} bloque ${attacker.name}.`);
-  render();
-}
-
-function resolveBlockingCombat() {
-  markOnlineDirty();
-  const attackingSide = getCurrentSide();
-  const defendingSide = getDefendingSide();
-  const attackers = attackingSide.board.filter((unit) => unit.attacking);
-  resolveCombatDamage(attackers, attackingSide, defendingSide);
-  clearCombatFlags();
-  cleanupBoards();
-  checkVictory();
-  if (state.phase !== PHASES.OVER) {
-    if (state.mode === "pve" && attackingSide.side === "enemy") finishEnemyTurn();
-    else state.phase = PHASES.MAIN_2;
-  }
-  render();
-}
-
 function finishEnemyTurn() {
   endCurrentTurn();
-}
-
-function aiDeclareBlockers(attackers, defenderSide) {
-  const blockers = defenderSide.board.filter((unit) => !unit.tapped);
-  const incomingDamage = attackers.reduce((sum, attacker) => sum + attacker.attack, 0);
-  const desperate = incomingDamage >= defenderSide.life;
-
-  // Bloque en priorité les plus gros attaquants, avec le meilleur échange possible.
-  for (const attacker of [...attackers].sort((a, b) => b.attack - a.attack)) {
-    const candidates = blockers.filter((candidate) => !candidate.blocking && canBlock(attacker, candidate));
-    if (candidates.length === 0) continue;
-
-    const killsAttacker = (candidate) =>
-      candidate.attack >= attacker.currentLife || hasKeyword(candidate, "Contact mortel");
-    const survives = (candidate) =>
-      attacker.attack < candidate.currentLife && !hasKeyword(attacker, "Contact mortel");
-
-    const perfect = candidates.filter((candidate) => killsAttacker(candidate) && survives(candidate));
-    const trades = candidates.filter(killsAttacker);
-    const blocker =
-      perfect.sort((a, b) => a.attack - b.attack)[0] ||
-      (desperate
-        ? candidates.sort((a, b) => a.attack - b.attack)[0]
-        : trades.sort((a, b) => a.cost - b.cost)[0]);
-
-    if (blocker) {
-      blocker.blocking = attacker.uid;
-      attacker.blockedBy = blocker.uid;
-      logEvent(`${sideDisplayName(defenderSide.side)} bloque ${attacker.name} avec ${blocker.name}.`);
-    }
-  }
-}
-
-function resolveCombatDamage(attackers, attackingSide, defendingSide) {
-  for (const attacker of attackers) {
-    if (!attackingSide.board.includes(attacker)) continue;
-    const blockers = defendingSide.board.filter((unit) => unit.blocking === attacker.uid);
-
-    if (blockers.length === 0) {
-      defendingSide.life -= attacker.attack;
-      gainLifeFromDamage(attacker, attackingSide, attacker.attack);
-      pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
-      logEvent(`${attacker.name} inflige ${attacker.attack} blessure${attacker.attack > 1 ? "s" : ""} à ${sideDisplayName(defendingSide.side)}.`);
-      continue;
-    }
-
-    // L'attaquant répartit ses dégâts sur ses bloqueurs dans l'ordre ;
-    // chaque bloqueur riposte de toute sa force.
-    const attackerDeathtouch = hasKeyword(attacker, "Contact mortel");
-    let remaining = attacker.attack;
-    let dealtTotal = 0;
-    for (const blocker of blockers) {
-      if (remaining <= 0) break;
-      const lethalNeeded = attackerDeathtouch ? 1 : blocker.currentLife;
-      const dealt = Math.min(remaining, Math.max(1, lethalNeeded));
-      blocker.currentLife -= dealt;
-      if (dealt > 0 && attackerDeathtouch) blocker.currentLife = 0;
-      remaining -= dealt;
-      dealtTotal += dealt;
-    }
-
-    const counterDamage = blockers.reduce((sum, blocker) => sum + blocker.attack, 0);
-    attacker.currentLife -= counterDamage;
-    if (blockers.some((blocker) => blocker.attack > 0 && hasKeyword(blocker, "Contact mortel"))) {
-      attacker.currentLife = 0;
-    }
-
-    gainLifeFromDamage(attacker, attackingSide, dealtTotal);
-    for (const blocker of blockers) {
-      gainLifeFromDamage(blocker, defendingSide, blocker.attack);
-    }
-    pushVisualEffect("hit", defendingSide.side, `-${dealtTotal}`);
-    pushVisualEffect("hit", attackingSide.side, `-${counterDamage}`);
-    const blockerNames = blockers.map((blocker) => blocker.name).join(" et ");
-    logEvent(`${attacker.name} et ${blockerNames} s'infligent leurs blessures.`);
-  }
 }
 
 function gainLifeFromDamage(unit, side, amount) {
@@ -1981,27 +2031,14 @@ function gainLifeFromDamage(unit, side, amount) {
   logEvent(`${sideDisplayName(side.side)} gagne ${amount} point${amount > 1 ? "s" : ""} de vie grâce à ${unit.name}.`);
 }
 
-function tapAttackers(attackers) {
-  for (const attacker of attackers) {
-    if (!hasKeyword(attacker, "Vigilance")) attacker.tapped = true;
-  }
-}
-
 function canAttack(unit) {
   return (
     !unit.tapped &&
+    !unit.hasAttacked &&
     unit.currentLife > 0 &&
     !hasKeyword(unit, "Défenseur") &&
     (unit.createdTurn < state.turn || hasKeyword(unit, "Célérité"))
   );
-}
-
-function canBlock(attacker, blocker) {
-  if (blocker.tapped || blocker.blocking) return false;
-  if (hasKeyword(attacker, "Vol") && !hasKeyword(blocker, "Vol") && !hasKeyword(blocker, "Portée")) {
-    return false;
-  }
-  return true;
 }
 
 function getSide(sideName) {
@@ -2082,6 +2119,7 @@ function cleanupBoards() {
 
 function clearCombatFlags() {
   state.selectedBlockerId = null;
+  state.selectedAttackerId = null;
   for (const unit of [...state.player.board, ...state.enemy.board]) {
     unit.attacking = false;
     unit.blocking = null;
@@ -2111,6 +2149,83 @@ function isSpell(card) {
 
 function isCreature(card) {
   return card.kind === "creature";
+}
+
+/* ---------------------------------------------------------------------- */
+/* Invocations divines : certains dieux ne peuvent être lancés que si une  */
+/* condition de légende est remplie. La condition est décrite dans les     */
+/* données (champ `divine`) sous forme de clauses combinées en OU.         */
+/*   board    : toutes ces cartes doivent être sur ton champ de bataille   */
+/*   boardAny : au moins une de ces cartes sur ton champ de bataille       */
+/*   cast     : ces sorts doivent avoir été lancés (doublons = N copies)   */
+/*   died     : au moins une de ces créatures doit être morte              */
+/* ---------------------------------------------------------------------- */
+function fallenCards(side) {
+  return [...(side.graveyard || []), ...(side.exile || [])];
+}
+
+function divineClauseMet(side, clause) {
+  const board = side.board || [];
+  const fallen = fallenCards(side);
+
+  if (clause.board && !clause.board.every((id) => board.some((unit) => unit.id === id))) return false;
+  if (clause.boardAny && !clause.boardAny.some((id) => board.some((unit) => unit.id === id))) return false;
+
+  if (clause.cast) {
+    const needed = new Map();
+    for (const id of clause.cast) needed.set(id, (needed.get(id) || 0) + 1);
+    for (const [id, count] of needed) {
+      const done = fallen.filter((card) => card.id === id && card.kind === "spell").length;
+      if (done < count) return false;
+    }
+  }
+
+  if (clause.died && !clause.died.some((id) => fallen.some((card) => card.id === id && card.kind === "creature"))) {
+    return false;
+  }
+  return true;
+}
+
+function isDivineUnlocked(side, card) {
+  if (!card?.divine?.any?.length) return true;
+  return card.divine.any.some((clause) => divineClauseMet(side, clause));
+}
+
+// Détail lisible de la condition, pour la fiche de carte.
+function describeDivineClause(side, clause) {
+  const board = side.board || [];
+  const fallen = fallenCards(side);
+  const parts = [];
+  const label = (id) =>
+    state.cards.find((c) => c.id === id)?.name || state.spells.find((c) => c.id === id)?.name || id;
+
+  for (const id of clause.board || []) {
+    parts.push({ text: label(id), done: board.some((u) => u.id === id) });
+  }
+  if (clause.boardAny?.length) {
+    parts.push({
+      text: clause.boardAny.map(label).join(" ou "),
+      done: clause.boardAny.some((id) => board.some((u) => u.id === id))
+    });
+  }
+  if (clause.cast?.length) {
+    const needed = new Map();
+    for (const id of clause.cast) needed.set(id, (needed.get(id) || 0) + 1);
+    for (const [id, count] of needed) {
+      const done = fallen.filter((c) => c.id === id && c.kind === "spell").length;
+      parts.push({
+        text: count > 1 ? `${label(id)} ×${count} lancé(s) (${Math.min(done, count)}/${count})` : `${label(id)} lancé`,
+        done: done >= count
+      });
+    }
+  }
+  if (clause.died?.length) {
+    parts.push({
+      text: `${clause.died.map(label).join(" ou ")} tombé au combat`,
+      done: clause.died.some((id) => fallen.some((c) => c.id === id && c.kind === "creature"))
+    });
+  }
+  return parts;
 }
 
 function checkVictory() {
@@ -2146,8 +2261,8 @@ function render() {
   els.enemyHero.style.setProperty("--hero-avatar", cssUrl(state.enemy.profile?.avatar));
   els.playerLife.textContent = Math.max(0, state.player.life);
   els.enemyLife.textContent = Math.max(0, state.enemy.life);
-  els.playerEnergy.textContent = `${availableMana(state.player)}/${state.player.lands.length}`;
-  els.enemyEnergy.textContent = `${availableMana(state.enemy)}/${state.enemy.lands.length}`;
+  els.playerEnergy.textContent = describeManaPool(state.player);
+  els.enemyEnergy.textContent = describeManaPool(state.enemy);
   els.playerDeck.textContent = state.player.deck.length;
   els.enemyDeck.textContent = state.enemy.deck.length;
   els.playerGraveyard.textContent = state.player.graveyard.length;
@@ -2236,22 +2351,22 @@ function rematch() {
 }
 
 function updateButtons() {
-  els.attackHero.disabled = true;
-  els.endTurn.disabled = state.phase === PHASES.OVER || !isCurrentSideHuman();
-  els.endTurn.textContent = state.phase === PHASES.MAIN_2 ? "Fin du tour" : "Phase suivante";
-  els.attackHero.textContent = "Attaquer le commandant";
+  const playing = state.phase !== PHASES.OVER && isCurrentSideHuman();
+  els.endTurn.disabled = !playing;
+  els.endTurn.textContent = "Fin du tour";
 
-  if (isCurrentSideHuman() && state.phase === PHASES.COMBAT) {
-    els.attackHero.disabled = false;
-    const chosen = getCurrentSide().board.filter((unit) => unit.attacking).length;
-    els.attackHero.textContent = chosen > 0 ? `Attaquer avec ${chosen} 🗡` : "Passer le combat";
-  }
-
-  if (isDefendingSideHuman() && state.phase === PHASES.BLOCK) {
-    els.attackHero.disabled = false;
-    els.attackHero.textContent = "Résoudre le combat";
-    els.endTurn.disabled = true;
-  }
+  // Le bouton rouge frappe directement le commandant avec l'attaquant choisi.
+  const attacker = state.selectedAttackerId
+    ? getCurrentSide().board.find((unit) => unit.uid === state.selectedAttackerId)
+    : null;
+  const heroReachable = Boolean(attacker && canTargetHero(attacker, getDefendingSide()));
+  document.body.classList.toggle("targeting", Boolean(attacker) && playing && heroReachable);
+  els.attackHero.disabled = !playing || !heroReachable;
+  els.attackHero.textContent = attacker
+    ? heroReachable
+      ? `Frapper le commandant 🗡`
+      : "Commandant protégé"
+    : "Choisis une créature";
 }
 
 function renderHand() {
@@ -2272,9 +2387,17 @@ function renderHand() {
     node.style.setProperty("--hand-drop", `${Math.pow(Math.abs(offset), 1.45) * 2.6}px`);
     node.style.setProperty("--hand-layer", `${20 + index}`);
     node.style.setProperty("--hand-overlap", `${overlap}px`);
-    if (!isPlayableFromHand(side, card)) node.classList.add("is-unplayable");
+    // Surbrillance des cartes réellement jouables maintenant.
+    if (isPlayableFromHand(side, card)) node.classList.add("is-playable");
+    else node.classList.add("is-unplayable");
+    // Dieu dont l'invocation n'est pas encore débloquée.
+    if (card.divine && !isDivineUnlocked(side, card)) {
+      node.classList.add("is-divine-locked");
+      node.dataset.divineDifficulty = String(card.divine.difficulty || 1);
+    }
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => openCardDetail(card, { zone: "hand", side: side.side }));
+    if (side.side === state.currentTurn && isCurrentSideHuman()) attachPlayDrag(node, card, side);
     fragment.append(node);
   }
   els.playerHand.append(fragment);
@@ -2284,6 +2407,7 @@ function isPlayableFromHand(side, card) {
   if (!canActInMain(side)) return false;
   if (isLand(card)) return !side.landPlayed;
   if (isSpell(card)) return canPay(side, card);
+  if (!isDivineUnlocked(side, card)) return false;
   return side.board.length < MAX_BOARD && canPay(side, card);
 }
 
@@ -2314,6 +2438,7 @@ function renderBoard(container, board, sideName) {
   const fragment = document.createDocumentFragment();
   for (const unit of board) {
     const node = renderCard(unit, { mode: "board", side: sideName });
+    node.dataset.uid = unit.uid;
     if (unit.attacking) node.classList.add("is-attacking");
     if (unit.blocking) node.classList.add("is-blocking");
     if (unit.tapped) node.classList.add("is-exhausted");
@@ -2322,64 +2447,285 @@ function renderBoard(container, board, sideName) {
 
     // Repères de combat : surbrillance des créatures prêtes à attaquer et
     // marqueur « mal d'invocation » pour celles qui ne peuvent pas encore.
-    const myCombat =
-      state.phase === PHASES.COMBAT && isCurrentSideHuman() && state.currentTurn === sideName;
-    if (myCombat && !unit.attacking && canAttack(unit)) node.classList.add("can-attack");
+    // Repères de combat Hearthstone : créatures prêtes, attaquant sélectionné,
+    // cibles légales et provocations adverses.
+    const myTurn = isCurrentSideHuman() && state.currentTurn === sideName && state.phase !== PHASES.OVER;
+    if (myTurn && canAttack(unit)) node.classList.add("can-attack");
+    if (unit.uid === state.selectedAttackerId) node.classList.add("is-attacking");
+
+    const selected = state.selectedAttackerId
+      ? getCurrentSide().board.find((entry) => entry.uid === state.selectedAttackerId)
+      : null;
+    if (selected && sideName !== state.currentTurn && isCurrentSideHuman()) {
+      if (canTargetUnit(selected, unit, getDefendingSide())) node.classList.add("is-target");
+      else node.classList.add("is-protected");
+    }
+
     const summoningSick =
       sideName === state.currentTurn &&
       !unit.tapped &&
       unit.stunTurns === 0 &&
       unit.createdTurn >= state.turn &&
       !hasKeyword(unit, "Célérité") &&
-      !hasKeyword(unit, "Défenseur");
+      !hasTaunt(unit);
     if (summoningSick) node.classList.add("is-summoning-sick");
-    if (hasKeyword(unit, "Défenseur")) node.classList.add("is-defender");
+    if (hasTaunt(unit)) node.classList.add("is-defender");
 
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => handleBoardCardClick(unit, sideName));
+    if (myTurn && canAttack(unit)) attachAttackDrag(node, unit);
     fragment.append(node);
   }
   container.append(fragment);
 }
 
-// Pendant les phases de combat, un clic sur une créature agit directement
-// (déclaration d'attaquant, choix ou annulation de bloqueur). Hors combat,
-// le clic ouvre la fiche détaillée de la carte.
+// Clic sur une créature du plateau (style Hearthstone) :
+// - une de tes créatures prêtes => on la sélectionne comme attaquante ;
+// - une créature adverse, quand un attaquant est sélectionné => attaque immédiate ;
+// - sinon => fiche détaillée de la carte.
 function handleBoardCardClick(unit, sideName) {
-  if (state.phase === PHASES.COMBAT && isCurrentSideHuman() && state.currentTurn === sideName) {
-    if (unit.attacking || canAttack(unit)) {
-      toggleAttacker(unit.uid);
+  const myTurn = isCurrentSideHuman() && state.phase !== PHASES.OVER;
+
+  if (myTurn && sideName === state.currentTurn) {
+    if (canAttack(unit) || unit.uid === state.selectedAttackerId) {
+      selectAttacker(unit.uid);
       return;
     }
-    // Créature qui ne peut pas attaquer : explique pourquoi plutôt que d'ouvrir la fiche.
-    const reason = unit.tapped || unit.stunTurns > 0
-      ? "est engagée et ne peut pas attaquer ce tour-ci."
-      : hasKeyword(unit, "Défenseur")
-        ? "a Défenseur : elle ne peut pas attaquer."
-        : "a le mal d'invocation 💤 : elle pourra attaquer au prochain tour.";
-    logEvent(`${unit.name} ${reason}`);
-    render();
+  }
+
+  if (myTurn && sideName !== state.currentTurn && state.selectedAttackerId) {
+    attackUnit(unit.uid);
     return;
   }
 
-  if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
-    if (getDefendingSide().side === sideName) {
-      if (unit.blocking) {
-        unassignBlocker(unit.uid);
-        return;
-      }
-      if (!unit.tapped) {
-        selectBlocker(unit.uid);
-        return;
-      }
-    }
-    if (getCurrentSide().side === sideName && state.selectedBlockerId && unit.attacking) {
-      assignBlocker(unit.uid);
-      return;
-    }
+  openCardDetail(unit, { zone: "board", side: sideName });
+}
+
+/* ===================================================================== */
+/* Glisser-déposer (souris/tactile) façon Hearthstone.                    */
+/*  - Carte de la main -> lâchée sur le champ de bataille = on la joue.    */
+/*  - Créature prête -> lâchée sur une cible = attaque avec flèche visée.  */
+/* Le clic reste actif : un simple clic (sans déplacement) ouvre la fiche. */
+/* ===================================================================== */
+const dragState = {
+  pending: false,
+  active: false,
+  mode: null, // "play" | "attack"
+  node: null,
+  card: null,
+  side: null,
+  uid: null,
+  startX: 0,
+  startY: 0,
+  ghost: null,
+  suppressClick: false
+};
+
+function attachPlayDrag(node, card, side) {
+  node.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 || event.pointerType === "mouse" && event.buttons !== 1) return;
+    if (!isPlayableFromHand(side, card)) return;
+    beginDragCandidate(event, { mode: "play", node, card, side });
+  });
+}
+
+function attachAttackDrag(node, unit) {
+  node.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) return;
+    if (!(isCurrentSideHuman() && state.phase !== PHASES.OVER && canAttack(unit))) return;
+    beginDragCandidate(event, { mode: "attack", node, uid: unit.uid });
+  });
+}
+
+function beginDragCandidate(event, spec) {
+  dragState.pending = true;
+  dragState.active = false;
+  dragState.mode = spec.mode;
+  dragState.node = spec.node;
+  dragState.card = spec.card || null;
+  dragState.side = spec.side || null;
+  dragState.uid = spec.uid || null;
+  dragState.startX = event.clientX;
+  dragState.startY = event.clientY;
+  dragState.suppressClick = false;
+}
+
+function onDragPointerMove(event) {
+  if (!dragState.pending) return;
+  if (!dragState.active) {
+    const moved = Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY);
+    if (moved < 9) return;
+    activateDrag(event);
+  }
+  updateDrag(event);
+}
+
+function activateDrag(event) {
+  dragState.active = true;
+  dragState.suppressClick = true;
+  document.body.classList.add("is-dragging");
+  ensureDragLayer();
+  if (dragState.node.setPointerCapture) {
+    try { dragState.node.setPointerCapture(event.pointerId); } catch {}
   }
 
-  openCardDetail(unit, { zone: "board", side: sideName });
+  if (dragState.mode === "play") {
+    const rect = dragState.node.getBoundingClientRect();
+    const ghost = dragState.node.cloneNode(true);
+    ghost.classList.add("drag-ghost");
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.height = `${rect.height}px`;
+    dragLayerEl.append(ghost);
+    dragState.ghost = ghost;
+    dragState.node.classList.add("is-drag-source");
+  } else {
+    dragArrowEl.hidden = false;
+    dragState.node.classList.add("is-attacking");
+  }
+}
+
+function updateDrag(event) {
+  if (dragState.mode === "play") {
+    if (dragState.ghost) {
+      dragState.ghost.style.left = `${event.clientX}px`;
+      dragState.ghost.style.top = `${event.clientY}px`;
+    }
+    const overField = isOverPlayField(event.clientX, event.clientY);
+    els.playerBoard?.closest(".mat-zone--field")?.classList.toggle("is-drop-target", overField);
+  } else {
+    const rect = dragState.node.getBoundingClientRect();
+    drawAimArrow(rect.left + rect.width / 2, rect.top + rect.height / 2, event.clientX, event.clientY);
+    highlightAttackTarget(event.clientX, event.clientY);
+  }
+}
+
+function onDragPointerUp(event) {
+  if (!dragState.pending) return;
+  const wasActive = dragState.active;
+  if (wasActive) {
+    if (dragState.mode === "play") finishPlayDrag(event);
+    else finishAttackDrag(event);
+  }
+  resetDrag();
+  if (dragState.suppressClick) {
+    // Empêche le clic « fiche » de suivre un vrai glisser.
+    const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
+    document.addEventListener("click", swallow, { capture: true, once: true });
+    setTimeout(() => document.removeEventListener("click", swallow, { capture: true }), 0);
+  }
+}
+
+function finishPlayDrag(event) {
+  if (isOverPlayField(event.clientX, event.clientY) && dragState.card && dragState.side) {
+    playCardFromHand(dragState.side, dragState.card.uid);
+  }
+}
+
+function finishAttackDrag(event) {
+  const target = attackTargetAt(event.clientX, event.clientY);
+  const attackerUid = dragState.uid;
+  if (!target) {
+    render();
+    return;
+  }
+  state.selectedAttackerId = attackerUid;
+  if (target.type === "hero") attackHero();
+  else attackUnit(target.uid);
+}
+
+function resetDrag() {
+  if (dragState.ghost) dragState.ghost.remove();
+  dragState.node?.classList.remove("is-drag-source");
+  document.body.classList.remove("is-dragging");
+  els.playerBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-target");
+  clearAttackTargetHighlight();
+  if (dragArrowEl) dragArrowEl.hidden = true;
+  dragState.pending = false;
+  dragState.active = false;
+  dragState.mode = null;
+  dragState.node = null;
+  dragState.card = null;
+  dragState.side = null;
+  dragState.uid = null;
+  dragState.ghost = null;
+}
+
+function isOverPlayField(x, y) {
+  const field = els.playerBoard?.closest(".mat-zone--field") || els.playerBoard;
+  if (!field) return false;
+  const r = field.getBoundingClientRect();
+  const pad = 30;
+  return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+}
+
+// Cible d'attaque sous le pointeur : créature adverse valide ou commandant.
+function attackTargetAt(x, y) {
+  const el = document.elementFromPoint(x, y);
+  if (!el) return null;
+  const attacker = getCurrentSide().board.find((u) => u.uid === dragState.uid);
+  if (!attacker) return null;
+  const defender = getDefendingSide();
+
+  const enemyCard = el.closest("#enemy-board .game-card, #player-board .game-card");
+  if (enemyCard && els.enemyBoard.contains(enemyCard)) {
+    const unit = defender.board.find((u) => u.uid === enemyCard.dataset.uid);
+    if (unit && canTargetUnit(attacker, unit, defender)) return { type: "unit", uid: unit.uid };
+    return null;
+  }
+  if (el.closest(".enemy-mat .mat-zone--commander") && canTargetHero(attacker, defender)) {
+    return { type: "hero" };
+  }
+  return null;
+}
+
+function highlightAttackTarget(x, y) {
+  clearAttackTargetHighlight();
+  const target = attackTargetAt(x, y);
+  if (!target) return;
+  if (target.type === "hero") {
+    els.enemyHero?.querySelector(".mat-zone--commander")?.classList.add("is-drop-target");
+  } else {
+    const node = els.enemyBoard.querySelector(`.game-card[data-uid="${cssAttr(target.uid)}"]`);
+    node?.classList.add("is-drop-hit");
+  }
+}
+
+function clearAttackTargetHighlight() {
+  els.enemyHero?.querySelector(".mat-zone--commander")?.classList.remove("is-drop-target");
+  for (const n of document.querySelectorAll(".game-card.is-drop-hit")) n.classList.remove("is-drop-hit");
+}
+
+function cssAttr(value) {
+  return String(value).replace(/["\\]/g, "\\$&");
+}
+
+/* --- Calque de glisser : fantôme de carte + flèche de visée --- */
+let dragLayerEl = null;
+let dragArrowEl = null;
+function ensureDragLayer() {
+  if (dragLayerEl) return;
+  dragLayerEl = document.createElement("div");
+  dragLayerEl.className = "drag-layer";
+  dragArrowEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  dragArrowEl.setAttribute("class", "drag-arrow");
+  dragArrowEl.hidden = true;
+  dragArrowEl.innerHTML = `
+    <defs>
+      <marker id="aim-head" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#ff5a4d" />
+      </marker>
+    </defs>
+    <path class="drag-arrow-line" marker-end="url(#aim-head)" />`;
+  dragLayerEl.append(dragArrowEl);
+  document.body.append(dragLayerEl);
+}
+
+function drawAimArrow(x1, y1, x2, y2) {
+  if (!dragArrowEl) return;
+  const path = dragArrowEl.querySelector(".drag-arrow-line");
+  const midX = (x1 + x2) / 2;
+  const midY = Math.min(y1, y2) - Math.abs(x2 - x1) * 0.12 - 30;
+  path.setAttribute("d", `M ${x1} ${y1} Q ${midX} ${midY} ${x2} ${y2}`);
 }
 
 function renderGallery() {
@@ -2460,6 +2806,18 @@ function renderDeckAudit() {
   `;
 }
 
+// Recadrage optionnel par carte (champ `art` dans les données) : certaines
+// illustrations larges sont mieux en `cover` avec une position de sujet précise.
+function artImgStyle(card) {
+  const art = card.art;
+  if (!art) return "";
+  const styles = [];
+  if (art.fit) styles.push(`object-fit:${art.fit}`);
+  if (art.position) styles.push(`object-position:${art.position}`);
+  if (styles.length === 0) return "";
+  return ` style="${styles.join(";")}"`;
+}
+
 function renderCard(card, options = {}) {
   const article = document.createElement("article");
   article.className = options.mode === "gallery" ? "gallery-card" : "game-card";
@@ -2503,7 +2861,7 @@ function renderCard(card, options = {}) {
       </div>
     </div>
     <div class="card-art">
-      <img src="${encodeURI(card.image)}" alt="${escapeHtml(card.name)}" loading="${loading}" decoding="async" />
+      <img src="${encodeURI(card.image)}" alt="${escapeHtml(card.name)}" loading="${loading}" decoding="async"${artImgStyle(card)} />
     </div>
     <span class="family-ribbon">${escapeHtml(card.family)}</span>
     <div class="card-scroll">
@@ -2583,6 +2941,47 @@ function renderLandPermanent(land) {
   return node;
 }
 
+// Panneau « Invocation divine » dans la fiche : condition + progression.
+function renderDivinePanel(card, context) {
+  let panel = document.querySelector("#divine-panel");
+  if (!card.divine) {
+    if (panel) panel.hidden = true;
+    return;
+  }
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "divine-panel";
+    panel.className = "divine-panel";
+    els.cardModalFlavor.after(panel);
+  }
+  panel.hidden = false;
+
+  const side = state.started ? getSide(context?.side || getVisibleHandSide().side) : null;
+  const unlocked = side ? isDivineUnlocked(side, card) : false;
+  const stars = "★".repeat(card.divine.difficulty || 1) + "☆".repeat(5 - (card.divine.difficulty || 1));
+
+  const clauses = (card.divine.any || [])
+    .map((clause, index) => {
+      const parts = side ? describeDivineClause(side, clause) : [];
+      const items = parts
+        .map((part) => `<li class="${part.done ? "is-done" : "is-todo"}">${part.done ? "✔" : "✖"} ${escapeHtml(part.text)}</li>`)
+        .join("");
+      const label = (card.divine.any.length > 1 ? `Voie ${index + 1}` : "Condition");
+      return `<div class="divine-clause"><strong>${label}</strong><ul>${items}</ul></div>`;
+    })
+    .join('<p class="divine-or">— ou —</p>');
+
+  panel.innerHTML = `
+    <p class="divine-head">
+      <span class="divine-title">🔱 Invocation divine</span>
+      <span class="divine-stars" title="Difficulté">${stars}</span>
+      <span class="divine-state ${unlocked ? "is-unlocked" : "is-locked"}">${unlocked ? "Débloquée" : "Verrouillée"}</span>
+    </p>
+    <p class="divine-text">${escapeHtml(card.divine.text || "")}</p>
+    ${side ? clauses : ""}
+  `;
+}
+
 function openCardDetail(card, context) {
   if (!els.cardModal) return;
   hideCardPreview();
@@ -2597,6 +2996,7 @@ function openCardDetail(card, context) {
   els.cardModalAbility.textContent = `${card.abilityName} - ${card.abilityText}`;
   els.cardModalFlavor.textContent = card.flavor || "";
   els.cardModalFlavor.hidden = !card.flavor;
+  renderDivinePanel(card, context);
 
   const action = getDetailAction(card, context);
   els.cardModalAction.textContent = action.label;
@@ -2671,30 +3071,24 @@ function getDetailAction(card, context) {
     const unit = side.board.find((candidate) => candidate.uid === card.uid);
     if (!unit) return { label: "Carte absente du plateau", enabled: false, run: null };
 
-    if (state.currentTurn === side.side && state.phase === PHASES.COMBAT && isCurrentSideHuman()) {
+    // Ton côté : choisir la créature comme attaquante.
+    if (state.currentTurn === side.side && isCurrentSideHuman() && state.phase !== PHASES.OVER) {
+      const selected = state.selectedAttackerId === unit.uid;
       return {
-        label: unit.attacking ? "Retirer des attaquants" : "Déclarer attaquant",
-        enabled: unit.attacking || canAttack(unit),
-        run: () => toggleAttacker(unit.uid)
+        label: selected ? "Annuler l'attaque" : "Attaquer avec cette créature",
+        enabled: selected || canAttack(unit),
+        run: () => selectAttacker(unit.uid)
       };
     }
 
-    if (state.phase === PHASES.BLOCK && getDefendingSide().side === side.side && isDefendingSideHuman()) {
-      const selected = state.selectedBlockerId === unit.uid;
+    // Côté adverse : cible d'un attaquant déjà sélectionné.
+    if (state.selectedAttackerId && isCurrentSideHuman() && state.phase !== PHASES.OVER) {
+      const attacker = getCurrentSide().board.find((candidate) => candidate.uid === state.selectedAttackerId);
+      const reachable = Boolean(attacker && canTargetUnit(attacker, unit, getDefendingSide()));
       return {
-        label: selected ? "Annuler le bloqueur" : "Choisir comme bloqueur",
-        enabled: selected || (!unit.tapped && !unit.blocking),
-        run: () => selectBlocker(unit.uid)
-      };
-    }
-
-    if (state.phase === PHASES.BLOCK && getCurrentSide().side === side.side && isDefendingSideHuman()) {
-      const blocker = getDefendingSide().board.find((candidate) => candidate.uid === state.selectedBlockerId);
-      const canAssign = Boolean(unit.attacking && blocker && canBlock(unit, blocker));
-      return {
-        label: "Bloquer cet attaquant",
-        enabled: canAssign,
-        run: () => assignBlocker(card.uid)
+        label: reachable ? "Frapper cette créature" : "Protégée par une Provocation",
+        enabled: reachable,
+        run: () => attackUnit(unit.uid)
       };
     }
   }
@@ -2719,41 +3113,58 @@ function availableMana(side) {
   return side.lands.filter((land) => !land.tapped).length;
 }
 
+// Mana disponible détaillé par couleur, ex. « 2V 1B » : indispensable depuis
+// que chaque carte exige des terrains de sa propre couleur.
+const MANA_INITIALS = { Blanc: "B", Bleu: "U", Noir: "N", Rouge: "R", Vert: "V" };
+
+function describeManaPool(side) {
+  const free = side.lands.filter((land) => !land.tapped);
+  if (side.lands.length === 0) return "0";
+  const counts = new Map();
+  for (const land of free) counts.set(land.family, (counts.get(land.family) || 0) + 1);
+  if (counts.size === 0) return `0/${side.lands.length}`;
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([family, n]) => `${n}${MANA_INITIALS[family] || family[0]}`)
+    .join(" ");
+}
+
 function phaseLabel() {
   if (state.phase === PHASES.OVER) return "Partie terminée";
-  if (state.phase === PHASES.BLOCK) return `Tour ${state.turn} · ${sideDisplayName(getDefendingSide().side)} bloque`;
   if (state.currentTurn === "enemy" && state.mode === "pve") return `Tour ${state.turn} · Tour adverse`;
-  if (state.phase === PHASES.MAIN_1) return `Tour ${state.turn} · Phase principale 1`;
-  if (state.phase === PHASES.COMBAT) return `Tour ${state.turn} · Combat`;
-  if (state.phase === PHASES.MAIN_2) return `Tour ${state.turn} · Phase principale 2`;
-  return `Tour de ${sideDisplayName(state.currentTurn)}`;
+  return `Tour ${state.turn} · ${sideDisplayName(state.currentTurn)}`;
 }
 
 function getActionHint() {
   if (state.phase === PHASES.OVER) return "La partie est terminée. Lance une nouvelle partie.";
   if (state.mode === "online" && !isLocalOnlineController()) {
-    if (state.phase === PHASES.BLOCK) return `${sideDisplayName(getDefendingSide().side)} choisit ses bloqueurs sur son écran.`;
     return `${sideDisplayName(state.currentTurn)} joue sur son écran.`;
   }
-  if (state.phase === PHASES.BLOCK && isDefendingSideHuman()) {
-    if (state.selectedBlockerId) return "Clique un attaquant adverse pour lui assigner ton bloqueur.";
-    return "Clique une créature dégagée pour la choisir, puis un attaquant adverse pour bloquer. Reclique un bloqueur pour annuler.";
-  }
   if (!isCurrentSideHuman()) return "L'adversaire joue son tour.";
-  if (state.phase === PHASES.COMBAT) {
-    const ready = getCurrentSide().board.filter((unit) => unit.attacking || canAttack(unit));
-    const chosen = getCurrentSide().board.filter((unit) => unit.attacking).length;
-    if (ready.length === 0) return "Aucune créature prête à attaquer ce tour-ci (mal d'invocation 💤). Clique « Passer le combat ».";
-    if (chosen > 0) return `${chosen} attaquant(s) choisi(s). Clique « Déclarer les attaquants » pour frapper le commandant adverse.`;
-    return "Clique les créatures en surbrillance verte ⚔ pour les envoyer à l'assaut du commandant adverse, puis « Déclarer les attaquants ».";
+
+  const me = getCurrentSide();
+  const foe = getDefendingSide();
+  const attacker = state.selectedAttackerId
+    ? me.board.find((unit) => unit.uid === state.selectedAttackerId)
+    : null;
+
+  if (attacker) {
+    const guards = tauntGuards(foe);
+    if (guards.length > 0 && !hasKeyword(attacker, "Vol")) {
+      return `${attacker.name} est prête : frappe une créature avec Défenseur 🛡 (elles protègent le commandant).`;
+    }
+    return `${attacker.name} est prête : clique une créature adverse ou le commandant pour frapper.`;
   }
-  const canAttackNow = state.started && getCurrentSide().board.some((unit) => canAttack(unit));
-  if (state.phase === PHASES.MAIN_2) {
-    if (canAttackNow) return "Tu as déjà combattu. Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
-    return "Tu peux encore jouer un terrain ou des créatures avant de finir le tour.";
+
+  const ready = me.board.filter((unit) => canAttack(unit));
+  const playable = me.hand.filter((card) => isPlayableFromHand(me, card)).length;
+  if (ready.length > 0) {
+    return `Clique une créature en surbrillance verte ⚔ (${ready.length} prête${ready.length > 1 ? "s" : ""}) pour attaquer, puis sa cible.`;
   }
-  if (canAttackNow) return "Pose tes cartes, puis clique « Phase suivante » pour passer au combat et attaquer le commandant adverse.";
-  return "Pose un terrain, puis lance tes créatures avec le mana de tes terrains.";
+  if (playable > 0) {
+    return `${playable} carte(s) jouable(s) en surbrillance dans ta main. Pose un terrain, puis lance tes cartes.`;
+  }
+  return "Rien de jouable : clique « Fin du tour ».";
 }
 
 function renderLog() {
@@ -2804,7 +3215,6 @@ function preloadImages() {
 
 function getVisibleHandSide() {
   if (state.mode === "online") return getSide(state.network.slot || "player");
-  if (state.mode === "pvp" && state.phase === PHASES.BLOCK) return getDefendingSide();
   if (state.mode === "pvp") return getCurrentSide();
   return state.player;
 }

@@ -1070,6 +1070,7 @@ a:hover {
   position: absolute;
   top: 12px;
   right: 12px;
+  z-index: 5;
   display: grid;
   width: 40px;
   height: 40px;
@@ -3195,8 +3196,8 @@ button.mat-zone--exile:focus-visible {
 /* ===================================================================== */
 .game-card.can-attack .card-content {
   box-shadow:
-    0 0 0 2px #74e69a,
-    0 0 16px rgba(116, 230, 154, 0.75),
+    0 0 0 1px #74e69a,
+    0 0 8px rgba(116, 230, 154, 0.38),
     0 12px 26px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   animation: ready-attack-pulse 1.4s ease-in-out infinite;
@@ -4002,4 +4003,522 @@ button.mat-zone--exile:focus-visible {
   .board-stage::after {
     display: none;
   }
+}
+
+/* ===================================================================== */
+/* Combat façon Hearthstone : cartes jouables, attaquant, cibles.         */
+/* ===================================================================== */
+
+/* Carte jouable dans la main : halo doré + légère montée */
+.hand-row .game-card.is-playable .card-content {
+  box-shadow:
+    0 0 0 2px #ffd980,
+    0 0 18px rgba(255, 217, 128, 0.75),
+    0 12px 26px rgba(0, 0, 0, 0.5);
+  animation: playable-glow 1.8s ease-in-out infinite;
+}
+
+.hand-row .game-card.is-playable {
+  translate: 0 -10px;
+}
+
+@keyframes playable-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.12) saturate(1.06); }
+}
+
+.hand-row .game-card.is-unplayable {
+  filter: grayscale(0.55) brightness(0.62);
+}
+
+/* Attaquant sélectionné */
+.game-card.is-attacking .card-content {
+  box-shadow:
+    0 0 0 1.5px #ffe27a,
+    0 0 12px rgba(255, 200, 90, 0.45),
+    0 12px 26px rgba(0, 0, 0, 0.55);
+}
+
+.game-card.is-attacking {
+  translate: 0 -8px;
+  z-index: 30;
+}
+
+/* Cible légale quand un attaquant est choisi */
+.game-card.is-target .card-content {
+  box-shadow:
+    0 0 0 1px #ff7a6b,
+    0 0 10px rgba(255, 122, 107, 0.42),
+    0 12px 26px rgba(0, 0, 0, 0.5);
+  cursor: crosshair;
+}
+
+.game-card.is-target::before {
+  content: "🎯";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  z-index: 9;
+  font-size: 14px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 1px 2px #000);
+  pointer-events: none;
+}
+
+/* Créature protégée par une Provocation : non ciblable */
+.game-card.is-protected {
+  filter: grayscale(0.4) brightness(0.7);
+}
+
+/* Provocation (Défenseur) : bouclier visible */
+.game-card.is-defender::after {
+  content: "🛡";
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  z-index: 9;
+  font-size: 12px;
+  filter: drop-shadow(0 1px 2px #000);
+  pointer-events: none;
+}
+
+/* Commandant adverse ciblable */
+.enemy-mat .mat-zone--commander {
+  cursor: default;
+}
+
+body.targeting .enemy-mat .mat-zone--commander {
+  cursor: crosshair;
+  outline: 2px solid rgba(255, 122, 107, 0.9);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 24px rgba(255, 122, 107, 0.45);
+  border-radius: 6px;
+}
+
+/* ===================================================================== */
+/* Invocations divines : dieux verrouillés et panneau de condition.       */
+/* ===================================================================== */
+.game-card.is-divine-locked .card-content {
+  box-shadow:
+    0 0 0 1px rgba(150, 120, 220, 0.85),
+    0 0 8px rgba(140, 110, 220, 0.28),
+    0 12px 26px rgba(0, 0, 0, 0.5);
+}
+
+.game-card.is-divine-locked::after {
+  content: "🔱🔒";
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  z-index: 10;
+  font-size: 11px;
+  filter: drop-shadow(0 1px 2px #000);
+  pointer-events: none;
+}
+
+.divine-panel {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  border: 1px solid rgba(178, 148, 255, 0.45);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(52, 34, 92, 0.55), rgba(20, 14, 34, 0.6));
+}
+
+.divine-panel[hidden] {
+  display: none;
+}
+
+.divine-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.divine-title {
+  color: #d9c6ff;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.divine-stars {
+  color: #ffd980;
+  letter-spacing: 2px;
+}
+
+.divine-state {
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.divine-state.is-locked {
+  color: #ffd9d2;
+  background: rgba(150, 40, 40, 0.6);
+}
+
+.divine-state.is-unlocked {
+  color: #ddffe6;
+  background: rgba(40, 140, 70, 0.6);
+}
+
+.divine-text {
+  margin: 0;
+  color: rgba(240, 230, 255, 0.82);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.divine-clause {
+  border-top: 1px solid rgba(178, 148, 255, 0.22);
+  padding-top: 6px;
+}
+
+.divine-clause strong {
+  color: #c9b3ff;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.divine-clause ul {
+  margin: 4px 0 0;
+  padding-left: 4px;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.divine-clause li {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.divine-clause li.is-done {
+  color: #a9f0c0;
+}
+
+.divine-clause li.is-todo {
+  color: rgba(255, 225, 225, 0.72);
+}
+
+.divine-or {
+  margin: 0;
+  color: rgba(210, 190, 255, 0.6);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ===================================================================== */
+/* REFONTE DES CARTES : tout est proportionnel à la largeur de la carte   */
+/* (unités cqw), donc rien n'est jamais coupé, quelle que soit la taille. */
+/* ===================================================================== */
+.game-card .card-content,
+.gallery-card .card-content {
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* --- Titre : deux lignes max, place réservée, ne mord plus sur le type --- */
+.card-title-lockup {
+  top: 6.4%;
+  right: 13%;
+  left: 13%;
+  height: 11.5%;
+  display: grid;
+  align-content: center;
+}
+
+.card-name,
+.compact .card-name,
+.gallery-card .card-name,
+.card-preview .card-name,
+.card-modal-card .card-name {
+  font-size: 6.2cqw;
+  line-height: 1.04;
+  -webkit-line-clamp: 2;
+  text-shadow: 0 0.5cqw 1cqw rgba(8, 4, 16, 0.95);
+}
+
+.card-type {
+  top: calc(100% + 0.6cqw);
+  right: -9%;
+  left: -9%;
+  font-size: 3.5cqw;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0.4cqw 0.8cqw rgba(8, 4, 16, 0.95);
+}
+
+/* --- Pastilles : coût, couleur, force et vie --- */
+.cost-badge {
+  top: 19.4%;
+  left: 9.4%;
+  width: 14.5%;
+  font-size: 6.6cqw;
+}
+
+.family-ribbon {
+  top: 19.6%;
+  right: 9%;
+  width: 15%;
+  padding: 0 1cqw;
+  font-size: 3.4cqw;
+}
+
+.stat-badge {
+  bottom: 2.4%;
+  width: 14%;
+  font-size: 7cqw;
+}
+
+.attack-stat { left: 6.6%; }
+.life-stat { right: 6.6%; }
+.mana-stat,
+.spell-stat { left: 43%; }
+
+/* --- Illustration : entière (jamais rognée), centrée dans son cadre --- */
+.card-art,
+.compact .card-art {
+  top: 25.5%;
+  left: 13.5%;
+  width: 73%;
+  aspect-ratio: 4 / 3;
+  border-radius: 7%;
+}
+
+.card-art img,
+.game-card:hover .card-art img,
+.gallery-card:hover .card-art img,
+.game-card:focus-within .card-art img,
+.card-modal-card .card-art img {
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+  transition: none;
+}
+
+/* --- Encart de texte : remonté pour dégager les orbes, texte lisible --- */
+.card-scroll {
+  top: 63.5%;
+  right: 11.5%;
+  bottom: 13.5%;
+  left: 11.5%;
+  gap: 1cqw;
+  padding: 2cqw 2.4cqw;
+  border-radius: 1.6cqw;
+}
+
+.card-ability {
+  font-size: 4.4cqw;
+  line-height: 1.22;
+  -webkit-line-clamp: 5;
+}
+
+.card-keywords {
+  gap: 1cqw;
+  max-height: none;
+}
+
+.tag {
+  min-height: 0;
+  padding: 0.5cqw 1.4cqw;
+  border-radius: 1.2cqw;
+  font-size: 3.4cqw;
+  line-height: 1.5;
+}
+
+/* Sur les toutes petites cartes du plateau, on masque le texte détaillé
+   (illisible de toute façon) et on garde nom + illustration + stats. */
+@container card (max-width: 96px) {
+  .card-scroll { display: none; }
+  .card-art { top: 28%; width: 76%; left: 12%; }
+}
+
+/* ===================================================================== */
+/* Surbrillance « jouable » : nette, à la couleur de la carte, sans flou  */
+/* ===================================================================== */
+.hand-row .game-card.is-playable .card-content,
+.game-card.is-playable .card-content {
+  box-shadow:
+    0 0 0 0.3cqw color-mix(in srgb, var(--family-accent) 92%, #fff),
+    0 0 2cqw color-mix(in srgb, var(--family-accent) 35%, transparent),
+    0 1.6cqw 3cqw rgba(0, 0, 0, 0.5);
+  animation: none;
+}
+
+/* On retire le filtre qui délavait/floutait les cartes */
+.hand-row .game-card.is-playable {
+  filter: none;
+  translate: 0 -10px;
+}
+
+.hand-row .game-card.is-unplayable {
+  filter: saturate(0.35) brightness(0.6);
+}
+
+.hand-row .game-card.is-playable::after {
+  content: "";
+  position: absolute;
+  inset: -1%;
+  z-index: -1;
+  border-radius: 6%;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    color-mix(in srgb, var(--family-accent) 28%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* ===================================================================== */
+/* Tapis agrandis : on récupère de la hauteur sur les marges, la barre    */
+/* du haut et la ligne centrale, puis on la rend aux deux tapis.          */
+/* ===================================================================== */
+.app-shell {
+  gap: 5px;
+  padding: 5px 10px;
+}
+
+.topbar {
+  padding: 3px 12px;
+}
+
+.topbar h1 {
+  font-size: clamp(17px, 2vw, 24px);
+}
+
+.topbar .primary-button,
+.topbar .ghost-button {
+  min-height: 32px;
+  padding: 0 12px;
+}
+
+.game-layout {
+  gap: 8px;
+}
+
+.arena {
+  gap: 5px;
+  padding: 5px;
+}
+
+.board-stage {
+  gap: 4px;
+  padding: 4px;
+}
+
+.centerline {
+  padding: 1px 10px;
+}
+
+.centerline .primary-button,
+.centerline .danger-button {
+  min-height: 30px;
+}
+
+.turn-pill {
+  font-size: 12px;
+}
+
+/* Logo compacté : la hauteur récupérée profite aux tapis */
+.topbar-logo {
+  height: clamp(30px, 3.4vw, 40px);
+}
+
+/* ===================================================================== */
+/* Glisser-déposer & animations de combat (style Hearthstone).            */
+/* ===================================================================== */
+body.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.drag-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.drag-ghost {
+  position: fixed;
+  z-index: 310;
+  margin: 0 !important;
+  translate: -50% -50% !important;
+  transform: rotate(0deg) scale(1.06) !important;
+  transition: none !important;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.65));
+  pointer-events: none;
+}
+
+.game-card.is-drag-source {
+  opacity: 0.28;
+}
+
+.drag-arrow {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.drag-arrow-line {
+  fill: none;
+  stroke: #ff5a4d;
+  stroke-width: 5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+/* Zone de dépôt (champ de bataille) mise en avant pendant un glisser */
+.mat-zone--field.is-drop-target {
+  outline: 3px dashed rgba(116, 230, 154, 0.9);
+  outline-offset: -6px;
+  background: rgba(116, 230, 154, 0.1);
+  border-radius: 8px;
+}
+
+/* Cibles d'attaque survolées pendant le glisser */
+.game-card.is-drop-hit .card-content {
+  box-shadow:
+    0 0 0 3px #ff5a4d,
+    0 0 22px rgba(255, 90, 77, 0.9) !important;
+}
+
+.mat-zone--commander.is-drop-target {
+  outline: 3px solid #ff5a4d;
+  outline-offset: -4px;
+  box-shadow: inset 0 0 28px rgba(255, 90, 77, 0.55);
+  border-radius: 6px;
+}
+
+/* Charge de l'attaquant */
+.game-card.is-lunging {
+  z-index: 200 !important;
+  animation: card-lunge 300ms ease-in-out;
+}
+
+@keyframes card-lunge {
+  0% { transform: translate(0, 0) scale(1); }
+  55% { transform: translate(var(--lunge-x, 0), var(--lunge-y, 0)) scale(1.12); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* Secousse d'impact sur le tapis touché */
+.mat-side.is-hit-shake {
+  animation: mat-shake 320ms ease;
+}
+
+@keyframes mat-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 3px); }
+  40% { transform: translate(6px, -3px); }
+  60% { transform: translate(-4px, 2px); }
+  80% { transform: translate(4px, -2px); }
 }

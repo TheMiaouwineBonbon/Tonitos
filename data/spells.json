@@ -8,7 +8,10 @@
     "type": "Rituel - Sort offensif",
     "cost": 5,
     "slot": "offense",
-    "keywords": ["Vague", "Zone"],
+    "keywords": [
+      "Vague",
+      "Zone"
+    ],
     "abilityName": "Déferlement divin",
     "abilityText": "Inflige 2 blessures à toutes les créatures adverses.",
     "flavor": "Quand Umi élève la mer, même les remparts apprennent à fuir.",
@@ -18,7 +21,11 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "effect": "dealAllEnemies2"
+    "effect": "dealAllEnemies2",
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
   },
   {
     "id": "malediction-ulgod",
@@ -29,7 +36,10 @@
     "type": "Rituel - Sort offensif",
     "cost": 4,
     "slot": "offense",
-    "keywords": ["Feu", "Zone"],
+    "keywords": [
+      "Feu",
+      "Zone"
+    ],
     "abilityName": "Météore infernal",
     "abilityText": "Inflige 2 blessures à toutes les créatures adverses.",
     "flavor": "Ulgod ne maudit pas à voix basse.",
@@ -50,7 +60,10 @@
     "type": "Éphémère - Soin",
     "cost": 4,
     "slot": "defense",
-    "keywords": ["Soin", "Grâce"],
+    "keywords": [
+      "Soin",
+      "Grâce"
+    ],
     "abilityName": "Lumière miséricordieuse",
     "abilityText": "Restaure tous les points de vie de tes créatures.",
     "flavor": "La cité tombe ; Aldia choisit pourtant qui doit se relever.",
@@ -71,7 +84,10 @@
     "type": "Enchantement - Amélioration",
     "cost": 3,
     "slot": "upgrade",
-    "keywords": ["Bénédiction", "Vaillance"],
+    "keywords": [
+      "Bénédiction",
+      "Vaillance"
+    ],
     "abilityName": "Armes consacrées",
     "abilityText": "Tes créatures gagnent +1/+1.",
     "flavor": "La lumière ne choisit pas le héros ; elle révèle celui qui se lève.",
@@ -92,7 +108,10 @@
     "type": "Rituel - Sort offensif",
     "cost": 5,
     "slot": "offense",
-    "keywords": ["Nature", "Vengeance"],
+    "keywords": [
+      "Nature",
+      "Vengeance"
+    ],
     "abilityName": "Révolte des anciens",
     "abilityText": "Tes créatures gagnent +1 force. Inflige 3 blessures à la créature adverse la plus puissante.",
     "flavor": "Quand Uldrid se souvient, les racines arrachent jusqu'aux fondations.",
@@ -113,7 +132,10 @@
     "type": "Artefact - Pioche",
     "cost": 2,
     "slot": "draw",
-    "keywords": ["Artefact", "Pioche"],
+    "keywords": [
+      "Artefact",
+      "Pioche"
+    ],
     "abilityName": "Vision gravée",
     "abilityText": "Pioche une carte et gagne 1 point de vie.",
     "flavor": "La pierre ne parle pas. Elle insiste.",
@@ -124,5 +146,265 @@
       "deep": "#17140f"
     },
     "effect": "drawOneGainOne"
+  },
+  {
+    "id": "sceptre-rena",
+    "kind": "spell",
+    "name": "Sceptre de Rena",
+    "subtitle": "Artefact de la sylve",
+    "family": "Vert",
+    "type": "Artefact - Invocation",
+    "cost": 3,
+    "slot": "upgrade",
+    "keywords": [
+      "Artefact",
+      "Nature"
+    ],
+    "abilityName": "Appel de la meute",
+    "abilityText": "Crée un Gardien 2/2 avec portée.",
+    "flavor": "Le bois se souvient de chaque main qui l'a tenu.",
+    "image": "Images/Artefact - Sceptre de Rena.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "createGuardian"
+  },
+  {
+    "id": "confiance-aldia",
+    "kind": "spell",
+    "name": "Confiance d'Aldia",
+    "subtitle": "Serment de lumière",
+    "family": "Blanc",
+    "type": "Enchantement - Amélioration",
+    "cost": 2,
+    "slot": "defense",
+    "keywords": [
+      "Bénédiction",
+      "Garde"
+    ],
+    "abilityName": "Foi inébranlable",
+    "abilityText": "Tes créatures gagnent +0/+2.",
+    "flavor": "Elle ne promet pas la victoire, seulement de ne pas lâcher.",
+    "image": "Images/Sort - Confiance d'Aldia.PNG",
+    "palette": {
+      "primary": "#d2b96d",
+      "secondary": "#fff1b5",
+      "deep": "#3d3520"
+    },
+    "effect": "toughTeam"
+  },
+  {
+    "id": "protection-umi",
+    "kind": "spell",
+    "name": "Protection d'Umi",
+    "subtitle": "Rempart des marées",
+    "family": "Bleu",
+    "type": "Éphémère - Sort défensif",
+    "cost": 4,
+    "slot": "defense",
+    "keywords": [
+      "Gel",
+      "Zone"
+    ],
+    "abilityName": "Étreinte des eaux",
+    "abilityText": "Engage toutes les créatures adverses.",
+    "flavor": "La mer ne repousse pas l'assaut : elle le retient.",
+    "image": "Images/Sort - Protection d'UMI.PNG",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    },
+    "effect": "freezeAll"
+  },
+  {
+    "id": "courroux-ulgod",
+    "kind": "spell",
+    "name": "Courroux d'Ulgod",
+    "subtitle": "Fureur de la fournaise",
+    "family": "Rouge",
+    "type": "Rituel - Sort offensif",
+    "cost": 3,
+    "slot": "offense",
+    "keywords": [
+      "Feu",
+      "Foudre"
+    ],
+    "abilityName": "Trait de braise",
+    "abilityText": "Inflige 3 blessures au héros adverse.",
+    "flavor": "Sa colère ne cherche pas de cible : elle en trouve toujours une.",
+    "image": "Images/Sort - Couroux d'Ulgod .PNG",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "dealHero3"
+  },
+  {
+    "id": "retour-vie",
+    "kind": "spell",
+    "name": "Retour à la vie",
+    "subtitle": "Pacte de réanimation",
+    "family": "Noir",
+    "type": "Rituel - Réanimation",
+    "cost": 5,
+    "slot": "upgrade",
+    "keywords": [
+      "Pacte",
+      "Réanimation"
+    ],
+    "abilityName": "Rappel des tombes",
+    "abilityText": "Ramène la créature la plus puissante de ton cimetière sur le champ de bataille.",
+    "flavor": "La mort est une porte, pas un mur.",
+    "image": "Images/Sort - Retour à la vie.PNG",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    },
+    "effect": "reanimate"
+  },
+  {
+    "id": "abysses",
+    "kind": "spell",
+    "name": "Abysses",
+    "subtitle": "Silence sous les eaux",
+    "family": "Bleu",
+    "type": "Rituel - Sort de contrôle",
+    "cost": 4,
+    "slot": "offense",
+    "keywords": [
+      "Gel",
+      "Profondeurs"
+    ],
+    "abilityName": "Descente sans fin",
+    "abilityText": "Engage jusqu'à deux créatures adverses. Elles ne se dégagent pas au prochain tour.",
+    "flavor": "La surface devient un souvenir bien avant que la lumière disparaisse.",
+    "image": "Images/Sort - Abysses.jpg",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    },
+    "effect": "freezeTwo",
+    "art": {
+      "fit": "cover",
+      "position": "50% 38%"
+    }
+  },
+  {
+    "id": "amour-rena",
+    "kind": "spell",
+    "name": "Amour de Rena",
+    "subtitle": "Grâce de la terre nourricière",
+    "family": "Vert",
+    "type": "Éphémère - Soin",
+    "cost": 3,
+    "slot": "defense",
+    "keywords": [
+      "Nature",
+      "Soin"
+    ],
+    "abilityName": "Étreinte du vivant",
+    "abilityText": "Tu gagnes 4 points de vie.",
+    "flavor": "Sous son regard, chaque blessure se souvient du printemps.",
+    "image": "Images/Sort - Amour de Rena.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "gainLife4",
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "repos-heros",
+    "kind": "spell",
+    "name": "Repos du héros",
+    "subtitle": "Halte au bord des eaux",
+    "family": "Blanc",
+    "type": "Éphémère - Soin et pioche",
+    "cost": 2,
+    "slot": "draw",
+    "keywords": [
+      "Repos",
+      "Pioche"
+    ],
+    "abilityName": "Souffle retrouvé",
+    "abilityText": "Tu gagnes 3 points de vie et tu pioches une carte.",
+    "flavor": "Même les légendes posent leur épée avant de reprendre la route.",
+    "image": "Images/Sort - Repos du héro.jpg",
+    "palette": {
+      "primary": "#d2b96d",
+      "secondary": "#fff1b5",
+      "deep": "#3d3520"
+    },
+    "effect": "restHero",
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "reincarnation-divine",
+    "kind": "spell",
+    "name": "Réincarnation divine",
+    "subtitle": "Retour des élus",
+    "family": "Noir",
+    "type": "Rituel - Réanimation",
+    "cost": 7,
+    "slot": "upgrade",
+    "keywords": [
+      "Réanimation",
+      "Divin"
+    ],
+    "abilityName": "Seconde destinée",
+    "abilityText": "Ramène jusqu'à deux créatures parmi les plus puissantes de ton cimetière sur le champ de bataille.",
+    "flavor": "La mort rend parfois ce qu'elle n'aurait jamais dû prendre.",
+    "image": "Images/Sort - Réincarnation Divine.jpg",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    },
+    "effect": "reanimateTwo",
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "damnation",
+    "kind": "spell",
+    "name": "Damnation",
+    "subtitle": "Sentence de lave",
+    "family": "Rouge",
+    "type": "Rituel - Sort offensif",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Feu",
+      "Zone"
+    ],
+    "abilityName": "Terre condamnée",
+    "abilityText": "Inflige 3 blessures à toutes les créatures adverses.",
+    "flavor": "La fournaise ne demande pas qui mérite son jugement.",
+    "image": "Images/Sort- Damnation.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "dealAllEnemies3",
+    "art": {
+      "fit": "cover",
+      "position": "50% 44%"
+    }
   }
 ]

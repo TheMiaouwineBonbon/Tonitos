@@ -24,8 +24,8 @@ petit serveur statique et l'API du salon multijoueur.
 Depuis le menu de lancement (nom du jeu : **Spellaho**) :
 
 - **1 joueur contre IA** : tu joues le côté joueur, l'IA joue l'adversaire.
-- **2 joueurs local** : les deux camps se jouent sur le même écran (la main affichée
-  suit le joueur actif / le défenseur pendant les blocages).
+- **2 joueurs local** : les deux camps se jouent sur le même écran et la main
+  affichée suit automatiquement le joueur actif.
 - **2 joueurs en ligne** : les deux joueurs saisissent le **code 1234**. Le serveur
   local garde le salon en mémoire et l'état se synchronise par polling (~1 s). Sur
   un hébergement statique comme GitHub Pages, Spellaho bascule automatiquement sur
@@ -36,23 +36,47 @@ Depuis le menu de lancement (nom du jeu : **Spellaho**) :
 Chaque joueur choisit son **nom**, son **portrait/avatar** (affiché dans la zone
 Commandant du tapis, sans activer les règles Commander) et son **deck** bicolore.
 
-## Règles de combat
+## Contrôles (glisser-déposer)
 
-- Pendant la phase de combat, **clique directement tes créatures** pour les déclarer
-  attaquantes ; pendant le blocage, clique un bloqueur puis un attaquant (reclique un
-  bloqueur pour annuler son blocage).
-- **Plusieurs bloqueurs** peuvent se liguer contre un même attaquant : l'attaquant
-  répartit ses blessures dans l'ordre des blocages, tous les bloqueurs ripostent.
-- Si le défenseur n'a **aucun bloqueur légal**, le combat se résout automatiquement.
-- Mots-clés gérés : Vol, Portée, Vigilance, Célérité, Défenseur, Contact mortel,
-  Lien de vie.
+- **Jouer une carte** : glisse-la de ta main vers le **champ de bataille** (il
+  s'illumine en vert). Un simple clic ouvre toujours la fiche détaillée.
+- **Attaquer** : glisse une de tes créatures prêtes (⚔) vers sa cible — une
+  créature adverse ou le **commandant**. Une flèche de visée rouge suit le
+  curseur et la cible valide s'illumine. Le clic (créature puis cible) reste
+  disponible en alternative.
+- Chaque attaque déclenche une **charge de l'attaquant** et une **secousse
+  d'impact** ; l'IA attaque de la même manière, une créature à la fois.
+
+## Cadrage des illustrations
+
+Certaines illustrations larges (16:9) étaient cernées de bandes noires dans le
+cadre 4:3. Un champ optionnel `art` par carte (`{ "fit": "cover", "position":
+"50% 32%" }` dans `data/cards.json`) permet de remplir le cadre en gardant le
+sujet bien centré, sans toucher aux autres cartes.
+
+## Règles de combat (style Hearthstone)
+
+- **Plus de phase de combat ni de bloqueurs.** Pendant tout ton tour tu poses tes
+  cartes et tu attaques librement, dans l'ordre que tu veux, puis « Fin du tour ».
+- **Attaquer** : clique une de tes créatures prêtes (surbrillance verte ⚔), puis
+  clique sa cible — une créature adverse ou directement le **commandant**. La
+  résolution est immédiate : l'attaquant frappe, la cible riposte.
+- Une créature ne peut attaquer qu'une fois par tour. **Vigilance** lui évite de
+  s'engager après l'attaque, mais ne lui accorde pas d'attaque supplémentaire.
+- **Mal d'invocation 💤** : une créature ne peut pas attaquer le tour où elle arrive,
+  sauf avec **Célérité**.
+- **Défenseur 🛡 = Provocation** : ces créatures ne peuvent pas attaquer, mais elles
+  doivent être frappées en premier — elles protègent le commandant et le reste du
+  plateau. Le **Vol** permet de les ignorer.
+- Les cartes **jouables** de ta main sont mises en surbrillance dorée.
+- Mots-clés gérés : Vol, Vigilance, Célérité, Défenseur (Provocation), Contact
+  mortel, Lien de vie. (Portée reste décorative depuis la suppression du blocage.)
 - La vie est **plafonnée à 30**. Piocher sans bibliothèque coûte 1 point de vie par
   carte manquante, et peut faire perdre la partie.
 - Un **écran de fin de partie** annonce le vainqueur et propose une revanche
   immédiate (mêmes decks et profils, y compris en ligne).
-- L'IA ne lance plus de sorts sans cible utile, choisit ses blocages (échanges
-  favorables, sacrifices seulement quand sa vie est menacée) et évite les attaques
-  suicidaires, sauf si l'attaque est létale.
+- L'IA ne lance plus de sorts sans cible utile et choisit ses attaques en privilégiant
+  les échanges favorables ou les dégâts létaux.
 
 Les cinq zones interactives suivent les cadres imprimés des tapis : Bibliothèque,
 Cimetière, Champ de bataille, Exil et Commandant. Le survol affiche une copie complète
@@ -61,10 +85,43 @@ sur mobile, le clic ouvre la fiche complète dans une fenêtre adaptée à l'éc
 Le recto fourni sert de cadre commun aux cartes, le dos apparaît dans les bibliothèques,
 et la carte supérieure est visible directement dans les zones Cimetière et Exil.
 
+## Mana coloré
+
+Chaque carte exige autant de terrains **de sa propre couleur** que son coût :
+une carte noire à 3 ne se lance qu'avec **3 terrains noirs dégagés**. Les terrains
+d'une autre couleur ne comptent pas. Seules les cartes **Incolores** (Pierre de
+Norne) acceptent n'importe quel terrain.
+
+La zone Commandant affiche donc le mana **par couleur** (ex. `2B 2V` = 2 blancs et
+2 verts disponibles), et le journal précise ce qu'il manque : « Il manque 2
+terrain(s) vert(s) dégagé(s) pour lancer Golem de pierre. »
+
+## Invocations divines
+
+Les cinq **dieux** ne peuvent pas être lancés librement : il faut d'abord accomplir
+une condition de légende sur ta propre moitié de table. Tant qu'elle n'est pas
+remplie, la carte reste **verrouillée 🔱🔒** dans ta main (elle ne s'allume pas et
+le clic ne la joue pas). Sa fiche affiche la condition et coche ✔ chaque étape
+accomplie en direct. **Plus la condition est dure, plus le dieu est puissant.**
+
+| Dieu | Difficulté | Condition | Puissance |
+| ---- | :--------: | --------- | :-------: |
+| **Umi Dieu des océans** | ★☆☆☆☆ | Roi des mers **ou** Terreur des mers Iguis est tombé au combat | 5/8 · pioche 3 |
+| **Dieu de la mort Bhaal** | ★★☆☆☆ | Noxis Drathis **ou** Valerius Dracul en jeu, **et** Retour à la vie déjà lancé | 9/8 · détruit la plus puissante + 3 au héros |
+| **Aldia déesse de lumière** | ★★★☆☆ | Dyklanne + Marinéhote + Johanna réunies, **ou** Trios des Héros après Confiance d'Aldia | 6/9 · +6 vie et +1/+1 aux alliés |
+| **Ulgod Dieu de l'enfer** | ★★★★☆ | Amrin **et** Ragast réunis sur ton champ de bataille | 9/8 · 5 blessures au héros |
+| **Rena Déesse de la nature** | ★★★★★ | Deux Sceptres de Rena lancés **et** Uldrid le sage arbre en jeu | 8/10 · +2/+2 aux alliés et +5 vie |
+
+Les conditions sont décrites dans `data/cards.json` (champ `divine`) et évaluées
+génériquement : `board` (toutes ces cartes en jeu), `boardAny` (au moins une),
+`cast` (sorts déjà lancés, doublons = N copies) et `died` (créature tombée).
+Ajouter une nouvelle invocation ne demande donc aucun code, seulement des données.
+L'IA est soumise aux mêmes conditions.
+
 ## Format construit Spellaho
 
 - Deck construit : **60 cartes exactes**.
-- Répartition : **24 terrains**, puis **22 à 28 créatures** et **8 à 14 sorts** selon les illustrations de sorts autonomes disponibles.
+- Répartition actuelle : **24 terrains**, **22 créatures** et **14 sorts**.
 - Maximum **4 exemplaires** d'une carte non-terrain ; terrains de base illimités.
 - Decks bicolores disponibles : Blanc/Vert, Rouge/Noir, Bleu/Vert, Noir/Blanc, Rouge/Bleu.
 
@@ -87,27 +144,27 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 8                 | 2             | 4                | **2 sorts uniques**              |
-| Bleu    | 5                 | 1             | 4                | **1 créature + 3 sorts**         |
-| Noir    | 7                 | 0             | 6                | **4 sorts uniques**              |
-| Rouge   | 6                 | 1             | 4                | **3 sorts uniques**              |
-| Vert    | 4                 | 1             | 5                | **2 créatures + 3 sorts**        |
+| Blanc   | 9                 | 4             | 4                | Base atteinte                    |
+| Bleu    | 6                 | 3             | 4                | **1 sort unique**                |
+| Noir    | 9                 | 2             | 6                | **2 sorts uniques**              |
+| Rouge   | 7                 | 3             | 4                | **1 sort unique**                |
+| Vert    | 6                 | 3             | 5                | **1 sort unique**                |
 
 Sorts incolores polyvalents (jouables dans tous les decks) : **1** (Pierre de Norne).
 
-Total à ajouter pour atteindre la base mono-couleur partout : **3 créatures uniques**
-(1 en Bleu, 2 en Vert) et **15 sorts avec leur propre illustration** (2 Blancs,
-3 Bleus, 4 Noirs, 3 Rouges, 3 Verts).
+Total restant pour atteindre la base mono-couleur partout : **5 sorts avec leur
+propre illustration** (1 Bleu, 2 Noirs, 1 Rouge et 1 Vert). Le quota de créatures
+est désormais atteint dans les cinq couleurs.
 
 Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :
 
 | Deck | Terrains | Créatures | Sorts dédiés |
 | ---- | :------: | :-------: | :-----------: |
 | Blanc / Vert | 24 | 22 | 14 |
-| Rouge / Noir | 24 | 28 | 8 |
-| Bleu / Vert | 24 | 24 | 12 |
-| Noir / Blanc | 24 | 24 | 12 |
-| Rouge / Bleu | 24 | 24 | 12 |
+| Rouge / Noir | 24 | 22 | 14 |
+| Bleu / Vert | 24 | 22 | 14 |
+| Noir / Blanc | 24 | 22 | 14 |
+| Rouge / Bleu | 24 | 22 | 14 |
 
 ## Lancer le jeu
 

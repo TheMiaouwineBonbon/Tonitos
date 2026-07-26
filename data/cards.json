@@ -8,7 +8,10 @@
     "cost": 3,
     "attack": 1,
     "life": 5,
-    "keywords": ["Invocation", "Vol"],
+    "keywords": [
+      "Invocation",
+      "Vol"
+    ],
     "abilityName": "Lien ailé",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, crée un Familier ailé 1/1 avec le vol.",
     "flavor": "Ses compagnons répondent avant même que le danger ait un nom.",
@@ -28,7 +31,10 @@
     "cost": 2,
     "attack": 1,
     "life": 3,
-    "keywords": ["Vol", "Soutien"],
+    "keywords": [
+      "Vol",
+      "Soutien"
+    ],
     "abilityName": "Garde-plumes",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 2 points de vie.",
     "flavor": "Ils arrivent toujours avant la chute.",
@@ -48,7 +54,10 @@
     "cost": 4,
     "attack": 3,
     "life": 3,
-    "keywords": ["Vol", "Vigilance"],
+    "keywords": [
+      "Vol",
+      "Vigilance"
+    ],
     "abilityName": "Patrouille céleste",
     "abilityText": "La vigilance permet au Griffon d'attaquer sans s'engager.",
     "flavor": "Son cri fend les nuages comme une bannière.",
@@ -68,7 +77,10 @@
     "cost": 4,
     "attack": 2,
     "life": 5,
-    "keywords": ["Mage", "Gel"],
+    "keywords": [
+      "Mage",
+      "Gel"
+    ],
     "abilityName": "Sceau des flots",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
     "flavor": "Le ciel n'est jamais loin lorsqu'elle ouvre le cercle.",
@@ -88,7 +100,10 @@
     "cost": 6,
     "attack": 5,
     "life": 7,
-    "keywords": ["Gel", "Imposant"],
+    "keywords": [
+      "Gel",
+      "Imposant"
+    ],
     "abilityName": "Marée d'effroi",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, engage jusqu'à deux créatures adverses.",
     "flavor": "La mer ne rugit pas. Elle avale.",
@@ -108,7 +123,10 @@
     "cost": 5,
     "attack": 4,
     "life": 6,
-    "keywords": ["Lien de vie", "Pacte"],
+    "keywords": [
+      "Lien de vie",
+      "Pacte"
+    ],
     "abilityName": "Pacte de minuit",
     "abilityText": "Les blessures infligées par Valerius te font gagner autant de points de vie.",
     "flavor": "Il ne promet pas l'éternité. Il l'exige.",
@@ -128,7 +146,10 @@
     "cost": 7,
     "attack": 7,
     "life": 6,
-    "keywords": ["Massacre", "Ascension"],
+    "keywords": [
+      "Massacre",
+      "Ascension"
+    ],
     "abilityName": "Moisson sanglante",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à toutes les créatures adverses. Chaque mort lui donne +1 force.",
     "flavor": "Le silence après son passage est encore une menace.",
@@ -148,7 +169,10 @@
     "cost": 6,
     "attack": 6,
     "life": 5,
-    "keywords": ["Contact mortel", "Pacte"],
+    "keywords": [
+      "Contact mortel",
+      "Pacte"
+    ],
     "abilityName": "Tribut infernal",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, détruis la créature adverse la plus faible.",
     "flavor": "Il ne règne pas sur l'enfer. Il le fait payer.",
@@ -168,7 +192,10 @@
     "cost": 2,
     "attack": 3,
     "life": 4,
-    "keywords": ["Vigilance", "Tenace"],
+    "keywords": [
+      "Vigilance",
+      "Tenace"
+    ],
     "abilityName": "Rempart de Mirthodil",
     "abilityText": "La vigilance permet à Dyklanne d'attaquer sans s'engager.",
     "flavor": "Il rit plus fort quand la salle commence à trembler.",
@@ -188,7 +215,10 @@
     "cost": 3,
     "attack": 2,
     "life": 2,
-    "keywords": ["Vol", "Célérité"],
+    "keywords": [
+      "Vol",
+      "Célérité"
+    ],
     "abilityName": "Souffle naissant",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 1 blessure au héros adverse.",
     "flavor": "Petit, oui. Déjà dangereux, absolument.",
@@ -208,7 +238,10 @@
     "cost": 5,
     "attack": 2,
     "life": 7,
-    "keywords": ["Portée", "Croissance"],
+    "keywords": [
+      "Portée",
+      "Croissance"
+    ],
     "abilityName": "Racines profondes",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, mets un terrain depuis ton deck sur le champ de bataille engagé.",
     "flavor": "Il parle lentement parce que les forêts savent attendre.",
@@ -228,7 +261,10 @@
     "cost": 4,
     "attack": 4,
     "life": 3,
-    "keywords": ["Contact mortel", "Pacte"],
+    "keywords": [
+      "Contact mortel",
+      "Pacte"
+    ],
     "abilityName": "Serment brisé",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, le héros adverse perd 1 point de vie et tu gagnes 1 point de vie.",
     "flavor": "Il avance encore parce que son serment refuse de mourir.",
@@ -248,7 +284,10 @@
     "cost": 7,
     "attack": 5,
     "life": 7,
-    "keywords": ["Vol", "Contact mortel"],
+    "keywords": [
+      "Vol",
+      "Contact mortel"
+    ],
     "abilityName": "Voile de Néant",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, détruis la créature adverse la plus puissante.",
     "flavor": "Son ombre tombe avant son nom.",
@@ -268,7 +307,9 @@
     "cost": 2,
     "attack": 2,
     "life": 1,
-    "keywords": ["Célérité"],
+    "keywords": [
+      "Célérité"
+    ],
     "abilityName": "Petites flammes",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 1 blessure au héros adverse.",
     "flavor": "Un seul est pénible. Trois deviennent un incendie.",
@@ -277,6 +318,10 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
     }
   },
   {
@@ -288,7 +333,10 @@
     "cost": 4,
     "attack": 3,
     "life": 6,
-    "keywords": ["Défenseur", "Portée"],
+    "keywords": [
+      "Défenseur",
+      "Portée"
+    ],
     "abilityName": "Mur de basalte",
     "abilityText": "Cette créature ne peut pas attaquer, mais elle peut bloquer les créatures avec le vol.",
     "flavor": "Il ne poursuit personne. Il attend que le monde le heurte.",
@@ -308,7 +356,10 @@
     "cost": 3,
     "attack": 2,
     "life": 3,
-    "keywords": ["Mage", "Pioche"],
+    "keywords": [
+      "Mage",
+      "Pioche"
+    ],
     "abilityName": "Savoir interdit",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte.",
     "flavor": "Ils ont perdu leur cité, pas leur mémoire.",
@@ -328,7 +379,9 @@
     "cost": 3,
     "attack": 3,
     "life": 2,
-    "keywords": ["Horde"],
+    "keywords": [
+      "Horde"
+    ],
     "abilityName": "Relève impie",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, crée un Zombie 1/1.",
     "flavor": "Une tombe vide est rarement une bonne nouvelle.",
@@ -348,7 +401,9 @@
     "cost": 3,
     "attack": 4,
     "life": 2,
-    "keywords": ["Célérité"],
+    "keywords": [
+      "Célérité"
+    ],
     "abilityName": "Charge brutale",
     "abilityText": "Cette créature peut attaquer dès le tour où elle arrive.",
     "flavor": "Leur stratégie commence à la hache et finit au cri.",
@@ -368,7 +423,10 @@
     "cost": 5,
     "attack": 4,
     "life": 6,
-    "keywords": ["Gel", "Imposant"],
+    "keywords": [
+      "Gel",
+      "Imposant"
+    ],
     "abilityName": "Décret des marées",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante.",
     "flavor": "La mer obéit mieux aux couronnes qu'aux prières.",
@@ -388,7 +446,10 @@
     "cost": 6,
     "attack": 6,
     "life": 4,
-    "keywords": ["Célérité", "Massacre"],
+    "keywords": [
+      "Célérité",
+      "Massacre"
+    ],
     "abilityName": "Couronne de braise",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à chaque créature adverse déjà blessée.",
     "flavor": "Il règne sur ce qui reste après l'incendie.",
@@ -408,7 +469,10 @@
     "cost": 5,
     "attack": 4,
     "life": 5,
-    "keywords": ["Vigilance", "Soutien"],
+    "keywords": [
+      "Vigilance",
+      "Soutien"
+    ],
     "abilityName": "Serment des trois",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +1/+1.",
     "flavor": "Trois voix suffisent à relever une armée.",
@@ -426,17 +490,41 @@
     "family": "Blanc",
     "type": "Créature légendaire - Déesse",
     "cost": 6,
-    "attack": 4,
-    "life": 7,
-    "keywords": ["Vol", "Lien de vie"],
+    "attack": 6,
+    "life": 9,
+    "keywords": [
+      "Vol",
+      "Lien de vie"
+    ],
     "abilityName": "Aurore sacrée",
-    "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 4 points de vie.",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 6 points de vie et tes autres créatures gagnent +1/+1.",
     "flavor": "Sa lumière ne pardonne pas l'ombre, elle la dissout.",
     "image": "Images/Aldia déesse de lumière.PNG",
     "palette": {
       "primary": "#d3a241",
       "secondary": "#fff0a6",
       "deep": "#2d220d"
+    },
+    "divine": {
+      "difficulty": 3,
+      "text": "Invocation divine : réunis Dyklanne, Marinéhote et Johanna sur ton champ de bataille, ou le Trios des Héros après avoir lancé Confiance d'Aldia.",
+      "any": [
+        {
+          "board": [
+            "dyklanne",
+            "marinehote",
+            "johanna"
+          ]
+        },
+        {
+          "board": [
+            "trios-heros"
+          ],
+          "cast": [
+            "confiance-aldia"
+          ]
+        }
+      ]
     }
   },
   {
@@ -448,7 +536,9 @@
     "cost": 2,
     "attack": 2,
     "life": 3,
-    "keywords": ["Vigilance"],
+    "keywords": [
+      "Vigilance"
+    ],
     "abilityName": "Serment mobile",
     "abilityText": "La vigilance permet au Chevalier Errant d'attaquer sans s'engager.",
     "flavor": "Il marche là où une promesse a été oubliée.",
@@ -457,6 +547,10 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 32%"
     }
   },
   {
@@ -468,7 +562,10 @@
     "cost": 2,
     "attack": 1,
     "life": 2,
-    "keywords": ["Vol", "Pioche"],
+    "keywords": [
+      "Vol",
+      "Pioche"
+    ],
     "abilityName": "Pollen de Manhil",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte.",
     "flavor": "Elle transporte les secrets trop légers pour les livres.",
@@ -488,7 +585,10 @@
     "cost": 3,
     "attack": 3,
     "life": 4,
-    "keywords": ["Portée", "Soutien"],
+    "keywords": [
+      "Portée",
+      "Soutien"
+    ],
     "abilityName": "Rempart vivant",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +0/+1.",
     "flavor": "La forêt sait très bien fermer une route.",
@@ -497,6 +597,10 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 26%"
     }
   },
   {
@@ -508,7 +612,10 @@
     "cost": 7,
     "attack": 7,
     "life": 8,
-    "keywords": ["Gel", "Imposant"],
+    "keywords": [
+      "Gel",
+      "Imposant"
+    ],
     "abilityName": "Étreinte abyssale",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, engage toutes les créatures adverses.",
     "flavor": "Quand la mer se referme, même les prières coulent.",
@@ -528,7 +635,9 @@
     "cost": 3,
     "attack": 3,
     "life": 2,
-    "keywords": ["Pioche"],
+    "keywords": [
+      "Pioche"
+    ],
     "abilityName": "Butin rapide",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte puis perds 1 point de vie.",
     "flavor": "Ils savent toujours où la marée cache les coffres.",
@@ -546,17 +655,32 @@
     "family": "Bleu",
     "type": "Créature légendaire - Dieu",
     "cost": 6,
-    "attack": 4,
-    "life": 7,
-    "keywords": ["Gel", "Pioche"],
+    "attack": 5,
+    "life": 8,
+    "keywords": [
+      "Gel",
+      "Pioche"
+    ],
     "abilityName": "Oracle des marées",
-    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche deux cartes.",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche trois cartes.",
     "flavor": "Ses réponses ont la patience des abysses.",
     "image": "Images/Umi Dieu des océans.PNG",
     "palette": {
       "primary": "#176b8c",
       "secondary": "#67d3ff",
       "deep": "#081d2a"
+    },
+    "divine": {
+      "difficulty": 1,
+      "text": "Invocation divine : le Roi des mers ou la Terreur des mers Iguis doit être tombé au combat.",
+      "any": [
+        {
+          "died": [
+            "roi-des-mers",
+            "terreur-mers-iguis"
+          ]
+        }
+      ]
     }
   },
   {
@@ -566,17 +690,32 @@
     "family": "Rouge",
     "type": "Créature légendaire - Dieu",
     "cost": 7,
-    "attack": 7,
-    "life": 6,
-    "keywords": ["Célérité", "Massacre"],
+    "attack": 9,
+    "life": 8,
+    "keywords": [
+      "Célérité",
+      "Massacre"
+    ],
     "abilityName": "Jugement de braise",
-    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 3 blessures au héros adverse.",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle inflige 5 blessures au héros adverse.",
     "flavor": "Il ne menace pas. Il arrive.",
     "image": "Images/Ulgod Dieu de l'enfer.PNG",
     "palette": {
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
+    },
+    "divine": {
+      "difficulty": 4,
+      "text": "Invocation divine : Premier Roi de l'enfer Amrin et Second roi des enfers Ragast réunis sur ton champ de bataille.",
+      "any": [
+        {
+          "board": [
+            "amrin",
+            "ragast"
+          ]
+        }
+      ]
     }
   },
   {
@@ -588,7 +727,9 @@
     "cost": 2,
     "attack": 2,
     "life": 2,
-    "keywords": ["Horde"],
+    "keywords": [
+      "Horde"
+    ],
     "abilityName": "Dernier râle",
     "abilityText": "Quand cette carte arrive sur le champ de bataille, le héros adverse perd 1 point de vie.",
     "flavor": "Il rentre chez lui, même si le village ne veut plus de lui.",
@@ -597,6 +738,199 @@
       "primary": "#566048",
       "secondary": "#a4b37c",
       "deep": "#151a12"
+    }
+  },
+  {
+    "id": "rena",
+    "name": "Rena Déesse de la nature",
+    "subtitle": "Souveraine des bois vivants",
+    "family": "Vert",
+    "type": "Créature légendaire - Déesse",
+    "cost": 6,
+    "attack": 8,
+    "life": 10,
+    "keywords": [
+      "Portée",
+      "Croissance"
+    ],
+    "abilityName": "Éveil de la canopée",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +2/+2 et tu gagnes 5 points de vie.",
+    "flavor": "Les bêtes ne la suivent pas : elles rentrent chez elles.",
+    "image": "Images/Rena Déesse de la nature.PNG",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "divine": {
+      "difficulty": 5,
+      "text": "Invocation divine : lance deux Sceptres de Rena et garde Uldrid le sage arbre sur ton champ de bataille.",
+      "any": [
+        {
+          "cast": [
+            "sceptre-rena",
+            "sceptre-rena"
+          ],
+          "board": [
+            "uldrid"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "bhaal",
+    "name": "Dieu de la mort Bhaal",
+    "subtitle": "Faucheur des champs de bataille",
+    "family": "Noir",
+    "type": "Créature légendaire - Dieu",
+    "cost": 8,
+    "attack": 9,
+    "life": 8,
+    "keywords": [
+      "Contact mortel",
+      "Massacre"
+    ],
+    "abilityName": "Moisson du néant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, détruis la créature adverse la plus puissante et inflige 3 blessures au héros adverse.",
+    "flavor": "Il ne compte pas les morts. Il les attend.",
+    "image": "Images/Dieu du mal Bhaal.PNG",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    },
+    "divine": {
+      "difficulty": 2,
+      "text": "Invocation divine : Noxis Drathis ou Valerius Dracul sur ton champ de bataille, et Retour à la vie déjà lancé.",
+      "any": [
+        {
+          "boardAny": [
+            "noxis",
+            "valerius"
+          ],
+          "cast": [
+            "retour-vie"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "chevalier-froussard",
+    "name": "Chevalier Froussard",
+    "subtitle": "Vaillant surtout en retraite",
+    "family": "Blanc",
+    "type": "Créature - Chevalier",
+    "cost": 1,
+    "attack": 1,
+    "life": 4,
+    "keywords": [
+      "Défenseur",
+      "Tenace"
+    ],
+    "abilityName": "Repli stratégique",
+    "abilityText": "Cette créature ne peut pas attaquer. Quand elle arrive sur le champ de bataille, tu gagnes 2 points de vie.",
+    "flavor": "Il jure que c'était une manœuvre d'encerclement.",
+    "image": "Images/Chevalier Froussard.PNG",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    }
+  },
+  {
+    "id": "tigre-zombie",
+    "name": "Tigre Zombie",
+    "subtitle": "Fauve relevé par la charogne",
+    "family": "Noir",
+    "type": "Créature - Zombie Bête",
+    "cost": 4,
+    "attack": 5,
+    "life": 2,
+    "keywords": [
+      "Célérité",
+      "Horde"
+    ],
+    "abilityName": "Bond putride",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 1 blessure à chaque créature adverse.",
+    "flavor": "La mort ne lui a rien pris, sauf la patience.",
+    "image": "Images/Tigre Zombie.png",
+    "palette": {
+      "primary": "#566048",
+      "secondary": "#a4b37c",
+      "deep": "#151a12"
+    }
+  },
+  {
+    "id": "homme-flammes",
+    "name": "Homme des flammes",
+    "subtitle": "Braise qui marche sur la neige",
+    "family": "Rouge",
+    "type": "Créature - Élémental",
+    "cost": 3,
+    "attack": 3,
+    "life": 3,
+    "keywords": [
+      "Célérité"
+    ],
+    "abilityName": "Sillage ardent",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à la créature adverse la plus faible.",
+    "flavor": "Là où il passe, l'hiver rend les armes.",
+    "image": "Images/Homme des flammes.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    }
+  },
+  {
+    "id": "poisson-mangeur",
+    "name": "Poisson mangeur d'hommes",
+    "subtitle": "Gueule des eaux troubles",
+    "family": "Bleu",
+    "type": "Créature - Poisson",
+    "cost": 3,
+    "attack": 3,
+    "life": 1,
+    "keywords": [
+      "Contact mortel"
+    ],
+    "abilityName": "Morsure vorace",
+    "abilityText": "Toute créature blessée par ce poisson est détruite.",
+    "flavor": "Les os au fond de l'eau ne sont pas tombés là par hasard.",
+    "image": "Images/Poisson mangeur d'hommes.jpg",
+    "palette": {
+      "primary": "#287da8",
+      "secondary": "#83d8ff",
+      "deep": "#0d2231"
+    }
+  },
+  {
+    "id": "ours-hibou",
+    "name": "Ours-hibou",
+    "subtitle": "Sentinelle des vieux bois",
+    "family": "Vert",
+    "type": "Créature - Ours Oiseau",
+    "cost": 4,
+    "attack": 4,
+    "life": 5,
+    "keywords": [
+      "Vigilance",
+      "Portée"
+    ],
+    "abilityName": "Instinct de la canopée",
+    "abilityText": "La vigilance lui permet d'attaquer sans s'engager, mais une seule fois par tour.",
+    "flavor": "Quand son cri traverse les branches, même les chasseurs baissent les yeux.",
+    "image": "Images/ours-hibou.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
     }
   }
 ]
