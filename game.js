@@ -623,6 +623,7 @@ function normalizeClientProfile(sideName, profile = {}) {
 }
 
 function newGame(config = {}) {
+  clearCinematicEffects();
   state.mode = config.mode || state.mode || "pve";
   state.playerDeckId = config.playerDeckId || state.playerDeckId || "blanc-vert";
   state.enemyDeckId = config.enemyDeckId || state.enemyDeckId || "rouge-noir";
@@ -645,8 +646,8 @@ function newGame(config = {}) {
   closeStartMenu();
   setMobileView("board");
 
-  draw(state.player, STARTING_HAND);
-  draw(state.enemy, STARTING_HAND);
+  draw(state.player, STARTING_HAND, { animate: false });
+  draw(state.enemy, STARTING_HAND, { animate: false });
   beginTurn(state.player, true);
   const modeLabel = state.mode === "online" ? "2 joueurs en ligne" : state.mode === "pvp" ? "2 joueurs local" : "1 joueur contre IA";
   logEvent(`Spellaho commence en mode ${modeLabel} : 20 points de vie, 7 cartes, un terrain par tour.`);
@@ -1009,6 +1010,12 @@ function serializeGameState() {
 function applyOnlineState(snapshot, version, room) {
   const network = { ...state.network, suppressPublish: true, version, dirty: false };
   const incomingMatchId = snapshot.matchId || "";
+  const remoteArrivals =
+    state.started &&
+    incomingMatchId === state.matchId &&
+    snapshot.publishedBy !== state.network.playerId
+      ? animateOnlineStateTransitions(snapshot)
+      : [];
   if (incomingMatchId && incomingMatchId !== state.matchId) {
     state.progressAwarded = false;
     state.lastProgressAwards = [];
@@ -1033,7 +1040,52 @@ function applyOnlineState(snapshot, version, room) {
   closeCardDetail();
   closeStartMenu();
   render();
+  for (const unit of remoteArrivals) {
+    animateSummonArrival(unit, Boolean(unit.sacrificeOnCast?.length));
+  }
   state.network.suppressPublish = false;
+}
+
+function animateOnlineStateTransitions(snapshot) {
+  const arrivals = [];
+
+  for (const sideName of ["player", "enemy"]) {
+    const before = state[sideName];
+    const after = snapshot[sideName];
+    if (!before || !after) continue;
+
+    const drawn = Math.max(0, (before.deck?.length || 0) - (after.deck?.length || 0));
+    for (let i = 0; i < drawn; i += 1) {
+      animateDrawCard(sideName, after.hand?.at(-(i + 1)), i * 110);
+    }
+
+    const beforeBoard = before.board || [];
+    const afterBoard = after.board || [];
+    const newUnits = afterBoard.filter((unit) => !beforeBoard.some((entry) => entry.uid === unit.uid));
+    arrivals.push(...newUnits);
+
+    const addedGraveyard = (after.graveyard || []).slice(before.graveyard?.length || 0);
+    const addedExile = (after.exile || []).slice(before.exile?.length || 0);
+    const removedUnits = beforeBoard.filter((unit) => !afterBoard.some((entry) => entry.uid === unit.uid));
+    let creatureGraveyardArrivals = 0;
+
+    for (const unit of removedUnits) {
+      const evolved = newUnits.some((candidate) => candidate.sacrificeOnCast?.includes(unit.id));
+      const exiled = addedExile.some((entry) => entry.id === unit.id);
+      animateCardDeparture(unit, sideName, evolved ? "decompose" : exiled ? "exile" : "death");
+      if (!exiled) {
+        creatureGraveyardArrivals += 1;
+        animateGraveyardArrival(sideName, unit, evolved ? 520 : 620);
+      }
+    }
+
+    const additionalGraveyardCards = Math.max(0, addedGraveyard.length - creatureGraveyardArrivals);
+    for (let i = 0; i < additionalGraveyardCards; i += 1) {
+      animateGraveyardArrival(sideName, addedGraveyard.at(-(i + 1)), 180 + i * 100);
+    }
+  }
+
+  return arrivals;
 }
 
 function markOnlineDirty() {
@@ -1281,7 +1333,7 @@ function untapPermanents(side) {
   }
 }
 
-function draw(side, amount) {
+function draw(side, amount, options = {}) {
   for (let i = 0; i < amount; i += 1) {
     const next = side.deck.shift();
     if (!next) {
@@ -1290,6 +1342,7 @@ function draw(side, amount) {
       continue;
     }
     side.hand.push(next);
+    if (options.animate !== false) animateDrawCard(side.side, next, i * 110);
   }
   checkVictory();
 }
@@ -1367,6 +1420,7 @@ function playCreature(side, cardIndex) {
   cleanupBoards();
   checkVictory();
   render();
+  animateSummonArrival(unit, Boolean(card.sacrificeOnCast?.length));
 }
 
 function invocationMaterialUnits(side, card) {
@@ -1392,7 +1446,11 @@ function sacrificeInvocationMaterials(side, card) {
   if (!card.sacrificeOnCast?.length) return;
   const materials = invocationMaterialUnits(side, card);
   if (materials.length !== card.sacrificeOnCast.length) return;
-  for (const unit of materials) unit.currentLife = 0;
+  for (const unit of materials) {
+    unit.invocationSacrifice = true;
+    animateCardDeparture(unit, side.side, "decompose");
+    unit.currentLife = 0;
+  }
   const subject = materials.map((unit) => unit.name).join(" et ");
   logEvent(
     `${subject} ${materials.length > 1 ? "sont sacrifiés" : "est sacrifié"} pour invoquer ${card.name}.`
@@ -1413,6 +1471,7 @@ function playSpell(side, cardIndex) {
   payMana(side, card);
   side.hand.splice(cardIndex, 1);
   side.graveyard.push({ ...card, uid: `${side.side}-grave-${card.id}-${crypto.randomUUID()}` });
+  animateGraveyardArrival(side.side, card, 180);
   pushVisualEffect("spell", side.side, "Sort");
   logEvent(`${sideDisplayName(side.side)} lance ${card.name}.`);
   applySpellEffect(card, side);
@@ -2487,8 +2546,15 @@ function cleanupBoards() {
     side.board = side.board.filter((unit) => unit.currentLife > 0);
     for (const unit of dead) {
       const destination = unit.exiled ? side.exile : side.graveyard;
+      if (!unit.invocationSacrifice) {
+        animateCardDeparture(unit, side.side, unit.exiled ? "exile" : "death");
+      }
+      if (!unit.exiled) {
+        animateGraveyardArrival(side.side, unit, unit.invocationSacrifice ? 520 : 620);
+      }
       destination.push({
         ...unit,
+        invocationSacrifice: false,
         attacking: false,
         blocking: null,
         blockedBy: null,
@@ -2741,6 +2807,7 @@ function renderPilePreviews() {
     const preview = zone.querySelector(".pile-card-mini");
     const art = preview?.querySelector(".pile-card-mini-art");
     if (!preview || !art) continue;
+    zone.classList.toggle("has-cards", pile.length > 0);
     preview.hidden = !card;
     art.style.setProperty("--pile-card-art", card ? cssUrl(card.image) : "none");
   }
@@ -3688,6 +3755,164 @@ function pushVisualEffect(type, sideName, text) {
   node.textContent = text;
   els.effectLayer.append(node);
   window.setTimeout(() => node.remove(), 950);
+}
+
+function prefersReducedEffects() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function ensureCinematicFxLayer() {
+  let layer = document.querySelector("#cinematic-fx-layer");
+  if (layer) return layer;
+  layer = document.createElement("div");
+  layer.id = "cinematic-fx-layer";
+  layer.className = "cinematic-fx-layer";
+  layer.setAttribute("aria-hidden", "true");
+  document.body.append(layer);
+  return layer;
+}
+
+function clearCinematicEffects() {
+  document.querySelector("#cinematic-fx-layer")?.replaceChildren();
+  for (const zone of document.querySelectorAll(".is-drawing-card, .is-graveyard-active")) {
+    zone.classList.remove("is-drawing-card", "is-graveyard-active");
+  }
+}
+
+function matZone(sideName, zoneName) {
+  return document.querySelector(`.${sideName}-mat .mat-zone--${zoneName}`);
+}
+
+function validEffectRect(node) {
+  if (!node) return null;
+  const rect = node.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0 ? rect : null;
+}
+
+function animateDrawCard(sideName, card, delay = 0) {
+  if (!state.started || prefersReducedEffects()) return;
+  const library = matZone(sideName, "library");
+  const source = validEffectRect(library);
+  if (!source) return;
+
+  const visibleHand = getVisibleHandSide()?.side === sideName;
+  const fallbackTarget = matZone(sideName, "commander") || document.querySelector(`.${sideName}-mat`);
+  const target = validEffectRect(visibleHand ? els.playerHand : fallbackTarget);
+  if (!target) return;
+
+  const width = Math.max(34, Math.min(68, source.width * 0.42));
+  const height = width * 1.46;
+  const fromX = source.left + source.width / 2 - width / 2;
+  const fromY = source.top + source.height * 0.42 - height / 2;
+  const toX = target.left + target.width / 2 - width / 2;
+  const toY = visibleHand
+    ? target.top + Math.min(28, target.height * 0.22)
+    : target.top + target.height * 0.3 - height / 2;
+
+  const flight = document.createElement("div");
+  flight.className = `draw-card-flight ${sideName}`;
+  flight.title = card?.name || "Carte piochée";
+  flight.style.width = `${width}px`;
+  flight.style.height = `${height}px`;
+  flight.style.setProperty("--draw-from-x", `${fromX}px`);
+  flight.style.setProperty("--draw-from-y", `${fromY}px`);
+  flight.style.setProperty("--draw-to-x", `${toX}px`);
+  flight.style.setProperty("--draw-to-y", `${toY}px`);
+  flight.style.setProperty("--draw-delay", `${delay}ms`);
+  ensureCinematicFxLayer().append(flight);
+
+  window.setTimeout(() => {
+    library.classList.remove("is-drawing-card");
+    void library.offsetWidth;
+    library.classList.add("is-drawing-card");
+  }, delay);
+  window.setTimeout(() => library.classList.remove("is-drawing-card"), delay + 780);
+  window.setTimeout(() => flight.remove(), delay + 1050);
+}
+
+function animateCardDeparture(unit, sideName, mode) {
+  if (prefersReducedEffects()) return;
+  const sourceNode = boardCardNode(unit.uid, sideName);
+  const source = validEffectRect(sourceNode);
+  if (!source) return;
+
+  const destinationName = mode === "exile" ? "exile" : "graveyard";
+  const destination = validEffectRect(matZone(sideName, destinationName));
+  const dx = destination ? destination.left + destination.width / 2 - (source.left + source.width / 2) : 0;
+  const dy = destination ? destination.top + destination.height / 2 - (source.top + source.height / 2) : 0;
+  const copy = sourceNode.cloneNode(true);
+  copy.className = `cinematic-card-copy compact is-${mode}`;
+  copy.removeAttribute("data-uid");
+  copy.querySelector(".evolution-timer")?.remove();
+  copy.style.left = `${source.left}px`;
+  copy.style.top = `${source.top}px`;
+  copy.style.width = `${source.width}px`;
+  copy.style.height = `${source.height}px`;
+  copy.style.setProperty("--departure-x", `${dx}px`);
+  copy.style.setProperty("--departure-y", `${dy}px`);
+  ensureCinematicFxLayer().append(copy);
+
+  spawnCardParticles(source, mode, unit.palette?.secondary);
+  window.setTimeout(() => copy.remove(), mode === "decompose" ? 1150 : 1000);
+}
+
+function spawnCardParticles(rect, mode, color) {
+  const layer = ensureCinematicFxLayer();
+  const count = mode === "decompose" ? 22 : 14;
+  const tone = color || (mode === "death" ? "#a697c4" : "#f2d17a");
+
+  for (let i = 0; i < count; i += 1) {
+    const angle = (Math.PI * 2 * i) / count + (i % 3) * 0.19;
+    const distance = Math.max(rect.width, rect.height) * (0.28 + (i % 5) * 0.075);
+    const particle = document.createElement("i");
+    particle.className = `card-fx-particle is-${mode}`;
+    particle.style.left = `${rect.left + rect.width * (0.25 + ((i * 37) % 50) / 100)}px`;
+    particle.style.top = `${rect.top + rect.height * (0.2 + ((i * 23) % 60) / 100)}px`;
+    particle.style.setProperty("--particle-x", `${Math.cos(angle) * distance}px`);
+    particle.style.setProperty("--particle-y", `${Math.sin(angle) * distance - (mode === "decompose" ? 30 : 0)}px`);
+    particle.style.setProperty("--particle-delay", `${(i % 6) * 28}ms`);
+    particle.style.setProperty("--particle-tone", tone);
+    layer.append(particle);
+    window.setTimeout(() => particle.remove(), 1250);
+  }
+}
+
+function animateGraveyardArrival(sideName, card, delay = 0) {
+  if (prefersReducedEffects()) return;
+  window.setTimeout(() => {
+    const graveyard = matZone(sideName, "graveyard");
+    const rect = validEffectRect(graveyard);
+    if (!rect) return;
+
+    graveyard.classList.remove("is-graveyard-active");
+    void graveyard.offsetWidth;
+    graveyard.classList.add("is-graveyard-active");
+
+    const vortex = document.createElement("div");
+    vortex.className = `graveyard-vortex ${sideName}`;
+    vortex.title = `${card?.name || "Une carte"} rejoint le cimetière`;
+    vortex.style.left = `${rect.left + rect.width / 2}px`;
+    vortex.style.top = `${rect.top + rect.height / 2}px`;
+    vortex.style.width = `${Math.max(54, rect.width * 0.78)}px`;
+    vortex.style.height = `${Math.max(54, rect.height * 0.58)}px`;
+    ensureCinematicFxLayer().append(vortex);
+
+    window.setTimeout(() => graveyard.classList.remove("is-graveyard-active"), 900);
+    window.setTimeout(() => vortex.remove(), 1050);
+  }, delay);
+}
+
+function animateSummonArrival(unit, isInvocation) {
+  if (prefersReducedEffects()) return;
+  window.requestAnimationFrame(() => {
+    const node = boardCardNode(unit.uid, unit.owner);
+    if (!node) return;
+    node.classList.add(isInvocation ? "is-divine-arrival" : "is-summon-arrival");
+    window.setTimeout(
+      () => node.classList.remove("is-divine-arrival", "is-summon-arrival"),
+      isInvocation ? 1250 : 750
+    );
+  });
 }
 
 function preloadImages() {

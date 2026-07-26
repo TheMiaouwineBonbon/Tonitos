@@ -97,6 +97,18 @@ async function main() {
     gameSource.includes('unit.id === "heritage-heros"') &&
       gameSource.includes('unit.id === "apocalypse-umi"')
   );
+  check(
+    "Effets cinématiques branchés aux événements de cartes",
+    gameSource.includes("animateDrawCard") &&
+      gameSource.includes("animateCardDeparture") &&
+      gameSource.includes("animateGraveyardArrival") &&
+      gameSource.includes("animateSummonArrival")
+  );
+  check(
+    "Les effets sont reconstruits chez le joueur en ligne distant",
+    gameSource.includes("animateOnlineStateTransitions") &&
+      gameSource.includes("snapshot.publishedBy !== state.network.playerId")
+  );
   check("Le passage de tour local masque la main", gameSource.includes("showTurnHandoff") && gameSource.includes("Main masquée"));
   check("Les résultats accordent l'XP une seule fois", gameSource.includes("progressAwarded") && gameSource.includes("awardMatchProgress"));
   check("Les parties ont un identifiant de récompense", gameSource.includes("matchId"));
@@ -111,6 +123,14 @@ async function main() {
   check("Illustrations stables au survol", styles.includes("object-fit: contain") && styles.includes(".game-card:hover .card-art img"));
   check("Plateau responsive sur une colonne", styles.includes("@media (max-width: 1100px)") && styles.includes("grid-template-columns: minmax(0, 1fr)"));
   check("Fumée magique animée autour de l'arène", styles.includes("spellaho-smoke-drift-a") && styles.includes("Fumee%20magique.png"));
+  check(
+    "Animations de pioche, décomposition, mort et cimetière présentes",
+    styles.includes("card-draw-flight") &&
+      styles.includes("invocation-card-decompose") &&
+      styles.includes("card-death-to-grave") &&
+      styles.includes("graveyard-vortex-open") &&
+      styles.includes("graveyard-ambient")
+  );
   check(
     "Téléphone paysage sans scroll avec deux tapis",
     styles.includes("(orientation: landscape)") &&

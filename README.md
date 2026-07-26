@@ -91,6 +91,19 @@ sujet bien centré, sans toucher aux autres cartes.
 - L'IA ne lance plus de sorts sans cible utile et choisit ses attaques en privilégiant
   les échanges favorables ou les dégâts létaux.
 
+## Effets visuels de cartes
+
+- La pioche fait voyager un dos de carte de la bibliothèque vers la main sans
+  révéler les cartes adverses.
+- Les composants d'une invocation légendaire se désagrègent avant de rejoindre
+  le cimetière.
+- Une créature détruite s'assombrit, se fragmente et est aspirée vers son
+  cimetière.
+- Chaque arrivée au cimetière ouvre brièvement un vortex ; un cimetière occupé
+  conserve ensuite une aura animée discrète.
+- Le réglage système « réduire les animations » raccourcit automatiquement ces
+  effets.
+
 Les cinq zones interactives suivent les cadres imprimés des tapis : Bibliothèque,
 Cimetière, Champ de bataille, Exil et Commandant. Le survol affiche une copie complète
 de la carte dans un calque indépendant, sans découpe par la main ou le panneau latéral ;
