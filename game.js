@@ -1248,11 +1248,18 @@ function beginTurn(side, firstTurn = false) {
   state.currentTurn = side.side;
   state.phase = PHASES.MAIN_1;
   side.landPlayed = false;
+  advanceSurvivalCounters(side);
   untapPermanents(side);
 
   if (!firstTurn) draw(side, 1);
 
   logEvent(`${sideDisplayName(side.side)} commence son tour. Phase principale : pose un terrain ou lance une carte.`);
+}
+
+function advanceSurvivalCounters(side) {
+  for (const creature of side.board) {
+    creature.survivedTurns = Math.max(0, Number(creature.survivedTurns) || 0) + 1;
+  }
 }
 
 function untapPermanents(side) {
@@ -1386,7 +1393,10 @@ function sacrificeInvocationMaterials(side, card) {
   const materials = invocationMaterialUnits(side, card);
   if (materials.length !== card.sacrificeOnCast.length) return;
   for (const unit of materials) unit.currentLife = 0;
-  logEvent(`${materials.map((unit) => unit.name).join(" et ")} sont sacrifiés pour accomplir la fusion.`);
+  const subject = materials.map((unit) => unit.name).join(" et ");
+  logEvent(
+    `${subject} ${materials.length > 1 ? "sont sacrifiés" : "est sacrifié"} pour invoquer ${card.name}.`
+  );
   cleanupBoards();
 }
 
@@ -1449,6 +1459,7 @@ function createUnit(card, owner) {
     uid: `${owner}-unit-${card.id}-${crypto.randomUUID()}`,
     maxLife: card.life,
     currentLife: card.life,
+    survivedTurns: 0,
     tapped: false,
     stunTurns: 0,
     createdTurn: state.turn,
@@ -1997,6 +2008,26 @@ function triggerOnPlay(unit, side) {
     );
   }
 
+  if (unit.id === "heritage-heros") {
+    const allies = side.board.filter((ally) => ally.uid !== unit.uid);
+    buffTeam(allies, 2, 2);
+    side.life = Math.min(MAX_LIFE, side.life + 6);
+    pushVisualEffect("buff", side.side, "Héritage");
+    logEvent(
+      `${unit.name} rend 6 points de vie et donne +2/+2 à ${allies.length} autre(s) créature(s) alliée(s).`
+    );
+  }
+
+  if (unit.id === "apocalypse-umi") {
+    for (const target of opponent.board) freezeCreature(target);
+    opponent.life -= 5;
+    pushVisualEffect("freeze", opponent.side, "Déluge");
+    pushVisualEffect("hit", opponent.side, "-5");
+    logEvent(
+      `${unit.name} engage ${opponent.board.length} créature(s) adverse(s) et inflige 5 blessures au héros adverse.`
+    );
+  }
+
   if (unit.id === "chevalier-froussard") {
     side.life = Math.min(MAX_LIFE, side.life + 2);
     logEvent(`Le Chevalier Froussard se met à l'abri : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
@@ -2376,6 +2407,8 @@ function isSpellWorthCasting(card, side, opponent) {
 
 function scoreAiPlay(card) {
   if (card.id === "noxis-bhaal-fusion") return 1000;
+  if (card.id === "apocalypse-umi") return 900;
+  if (card.id === "heritage-heros") return 800;
   return card.cost * 10 + (card.attack || 0) + (isSpell(card) ? 8 : 0);
 }
 
@@ -2517,6 +2550,7 @@ function isCreature(card) {
 /*   boardAny : au moins une de ces cartes sur ton champ de bataille       */
 /*   cast     : ces sorts doivent avoir été lancés (doublons = N copies)   */
 /*   died     : au moins une de ces créatures doit être morte              */
+/*   survived : ces créatures doivent être en jeu depuis N tours du joueur */
 /* ---------------------------------------------------------------------- */
 function fallenCards(side) {
   return [...(side.graveyard || []), ...(side.exile || [])];
@@ -2540,6 +2574,18 @@ function divineClauseMet(side, clause) {
 
   if (clause.died && !clause.died.some((id) => fallen.some((card) => card.id === id && card.kind === "creature"))) {
     return false;
+  }
+
+  if (clause.survived) {
+    for (const requirement of clause.survived) {
+      const ready = board.some(
+        (unit) =>
+          unit.id === requirement.id &&
+          unit.currentLife > 0 &&
+          (Number(unit.survivedTurns) || 0) >= requirement.turns
+      );
+      if (!ready) return false;
+    }
   }
   return true;
 }
@@ -2581,6 +2627,16 @@ function describeDivineClause(side, clause) {
     parts.push({
       text: `${clause.died.map(label).join(" ou ")} tombé au combat`,
       done: clause.died.some((id) => fallen.some((c) => c.id === id && c.kind === "creature"))
+    });
+  }
+  for (const requirement of clause.survived || []) {
+    const unit = board
+      .filter((entry) => entry.id === requirement.id && entry.currentLife > 0)
+      .sort((a, b) => (Number(b.survivedTurns) || 0) - (Number(a.survivedTurns) || 0))[0];
+    const progress = Math.min(Number(unit?.survivedTurns) || 0, requirement.turns);
+    parts.push({
+      text: `${label(requirement.id)} en jeu depuis ${progress}/${requirement.turns} tours`,
+      done: progress >= requirement.turns
     });
   }
   return parts;
@@ -2853,6 +2909,15 @@ function renderBoard(container, board, sideName) {
   for (const unit of board) {
     const node = renderCard(unit, { mode: "board", side: sideName });
     node.dataset.uid = unit.uid;
+    const survivalGoal = survivalGoalForUnit(unit);
+    if (survivalGoal > 0) {
+      const timer = document.createElement("span");
+      const progress = Math.min(Number(unit.survivedTurns) || 0, survivalGoal);
+      timer.className = `evolution-timer${progress >= survivalGoal ? " is-ready" : ""}`;
+      timer.textContent = `⏳ ${progress}/${survivalGoal}`;
+      timer.title = progress >= survivalGoal ? "Évolution débloquée" : "Tours survécus";
+      node.append(timer);
+    }
     if (unit.attacking) node.classList.add("is-attacking");
     if (unit.blocking) node.classList.add("is-blocking");
     if (unit.tapped) node.classList.add("is-exhausted");
@@ -2891,6 +2956,18 @@ function renderBoard(container, board, sideName) {
     fragment.append(node);
   }
   container.append(fragment);
+}
+
+function survivalGoalForUnit(unit) {
+  let goal = 0;
+  for (const card of state.cards) {
+    for (const clause of card.divine?.any || []) {
+      for (const requirement of clause.survived || []) {
+        if (requirement.id === unit.id) goal = Math.max(goal, Number(requirement.turns) || 0);
+      }
+    }
+  }
+  return goal;
 }
 
 // Clic sur une créature du plateau (style Hearthstone) :

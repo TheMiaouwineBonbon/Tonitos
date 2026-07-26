@@ -114,7 +114,7 @@ terrain(s) vert(s) dégagé(s) pour lancer Golem de pierre. »
 
 ## Invocations divines
 
-Les cinq **dieux** et la **Fusion complète** ne peuvent pas être lancés librement : il faut d'abord accomplir
+Les cinq **dieux** et les **invocations légendaires** ne peuvent pas être lancés librement : il faut d'abord accomplir
 une condition de légende sur ta propre moitié de table. Tant qu'elle n'est pas
 remplie, la carte reste **verrouillée 🔱🔒** dans ta main (elle ne s'allume pas et
 le clic ne la joue pas). Sa fiche affiche la condition et coche ✔ chaque étape
@@ -128,10 +128,13 @@ accomplie en direct. **Plus la condition est dure, plus le dieu est puissant.**
 | **Ulgod Dieu de l'enfer** | ★★★★☆ | Amrin **et** Ragast réunis sur ton champ de bataille | 9/8 · 5 blessures au héros |
 | **Rena Déesse de la nature** | ★★★★★ | Deux Sceptres de Rena lancés **et** Uldrid le sage arbre en jeu | 8/10 · +2/+2 aux alliés et +5 vie |
 | **Noxis Bhaal, Fusion complète** | ★★★★★ | Noxis Drathis **et** Dieu de la mort Bhaal en jeu ; les deux sont sacrifiés | 15/15 · détruit toutes les créatures adverses, 5 au héros, célérité |
+| **Héritage des héros** | ★★★★☆ | Johanna et Dyklanne survivent ensemble pendant 3 tours ; les deux sont sacrifiés | 10/10 · +6 vie et +2/+2 aux autres alliés |
+| **Apocalypse d'UMI** | ★★★★★ | Le Roi des mers survit pendant 5 tours, puis il est sacrifié pour évoluer | 13/14 · engage toute l'armée adverse et inflige 5 au héros |
 
 Les conditions sont décrites dans `data/cards.json` (champ `divine`) et évaluées
 génériquement : `board` (toutes ces cartes en jeu), `boardAny` (au moins une),
-`cast` (sorts déjà lancés, doublons = N copies) et `died` (créature tombée).
+`cast` (sorts déjà lancés, doublons = N copies), `died` (créature tombée) et
+`survived` (créature restée en jeu pendant N tours de son propriétaire).
 Ajouter une nouvelle invocation ne demande donc aucun code, seulement des données.
 L'IA est soumise aux mêmes conditions.
 

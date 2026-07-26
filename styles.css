@@ -4116,6 +4116,37 @@ body.targeting .enemy-mat .mat-zone--commander {
   pointer-events: none;
 }
 
+.evolution-timer {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  z-index: 12;
+  min-width: 48px;
+  border: 1px solid rgba(159, 223, 255, 0.82);
+  border-radius: 7px;
+  padding: 3px 7px;
+  color: #eaf9ff;
+  background: rgba(5, 17, 31, 0.92);
+  box-shadow:
+    inset 0 0 8px rgba(87, 189, 255, 0.18),
+    0 2px 7px rgba(0, 0, 0, 0.7);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.evolution-timer.is-ready {
+  border-color: #ffe59b;
+  color: #251404;
+  background: linear-gradient(180deg, #fff3b7, #d99a31);
+  box-shadow:
+    0 0 12px rgba(255, 218, 112, 0.8),
+    0 2px 7px rgba(0, 0, 0, 0.72);
+}
+
 .divine-panel {
   display: grid;
   gap: 6px;

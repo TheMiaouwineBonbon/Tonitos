@@ -979,5 +979,103 @@
       "fit": "contain",
       "position": "50% 50%"
     }
+  },
+  {
+    "id": "heritage-heros",
+    "name": "Héritage des héros",
+    "subtitle": "Lignée de Johanna et Dyklanne",
+    "family": "Blanc",
+    "type": "Créature légendaire - Enfants Héros Fusion",
+    "cost": 0,
+    "attack": 10,
+    "life": 10,
+    "keywords": [
+      "Vigilance",
+      "Lien de vie",
+      "Défenseur"
+    ],
+    "abilityName": "Promesse des générations",
+    "abilityText": "Johanna Bordeciel et Dyklanne de Mirthodil doivent survivre ensemble pendant 3 tours. Sacrifie-les pour invoquer cette carte. À son arrivée, gagne 6 points de vie et donne +2/+2 aux autres créatures alliées.",
+    "flavor": "Ce que les héros protègent aujourd'hui fleurira bien après eux.",
+    "image": "Images/Héritage des héros.jpg",
+    "palette": {
+      "primary": "#c58b43",
+      "secondary": "#f5e6a8",
+      "deep": "#24331a"
+    },
+    "deckCopies": 1,
+    "sacrificeOnCast": [
+      "johanna",
+      "dyklanne"
+    ],
+    "divine": {
+      "difficulty": 4,
+      "text": "Héritage héroïque : Johanna Bordeciel et Dyklanne de Mirthodil doivent rester simultanément sur ton champ de bataille pendant 3 de tes tours. Ils sont sacrifiés lors de l'invocation.",
+      "any": [
+        {
+          "survived": [
+            {
+              "id": "johanna",
+              "turns": 3
+            },
+            {
+              "id": "dyklanne",
+              "turns": 3
+            }
+          ]
+        }
+      ]
+    },
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
+  },
+  {
+    "id": "apocalypse-umi",
+    "name": "Apocalypse d'UMI",
+    "subtitle": "Évolution ultime du Roi des mers",
+    "family": "Bleu",
+    "type": "Créature légendaire - Dragon Léviathan Évolution",
+    "cost": 0,
+    "attack": 13,
+    "life": 14,
+    "keywords": [
+      "Vol",
+      "Célérité",
+      "Gel",
+      "Imposant"
+    ],
+    "abilityName": "Déluge terminal",
+    "abilityText": "Le Roi des mers doit survivre pendant 5 tours. Sacrifie-le pour le faire évoluer en cette carte. À son arrivée, engage toutes les créatures adverses jusqu'à leur prochain tour et inflige 5 blessures au héros adverse.",
+    "flavor": "Quand le roi abandonne sa couronne, l'océan entier prend sa véritable forme.",
+    "image": "Images/Apacalypse d'UMI.jpg",
+    "palette": {
+      "primary": "#237da8",
+      "secondary": "#b8edff",
+      "deep": "#071e35"
+    },
+    "deckCopies": 1,
+    "sacrificeOnCast": [
+      "roi-des-mers"
+    ],
+    "divine": {
+      "difficulty": 5,
+      "text": "Évolution océanique : le Roi des mers doit rester sur ton champ de bataille pendant 5 de tes tours. Il est sacrifié lorsqu'il évolue en Apocalypse d'UMI.",
+      "any": [
+        {
+          "survived": [
+            {
+              "id": "roi-des-mers",
+              "turns": 5
+            }
+          ]
+        }
+      ]
+    },
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
   }
 ]

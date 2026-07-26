@@ -86,6 +86,17 @@ async function main() {
       gameSource.includes('unit.id === "noxis-bhaal-fusion"') &&
       gameSource.includes("canFitCreatureOnBoard")
   );
+  check(
+    "Les évolutions suivent les tours réellement survécus",
+    gameSource.includes("advanceSurvivalCounters") &&
+      gameSource.includes("survivedTurns") &&
+      gameSource.includes("survivalGoalForUnit")
+  );
+  check(
+    "Les effets d'Héritage et d'Apocalypse sont implémentés",
+    gameSource.includes('unit.id === "heritage-heros"') &&
+      gameSource.includes('unit.id === "apocalypse-umi"')
+  );
   check("Le passage de tour local masque la main", gameSource.includes("showTurnHandoff") && gameSource.includes("Main masquée"));
   check("Les résultats accordent l'XP une seule fois", gameSource.includes("progressAwarded") && gameSource.includes("awardMatchProgress"));
   check("Les parties ont un identifiant de récompense", gameSource.includes("matchId"));
@@ -116,7 +127,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 38 créatures", Array.isArray(cards) && cards.length === 38);
+  check("cards.json = 40 créatures", Array.isArray(cards) && cards.length === 40);
   check("Golem de pierre = Vert", cards.find((c) => c.id === "golem-pierre")?.family === "Vert");
   check("Amrin = Rouge", cards.find((c) => c.id === "amrin")?.family === "Rouge");
   check("Roi des mers = Bleu", cards.find((c) => c.id === "roi-des-mers")?.family === "Bleu");
@@ -137,6 +148,28 @@ async function main() {
     fusion?.divine?.any?.some((clause) => clause.board?.includes("noxis") && clause.board?.includes("bhaal")) &&
       fusion?.sacrificeOnCast?.join(",") === "noxis,bhaal" &&
       fusion.deckCopies === 1
+  );
+  const heritage = cards.find((c) => c.id === "heritage-heros");
+  check(
+    "Héritage exige Johanna + Dyklanne pendant 3 tours",
+    heritage?.family === "Blanc" &&
+      heritage?.sacrificeOnCast?.join(",") === "johanna,dyklanne" &&
+      heritage?.divine?.any?.some(
+        (clause) =>
+          clause.survived?.some((item) => item.id === "johanna" && item.turns === 3) &&
+          clause.survived?.some((item) => item.id === "dyklanne" && item.turns === 3)
+      ) &&
+      heritage.deckCopies === 1
+  );
+  const apocalypse = cards.find((c) => c.id === "apocalypse-umi");
+  check(
+    "Apocalypse fait évoluer le Roi des mers après 5 tours",
+    apocalypse?.family === "Bleu" &&
+      apocalypse?.sacrificeOnCast?.join(",") === "roi-des-mers" &&
+      apocalypse?.divine?.any?.some(
+        (clause) => clause.survived?.some((item) => item.id === "roi-des-mers" && item.turns === 5)
+      ) &&
+      apocalypse.deckCopies === 1
   );
 
   res = await fetch(`${base}/data/spells.json`);
