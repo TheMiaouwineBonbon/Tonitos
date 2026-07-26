@@ -5114,3 +5114,7 @@ body.is-dragging {
 .mat-zone--commander .commander-portrait {
   transform: translate(-50%, 10%);
 }
+
+.enemy-mat .mat-zone--commander .commander-portrait {
+  transform: translate(-50%, 20%);
+}
