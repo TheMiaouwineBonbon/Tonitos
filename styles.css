@@ -5104,3 +5104,13 @@ body.is-dragging {
     display: none;
   }
 }
+
+/* Ajustements de proportions des zones Bibliothèque et Commandant. */
+.library-card-back {
+  top: 14%;
+  width: 70.5%;
+}
+
+.mat-zone--commander .commander-portrait {
+  transform: translate(-50%, 10%);
+}
