@@ -406,5 +406,145 @@
       "fit": "cover",
       "position": "50% 44%"
     }
+  },
+  {
+    "id": "menace-abysses",
+    "kind": "spell",
+    "name": "Menace des abysses",
+    "subtitle": "Terreur sous la surface",
+    "family": "Bleu",
+    "type": "Rituel - Sort de contrôle",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Profondeurs",
+      "Gel"
+    ],
+    "abilityName": "Regard des profondeurs",
+    "abilityText": "Engage toutes les créatures adverses. Elles perdent 1 force.",
+    "flavor": "Sous la dernière lueur attend une faim plus ancienne que la mer.",
+    "image": "Images/Sort - Menace des abysses.jpg",
+    "palette": {
+      "primary": "#1d6f9d",
+      "secondary": "#75d7ff",
+      "deep": "#071923"
+    },
+    "effect": "abyssThreat",
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
+  },
+  {
+    "id": "passe-naturel",
+    "kind": "spell",
+    "name": "Passé naturel",
+    "subtitle": "Mémoire du monde",
+    "family": "Vert",
+    "type": "Rituel - Pioche et soin",
+    "cost": 3,
+    "slot": "draw",
+    "keywords": [
+      "Nature",
+      "Mémoire"
+    ],
+    "abilityName": "Sève ancestrale",
+    "abilityText": "Pioche deux cartes et gagne 2 points de vie.",
+    "flavor": "La forêt n'oublie rien ; elle transforme seulement ses blessures.",
+    "image": "Images/Sort - Passé Naturel.jpg",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "naturalMemory",
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
+  },
+  {
+    "id": "couronne-ulgod",
+    "kind": "spell",
+    "name": "Couronne d'Ulgod",
+    "subtitle": "Insigne de la fournaise",
+    "family": "Rouge",
+    "type": "Artefact - Amélioration",
+    "cost": 4,
+    "slot": "upgrade",
+    "keywords": [
+      "Artefact",
+      "Feu"
+    ],
+    "abilityName": "Règne incandescent",
+    "abilityText": "Tes créatures gagnent +1 force. Inflige 2 blessures au héros adverse.",
+    "flavor": "La couronne ne désigne pas un roi ; elle choisit ce qu'il reste à brûler.",
+    "image": "Images/Artefact - Couronne de Ulgod.jpg",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "effect": "crownUlgod",
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
+  },
+  {
+    "id": "ancien-corps-bhaal",
+    "kind": "spell",
+    "name": "Ancien corps de Bhaal",
+    "subtitle": "Reliquaire du dieu meurtrier",
+    "family": "Noir",
+    "type": "Artefact - Réanimation",
+    "cost": 4,
+    "slot": "upgrade",
+    "keywords": [
+      "Artefact",
+      "Réanimation"
+    ],
+    "abilityName": "Vase de l'assassin",
+    "abilityText": "Perds 2 points de vie. Ramène ta créature la plus puissante du cimetière.",
+    "flavor": "Le crâne est vide, mais quelque chose y respire encore.",
+    "image": "Images/Artefact - Ancien corps de Bhaal.jpg",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    },
+    "effect": "bhaalVessel",
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
+  },
+  {
+    "id": "esprits-vengeurs",
+    "kind": "spell",
+    "name": "Esprits vengeurs",
+    "subtitle": "Cortège des oubliés",
+    "family": "Noir",
+    "type": "Rituel - Sort offensif",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Esprit",
+      "Drain"
+    ],
+    "abilityName": "Marche des revenants",
+    "abilityText": "Inflige 2 blessures à toutes les créatures adverses et draine 2 points de vie au héros adverse.",
+    "flavor": "Ils ne demandent pas justice. Ils réclament une place dans le souvenir.",
+    "image": "Images/Sorts - Esprits vengeurs.jpg",
+    "palette": {
+      "primary": "#6f1c46",
+      "secondary": "#d5448a",
+      "deep": "#120711"
+    },
+    "effect": "vengefulSpirits",
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
   }
 ]

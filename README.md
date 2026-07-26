@@ -11,6 +11,7 @@ petit serveur statique et l'API du salon multijoueur.
 - `index.html` : menu de lancement + plateau jouable.
 - `styles.css` : direction artistique, tapis de jeu, zones, effets et cartes.
 - `game.js` : moteur de partie (IA solo, 2 joueurs local, 2 joueurs en ligne).
+- `progression.js` : profils locaux, XP, niveaux, statistiques et grades.
 - `serve.js` : serveur HTTP statique + API du salon en mémoire (code `1234`).
 - `data/cards.json` : créatures et champions.
 - `data/lands.json` : terrains par couleur.
@@ -35,6 +36,18 @@ Depuis le menu de lancement (nom du jeu : **Spellaho**) :
 
 Chaque joueur choisit son **nom**, son **portrait/avatar** (affiché dans la zone
 Commandant du tapis, sans activer les règles Commander) et son **deck** bicolore.
+
+## Profils et progression
+
+Spellaho peut conserver plusieurs profils sur le même appareil. Les données restent
+dans le navigateur afin de rester compatibles avec GitHub Pages : il ne s'agit pas
+d'un compte distant protégé par mot de passe.
+
+- Victoire : **100 XP** · égalité : **60 XP** · défaite : **35 XP**.
+- Grades : Débutant, Bronze, Silver, Or, Platine, Diamant, Émeraude et Master.
+- Le menu affiche le niveau, la barre d'XP et les statistiques du profil actif.
+- En mode local, chaque joueur peut choisir son propre profil ; la main est masquée
+  entre les tours jusqu'à ce que le joueur suivant confirme qu'il a l'écran.
 
 ## Contrôles (glisser-déposer)
 
@@ -84,6 +97,9 @@ de la carte dans un calque indépendant, sans découpe par la main ou le panneau
 sur mobile, le clic ouvre la fiche complète dans une fenêtre adaptée à l'écran.
 Le recto fourni sert de cadre commun aux cartes, le dos apparaît dans les bibliothèques,
 et la carte supérieure est visible directement dans les zones Cimetière et Exil.
+Sur téléphone en paysage, les deux tapis, les commandes et la main tiennent dans
+le même écran sans défilement. Les vues Cartes, Règles et Journal restent accessibles
+depuis la barre inférieure.
 
 ## Mana coloré
 
@@ -145,16 +161,16 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
 | Blanc   | 9                 | 4             | 4                | Base atteinte                    |
-| Bleu    | 6                 | 3             | 4                | **1 sort unique**                |
-| Noir    | 9                 | 2             | 6                | **2 sorts uniques**              |
-| Rouge   | 7                 | 3             | 4                | **1 sort unique**                |
-| Vert    | 6                 | 3             | 5                | **1 sort unique**                |
+| Bleu    | 6                 | 4             | 4                | Base atteinte                    |
+| Noir    | 9                 | 4             | 6                | Base atteinte                    |
+| Rouge   | 7                 | 4             | 4                | Base atteinte                    |
+| Vert    | 6                 | 4             | 5                | Base atteinte                    |
 
 Sorts incolores polyvalents (jouables dans tous les decks) : **1** (Pierre de Norne).
 
-Total restant pour atteindre la base mono-couleur partout : **5 sorts avec leur
-propre illustration** (1 Bleu, 2 Noirs, 1 Rouge et 1 Vert). Le quota de créatures
-est désormais atteint dans les cinq couleurs.
+Les cinq bases mono-couleur atteignent désormais les quotas : **aucune carte ne
+manque** pour cette base de construction. Les 21 sorts disposent tous de leur propre
+illustration.
 
 Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :
 

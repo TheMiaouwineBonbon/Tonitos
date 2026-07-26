@@ -9,7 +9,7 @@
       content="Spellaho, jeu de cartes fantasy avec decks bicolores, terrains, créatures, sorts, mana et combat tactique."
     />
     <link rel="icon" type="image/png" href="./Images/Logo%20Jeu/Spellaho.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260723-3" />
+    <link rel="stylesheet" href="./styles.css?v=20260726-1" />
   </head>
   <body>
     <div id="start-menu" class="start-menu">
@@ -24,6 +24,35 @@
         </header>
 
         <div class="start-body">
+          <section class="account-hub" aria-labelledby="account-title">
+            <div class="account-hub-main">
+              <img id="account-grade-image" class="account-grade-image" src="./Images/Grade/Niveau%20Débutant.png" alt="" />
+              <div class="account-hub-copy">
+                <span id="account-title" class="menu-field-label">Profil Spellaho</span>
+                <div class="account-controls">
+                  <select id="account-select" aria-label="Profil actif"></select>
+                  <button id="account-create-toggle" class="small-button" type="button">Créer</button>
+                  <button id="account-save" class="small-button" type="button">Enregistrer</button>
+                </div>
+                <div id="account-summary" class="account-summary"></div>
+              </div>
+            </div>
+            <form id="account-create-form" class="account-create-form" hidden>
+              <label class="menu-field">
+                <span class="menu-field-label">Nom du profil</span>
+                <input id="account-name-input" type="text" maxlength="24" autocomplete="off" required />
+              </label>
+              <label class="menu-field">
+                <span class="menu-field-label">Portrait</span>
+                <select id="account-avatar-select"></select>
+              </label>
+              <div class="account-create-actions">
+                <button id="account-create-confirm" class="primary-button" type="submit">Créer le profil</button>
+                <button id="account-create-cancel" class="ghost-button" type="button">Annuler</button>
+              </div>
+            </form>
+          </section>
+
           <label class="menu-field menu-field--mode">
             <span class="menu-field-label">Mode de jeu</span>
             <select id="mode-select">
@@ -60,6 +89,10 @@
               <div class="menu-player-body">
                 <div class="menu-avatar-preview" id="enemy-avatar-preview" aria-hidden="true"></div>
                 <div class="menu-player-fields">
+                  <label id="enemy-account-control" class="menu-field" hidden>
+                    <span class="menu-field-label">Profil local</span>
+                    <select id="enemy-account-select"></select>
+                  </label>
                   <label class="menu-field">
                     <span class="menu-field-label">Nom</span>
                     <input id="enemy-name-input" type="text" maxlength="24" value="Joueur 2" autocomplete="off" />
@@ -98,6 +131,10 @@
           </h1>
         </div>
         <div class="topbar-actions">
+          <div id="topbar-account" class="topbar-account" hidden>
+            <img id="topbar-grade-image" src="./Images/Grade/Niveau%20Débutant.png" alt="" />
+            <span><strong id="topbar-account-name">Joueur</strong><small id="topbar-account-level">Niveau 1</small></span>
+          </div>
           <button id="new-game" class="primary-button" type="button">Nouvelle partie</button>
           <a class="ghost-button" href="./cartes.html" target="_blank" rel="noreferrer">Cartes SVG</a>
         </div>
@@ -260,10 +297,22 @@
         <p class="eyebrow">Fin de partie</p>
         <h2 id="game-over-title">Victoire !</h2>
         <p id="game-over-text" class="game-over-text"></p>
+        <div id="game-over-xp" class="game-over-xp"></div>
         <div class="game-over-actions">
           <button id="game-over-rematch" class="primary-button" type="button">Rejouer</button>
           <button id="game-over-menu" class="ghost-button" type="button">Retour au menu</button>
         </div>
+      </section>
+    </div>
+
+    <div id="turn-handoff" class="turn-handoff" hidden>
+      <div class="turn-handoff-backdrop"></div>
+      <section class="turn-handoff-panel" role="dialog" aria-modal="true" aria-labelledby="turn-handoff-title">
+        <div id="turn-handoff-avatar" class="turn-handoff-avatar" aria-hidden="true"></div>
+        <p class="eyebrow">Changement de joueur</p>
+        <h2 id="turn-handoff-title">Au joueur suivant</h2>
+        <p id="turn-handoff-text">Passe l'écran sans regarder la main adverse.</p>
+        <button id="turn-handoff-confirm" class="primary-button" type="button">Commencer le tour</button>
       </section>
     </div>
 
@@ -296,6 +345,13 @@
         <div id="pile-modal-grid" class="pile-modal-grid"></div>
       </section>
     </div>
+
+    <nav class="mobile-nav" aria-label="Navigation mobile">
+      <button type="button" data-mobile-view="board" aria-pressed="true">Plateau</button>
+      <button type="button" data-mobile-view="cards" aria-pressed="false">Cartes</button>
+      <button type="button" data-mobile-view="rules" aria-pressed="false">Règles</button>
+      <button type="button" data-mobile-view="log" aria-pressed="false">Journal</button>
+    </nav>
 
     <script type="module">import(`./game.js?v=${Date.now()}`);</script>
   </body>

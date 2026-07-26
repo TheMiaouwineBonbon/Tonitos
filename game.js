@@ -1,3 +1,15 @@
+import {
+  awardAccount,
+  createAccount,
+  getAccount,
+  getActiveAccountId,
+  getGrade,
+  getLevelProgress,
+  loadAccounts,
+  setActiveAccountId,
+  updateAccount
+} from "./progression.js?v=20260726-1";
+
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {
   MAIN_1: "main1",
@@ -24,9 +36,16 @@ const state = {
   currentTurn: "player",
   phase: PHASES.MAIN_1,
   turn: 1,
+  matchId: "",
   winner: null,
   log: [],
   detailContext: null,
+  activeAccountId: getActiveAccountId(),
+  enemyAccountId: "",
+  progressAwarded: false,
+  lastProgressAwards: [],
+  handoffPending: false,
+  mobileView: "board",
   mode: "pve",
   playerDeckId: "blanc-vert",
   enemyDeckId: "rouge-noir",
@@ -108,6 +127,21 @@ const els = {
   roomCodeInput: document.querySelector("#room-code-input"),
   menuDeckSummary: document.querySelector("#menu-deck-summary"),
   onlineStatus: document.querySelector("#online-status"),
+  accountSelect: document.querySelector("#account-select"),
+  accountCreateToggle: document.querySelector("#account-create-toggle"),
+  accountSave: document.querySelector("#account-save"),
+  accountCreateForm: document.querySelector("#account-create-form"),
+  accountNameInput: document.querySelector("#account-name-input"),
+  accountAvatarSelect: document.querySelector("#account-avatar-select"),
+  accountCreateCancel: document.querySelector("#account-create-cancel"),
+  accountSummary: document.querySelector("#account-summary"),
+  accountGradeImage: document.querySelector("#account-grade-image"),
+  enemyAccountControl: document.querySelector("#enemy-account-control"),
+  enemyAccountSelect: document.querySelector("#enemy-account-select"),
+  topbarAccount: document.querySelector("#topbar-account"),
+  topbarGradeImage: document.querySelector("#topbar-grade-image"),
+  topbarAccountName: document.querySelector("#topbar-account-name"),
+  topbarAccountLevel: document.querySelector("#topbar-account-level"),
   cardCountSummary: document.querySelector("#card-count-summary"),
   deckAudit: document.querySelector("#deck-audit"),
   boardStage: document.querySelector(".board-stage"),
@@ -120,8 +154,15 @@ const els = {
   gameOver: document.querySelector("#game-over"),
   gameOverTitle: document.querySelector("#game-over-title"),
   gameOverText: document.querySelector("#game-over-text"),
+  gameOverXp: document.querySelector("#game-over-xp"),
   gameOverRematch: document.querySelector("#game-over-rematch"),
-  gameOverMenu: document.querySelector("#game-over-menu")
+  gameOverMenu: document.querySelector("#game-over-menu"),
+  turnHandoff: document.querySelector("#turn-handoff"),
+  turnHandoffTitle: document.querySelector("#turn-handoff-title"),
+  turnHandoffText: document.querySelector("#turn-handoff-text"),
+  turnHandoffAvatar: document.querySelector("#turn-handoff-avatar"),
+  turnHandoffConfirm: document.querySelector("#turn-handoff-confirm"),
+  mobileViewButtons: [...document.querySelectorAll("[data-mobile-view]")]
 };
 
 const MAX_BOARD = 7;
@@ -204,6 +245,7 @@ async function init() {
   applyPlaymats();
   populateDeckMenu();
   populateAvatarMenu();
+  initializeAccounts();
   renderGallery();
   renderDeckAudit();
   bindEvents();
@@ -227,6 +269,12 @@ function bindEvents() {
   els.playerAvatarSelect?.addEventListener("change", updateMenuSummary);
   els.enemyAvatarSelect?.addEventListener("change", updateMenuSummary);
   els.roomCodeInput?.addEventListener("input", updateMenuSummary);
+  els.accountSelect?.addEventListener("change", selectActiveAccount);
+  els.accountCreateToggle?.addEventListener("click", toggleAccountCreation);
+  els.accountCreateCancel?.addEventListener("click", closeAccountCreation);
+  els.accountCreateForm?.addEventListener("submit", createAccountFromMenu);
+  els.accountSave?.addEventListener("click", saveActiveAccount);
+  els.enemyAccountSelect?.addEventListener("change", selectEnemyAccount);
   els.endTurn?.addEventListener("click", advancePhase);
   els.attackHero?.addEventListener("click", attackHero);
   // Le commandant adverse est une cible cliquable quand un attaquant est choisi.
@@ -241,6 +289,10 @@ function bindEvents() {
   els.cardModalClose?.addEventListener("click", closeCardDetail);
   els.cardModalAction?.addEventListener("click", runDetailAction);
   els.gameOverRematch?.addEventListener("click", rematch);
+  els.turnHandoffConfirm?.addEventListener("click", confirmTurnHandoff);
+  for (const button of els.mobileViewButtons) {
+    button.addEventListener("click", () => setMobileView(button.dataset.mobileView));
+  }
   els.gameOverMenu?.addEventListener("click", () => {
     if (els.gameOver) els.gameOver.hidden = true;
     openStartMenu();
@@ -296,7 +348,7 @@ function populateAvatarMenu() {
     .filter((card) => card.image)
     .sort((a, b) => a.name.localeCompare(b.name, "fr"));
 
-  const selects = [els.playerAvatarSelect, els.enemyAvatarSelect].filter(Boolean);
+  const selects = [els.playerAvatarSelect, els.enemyAvatarSelect, els.accountAvatarSelect].filter(Boolean);
   if (selects.length === 0) return;
   for (const select of selects) {
     select.innerHTML = "";
@@ -310,13 +362,178 @@ function populateAvatarMenu() {
 
   if (els.playerAvatarSelect) els.playerAvatarSelect.value = DEFAULT_PROFILES.player.avatar;
   if (els.enemyAvatarSelect) els.enemyAvatarSelect.value = DEFAULT_PROFILES.enemy.avatar;
+  if (els.accountAvatarSelect) els.accountAvatarSelect.value = DEFAULT_PROFILES.player.avatar;
   updateMenuSummary();
+}
+
+function initializeAccounts() {
+  const accounts = loadAccounts();
+  if (state.activeAccountId && !accounts.some((account) => account.id === state.activeAccountId)) {
+    state.activeAccountId = "";
+    setActiveAccountId("");
+  }
+  refreshAccountMenus();
+  if (state.activeAccountId) applyAccountToSide("player", state.activeAccountId);
+  renderAccountSummary();
+  renderTopbarAccount();
+  setMobileView("board");
+}
+
+function refreshAccountMenus() {
+  const accounts = loadAccounts();
+  if (els.accountSelect) {
+    els.accountSelect.innerHTML = '<option value="">Jouer sans profil</option>';
+    for (const account of accounts) {
+      const option = document.createElement("option");
+      option.value = account.id;
+      option.textContent = `${account.name} · niveau ${account.level}`;
+      els.accountSelect.append(option);
+    }
+    els.accountSelect.value = state.activeAccountId;
+  }
+  if (els.enemyAccountSelect) {
+    els.enemyAccountSelect.innerHTML = '<option value="">Invité local</option>';
+    for (const account of accounts) {
+      const option = document.createElement("option");
+      option.value = account.id;
+      option.textContent = `${account.name} · niveau ${account.level}`;
+      els.enemyAccountSelect.append(option);
+    }
+    els.enemyAccountSelect.value = state.enemyAccountId;
+  }
+}
+
+function selectActiveAccount() {
+  state.activeAccountId = els.accountSelect?.value || "";
+  setActiveAccountId(state.activeAccountId);
+  if (state.activeAccountId) applyAccountToSide("player", state.activeAccountId);
+  renderAccountSummary();
+  renderTopbarAccount();
+  updateMenuSummary();
+}
+
+function selectEnemyAccount() {
+  state.enemyAccountId = els.enemyAccountSelect?.value || "";
+  if (state.enemyAccountId) applyAccountToSide("enemy", state.enemyAccountId);
+  updateMenuSummary();
+}
+
+function applyAccountToSide(sideName, accountId) {
+  const account = getAccount(accountId);
+  if (!account) return;
+  const nameInput = sideName === "player" ? els.playerNameInput : els.enemyNameInput;
+  const avatarSelect = sideName === "player" ? els.playerAvatarSelect : els.enemyAvatarSelect;
+  if (nameInput) nameInput.value = account.name;
+  if (avatarSelect && [...avatarSelect.options].some((option) => option.value === account.avatar)) {
+    avatarSelect.value = account.avatar;
+  }
+  updateAvatarPreviews();
+}
+
+function toggleAccountCreation() {
+  if (!els.accountCreateForm) return;
+  els.accountCreateForm.hidden = !els.accountCreateForm.hidden;
+  if (!els.accountCreateForm.hidden) {
+    els.accountNameInput?.focus();
+    if (els.accountAvatarSelect && els.playerAvatarSelect) {
+      els.accountAvatarSelect.value = els.playerAvatarSelect.value;
+    }
+  }
+}
+
+function closeAccountCreation() {
+  if (els.accountCreateForm) els.accountCreateForm.hidden = true;
+}
+
+function createAccountFromMenu(event) {
+  event.preventDefault();
+  const account = createAccount({
+    name: els.accountNameInput?.value,
+    avatar: els.accountAvatarSelect?.value || DEFAULT_PROFILES.player.avatar
+  });
+  state.activeAccountId = account.id;
+  refreshAccountMenus();
+  applyAccountToSide("player", account.id);
+  closeAccountCreation();
+  els.accountCreateForm?.reset();
+  if (els.accountAvatarSelect) els.accountAvatarSelect.value = DEFAULT_PROFILES.player.avatar;
+  renderAccountSummary();
+  renderTopbarAccount();
+  updateMenuSummary();
+}
+
+function saveActiveAccount() {
+  if (!state.activeAccountId) {
+    toggleAccountCreation();
+    return;
+  }
+  updateAccount(state.activeAccountId, {
+    name: els.playerNameInput?.value,
+    avatar: els.playerAvatarSelect?.value
+  });
+  refreshAccountMenus();
+  renderAccountSummary();
+  renderTopbarAccount();
+  updateMenuSummary();
+}
+
+function renderAccountSummary() {
+  if (!els.accountSummary || !els.accountGradeImage) return;
+  const account = getAccount(state.activeAccountId);
+  if (!account) {
+    els.accountSummary.innerHTML = "<span>Profil invité · progression non enregistrée</span>";
+    els.accountGradeImage.src = "./Images/Grade/Niveau Débutant.png";
+    els.accountGradeImage.alt = "Grade Débutant";
+    if (els.accountSave) els.accountSave.disabled = true;
+    return;
+  }
+  const progress = getLevelProgress(account.xp);
+  const grade = getGrade(account.level);
+  els.accountGradeImage.src = `./${grade.image}`;
+  els.accountGradeImage.alt = `Grade ${grade.name}`;
+  els.accountSummary.innerHTML = `
+    <div class="account-summary-line">
+      <strong>${escapeHtml(grade.name)} · niveau ${account.level}</strong>
+      <span>${account.wins} V · ${account.losses} D · ${account.draws} N</span>
+    </div>
+    <div class="xp-track" role="progressbar" aria-label="Progression d'expérience" aria-valuemin="0" aria-valuemax="${progress.nextXp || 1}" aria-valuenow="${progress.currentXp}">
+      <span style="width:${progress.percent}%"></span>
+    </div>
+    <small>${progress.nextXp ? `${progress.currentXp} / ${progress.nextXp} XP` : "Niveau maximum"}</small>
+  `;
+  if (els.accountSave) els.accountSave.disabled = false;
+}
+
+function renderTopbarAccount() {
+  if (!els.topbarAccount) return;
+  const account = getAccount(state.activeAccountId);
+  els.topbarAccount.hidden = !account;
+  if (!account) return;
+  const grade = getGrade(account.level);
+  els.topbarGradeImage.src = `./${grade.image}`;
+  els.topbarGradeImage.alt = grade.name;
+  els.topbarAccountName.textContent = account.name;
+  els.topbarAccountLevel.textContent = `Niveau ${account.level} · ${grade.name}`;
+}
+
+function setMobileView(view = "board") {
+  state.mobileView = ["board", "cards", "rules", "log"].includes(view) ? view : "board";
+  document.body.dataset.mobileView = state.mobileView;
+  for (const button of els.mobileViewButtons) {
+    button.setAttribute("aria-pressed", String(button.dataset.mobileView === state.mobileView));
+  }
+  hideCardPreview();
 }
 
 function openStartMenu() {
   if (!els.startMenu) return;
   els.startMenu.hidden = false;
   document.body.classList.add("menu-open");
+  state.handoffPending = false;
+  document.body.classList.remove("handoff-open");
+  if (els.turnHandoff) els.turnHandoff.hidden = true;
+  refreshAccountMenus();
+  renderAccountSummary();
   updateMenuSummary();
 }
 
@@ -352,6 +569,7 @@ function updateMenuSummary() {
   const playerComposition = getDeckComposition(playerDeck);
   const enemyComposition = getDeckComposition(enemyDeck);
   const roomCodeControl = els.roomCodeInput?.closest("label");
+  if (els.enemyAccountControl) els.enemyAccountControl.hidden = mode !== "pvp";
   if (roomCodeControl) roomCodeControl.hidden = !isOnline;
   if (els.enemyNameInput) els.enemyNameInput.disabled = isOnline;
   if (els.enemyAvatarSelect) els.enemyAvatarSelect.disabled = isOnline;
@@ -368,6 +586,7 @@ function updateMenuSummary() {
 }
 
 function profileFromMenu(sideName) {
+  const accountId = sideName === "player" ? state.activeAccountId : state.enemyAccountId;
   const source = sideName === "player"
     ? {
         name: els.playerNameInput?.value,
@@ -377,7 +596,7 @@ function profileFromMenu(sideName) {
         name: els.enemyNameInput?.value,
         avatar: els.enemyAvatarSelect?.value
       };
-  return normalizeClientProfile(sideName, source);
+  return normalizeClientProfile(sideName, { ...source, accountId });
 }
 
 function updateAvatarPreviews() {
@@ -391,9 +610,15 @@ function updateAvatarPreviews() {
 
 function normalizeClientProfile(sideName, profile = {}) {
   const fallback = DEFAULT_PROFILES[sideName];
+  const account = profile.accountId ? getAccount(profile.accountId) : null;
+  const level = account?.level || Math.max(1, Number(profile.level) || 1);
+  const grade = getGrade(level);
   return {
     name: String(profile.name || fallback.name).trim().slice(0, 24) || fallback.name,
-    avatar: profile.avatar || fallback.avatar
+    avatar: profile.avatar || fallback.avatar,
+    accountId: String(profile.accountId || ""),
+    level,
+    grade: grade.name
   };
 }
 
@@ -409,11 +634,16 @@ function newGame(config = {}) {
   state.currentTurn = "player";
   state.phase = PHASES.MAIN_1;
   state.turn = 1;
+  state.matchId = config.matchId || crypto.randomUUID();
   state.winner = null;
   state.log = [];
+  state.progressAwarded = false;
+  state.lastProgressAwards = [];
+  state.handoffPending = false;
   state.started = true;
   closeCardDetail();
   closeStartMenu();
+  setMobileView("board");
 
   draw(state.player, STARTING_HAND);
   draw(state.enemy, STARTING_HAND);
@@ -768,6 +998,7 @@ function serializeGameState() {
     currentTurn: state.currentTurn,
     phase: state.phase,
     turn: state.turn,
+    matchId: state.matchId,
     winner: state.winner,
     log: state.log,
     publishedBy: state.network.playerId,
@@ -777,6 +1008,11 @@ function serializeGameState() {
 
 function applyOnlineState(snapshot, version, room) {
   const network = { ...state.network, suppressPublish: true, version, dirty: false };
+  const incomingMatchId = snapshot.matchId || "";
+  if (incomingMatchId && incomingMatchId !== state.matchId) {
+    state.progressAwarded = false;
+    state.lastProgressAwards = [];
+  }
   state.mode = "online";
   state.started = Boolean(snapshot.started);
   state.playerDeckId = snapshot.playerDeckId || state.playerDeckId;
@@ -788,8 +1024,10 @@ function applyOnlineState(snapshot, version, room) {
   state.currentTurn = snapshot.currentTurn || "player";
   state.phase = snapshot.phase || PHASES.MAIN_1;
   state.turn = snapshot.turn || 1;
+  state.matchId = incomingMatchId || state.matchId || crypto.randomUUID();
   state.winner = snapshot.winner || null;
   state.log = Array.isArray(snapshot.log) ? snapshot.log : [];
+  state.handoffPending = false;
   state.network = network;
   syncProfilesFromRoom(room);
   closeCardDetail();
@@ -1140,7 +1378,7 @@ function playSpell(side, cardIndex) {
 
 // Style Hearthstone : pendant tout ton tour tu peux poser des cartes.
 function canActInMain(side) {
-  return state.currentTurn === side.side && state.phase !== PHASES.OVER;
+  return !state.handoffPending && state.currentTurn === side.side && state.phase !== PHASES.OVER;
 }
 
 // Mana coloré : une carte d'une couleur exige autant de terrains DE CETTE
@@ -1425,6 +1663,53 @@ function applySpellEffect(card, side) {
       pushVisualEffect("freeze", opponent.side, "Gel");
       logEvent(`${card.name} engage toutes les créatures adverses.`);
     }
+  }
+
+  if (card.effect === "abyssThreat") {
+    for (const target of opponent.board) {
+      freezeCreature(target);
+      target.attack = Math.max(0, target.attack - 1);
+    }
+    if (opponent.board.length > 0) {
+      pushVisualEffect("freeze", opponent.side, "Terreur");
+      logEvent(`${card.name} engage et affaiblit toutes les créatures adverses.`);
+    }
+  }
+
+  if (card.effect === "naturalMemory") {
+    draw(side, 2);
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    pushVisualEffect("buff", side.side, "+2 vie");
+    logEvent(`${card.name} fait piocher deux cartes et rend 2 points de vie.`);
+  }
+
+  if (card.effect === "crownUlgod") {
+    for (const ally of side.board) ally.attack += 1;
+    opponent.life -= 2;
+    pushVisualEffect("buff", side.side, "+1 force");
+    pushVisualEffect("hit", opponent.side, "-2");
+    logEvent(`${card.name} renforce tes créatures et inflige 2 blessures au héros adverse.`);
+  }
+
+  if (card.effect === "bhaalVessel") {
+    side.life -= 2;
+    const returned = reanimateBestCreatures(side, 1);
+    pushVisualEffect("hit", side.side, "-2");
+    if (returned.length > 0) {
+      pushVisualEffect("summon", side.side, "Réanimation");
+      logEvent(`${card.name} réclame 2 points de vie et ramène ${returned[0].name}.`);
+    } else {
+      logEvent(`${card.name} réclame 2 points de vie, mais le cimetière ne répond pas.`);
+    }
+  }
+
+  if (card.effect === "vengefulSpirits") {
+    for (const target of opponent.board) target.currentLife -= 2;
+    opponent.life -= 2;
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    pushVisualEffect("hit", opponent.side, "-2");
+    pushVisualEffect("buff", side.side, "+2 vie");
+    logEvent(`${card.name} frappe toutes les créatures adverses et draine 2 points de vie.`);
   }
 
   if (card.effect === "vengeanceUldrid") {
@@ -1879,6 +2164,25 @@ function endCurrentTurn() {
   }
 
   beginTurn(nextSide);
+  if (state.mode === "pvp") showTurnHandoff(nextSide);
+  render();
+}
+
+function showTurnHandoff(nextSide) {
+  state.handoffPending = true;
+  document.body.classList.add("handoff-open");
+  if (!els.turnHandoff) return;
+  els.turnHandoff.hidden = false;
+  els.turnHandoffTitle.textContent = `À ${sideDisplayName(nextSide.side)}`;
+  els.turnHandoffText.textContent = `Passe l'écran à ${sideDisplayName(nextSide.side)}, puis commence le tour quand la main est cachée.`;
+  els.turnHandoffAvatar.style.backgroundImage = cssUrl(nextSide.profile?.avatar);
+  setTimeout(() => els.turnHandoffConfirm?.focus(), 0);
+}
+
+function confirmTurnHandoff() {
+  state.handoffPending = false;
+  document.body.classList.remove("handoff-open");
+  if (els.turnHandoff) els.turnHandoff.hidden = true;
   render();
 }
 
@@ -1985,6 +2289,7 @@ function isSpellWorthCasting(card, side, opponent) {
     case "dealAllEnemies3":
     case "weakenAllEnemies":
     case "freezeAll":
+    case "abyssThreat":
       return opponent.board.length > 0;
     case "freezeStrongest":
     case "freezeTwo":
@@ -1998,16 +2303,22 @@ function isSpellWorthCasting(card, side, opponent) {
     case "buffTeamAttack1":
     case "toughTeam":
     case "vengeanceUldrid":
+    case "crownUlgod":
       return side.board.length > 0;
     case "createTwoZombies":
     case "createGuardian":
       return side.board.length < MAX_BOARD;
     case "reanimate":
     case "reanimateTwo":
+    case "bhaalVessel":
       return (
         side.board.length < MAX_BOARD &&
         (side.graveyard || []).some((entry) => entry.kind === "creature")
       );
+    case "naturalMemory":
+      return side.deck.length > 0 || side.life < MAX_LIFE;
+    case "vengefulSpirits":
+      return opponent.board.length > 0 || opponent.life > 0;
     case "gainLife4":
       return side.life <= MAX_LIFE - 4;
     case "restHero":
@@ -2063,7 +2374,7 @@ function isHumanSide(sideName) {
 }
 
 function isCurrentSideHuman() {
-  return isHumanSide(state.currentTurn);
+  return !state.handoffPending && isHumanSide(state.currentTurn);
 }
 
 function isDefendingSideHuman() {
@@ -2242,6 +2553,34 @@ function checkVictory() {
     const loser = state.winner === "player" ? "enemy" : "player";
     logEvent(`${sideDisplayName(loser)} tombe à 0 point de vie. ${sideDisplayName(state.winner)} remporte la partie !`);
   }
+  awardMatchProgress();
+}
+
+function awardMatchProgress() {
+  if (state.progressAwarded || state.phase !== PHASES.OVER) return;
+  state.progressAwarded = true;
+  state.lastProgressAwards = [];
+
+  const entries = [];
+  if (state.mode === "online") {
+    if (state.activeAccountId && state.network.slot) {
+      entries.push({ accountId: state.activeAccountId, side: state.network.slot });
+    }
+  } else {
+    if (state.activeAccountId) entries.push({ accountId: state.activeAccountId, side: "player" });
+    if (state.mode === "pvp" && state.enemyAccountId && state.enemyAccountId !== state.activeAccountId) {
+      entries.push({ accountId: state.enemyAccountId, side: "enemy" });
+    }
+  }
+
+  for (const entry of entries) {
+    const result = state.winner === "draw" ? "draw" : state.winner === entry.side ? "win" : "loss";
+    const award = awardAccount(entry.accountId, result, state.matchId);
+    if (award) state.lastProgressAwards.push({ ...award, side: entry.side });
+  }
+  refreshAccountMenus();
+  renderAccountSummary();
+  renderTopbarAccount();
 }
 
 function render() {
@@ -2309,6 +2648,7 @@ function updateGameOver() {
   const over = state.started && state.phase === PHASES.OVER;
   els.gameOver.hidden = !over;
   if (!over) return;
+  awardMatchProgress();
 
   const localSlot = state.mode === "online" ? state.network.slot : state.mode === "pve" ? "player" : null;
   let title;
@@ -2328,6 +2668,29 @@ function updateGameOver() {
   }
   els.gameOverTitle.textContent = title;
   els.gameOverText.textContent = text;
+  if (els.gameOverXp) {
+    if (state.lastProgressAwards.length === 0) {
+      els.gameOverXp.innerHTML = '<p class="game-over-guest">Crée un profil pour enregistrer ton XP et ton grade.</p>';
+    } else {
+      els.gameOverXp.innerHTML = state.lastProgressAwards
+        .map((award) => {
+          const resultLabel = award.result === "win" ? "Victoire" : award.result === "loss" ? "Défaite" : "Égalité";
+          const levelNotice = award.leveledUp ? `<strong>Niveau ${award.account.level} atteint</strong>` : "";
+          const gradeNotice = award.gradeChanged ? `<strong>Nouveau grade : ${escapeHtml(award.grade.name)}</strong>` : "";
+          return `
+            <article class="game-over-xp-row">
+              <img src="./${escapeHtml(award.grade.image)}" alt="${escapeHtml(award.grade.name)}" />
+              <div>
+                <span>${escapeHtml(award.account.name)} · ${resultLabel}</span>
+                <strong>+${award.xpEarned} XP</strong>
+                ${levelNotice}${gradeNotice}
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+  }
 }
 
 function rematch() {
@@ -2372,6 +2735,10 @@ function updateButtons() {
 function renderHand() {
   const side = getVisibleHandSide();
   els.playerHand.innerHTML = "";
+  if (state.handoffPending) {
+    els.playerHand.append(emptySlot("Main masquée"));
+    return;
+  }
   if (side.hand.length === 0) {
     els.playerHand.append(emptySlot("Main vide"));
     return;
@@ -3137,6 +3504,7 @@ function phaseLabel() {
 
 function getActionHint() {
   if (state.phase === PHASES.OVER) return "La partie est terminée. Lance une nouvelle partie.";
+  if (state.handoffPending) return "La main reste masquée jusqu'au début du prochain tour.";
   if (state.mode === "online" && !isLocalOnlineController()) {
     return `${sideDisplayName(state.currentTurn)} joue sur son écran.`;
   }
@@ -3200,12 +3568,13 @@ function pushVisualEffect(type, sideName, text) {
 
 function preloadImages() {
   const urls = new Set([
-    ...state.cards.map((card) => card.image),
-    ...state.lands.map((land) => land.image),
-    ...state.spells.map((card) => card.image),
-    "Images/Familliers.png",
     PLAYMATS.player,
-    PLAYMATS.enemy
+    PLAYMATS.enemy,
+    DEFAULT_PROFILES.player.avatar,
+    DEFAULT_PROFILES.enemy.avatar,
+    "Images/Tapis de Jeu/Carte Dos.png",
+    "Images/Tapis de Jeu/Devant de carte.jpg",
+    "Images/Logo Jeu/Spellaho.png"
   ]);
   for (const url of urls) {
     const img = new Image();

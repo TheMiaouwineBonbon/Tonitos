@@ -60,6 +60,15 @@ async function main() {
     ["Images/Logo Jeu/Spellaho.png", "Images/Effets/Fumee magique.png"]
       .every((file) => fs.existsSync(path.join(__dirname, "..", file)))
   );
+  check(
+    "Les 8 grades illustrés existent",
+    ["Débutant", "Bronze", "Silver", "Or", "Platine", "Diamant", "Emeraude", "Master"]
+      .every((grade) => fs.existsSync(path.join(__dirname, "..", `Images/Grade/Niveau ${grade}.png`)))
+  );
+  check(
+    "Le menu contient les profils et l'écran d'XP",
+    html.includes('id="account-select"') && html.includes('id="game-over-xp"') && html.includes('id="turn-handoff"')
+  );
 
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
@@ -71,6 +80,9 @@ async function main() {
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
   check("Vigilance reste limitée à une attaque par tour", gameSource.includes("!unit.hasAttacked"));
   check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
+  check("Le passage de tour local masque la main", gameSource.includes("showTurnHandoff") && gameSource.includes("Main masquée"));
+  check("Les résultats accordent l'XP une seule fois", gameSource.includes("progressAwarded") && gameSource.includes("awardMatchProgress"));
+  check("Les parties ont un identifiant de récompense", gameSource.includes("matchId"));
   const reanimateSource = gameSource.slice(
     gameSource.indexOf("function reanimateBestCreatures"),
     gameSource.indexOf("function triggerOnPlay")
@@ -82,6 +94,19 @@ async function main() {
   check("Illustrations stables au survol", styles.includes("object-fit: contain") && styles.includes(".game-card:hover .card-art img"));
   check("Plateau responsive sur une colonne", styles.includes("@media (max-width: 1100px)") && styles.includes("grid-template-columns: minmax(0, 1fr)"));
   check("Fumée magique animée autour de l'arène", styles.includes("spellaho-smoke-drift-a") && styles.includes("Fumee%20magique.png"));
+  check(
+    "Téléphone paysage sans scroll avec deux tapis",
+    styles.includes("(orientation: landscape)") &&
+      styles.includes('body[data-mobile-view="board"] .enemy-mat') &&
+      styles.includes('body[data-mobile-view="board"] .player-mat') &&
+      styles.includes("overflow: hidden")
+  );
+
+  res = await fetch(`${base}/progression.js`);
+  const progressionSource = await res.text();
+  check("GET /progression.js -> 200", res.status === 200);
+  check("Progression avec XP, niveaux et grades", progressionSource.includes("XP_REWARDS") && progressionSource.includes("getLevelProgress"));
+  check("Une partie ne peut attribuer l'XP qu'une fois", progressionSource.includes("rewardedMatches"));
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
@@ -96,7 +121,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("16 sorts avec illustrations autonomes", spells.length === 16);
+  check("21 sorts avec illustrations autonomes", spells.length === 21);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -111,6 +136,11 @@ async function main() {
   check("Repos du héros = Blanc", spells.find((s) => s.id === "repos-heros")?.family === "Blanc");
   check("Réincarnation divine = Noir", spells.find((s) => s.id === "reincarnation-divine")?.family === "Noir");
   check("Damnation = Rouge", spells.find((s) => s.id === "damnation")?.family === "Rouge");
+  check("Menace des abysses = Bleu", spells.find((s) => s.id === "menace-abysses")?.family === "Bleu");
+  check("Passé naturel = Vert", spells.find((s) => s.id === "passe-naturel")?.family === "Vert");
+  check("Couronne d'Ulgod = Rouge", spells.find((s) => s.id === "couronne-ulgod")?.family === "Rouge");
+  check("Ancien corps de Bhaal = Noir", spells.find((s) => s.id === "ancien-corps-bhaal")?.family === "Noir");
+  check("Esprits vengeurs = Noir", spells.find((s) => s.id === "esprits-vengeurs")?.family === "Noir");
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
