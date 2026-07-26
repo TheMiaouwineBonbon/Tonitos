@@ -932,5 +932,52 @@
       "fit": "cover",
       "position": "50% 45%"
     }
+  },
+  {
+    "id": "noxis-bhaal-fusion",
+    "name": "Noxis Bhaal, Fusion complète",
+    "subtitle": "Apothéose du dieu meurtrier",
+    "family": "Noir",
+    "type": "Créature légendaire - Avatar Dieu Fusion",
+    "cost": 0,
+    "attack": 15,
+    "life": 15,
+    "keywords": [
+      "Vol",
+      "Célérité",
+      "Vigilance",
+      "Contact mortel",
+      "Lien de vie"
+    ],
+    "abilityName": "Apothéose sanglante",
+    "abilityText": "Pour invoquer cette carte, sacrifie Noxis Drathis et Dieu de la mort Bhaal. À son arrivée, détruis toutes les créatures adverses et inflige 5 blessures au héros adverse.",
+    "flavor": "L'incarnation et le dieu ne font plus qu'un. Même la mort détourne le regard.",
+    "image": "Images/Noxis Bhaal Fusion Complète.jpg",
+    "palette": {
+      "primary": "#5d1836",
+      "secondary": "#f0d6ff",
+      "deep": "#09040d"
+    },
+    "deckCopies": 1,
+    "sacrificeOnCast": [
+      "noxis",
+      "bhaal"
+    ],
+    "divine": {
+      "difficulty": 5,
+      "text": "Fusion interdite : Noxis Drathis et Dieu de la mort Bhaal doivent être ensemble sur ton champ de bataille. Ils sont sacrifiés lors de l'invocation.",
+      "any": [
+        {
+          "board": [
+            "noxis",
+            "bhaal"
+          ]
+        }
+      ]
+    },
+    "art": {
+      "fit": "contain",
+      "position": "50% 50%"
+    }
   }
 ]

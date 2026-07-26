@@ -1149,8 +1149,12 @@ function makeDeck(side, deckSpec) {
 }
 
 function pickCreatures(pool, count) {
-  const counts = new Map();
+  const signatureCards = pool
+    .filter((card) => Number(card.deckCopies) === 1)
+    .map((card) => card);
+  const counts = countCopies(signatureCards);
   const picks = [
+    ...signatureCards,
     ...pickCopiesSoft(pool.filter((card) => card.cost <= 2), 8, MAX_NONLAND_COPIES, counts),
     ...pickCopiesSoft(pool.filter((card) => card.cost === 3), 6, MAX_NONLAND_COPIES, counts),
     ...pickCopiesSoft(pool.filter((card) => card.cost >= 4 && card.cost <= 5), 6, MAX_NONLAND_COPIES, counts),
@@ -1183,7 +1187,8 @@ function pickCopies(pool, count, maxCopies, existing = new Map()) {
   while (picks.length < count && sorted.length > 0 && guard < count * sorted.length * 8) {
     const card = sorted[guard % sorted.length];
     const used = existing.get(card.id) || 0;
-    if (used < maxCopies) {
+    const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
+    if (used < cardLimit) {
       picks.push(card);
       existing.set(card.id, used + 1);
     }
@@ -1204,7 +1209,8 @@ function pickCopiesSoft(pool, count, maxCopies, existing = new Map()) {
   while (picks.length < count && sorted.length > 0 && guard < count * sorted.length * 8) {
     const card = sorted[guard % sorted.length];
     const used = existing.get(card.id) || 0;
-    if (used < maxCopies) {
+    const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
+    if (used < cardLimit) {
       picks.push(card);
       existing.set(card.id, used + 1);
     }
@@ -1330,7 +1336,7 @@ function playCreature(side, cardIndex) {
     return;
   }
 
-  if (side.board.length >= MAX_BOARD) {
+  if (!canFitCreatureOnBoard(side, card)) {
     logEvent("Le champ de bataille est plein.");
     render();
     return;
@@ -1345,6 +1351,7 @@ function playCreature(side, cardIndex) {
   markOnlineDirty();
   payMana(side, card);
   side.hand.splice(cardIndex, 1);
+  sacrificeInvocationMaterials(side, card);
   const unit = createUnit(card, side.side);
   side.board.push(unit);
   pushVisualEffect("summon", side.side, "Invocation");
@@ -1353,6 +1360,34 @@ function playCreature(side, cardIndex) {
   cleanupBoards();
   checkVictory();
   render();
+}
+
+function invocationMaterialUnits(side, card) {
+  const available = [...side.board];
+  const units = [];
+  for (const id of card.sacrificeOnCast || []) {
+    const index = available.findIndex((unit) => unit.id === id && unit.currentLife > 0);
+    if (index < 0) return [];
+    units.push(available[index]);
+    available.splice(index, 1);
+  }
+  return units;
+}
+
+function canFitCreatureOnBoard(side, card) {
+  const materials = invocationMaterialUnits(side, card);
+  const required = card.sacrificeOnCast?.length || 0;
+  const removed = materials.length === required ? materials.length : 0;
+  return side.board.length - removed < MAX_BOARD;
+}
+
+function sacrificeInvocationMaterials(side, card) {
+  if (!card.sacrificeOnCast?.length) return;
+  const materials = invocationMaterialUnits(side, card);
+  if (materials.length !== card.sacrificeOnCast.length) return;
+  for (const unit of materials) unit.currentLife = 0;
+  logEvent(`${materials.map((unit) => unit.name).join(" et ")} sont sacrifiés pour accomplir la fusion.`);
+  cleanupBoards();
 }
 
 function playSpell(side, cardIndex) {
@@ -1951,6 +1986,17 @@ function triggerOnPlay(unit, side) {
     logEvent("Bhaal inflige 3 blessures au héros adverse.");
   }
 
+  if (unit.id === "noxis-bhaal-fusion") {
+    const destroyed = opponent.board.length;
+    for (const enemy of opponent.board) enemy.currentLife = 0;
+    opponent.life -= 5;
+    pushVisualEffect("hit", opponent.side, "-5");
+    pushVisualEffect("summon", side.side, "Apothéose");
+    logEvent(
+      `${unit.name} détruit ${destroyed} créature(s) adverse(s) et inflige 5 blessures au héros adverse.`
+    );
+  }
+
   if (unit.id === "chevalier-froussard") {
     side.life = Math.min(MAX_LIFE, side.life + 2);
     logEvent(`Le Chevalier Froussard se met à l'abri : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
@@ -2269,7 +2315,7 @@ function enemyPlaySpells() {
           canPay(state.enemy, card) &&
           (isSpell(card)
             ? isSpellWorthCasting(card, state.enemy, state.player)
-            : state.enemy.board.length < MAX_BOARD && isDivineUnlocked(state.enemy, card))
+            : canFitCreatureOnBoard(state.enemy, card) && isDivineUnlocked(state.enemy, card))
       )
       .sort((a, b) => scoreAiPlay(b) - scoreAiPlay(a))[0];
 
@@ -2329,6 +2375,7 @@ function isSpellWorthCasting(card, side, opponent) {
 }
 
 function scoreAiPlay(card) {
+  if (card.id === "noxis-bhaal-fusion") return 1000;
   return card.cost * 10 + (card.attack || 0) + (isSpell(card) ? 8 : 0);
 }
 
@@ -2775,7 +2822,7 @@ function isPlayableFromHand(side, card) {
   if (isLand(card)) return !side.landPlayed;
   if (isSpell(card)) return canPay(side, card);
   if (!isDivineUnlocked(side, card)) return false;
-  return side.board.length < MAX_BOARD && canPay(side, card);
+  return canFitCreatureOnBoard(side, card) && canPay(side, card);
 }
 
 function renderLands(container, lands, sideName) {

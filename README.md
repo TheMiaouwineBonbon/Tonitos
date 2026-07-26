@@ -114,7 +114,7 @@ terrain(s) vert(s) dégagé(s) pour lancer Golem de pierre. »
 
 ## Invocations divines
 
-Les cinq **dieux** ne peuvent pas être lancés librement : il faut d'abord accomplir
+Les cinq **dieux** et la **Fusion complète** ne peuvent pas être lancés librement : il faut d'abord accomplir
 une condition de légende sur ta propre moitié de table. Tant qu'elle n'est pas
 remplie, la carte reste **verrouillée 🔱🔒** dans ta main (elle ne s'allume pas et
 le clic ne la joue pas). Sa fiche affiche la condition et coche ✔ chaque étape
@@ -127,6 +127,7 @@ accomplie en direct. **Plus la condition est dure, plus le dieu est puissant.**
 | **Aldia déesse de lumière** | ★★★☆☆ | Dyklanne + Marinéhote + Johanna réunies, **ou** Trios des Héros après Confiance d'Aldia | 6/9 · +6 vie et +1/+1 aux alliés |
 | **Ulgod Dieu de l'enfer** | ★★★★☆ | Amrin **et** Ragast réunis sur ton champ de bataille | 9/8 · 5 blessures au héros |
 | **Rena Déesse de la nature** | ★★★★★ | Deux Sceptres de Rena lancés **et** Uldrid le sage arbre en jeu | 8/10 · +2/+2 aux alliés et +5 vie |
+| **Noxis Bhaal, Fusion complète** | ★★★★★ | Noxis Drathis **et** Dieu de la mort Bhaal en jeu ; les deux sont sacrifiés | 15/15 · détruit toutes les créatures adverses, 5 au héros, célérité |
 
 Les conditions sont décrites dans `data/cards.json` (champ `divine`) et évaluées
 génériquement : `board` (toutes ces cartes en jeu), `boardAny` (au moins une),
@@ -146,7 +147,7 @@ L'IA est soumise aux mêmes conditions.
 Correspondances respectées dans les données, les palettes et la construction des decks :
 
 - Fée → **Vert** · Golem de pierre → **Vert** · Uldrid, Protecteurs de la nature → **Vert**
-- Magicien exilé, Valerius Dracul (vampire, pacte avec la mort), Nilith → **Noir**
+- Magicien exilé, Valerius Dracul (vampire, pacte avec la mort), Nilith et Fusion complète → **Noir**
 - Roi des mers, Kraken, Umi → **Bleu**
 - Dyklanne de Mirthodil, Johanna Bordeciel, Aldia → **Blanc**
 - Premier Roi de l'enfer Amrin, Ulgod, Ragast → **Rouge**
@@ -162,7 +163,7 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
 | Blanc   | 9                 | 4             | 4                | Base atteinte                    |
 | Bleu    | 6                 | 4             | 4                | Base atteinte                    |
-| Noir    | 9                 | 4             | 6                | Base atteinte                    |
+| Noir    | 10                | 4             | 6                | Base atteinte                    |
 | Rouge   | 7                 | 4             | 4                | Base atteinte                    |
 | Vert    | 6                 | 4             | 5                | Base atteinte                    |
 

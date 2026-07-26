@@ -80,6 +80,12 @@ async function main() {
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
   check("Vigilance reste limitée à une attaque par tour", gameSource.includes("!unit.hasAttacked"));
   check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
+  check(
+    "La Fusion sacrifie réellement Noxis et Bhaal",
+    gameSource.includes("sacrificeInvocationMaterials") &&
+      gameSource.includes('unit.id === "noxis-bhaal-fusion"') &&
+      gameSource.includes("canFitCreatureOnBoard")
+  );
   check("Le passage de tour local masque la main", gameSource.includes("showTurnHandoff") && gameSource.includes("Main masquée"));
   check("Les résultats accordent l'XP une seule fois", gameSource.includes("progressAwarded") && gameSource.includes("awardMatchProgress"));
   check("Les parties ont un identifiant de récompense", gameSource.includes("matchId"));
@@ -110,7 +116,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 37 créatures", Array.isArray(cards) && cards.length === 37);
+  check("cards.json = 38 créatures", Array.isArray(cards) && cards.length === 38);
   check("Golem de pierre = Vert", cards.find((c) => c.id === "golem-pierre")?.family === "Vert");
   check("Amrin = Rouge", cards.find((c) => c.id === "amrin")?.family === "Rouge");
   check("Roi des mers = Bleu", cards.find((c) => c.id === "roi-des-mers")?.family === "Bleu");
@@ -118,6 +124,20 @@ async function main() {
   check("Fée = Vert", cards.find((c) => c.id === "fee")?.family === "Vert");
   check("Ours-hibou = Vert", cards.find((c) => c.id === "ours-hibou")?.family === "Vert");
   check("Valerius = Noir", cards.find((c) => c.id === "valerius")?.family === "Noir");
+  const fusion = cards.find((c) => c.id === "noxis-bhaal-fusion");
+  check(
+    "Fusion complète = carte la plus forte",
+    fusion?.family === "Noir" &&
+      fusion.attack === 15 &&
+      fusion.life === 15 &&
+      cards.filter((card) => card.id !== fusion.id).every((card) => card.attack < fusion.attack && card.life < fusion.life)
+  );
+  check(
+    "Fusion complète exige et sacrifie Noxis + Bhaal",
+    fusion?.divine?.any?.some((clause) => clause.board?.includes("noxis") && clause.board?.includes("bhaal")) &&
+      fusion?.sacrificeOnCast?.join(",") === "noxis,bhaal" &&
+      fusion.deckCopies === 1
+  );
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
