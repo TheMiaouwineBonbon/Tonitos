@@ -81,6 +81,13 @@ async function main() {
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
   check("Main en éventail calculée selon le nombre de cartes", gameSource.includes("--hand-rotation") && gameSource.includes("--hand-overlap"));
+  check(
+    "Glisser tactile capturé jusqu'au terrain du joueur actif",
+    gameSource.includes("setPointerCapture") &&
+      gameSource.includes("pointerId") &&
+      gameSource.includes("playDropField") &&
+      gameSource.includes("onDragPointerCancel")
+  );
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
   check("Vigilance reste limitée à une attaque par tour", gameSource.includes("!unit.hasAttacked"));
   check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
@@ -147,6 +154,12 @@ async function main() {
     styles.includes("grid-template-rows: repeat(2, minmax(0, 1fr))") &&
       styles.includes("--phone-hand-height") &&
       styles.includes("--phone-board-card-width")
+  );
+  check(
+    "Cartes mobiles déplaçables au doigt",
+    styles.includes("touch-action: none") &&
+      styles.includes(".game-card.is-drag-source") &&
+      styles.includes(".mat-zone--field.is-drop-ready")
   );
   check(
     "Verrouillage paysage relié au moteur",

@@ -4734,6 +4734,7 @@ body.targeting .enemy-mat .mat-zone--commander {
 body.is-dragging {
   cursor: grabbing;
   user-select: none;
+  touch-action: none;
 }
 
 .drag-layer {
@@ -4776,6 +4777,14 @@ body.is-dragging {
 }
 
 /* Zone de dépôt (champ de bataille) mise en avant pendant un glisser */
+.mat-zone--field.is-drop-ready {
+  outline: 2px solid rgba(116, 230, 154, 0.46);
+  outline-offset: -5px;
+  box-shadow:
+    inset 0 0 28px rgba(116, 230, 154, 0.12),
+    0 0 18px rgba(116, 230, 154, 0.16);
+}
+
 .mat-zone--field.is-drop-target {
   outline: 3px dashed rgba(116, 230, 154, 0.9);
   outline-offset: -6px;
@@ -6300,7 +6309,28 @@ body.phone-portrait-blocked .orientation-gate {
     margin-inline: calc(var(--hand-overlap, -7px) / 2);
     aspect-ratio: 2 / 3;
     transform: translateY(var(--hand-drop, 0px)) rotate(var(--hand-rotation, 0deg));
-    touch-action: manipulation;
+    -webkit-user-drag: none;
+    touch-action: none;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card .card-content {
+    -webkit-touch-callout: none;
+    touch-action: none;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card.is-playable {
+    cursor: grab;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card.is-drag-source {
+    opacity: 0.18;
+  }
+
+  body[data-mobile-view="board"] .drag-ghost {
+    width: 88px !important;
+    height: 132px !important;
+    opacity: 0.94;
+    transform: rotate(-2deg) scale(1.04) !important;
   }
 
   body[data-mobile-view="board"] .hand-row .game-card:hover,

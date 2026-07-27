@@ -330,9 +330,9 @@ function bindEvents() {
   window.addEventListener("orientationchange", updatePhoneOrientation);
   screen.orientation?.addEventListener?.("change", updatePhoneOrientation);
   window.addEventListener("scroll", hideCardPreview, true);
-  window.addEventListener("pointermove", onDragPointerMove);
+  window.addEventListener("pointermove", onDragPointerMove, { passive: false });
   window.addEventListener("pointerup", onDragPointerUp);
-  window.addEventListener("pointercancel", () => resetDrag());
+  window.addEventListener("pointercancel", onDragPointerCancel);
 }
 
 function isPhoneViewport() {
@@ -3112,6 +3112,8 @@ const dragState = {
   uid: null,
   startX: 0,
   startY: 0,
+  pointerId: null,
+  pointerType: "",
   ghost: null,
   suppressClick: false
 };
@@ -3133,6 +3135,7 @@ function attachAttackDrag(node, unit) {
 }
 
 function beginDragCandidate(event, spec) {
+  if (dragState.pending) resetDrag();
   dragState.pending = true;
   dragState.active = false;
   dragState.mode = spec.mode;
@@ -3142,14 +3145,23 @@ function beginDragCandidate(event, spec) {
   dragState.uid = spec.uid || null;
   dragState.startX = event.clientX;
   dragState.startY = event.clientY;
+  dragState.pointerId = event.pointerId;
+  dragState.pointerType = event.pointerType || "";
   dragState.suppressClick = false;
+  if (spec.node.setPointerCapture) {
+    try {
+      spec.node.setPointerCapture(event.pointerId);
+    } catch {}
+  }
 }
 
 function onDragPointerMove(event) {
-  if (!dragState.pending) return;
+  if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
+  if (event.cancelable) event.preventDefault();
   if (!dragState.active) {
     const moved = Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY);
-    if (moved < 9) return;
+    const threshold = dragState.pointerType === "touch" ? 5 : 9;
+    if (moved < threshold) return;
     activateDrag(event);
   }
   updateDrag(event);
@@ -3160,9 +3172,6 @@ function activateDrag(event) {
   dragState.suppressClick = true;
   document.body.classList.add("is-dragging");
   ensureDragLayer();
-  if (dragState.node.setPointerCapture) {
-    try { dragState.node.setPointerCapture(event.pointerId); } catch {}
-  }
 
   if (dragState.mode === "play") {
     const rect = dragState.node.getBoundingClientRect();
@@ -3173,6 +3182,8 @@ function activateDrag(event) {
     dragLayerEl.append(ghost);
     dragState.ghost = ghost;
     dragState.node.classList.add("is-drag-source");
+    playDropField()?.classList.add("is-drop-ready");
+    navigator.vibrate?.(12);
   } else {
     dragArrowEl.hidden = false;
     dragState.node.classList.add("is-attacking");
@@ -3186,7 +3197,7 @@ function updateDrag(event) {
       dragState.ghost.style.top = `${event.clientY}px`;
     }
     const overField = isOverPlayField(event.clientX, event.clientY);
-    els.playerBoard?.closest(".mat-zone--field")?.classList.toggle("is-drop-target", overField);
+    playDropField()?.classList.toggle("is-drop-target", overField);
   } else {
     const rect = dragState.node.getBoundingClientRect();
     drawAimArrow(rect.left + rect.width / 2, rect.top + rect.height / 2, event.clientX, event.clientY);
@@ -3195,14 +3206,15 @@ function updateDrag(event) {
 }
 
 function onDragPointerUp(event) {
-  if (!dragState.pending) return;
+  if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
   const wasActive = dragState.active;
+  const suppressClick = dragState.suppressClick;
   if (wasActive) {
     if (dragState.mode === "play") finishPlayDrag(event);
     else finishAttackDrag(event);
   }
   resetDrag();
-  if (dragState.suppressClick) {
+  if (suppressClick) {
     // Empêche le clic « fiche » de suivre un vrai glisser.
     const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
     document.addEventListener("click", swallow, { capture: true, once: true });
@@ -3210,8 +3222,14 @@ function onDragPointerUp(event) {
   }
 }
 
+function onDragPointerCancel(event) {
+  if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
+  resetDrag();
+}
+
 function finishPlayDrag(event) {
   if (isOverPlayField(event.clientX, event.clientY) && dragState.card && dragState.side) {
+    navigator.vibrate?.(22);
     playCardFromHand(dragState.side, dragState.card.uid);
   }
 }
@@ -3229,10 +3247,18 @@ function finishAttackDrag(event) {
 }
 
 function resetDrag() {
+  if (dragState.node?.hasPointerCapture?.(dragState.pointerId)) {
+    try {
+      dragState.node.releasePointerCapture(dragState.pointerId);
+    } catch {}
+  }
   if (dragState.ghost) dragState.ghost.remove();
   dragState.node?.classList.remove("is-drag-source");
   document.body.classList.remove("is-dragging");
   els.playerBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-target");
+  els.playerBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-ready");
+  els.enemyBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-target");
+  els.enemyBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-ready");
   clearAttackTargetHighlight();
   if (dragArrowEl) dragArrowEl.hidden = true;
   dragState.pending = false;
@@ -3242,11 +3268,19 @@ function resetDrag() {
   dragState.card = null;
   dragState.side = null;
   dragState.uid = null;
+  dragState.pointerId = null;
+  dragState.pointerType = "";
   dragState.ghost = null;
+  dragState.suppressClick = false;
+}
+
+function playDropField() {
+  const board = dragState.side?.side === "enemy" ? els.enemyBoard : els.playerBoard;
+  return board?.closest(".mat-zone--field") || board || null;
 }
 
 function isOverPlayField(x, y) {
-  const field = els.playerBoard?.closest(".mat-zone--field") || els.playerBoard;
+  const field = playDropField();
   if (!field) return false;
   const r = field.getBoundingClientRect();
   const pad = 30;
