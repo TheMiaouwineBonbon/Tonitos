@@ -5493,6 +5493,15 @@ body.phone-portrait-blocked .orientation-gate {
   line-height: 1.4;
 }
 
+.orientation-gate-panel .orientation-status {
+  max-width: 300px;
+  border-top: 1px solid rgba(119, 201, 243, 0.34);
+  padding-top: 9px;
+  color: #9fdcf8;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .rotate-phone {
   position: relative;
   display: block;
@@ -5558,7 +5567,7 @@ body.phone-portrait-blocked .orientation-gate {
 @media (max-width: 950px) and (orientation: landscape) {
   :root {
     --phone-nav-height: 30px;
-    --phone-hand-height: 118px;
+    --phone-hand-height: 112px;
     --phone-board-card-width: 64px;
   }
 
@@ -6201,53 +6210,62 @@ body.phone-portrait-blocked .orientation-gate {
     height: 14px;
   }
 
-  /* Barre de tour centrale : grande cible tactile sans manger le plateau. */
+  /* Commandes flottantes : elles ne forment plus une barre sur le terrain. */
   body[data-mobile-view="board"] .centerline {
     position: absolute;
     top: 50%;
-    right: 2%;
+    right: 0;
+    left: 0;
     z-index: 40;
     grid-column: auto;
     grid-row: auto;
-    display: grid;
-    grid-template-columns: minmax(90px, 1fr) 104px minmax(82px, 0.85fr);
-    grid-template-rows: 36px;
-    width: min(390px, 58%);
-    gap: 4px;
-    align-content: center;
-    padding: 2px;
-    border: 1px solid rgba(223, 190, 112, 0.52);
-    border-radius: 7px;
-    background: rgba(5, 7, 11, 0.9);
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.66);
+    display: block;
+    width: 100%;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
     transform: translateY(-50%);
+    pointer-events: none;
   }
 
   body[data-mobile-view="board"] .centerline .danger-button,
   body[data-mobile-view="board"] .centerline .turn-pill,
   body[data-mobile-view="board"] .centerline .primary-button {
-    grid-row: 1;
+    position: absolute;
+    top: 50%;
     min-width: 0;
-    min-height: 32px;
+    min-height: 34px;
     margin: 0;
-    padding: 2px 5px;
+    padding: 2px 8px;
     font-size: 10px;
     line-height: 1.05;
     white-space: normal;
+    transform: translateY(-50%);
+    pointer-events: auto;
   }
 
   body[data-mobile-view="board"] .centerline .danger-button {
-    grid-column: 1;
+    left: max(6px, env(safe-area-inset-left));
+    width: 116px;
+  }
+
+  body[data-mobile-view="board"] .centerline .danger-button:disabled {
+    visibility: hidden;
   }
 
   body[data-mobile-view="board"] .centerline .turn-pill {
-    grid-column: 2;
+    left: 50%;
     display: grid;
+    width: 112px;
     place-items: center;
+    transform: translate(-50%, -50%);
   }
 
   body[data-mobile-view="board"] .centerline .primary-button {
-    grid-column: 3;
+    right: max(6px, env(safe-area-inset-right));
+    width: 96px;
   }
 
   /* Main en éventail au premier plan, pensée pour le toucher. */
@@ -6288,27 +6306,27 @@ body.phone-portrait-blocked .orientation-gate {
 
   body[data-mobile-view="board"] .hand-row {
     position: absolute;
-    inset: auto 0 10px;
+    inset: auto 0 6px;
     display: flex;
     width: 100%;
-    height: 146px;
+    height: 128px;
     min-height: 0;
     align-items: flex-end;
     justify-content: center;
     gap: 0;
     overflow: visible;
-    padding: 0 36px 2px;
+    padding: 0 32px;
     perspective: 900px;
   }
 
   body[data-mobile-view="board"] .hand-row .game-card {
-    flex: 0 0 96px;
-    width: 96px;
-    min-width: 96px;
-    height: 144px;
+    flex: 0 0 84px;
+    width: 84px;
+    min-width: 84px;
+    height: 126px;
     margin-inline: calc(var(--hand-overlap, -7px) / 2);
     aspect-ratio: 2 / 3;
-    transform: translateY(var(--hand-drop, 0px)) rotate(var(--hand-rotation, 0deg));
+    transform: translateY(min(var(--hand-drop, 0px), 6px)) rotate(var(--hand-rotation, 0deg));
     -webkit-user-drag: none;
     touch-action: none;
   }
@@ -6327,15 +6345,15 @@ body.phone-portrait-blocked .orientation-gate {
   }
 
   body[data-mobile-view="board"] .drag-ghost {
-    width: 88px !important;
-    height: 132px !important;
+    width: 80px !important;
+    height: 120px !important;
     opacity: 0.94;
     transform: rotate(-2deg) scale(1.04) !important;
   }
 
   body[data-mobile-view="board"] .hand-row .game-card:hover,
   body[data-mobile-view="board"] .hand-row .game-card:focus-within {
-    transform: translateY(-8px) rotate(0deg) scale(1.04);
+    transform: translateY(-4px) rotate(0deg) scale(1.03);
   }
 
   body[data-mobile-view="board"] .hand-row .card-name {
@@ -6422,7 +6440,7 @@ body.phone-portrait-blocked .orientation-gate {
 @media (max-width: 700px) and (orientation: landscape) {
   :root {
     --phone-nav-height: 28px;
-    --phone-hand-height: 108px;
+    --phone-hand-height: 104px;
     --phone-board-card-width: 55px;
   }
 
@@ -6463,11 +6481,6 @@ body.phone-portrait-blocked .orientation-gate {
     height: 34px;
   }
 
-  body[data-mobile-view="board"] .centerline {
-    grid-template-columns: minmax(76px, 1fr) 92px minmax(72px, 0.8fr);
-    width: min(335px, 62%);
-  }
-
   body[data-mobile-view="board"] .centerline .danger-button,
   body[data-mobile-view="board"] .centerline .turn-pill,
   body[data-mobile-view="board"] .centerline .primary-button {
@@ -6475,30 +6488,35 @@ body.phone-portrait-blocked .orientation-gate {
   }
 
   body[data-mobile-view="board"] .hand-row {
-    height: 134px;
-    padding-inline: 22px;
+    height: 119px;
+    padding-inline: 20px;
   }
 
   body[data-mobile-view="board"] .hand-row .game-card {
-    flex-basis: 88px;
-    width: 88px;
-    min-width: 88px;
-    height: 132px;
+    flex-basis: 78px;
+    width: 78px;
+    min-width: 78px;
+    height: 117px;
   }
 }
 
 @media (max-width: 600px) and (orientation: landscape) {
+  :root {
+    --phone-hand-height: 100px;
+  }
+
   body[data-mobile-view="board"] .hand-row {
-    bottom: 18px;
+    bottom: 6px;
+    height: 110px;
     padding-inline: 16px;
   }
 
   body[data-mobile-view="board"] .hand-row .game-card {
-    flex-basis: 82px;
-    width: 82px;
-    min-width: 82px;
-    height: 123px;
-    margin-inline: -10px;
+    flex-basis: 72px;
+    width: 72px;
+    min-width: 72px;
+    height: 108px;
+    margin-inline: -9px;
   }
 }
 

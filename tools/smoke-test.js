@@ -71,7 +71,9 @@ async function main() {
   );
   check(
     "Le téléphone portrait affiche l'écran de rotation",
-    html.includes('id="orientation-gate"') && html.includes('id="orientation-lock"')
+    html.includes('id="orientation-gate"') &&
+      html.includes('id="orientation-lock"') &&
+      html.includes('id="orientation-status"')
   );
 
   res = await fetch(`${base}/game.js`);
@@ -162,10 +164,12 @@ async function main() {
       styles.includes(".mat-zone--field.is-drop-ready")
   );
   check(
-    "Verrouillage paysage relié au moteur",
+    "Verrouillage paysage sans plein écran forcé",
     gameSource.includes("requestLandscapeMode") &&
       gameSource.includes("updatePhoneOrientation") &&
-      gameSource.includes("phone-portrait-blocked")
+      gameSource.includes("phone-portrait-blocked") &&
+      gameSource.includes("orientationLockFailed") &&
+      !gameSource.includes("requestFullscreen")
   );
 
   res = await fetch(`${base}/progression.js`);

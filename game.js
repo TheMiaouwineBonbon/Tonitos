@@ -71,6 +71,7 @@ const state = {
 const els = {
   orientationGate: document.querySelector("#orientation-gate"),
   orientationLock: document.querySelector("#orientation-lock"),
+  orientationStatus: document.querySelector("#orientation-status"),
   playerLife: document.querySelector("#player-life"),
   enemyLife: document.querySelector("#enemy-life"),
   playerEnergy: document.querySelector("#player-energy"),
@@ -346,18 +347,32 @@ function isPhoneViewport() {
   );
 }
 
+let orientationLockFailed = false;
+
 function updatePhoneOrientation() {
   const blocked = isPhoneViewport() && window.innerHeight > window.innerWidth;
+  const canLock = typeof screen.orientation?.lock === "function";
   document.body.classList.toggle("phone-portrait-blocked", blocked);
+  document.body.classList.toggle("orientation-lock-unavailable", isPhoneViewport() && !canLock);
   els.orientationGate?.setAttribute("aria-hidden", String(!blocked));
+  if (els.orientationLock) els.orientationLock.hidden = !canLock;
+  if (els.orientationStatus) els.orientationStatus.hidden = canLock && !orientationLockFailed;
 }
 
 async function requestLandscapeMode() {
+  if (!isPhoneViewport()) return;
+  orientationLockFailed = false;
   try {
-    await screen.orientation?.lock?.("landscape");
+    if (typeof screen.orientation?.lock !== "function") {
+      throw new Error("Orientation lock unavailable");
+    }
+    await screen.orientation.lock("landscape");
   } catch {
-    // iOS ne permet pas le verrouillage depuis une page web : l'écran reste
-    // volontairement bloqué jusqu'à ce que le téléphone soit tourné.
+    orientationLockFailed = true;
+    if (els.orientationStatus) {
+      els.orientationStatus.hidden = false;
+      els.orientationStatus.textContent = "Tourne physiquement ton téléphone vers la gauche ou la droite.";
+    }
   }
   updatePhoneOrientation();
 }
