@@ -44,6 +44,10 @@ body.menu-open {
   overflow: hidden;
 }
 
+html:has(body.menu-open) {
+  overflow: hidden;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -5412,4 +5416,1065 @@ body.is-dragging {
 
 .enemy-mat .mat-zone--commander .commander-portrait {
   transform: translate(-50%, 20%);
+}
+
+/* ===================================================================== */
+/* Smartphone v3 : orientation imposée et plateau tactile façon TCG.     */
+/* Ces règles sont volontairement placées en dernier pour neutraliser     */
+/* les anciennes réductions du plateau de bureau sur petit écran.         */
+/* ===================================================================== */
+
+.orientation-gate {
+  display: none;
+}
+
+body.phone-portrait-blocked {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.phone-portrait-blocked .orientation-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+  display: grid;
+  place-items: center;
+  padding:
+    max(18px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right))
+    max(18px, env(safe-area-inset-bottom))
+    max(18px, env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at 50% 38%, rgba(85, 70, 202, 0.3), transparent 34%),
+    #070a11;
+}
+
+.orientation-gate-panel {
+  display: grid;
+  width: min(410px, 100%);
+  justify-items: center;
+  gap: 12px;
+  border: 1px solid rgba(228, 194, 111, 0.6);
+  border-radius: 8px;
+  padding: 22px 20px;
+  color: #fff4d5;
+  background: rgba(8, 13, 23, 0.96);
+  box-shadow:
+    inset 0 0 36px rgba(77, 116, 214, 0.16),
+    0 24px 60px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.orientation-gate-panel img {
+  width: min(250px, 76%);
+  height: 108px;
+  object-fit: contain;
+}
+
+.orientation-gate-panel h1 {
+  margin: 0;
+  font: 800 25px/1.1 Georgia, "Times New Roman", serif;
+}
+
+.orientation-gate-panel p {
+  max-width: 320px;
+  margin: 0;
+  color: rgba(244, 232, 202, 0.78);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.rotate-phone {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 56px;
+}
+
+.rotate-phone span {
+  position: absolute;
+  top: 12px;
+  left: 25px;
+  width: 28px;
+  height: 46px;
+  border: 3px solid #f0cd74;
+  border-radius: 6px;
+  transform: rotate(90deg);
+  animation: phone-rotate 1.8s ease-in-out infinite;
+}
+
+.rotate-phone::before {
+  content: "";
+  position: absolute;
+  inset: 3px 4px 5px;
+  border: 3px solid transparent;
+  border-top-color: #77c9f3;
+  border-radius: 50%;
+  transform: rotate(32deg);
+}
+
+.rotate-phone::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  width: 10px;
+  height: 10px;
+  border-top: 3px solid #77c9f3;
+  border-right: 3px solid #77c9f3;
+  transform: rotate(45deg);
+}
+
+@keyframes phone-rotate {
+  0%, 28% { transform: rotate(0deg); }
+  62%, 100% { transform: rotate(90deg); }
+}
+
+@media (max-width: 950px) and (orientation: portrait) and (hover: none) {
+  .orientation-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: grid;
+    place-items: center;
+    padding:
+      max(18px, env(safe-area-inset-top))
+      max(18px, env(safe-area-inset-right))
+      max(18px, env(safe-area-inset-bottom))
+      max(18px, env(safe-area-inset-left));
+    background: #070a11;
+  }
+}
+
+@media (max-width: 950px) and (orientation: landscape) {
+  :root {
+    --phone-nav-height: 30px;
+    --phone-hand-height: 118px;
+    --phone-board-card-width: 64px;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overscroll-behavior: none;
+  }
+
+  body {
+    padding: 0;
+  }
+
+  body.menu-open .mobile-nav {
+    display: none;
+  }
+
+  body.modal-open .mobile-nav {
+    display: none;
+  }
+
+  /* Menu compact : tous les réglages utiles tiennent dans le paysage. */
+  .start-menu {
+    place-items: stretch;
+    overflow: hidden;
+    padding:
+      max(4px, env(safe-area-inset-top))
+      max(6px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+  }
+
+  .start-panel {
+    grid-template-rows: 48px minmax(0, 1fr) 42px;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    gap: 4px;
+    overflow: hidden;
+    border-radius: 6px;
+    padding: 5px 8px;
+  }
+
+  .start-head {
+    display: flex;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(230, 195, 117, 0.26);
+    padding: 0 8px;
+  }
+
+  .start-head .eyebrow,
+  .start-tagline {
+    display: none;
+  }
+
+  .start-title,
+  .start-panel h1 {
+    display: grid;
+    height: 46px;
+    place-items: center;
+    font-size: 0;
+  }
+
+  .start-logo {
+    width: 164px;
+    height: 46px;
+    object-fit: contain;
+  }
+
+  .start-body {
+    grid-template:
+      "account mode" 40px
+      "players players" minmax(0, 1fr)
+      "room room" auto
+      / minmax(0, 1.25fr) minmax(190px, 0.75fr);
+    gap: 4px 7px;
+    min-height: 0;
+  }
+
+  .account-hub {
+    grid-area: account;
+    min-height: 0;
+    padding: 3px 6px;
+  }
+
+  .account-hub-main {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 6px;
+    height: 100%;
+  }
+
+  .account-grade-image {
+    width: 32px;
+    height: 32px;
+  }
+
+  .account-hub-copy {
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .account-hub-copy > .menu-field-label,
+  .account-summary {
+    display: none;
+  }
+
+  .account-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px;
+  }
+
+  .account-controls select,
+  .account-controls .small-button {
+    height: 31px;
+    min-height: 31px;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+
+  .account-controls .small-button:last-child {
+    grid-column: auto;
+  }
+
+  .account-create-form:not([hidden]) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2300;
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr);
+    width: min(540px, calc(100vw - 24px));
+    border: 1px solid #d8b665;
+    border-radius: 8px;
+    padding: 12px;
+    background: #0b111d;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.82);
+    transform: translate(-50%, -50%);
+  }
+
+  .account-create-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .menu-field--mode {
+    grid-area: mode;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 7px;
+    padding: 3px 6px;
+  }
+
+  .menu-players {
+    grid-area: players;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    min-height: 0;
+  }
+
+  .menu-player {
+    min-height: 0;
+    overflow: hidden;
+    padding: 3px 7px 5px;
+  }
+
+  .menu-player legend {
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .menu-player-body {
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    gap: 7px;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .menu-avatar-preview {
+    width: 72px;
+    height: 96px;
+    align-self: center;
+  }
+
+  .menu-player-fields {
+    align-content: center;
+    gap: 3px;
+    min-height: 0;
+  }
+
+  .menu-field {
+    gap: 1px;
+  }
+
+  .menu-field-label {
+    font-size: 9px;
+    line-height: 1;
+  }
+
+  .menu-field input,
+  .menu-field select {
+    height: 30px;
+    min-height: 30px;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+
+  .room-code-control:not([hidden]) {
+    grid-area: room;
+    grid-template-columns: auto 90px;
+    justify-self: center;
+    width: min(390px, 100%);
+    padding: 2px 6px;
+  }
+
+  .menu-deck-summary,
+  .online-status {
+    display: none;
+  }
+
+  .start-launch {
+    align-self: stretch;
+    justify-self: center;
+    min-width: min(320px, 60%);
+    min-height: 38px;
+    font-size: 15px;
+  }
+
+  /* Vue de jeu : aucun défilement, aucune barre de bureau. */
+  body[data-mobile-view="board"] {
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body[data-mobile-view="board"] .app-shell {
+    width: 100%;
+    height: 100dvh;
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      calc(var(--phone-nav-height) + env(safe-area-inset-bottom))
+      env(safe-area-inset-left);
+  }
+
+  body[data-mobile-view="board"] .topbar {
+    display: none;
+  }
+
+  body[data-mobile-view="board"] .game-layout,
+  body[data-mobile-view="board"] .arena {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  body[data-mobile-view="board"] .game-layout {
+    display: block;
+  }
+
+  body[data-mobile-view="board"] .arena {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) var(--phone-hand-height);
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: #0d0a08;
+    box-shadow: none;
+  }
+
+  body[data-mobile-view="board"] .board-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    min-height: 0;
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #090b11;
+    box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.9);
+  }
+
+  body[data-mobile-view="board"] .board-stage::before {
+    display: block;
+    inset: 0;
+    z-index: 4;
+    border: 0;
+    border-radius: 0;
+    background:
+      linear-gradient(180deg, rgba(89, 8, 15, 0.1), transparent 35%, rgba(56, 78, 180, 0.08)),
+      radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.38));
+    pointer-events: none;
+  }
+
+  body[data-mobile-view="board"] .mat-side {
+    position: relative;
+    z-index: 5;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    aspect-ratio: auto;
+    background-position: center;
+    background-size: cover;
+    box-shadow: inset 0 0 32px rgba(0, 0, 0, 0.62);
+  }
+
+  body[data-mobile-view="board"] .enemy-mat {
+    grid-row: 1;
+    background-image:
+      linear-gradient(180deg, rgba(15, 0, 3, 0.02), rgba(18, 0, 3, 0.34)),
+      var(--playmat-enemy);
+  }
+
+  body[data-mobile-view="board"] .player-mat {
+    grid-row: 2;
+    background-image:
+      linear-gradient(180deg, rgba(4, 10, 35, 0.3), rgba(0, 8, 31, 0.02)),
+      var(--playmat-player);
+  }
+
+  body[data-mobile-view="board"] .mat-zone {
+    border-color: rgba(237, 204, 125, 0.42);
+    background-color: rgba(5, 8, 14, 0.48);
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field {
+    top: 3%;
+    left: 11%;
+    width: 78%;
+    height: 94%;
+    overflow: visible;
+    border: 1px solid rgba(226, 192, 111, 0.18);
+    border-radius: 40%;
+    background: rgba(0, 0, 0, 0.14);
+    box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.34);
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .board-row,
+  body[data-mobile-view="board"] .mat-zone--field .land-row {
+    right: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 1px 3px;
+    overflow: visible;
+    background: transparent;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .board-row {
+    display: flex;
+    height: 70%;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .land-row {
+    display: flex;
+    height: 26%;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  body[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row {
+    top: 0;
+    bottom: auto;
+  }
+
+  body[data-mobile-view="board"] .enemy-mat .mat-zone--field .board-row {
+    top: auto;
+    bottom: 0;
+  }
+
+  body[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
+    top: 0;
+    bottom: auto;
+  }
+
+  body[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
+    top: auto;
+    bottom: 0;
+  }
+
+  /* Piles latérales compactes, conservées comme vraies zones tactiles. */
+  body[data-mobile-view="board"] .mat-zone--library,
+  body[data-mobile-view="board"] .mat-zone--graveyard {
+    left: 1.2%;
+    width: 8.8%;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--exile,
+  body[data-mobile-view="board"] .mat-zone--commander {
+    right: 1.2%;
+    left: auto;
+    width: 9.2%;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--library,
+  body[data-mobile-view="board"] .mat-zone--exile {
+    top: 7%;
+    height: 42%;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--graveyard,
+  body[data-mobile-view="board"] .mat-zone--commander {
+    top: 52%;
+    height: 42%;
+  }
+
+  body[data-mobile-view="board"] .library-card-back {
+    top: 5%;
+    width: 48%;
+    max-height: 70%;
+  }
+
+  body[data-mobile-view="board"] .mat-zone-count {
+    right: 4%;
+    bottom: 4%;
+    left: 4%;
+    min-width: 0;
+    padding: 1px 3px;
+    font-size: 8px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone-count strong {
+    font-size: 12px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone-count span {
+    display: none;
+  }
+
+  body[data-mobile-view="board"] .pile-card-mini {
+    top: 5%;
+    width: 46%;
+    max-height: 70%;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
+  body[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
+    top: 1%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translateX(-50%);
+  }
+
+  body[data-mobile-view="board"] .mat-zone--commander .commander-info {
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+    gap: 1px;
+  }
+
+  body[data-mobile-view="board"] .commander-info h2 {
+    display: block;
+    overflow: hidden;
+    font-size: 9px;
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body[data-mobile-view="board"] .commander-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1px;
+  }
+
+  body[data-mobile-view="board"] .stat-orb {
+    min-width: 17px;
+    min-height: 15px;
+    padding: 0 2px;
+    font-size: 8px;
+  }
+
+  body[data-mobile-view="board"] .stat-orb strong {
+    font-size: 10px;
+  }
+
+  /* Les créatures deviennent des serviteurs : art, nom, coût et stats. */
+  body[data-mobile-view="board"] .mat-zone--field .game-card {
+    flex: 0 1 var(--phone-board-card-width);
+    width: var(--phone-board-card-width);
+    min-width: 46px;
+    max-width: var(--phone-board-card-width);
+    height: 78px;
+    margin: 0;
+    aspect-ratio: auto;
+    transform: none;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .game-card .card-content {
+    position: relative;
+    width: 100%;
+    height: 78px;
+    min-height: 0;
+    overflow: hidden;
+    border: 2px solid rgba(235, 202, 125, 0.88);
+    border-radius: 45% 45% 13px 13px;
+    background: #0a0b0d;
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.76),
+      0 4px 8px rgba(0, 0, 0, 0.58);
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-art {
+    position: absolute;
+    inset: 2px;
+    z-index: 1;
+    width: auto;
+    height: auto;
+    border: 0;
+    border-radius: 43% 43% 10px 10px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-frame-top {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .cost-badge {
+    top: -1px;
+    left: -1px;
+    width: 21px;
+    height: 21px;
+    min-width: 21px;
+    font-size: 10px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-title-lockup {
+    top: auto;
+    right: 3px;
+    bottom: 12px;
+    left: 3px;
+    height: auto;
+    min-height: 14px;
+    padding: 2px;
+    background: rgba(4, 5, 8, 0.82);
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-name {
+    overflow: hidden;
+    color: #fff8df;
+    font-size: 8px;
+    line-height: 1;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px #000;
+    white-space: nowrap;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-type,
+  body[data-mobile-view="board"] .mat-zone--field .family-ribbon,
+  body[data-mobile-view="board"] .mat-zone--field .card-scroll {
+    display: none;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .card-stats {
+    right: 1px;
+    bottom: -1px;
+    left: 1px;
+    z-index: 6;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .stat-badge {
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .empty-slot {
+    min-height: 0;
+    border: 0;
+    color: rgba(255, 244, 217, 0.58);
+    background: transparent;
+    font-size: 9px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .land-permanent {
+    flex: 0 1 54px;
+    width: 54px;
+    min-width: 34px;
+    max-width: 54px;
+    height: 25px;
+    min-height: 25px;
+    border-radius: 5px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .land-permanent-art {
+    inset: 1px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .land-name {
+    display: none;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .land-gem {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Barre de tour centrale : grande cible tactile sans manger le plateau. */
+  body[data-mobile-view="board"] .centerline {
+    position: absolute;
+    top: 50%;
+    right: 2%;
+    z-index: 40;
+    grid-column: auto;
+    grid-row: auto;
+    display: grid;
+    grid-template-columns: minmax(90px, 1fr) 104px minmax(82px, 0.85fr);
+    grid-template-rows: 36px;
+    width: min(390px, 58%);
+    gap: 4px;
+    align-content: center;
+    padding: 2px;
+    border: 1px solid rgba(223, 190, 112, 0.52);
+    border-radius: 7px;
+    background: rgba(5, 7, 11, 0.9);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.66);
+    transform: translateY(-50%);
+  }
+
+  body[data-mobile-view="board"] .centerline .danger-button,
+  body[data-mobile-view="board"] .centerline .turn-pill,
+  body[data-mobile-view="board"] .centerline .primary-button {
+    grid-row: 1;
+    min-width: 0;
+    min-height: 32px;
+    margin: 0;
+    padding: 2px 5px;
+    font-size: 10px;
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+  body[data-mobile-view="board"] .centerline .danger-button {
+    grid-column: 1;
+  }
+
+  body[data-mobile-view="board"] .centerline .turn-pill {
+    grid-column: 2;
+    display: grid;
+    place-items: center;
+  }
+
+  body[data-mobile-view="board"] .centerline .primary-button {
+    grid-column: 3;
+  }
+
+  /* Main en éventail au premier plan, pensée pour le toucher. */
+  body[data-mobile-view="board"] .hand-wrap {
+    position: relative;
+    z-index: 60;
+    width: 100%;
+    height: var(--phone-hand-height);
+    min-height: 0;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid rgba(229, 194, 112, 0.5);
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(115, 70, 28, 0.55), transparent 58%),
+      #17100b;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.7);
+  }
+
+  body[data-mobile-view="board"] .hand-wrap .section-heading {
+    top: 4px;
+    right: 6px;
+    left: 6px;
+    z-index: 140;
+  }
+
+  body[data-mobile-view="board"] .hand-wrap .section-heading h2,
+  body[data-mobile-view="board"] .hand-wrap .section-heading span {
+    border-radius: 5px;
+    padding: 3px 7px;
+    color: #fff2cf;
+    background: rgba(4, 6, 10, 0.8);
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  body[data-mobile-view="board"] .hand-row {
+    position: absolute;
+    inset: auto 0 10px;
+    display: flex;
+    width: 100%;
+    height: 146px;
+    min-height: 0;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    overflow: visible;
+    padding: 0 36px 2px;
+    perspective: 900px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card {
+    flex: 0 0 96px;
+    width: 96px;
+    min-width: 96px;
+    height: 144px;
+    margin-inline: calc(var(--hand-overlap, -7px) / 2);
+    aspect-ratio: 2 / 3;
+    transform: translateY(var(--hand-drop, 0px)) rotate(var(--hand-rotation, 0deg));
+    touch-action: manipulation;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card:hover,
+  body[data-mobile-view="board"] .hand-row .game-card:focus-within {
+    transform: translateY(-8px) rotate(0deg) scale(1.04);
+  }
+
+  body[data-mobile-view="board"] .hand-row .card-name {
+    font-size: 10px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .card-ability {
+    font-size: 8px;
+    line-height: 1.05;
+  }
+
+  body[data-mobile-view="board"] .hand-row .tag {
+    font-size: 7px;
+  }
+
+  body[data-mobile-view="board"] .side-panel {
+    display: none;
+  }
+
+  body[data-mobile-view="board"] .mobile-nav {
+    height: calc(var(--phone-nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Fiche de carte plein écran : l'image et le texte restent lisibles. */
+  .card-modal,
+  .pile-modal {
+    padding:
+      max(3px, env(safe-area-inset-top))
+      max(5px, env(safe-area-inset-right))
+      max(3px, env(safe-area-inset-bottom))
+      max(5px, env(safe-area-inset-left));
+  }
+
+  .card-modal-panel {
+    grid-template-columns: minmax(180px, 35%) minmax(0, 1fr);
+    width: min(860px, 100%);
+    max-height: 100%;
+    gap: 12px;
+    overflow: hidden;
+    padding: 7px 12px 7px 7px;
+  }
+
+  .card-modal-card {
+    display: grid;
+    min-height: 0;
+    place-items: center;
+  }
+
+  .card-modal-card .game-card {
+    width: auto;
+    height: min(94dvh, 360px);
+    max-width: 100%;
+  }
+
+  .card-modal-card .card-content {
+    width: auto;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: 2 / 3;
+  }
+
+  .card-modal-copy {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .card-modal-copy h2 {
+    margin: 2px 0 4px;
+    font-size: 21px;
+  }
+
+  .card-modal-copy p {
+    margin: 4px 0;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .card-modal-copy .primary-button {
+    min-height: 38px;
+  }
+}
+
+@media (max-width: 700px) and (orientation: landscape) {
+  :root {
+    --phone-nav-height: 28px;
+    --phone-hand-height: 108px;
+    --phone-board-card-width: 55px;
+  }
+
+  .start-panel {
+    grid-template-rows: 40px minmax(0, 1fr) 36px;
+  }
+
+  .start-title,
+  .start-panel h1,
+  .start-logo {
+    height: 38px;
+  }
+
+  .menu-player-body {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .menu-avatar-preview {
+    width: 56px;
+    height: 75px;
+  }
+
+  .menu-field input,
+  .menu-field select {
+    height: 27px;
+    min-height: 27px;
+    font-size: 10px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--field .game-card,
+  body[data-mobile-view="board"] .mat-zone--field .game-card .card-content {
+    height: 69px;
+  }
+
+  body[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
+  body[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
+    width: 34px;
+    height: 34px;
+  }
+
+  body[data-mobile-view="board"] .centerline {
+    grid-template-columns: minmax(76px, 1fr) 92px minmax(72px, 0.8fr);
+    width: min(335px, 62%);
+  }
+
+  body[data-mobile-view="board"] .centerline .danger-button,
+  body[data-mobile-view="board"] .centerline .turn-pill,
+  body[data-mobile-view="board"] .centerline .primary-button {
+    font-size: 9px;
+  }
+
+  body[data-mobile-view="board"] .hand-row {
+    height: 134px;
+    padding-inline: 22px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card {
+    flex-basis: 88px;
+    width: 88px;
+    min-width: 88px;
+    height: 132px;
+  }
+}
+
+@media (max-width: 600px) and (orientation: landscape) {
+  body[data-mobile-view="board"] .hand-row {
+    bottom: 18px;
+    padding-inline: 16px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .game-card {
+    flex-basis: 82px;
+    width: 82px;
+    min-width: 82px;
+    height: 123px;
+    margin-inline: -10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotate-phone span {
+    animation: none;
+    transform: rotate(90deg);
+  }
 }

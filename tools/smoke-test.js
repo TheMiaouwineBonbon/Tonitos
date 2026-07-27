@@ -69,6 +69,10 @@ async function main() {
     "Le menu contient les profils et l'écran d'XP",
     html.includes('id="account-select"') && html.includes('id="game-over-xp"') && html.includes('id="turn-handoff"')
   );
+  check(
+    "Le téléphone portrait affiche l'écran de rotation",
+    html.includes('id="orientation-gate"') && html.includes('id="orientation-lock"')
+  );
 
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
@@ -137,6 +141,18 @@ async function main() {
       styles.includes('body[data-mobile-view="board"] .enemy-mat') &&
       styles.includes('body[data-mobile-view="board"] .player-mat') &&
       styles.includes("overflow: hidden")
+  );
+  check(
+    "Plateau mobile empilé avec main tactile agrandie",
+    styles.includes("grid-template-rows: repeat(2, minmax(0, 1fr))") &&
+      styles.includes("--phone-hand-height") &&
+      styles.includes("--phone-board-card-width")
+  );
+  check(
+    "Verrouillage paysage relié au moteur",
+    gameSource.includes("requestLandscapeMode") &&
+      gameSource.includes("updatePhoneOrientation") &&
+      gameSource.includes("phone-portrait-blocked")
   );
 
   res = await fetch(`${base}/progression.js`);

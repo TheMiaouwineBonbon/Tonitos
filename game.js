@@ -69,6 +69,8 @@ const state = {
 };
 
 const els = {
+  orientationGate: document.querySelector("#orientation-gate"),
+  orientationLock: document.querySelector("#orientation-lock"),
   playerLife: document.querySelector("#player-life"),
   enemyLife: document.querySelector("#enemy-life"),
   playerEnergy: document.querySelector("#player-energy"),
@@ -249,6 +251,7 @@ async function init() {
   renderGallery();
   renderDeckAudit();
   bindEvents();
+  updatePhoneOrientation();
   openStartMenu();
 }
 
@@ -259,6 +262,7 @@ function applyPlaymats() {
 }
 
 function bindEvents() {
+  els.orientationLock?.addEventListener("click", requestLandscapeMode);
   els.newGame?.addEventListener("click", openStartMenu);
   els.startGame?.addEventListener("click", startGameFromMenu);
   els.modeSelect?.addEventListener("change", updateMenuSummary);
@@ -319,11 +323,43 @@ function bindEvents() {
     if (els.cardModal && !els.cardModal.hidden) closeCardDetail();
     else if (els.pileModal && !els.pileModal.hidden) closePileViewer();
   });
-  window.addEventListener("resize", hideCardPreview);
+  window.addEventListener("resize", () => {
+    hideCardPreview();
+    updatePhoneOrientation();
+  });
+  window.addEventListener("orientationchange", updatePhoneOrientation);
+  screen.orientation?.addEventListener?.("change", updatePhoneOrientation);
   window.addEventListener("scroll", hideCardPreview, true);
   window.addEventListener("pointermove", onDragPointerMove);
   window.addEventListener("pointerup", onDragPointerUp);
   window.addEventListener("pointercancel", () => resetDrag());
+}
+
+function isPhoneViewport() {
+  const compactViewport =
+    Math.min(window.innerWidth, window.innerHeight) <= 760 &&
+    Math.max(window.innerWidth, window.innerHeight) <= 1200;
+  return (
+    compactViewport ||
+    window.matchMedia("(max-width: 950px) and (hover: none)").matches ||
+    (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) <= 950)
+  );
+}
+
+function updatePhoneOrientation() {
+  const blocked = isPhoneViewport() && window.innerHeight > window.innerWidth;
+  document.body.classList.toggle("phone-portrait-blocked", blocked);
+  els.orientationGate?.setAttribute("aria-hidden", String(!blocked));
+}
+
+async function requestLandscapeMode() {
+  try {
+    await screen.orientation?.lock?.("landscape");
+  } catch {
+    // iOS ne permet pas le verrouillage depuis une page web : l'écran reste
+    // volontairement bloqué jusqu'à ce que le téléphone soit tourné.
+  }
+  updatePhoneOrientation();
 }
 
 function populateDeckMenu() {
@@ -544,6 +580,7 @@ function closeStartMenu() {
 }
 
 async function startGameFromMenu() {
+  await requestLandscapeMode();
   if (els.modeSelect.value === "online") {
     await joinOnlineRoom();
     return;
