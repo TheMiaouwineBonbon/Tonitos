@@ -133,7 +133,12 @@ async function main() {
 
   res = await fetch(`${base}/styles.css`);
   const styles = await res.text();
-  check("Illustrations stables au survol", styles.includes("object-fit: contain") && styles.includes(".game-card:hover .card-art img"));
+  check(
+    "Illustrations sans bandes noires et stables au survol",
+    styles.includes("object-fit: cover") &&
+      styles.includes(".game-card:hover .card-art img") &&
+      styles.includes(".card-art-video::-webkit-media-controls")
+  );
   check("Plateau responsive sur une colonne", styles.includes("@media (max-width: 1100px)") && styles.includes("grid-template-columns: minmax(0, 1fr)"));
   check("Fumée magique animée autour de l'arène", styles.includes("spellaho-smoke-drift-a") && styles.includes("Fumee%20magique.png"));
   check(
@@ -193,10 +198,12 @@ async function main() {
       gameSource.includes("creature.currentLife += 1")
   );
   check(
-    "Les vidéos de carte se lancent dans la fiche",
+    "Les vidéos de carte se lancent sans commandes visibles",
     ["roi-sorcier-connor", "fee", "kraken", "rena"].every((id) => cards.find((card) => card.id === id)?.video) &&
       gameSource.includes("playCardDetailVideo") &&
-      gameSource.includes('video.className = "card-art-video"')
+      gameSource.includes('video.className = "card-art-video"') &&
+      gameSource.includes("video.controls = false") &&
+      gameSource.includes("video.disablePictureInPicture = true")
   );
   res = await fetch(`${base}/${connor.video}`, { method: "HEAD" });
   check("Le serveur local sert les MP4 avec le bon type", res.status === 200 && res.headers.get("content-type") === "video/mp4");

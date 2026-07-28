@@ -3457,16 +3457,12 @@ function renderDeckAudit() {
   `;
 }
 
-// Recadrage optionnel par carte (champ `art` dans les données) : certaines
-// illustrations larges sont mieux en `cover` avec une position de sujet précise.
+// Le cadre d'illustration doit toujours être rempli. Le champ `art.position`
+// permet de conserver le sujet principal lors du recadrage.
 function artImgStyle(card) {
   const art = card.art;
-  if (!art) return "";
-  const styles = [];
-  if (art.fit) styles.push(`object-fit:${art.fit}`);
-  if (art.position) styles.push(`object-position:${art.position}`);
-  if (styles.length === 0) return "";
-  return ` style="${styles.join(";")}"`;
+  if (!art?.position) return "";
+  return ` style="object-position:${art.position}"`;
 }
 
 function renderCard(card, options = {}) {
@@ -3670,9 +3666,15 @@ function playCardDetailVideo(card, detailCard) {
   video.poster = encodeURI(card.image);
   video.preload = "metadata";
   video.playsInline = true;
-  video.controls = true;
-  video.setAttribute("controlslist", "nodownload noplaybackrate");
-  video.setAttribute("aria-label", `Vidéo de ${card.name}`);
+  video.controls = false;
+  video.disablePictureInPicture = true;
+  video.disableRemotePlayback = true;
+  video.tabIndex = -1;
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
+  video.setAttribute("disablepictureinpicture", "");
+  video.setAttribute("disableremoteplayback", "");
+  video.setAttribute("aria-hidden", "true");
   video.addEventListener("ended", () => {
     video.classList.add("is-finished");
   }, { once: true });
