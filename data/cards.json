@@ -528,6 +528,31 @@
     }
   },
   {
+    "id": "roi-sorcier-connor",
+    "name": "Roi Sorcier Connor",
+    "subtitle": "Dieu pour les uns, messie pour les autres",
+    "family": "Blanc",
+    "type": "Créature légendaire - Roi Sorcier",
+    "cost": 3,
+    "attack": 1,
+    "life": 2,
+    "keywords": [
+      "Croissance",
+      "Vigilance"
+    ],
+    "abilityName": "Foi grandissante",
+    "abilityText": "Au début de chacun de tes tours, Connor gagne définitivement +1/+1.",
+    "flavor": "Le peuple ne sait pas s'il doit s'agenouiller devant un dieu ou suivre un messie.",
+    "image": "Images/Roi Sorcier Connor.png",
+    "video": "Images/Vidéos/roi-sorcier-connor.mp4",
+    "palette": {
+      "primary": "#c99a48",
+      "secondary": "#fff0ae",
+      "deep": "#2b170f"
+    },
+    "deckCopies": 1
+  },
+  {
     "id": "chevalier-errant",
     "name": "Chevalier Errant",
     "subtitle": "Protecteur sans bannière",
@@ -570,6 +595,7 @@
     "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche une carte.",
     "flavor": "Elle transporte les secrets trop légers pour les livres.",
     "image": "Images/Fée.PNG",
+    "video": "Images/Vidéos/fee.mp4",
     "palette": {
       "primary": "#3f8a45",
       "secondary": "#a9d778",
@@ -620,6 +646,7 @@
     "abilityText": "Quand cette carte arrive sur le champ de bataille, engage toutes les créatures adverses.",
     "flavor": "Quand la mer se referme, même les prières coulent.",
     "image": "Images/Kraken.PNG",
+    "video": "Images/Vidéos/kraken.mp4",
     "palette": {
       "primary": "#176b8c",
       "secondary": "#67d3ff",
@@ -757,6 +784,7 @@
     "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures gagnent +2/+2 et tu gagnes 5 points de vie.",
     "flavor": "Les bêtes ne la suivent pas : elles rentrent chez elles.",
     "image": "Images/Rena Déesse de la nature.PNG",
+    "video": "Images/Vidéos/rena.mp4",
     "palette": {
       "primary": "#3f8a45",
       "secondary": "#a9d778",

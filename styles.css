@@ -4600,6 +4600,31 @@ body.targeting .enemy-mat .mat-zone--commander {
   transition: none;
 }
 
+.card-modal-card .has-card-video .card-art {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 236, 179, 0.72),
+    0 0 18px color-mix(in srgb, var(--tone-2) 48%, transparent);
+}
+
+.card-modal-card .card-art-video {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  opacity: 1;
+  object-fit: contain;
+  object-position: center;
+  background: #06060b;
+  transition: opacity 420ms ease;
+}
+
+.card-modal-card .card-art-video.is-finished {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* --- Encart de texte : remonté pour dégager les orbes, texte lisible --- */
 .card-scroll {
   top: 63.5%;

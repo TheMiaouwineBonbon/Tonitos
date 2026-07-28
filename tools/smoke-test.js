@@ -180,7 +180,26 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 40 créatures", Array.isArray(cards) && cards.length === 40);
+  check("cards.json = 41 créatures", Array.isArray(cards) && cards.length === 41);
+  const connor = cards.find((c) => c.id === "roi-sorcier-connor");
+  check(
+    "Roi Sorcier Connor = Blanc 1/2 à croissance",
+    connor?.family === "Blanc" &&
+      connor.attack === 1 &&
+      connor.life === 2 &&
+      connor.video === "Images/Vidéos/roi-sorcier-connor.mp4" &&
+      gameSource.includes('creature.id === "roi-sorcier-connor"') &&
+      gameSource.includes("creature.maxLife += 1") &&
+      gameSource.includes("creature.currentLife += 1")
+  );
+  check(
+    "Les vidéos de carte se lancent dans la fiche",
+    ["roi-sorcier-connor", "fee", "kraken", "rena"].every((id) => cards.find((card) => card.id === id)?.video) &&
+      gameSource.includes("playCardDetailVideo") &&
+      gameSource.includes('video.className = "card-art-video"')
+  );
+  res = await fetch(`${base}/${connor.video}`, { method: "HEAD" });
+  check("Le serveur local sert les MP4 avec le bon type", res.status === 200 && res.headers.get("content-type") === "video/mp4");
   check("Golem de pierre = Vert", cards.find((c) => c.id === "golem-pierre")?.family === "Vert");
   check("Amrin = Rouge", cards.find((c) => c.id === "amrin")?.family === "Rouge");
   check("Roi des mers = Bleu", cards.find((c) => c.id === "roi-des-mers")?.family === "Bleu");
@@ -258,6 +277,12 @@ async function main() {
   const lands = await res.json();
   const allCards = [...cards, ...lands, ...spells];
   check("Toutes les illustrations existent", allCards.every((card) => fs.existsSync(path.join(__dirname, "..", card.image))));
+  check(
+    "Toutes les vidéos de carte existent en MP4",
+    cards.filter((card) => card.video).every(
+      (card) => card.video.endsWith(".mp4") && fs.existsSync(path.join(__dirname, "..", card.video))
+    )
+  );
   check("Tous les identifiants de cartes sont uniques", new Set(allCards.map((card) => card.id)).size === allCards.length);
 
   const deckColors = [

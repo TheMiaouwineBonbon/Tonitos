@@ -1363,6 +1363,13 @@ function beginTurn(side, firstTurn = false) {
 function advanceSurvivalCounters(side) {
   for (const creature of side.board) {
     creature.survivedTurns = Math.max(0, Number(creature.survivedTurns) || 0) + 1;
+    if (creature.id === "roi-sorcier-connor") {
+      creature.attack += 1;
+      creature.maxLife += 1;
+      creature.currentLife += 1;
+      pushVisualEffect("buff", side.side, "Connor +1/+1");
+      logEvent(`La foi grandissante renforce ${creature.name} : +1/+1.`);
+    }
   }
 }
 
@@ -3632,7 +3639,9 @@ function openCardDetail(card, context) {
   state.detailContext = { card, context };
 
   els.cardModalCard.innerHTML = "";
-  els.cardModalCard.append(renderCard(card, { mode: "detail" }));
+  const detailCard = renderCard(card, { mode: "detail" });
+  els.cardModalCard.append(detailCard);
+  playCardDetailVideo(card, detailCard);
   els.cardModalFamily.textContent = `${card.family} - ${isLand(card) ? "Terrain" : isSpell(card) ? "Sort" : "Créature"}`;
   els.cardModalTitle.textContent = card.name;
   els.cardModalType.textContent = card.type;
@@ -3648,6 +3657,38 @@ function openCardDetail(card, context) {
 
   els.cardModal.hidden = false;
   document.body.classList.add("modal-open");
+}
+
+function playCardDetailVideo(card, detailCard) {
+  if (!card.video || !detailCard) return;
+  const art = detailCard.querySelector(".card-art");
+  if (!art) return;
+
+  const video = document.createElement("video");
+  video.className = "card-art-video";
+  video.src = encodeURI(card.video);
+  video.poster = encodeURI(card.image);
+  video.preload = "metadata";
+  video.playsInline = true;
+  video.controls = true;
+  video.setAttribute("controlslist", "nodownload noplaybackrate");
+  video.setAttribute("aria-label", `Vidéo de ${card.name}`);
+  video.addEventListener("ended", () => {
+    video.classList.add("is-finished");
+  }, { once: true });
+  video.addEventListener("error", () => {
+    detailCard.classList.remove("has-card-video");
+    video.remove();
+  }, { once: true });
+
+  detailCard.classList.add("has-card-video");
+  art.append(video);
+
+  const playback = video.play();
+  playback?.catch(() => {
+    video.muted = true;
+    video.play().catch(() => {});
+  });
 }
 
 function closeCardDetail() {
