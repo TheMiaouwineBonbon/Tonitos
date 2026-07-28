@@ -3683,6 +3683,8 @@ function playCardDetailVideo(card, detailCard) {
   video.preload = "metadata";
   video.playsInline = true;
   video.controls = false;
+  video.muted = false;
+  video.volume = 1;
   video.disablePictureInPicture = true;
   video.disableRemotePlayback = true;
   video.tabIndex = -1;

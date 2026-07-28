@@ -220,6 +220,8 @@ async function main() {
       gameSource.includes("playCardDetailVideo") &&
       gameSource.includes('video.className = "card-art-video"') &&
       gameSource.includes("video.controls = false") &&
+      gameSource.includes("video.muted = false") &&
+      gameSource.includes("video.volume = 1") &&
       gameSource.includes("video.disablePictureInPicture = true")
   );
   res = await fetch(`${base}/${connor.video}`, { method: "HEAD" });
