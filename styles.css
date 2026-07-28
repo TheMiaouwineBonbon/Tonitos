@@ -5180,7 +5180,7 @@ body.is-dragging {
 }
 
 /* ===================================================================== */
-/* Téléphone paysage : deux tapis et la main dans un viewport, sans scroll. */
+/* Téléphone paysage : arène continue et main dans un viewport, sans scroll. */
 /* ===================================================================== */
 @media (max-width: 950px) and (orientation: landscape) {
   body:not([data-mobile-view="board"]) {
@@ -5894,8 +5894,20 @@ body.phone-portrait-blocked .orientation-gate {
     border-radius: 0;
     padding: 0;
     overflow: hidden;
-    background: #090b11;
-    box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.9);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(54, 4, 10, 0.44) 0%,
+        rgba(32, 8, 18, 0.22) 38%,
+        rgba(16, 18, 38, 0.08) 52%,
+        rgba(4, 13, 48, 0.18) 100%
+      ),
+      radial-gradient(ellipse at 50% 50%, rgba(222, 183, 94, 0.18), transparent 22%),
+      var(--playmat-player) center / 100% 100% no-repeat,
+      #090b11;
+    box-shadow:
+      inset 0 0 36px rgba(0, 0, 0, 0.72),
+      inset 0 0 0 1px rgba(222, 188, 113, 0.34);
   }
 
   body[data-mobile-view="board"] .board-stage::before {
@@ -5905,8 +5917,20 @@ body.phone-portrait-blocked .orientation-gate {
     border: 0;
     border-radius: 0;
     background:
-      linear-gradient(180deg, rgba(89, 8, 15, 0.1), transparent 35%, rgba(56, 78, 180, 0.08)),
-      radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.38));
+      linear-gradient(
+        180deg,
+        rgba(79, 4, 12, 0.12),
+        rgba(42, 4, 10, 0.28)
+      ),
+      var(--playmat-enemy) center / 100% 100% no-repeat;
+    opacity: 0.66;
+    filter: none;
+    mix-blend-mode: normal;
+    animation: none;
+    transform: none;
+    will-change: auto;
+    -webkit-mask-image: linear-gradient(180deg, #000 0 36%, rgba(0, 0, 0, 0.72) 45%, transparent 61%);
+    mask-image: linear-gradient(180deg, #000 0 36%, rgba(0, 0, 0, 0.72) 45%, transparent 61%);
     pointer-events: none;
   }
 
@@ -5923,23 +5947,16 @@ body.phone-portrait-blocked .orientation-gate {
     border: 0;
     border-radius: 0;
     aspect-ratio: auto;
-    background-position: center;
-    background-size: cover;
-    box-shadow: inset 0 0 32px rgba(0, 0, 0, 0.62);
+    background: transparent;
+    box-shadow: none;
   }
 
   body[data-mobile-view="board"] .enemy-mat {
     grid-row: 1;
-    background-image:
-      linear-gradient(180deg, rgba(15, 0, 3, 0.02), rgba(18, 0, 3, 0.34)),
-      var(--playmat-enemy);
   }
 
   body[data-mobile-view="board"] .player-mat {
     grid-row: 2;
-    background-image:
-      linear-gradient(180deg, rgba(4, 10, 35, 0.3), rgba(0, 8, 31, 0.02)),
-      var(--playmat-player);
   }
 
   body[data-mobile-view="board"] .mat-zone {

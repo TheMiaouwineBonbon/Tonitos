@@ -150,14 +150,16 @@ async function main() {
       styles.includes("graveyard-ambient")
   );
   check(
-    "Téléphone paysage sans scroll avec deux tapis",
-    styles.includes("(orientation: landscape)") &&
+    "Téléphone paysage sans scroll avec une arène continue",
+      styles.includes("(orientation: landscape)") &&
       styles.includes('body[data-mobile-view="board"] .enemy-mat') &&
       styles.includes('body[data-mobile-view="board"] .player-mat') &&
-      styles.includes("overflow: hidden")
+      styles.includes("var(--playmat-player) center / 100% 100% no-repeat") &&
+      styles.includes("var(--playmat-enemy) center / 100% 100% no-repeat") &&
+      styles.includes("mask-image: linear-gradient")
   );
   check(
-    "Plateau mobile empilé avec main tactile agrandie",
+    "Deux camps superposés dans le même plateau mobile",
     styles.includes("grid-template-rows: repeat(2, minmax(0, 1fr))") &&
       styles.includes("--phone-hand-height") &&
       styles.includes("--phone-board-card-width")
