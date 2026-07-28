@@ -2842,8 +2842,19 @@ function render() {
   els.enemyLandsCount.textContent = state.enemy.lands.length;
   els.handTitle.textContent = `Main - ${sideDisplayName(handSide.side)}`;
   els.handCount.textContent = `${handSide.hand.length} carte${handSide.hand.length > 1 ? "s" : ""}`;
-  els.turnPill.textContent = phaseLabel();
+  const nextTurnLabel = phaseLabel();
+  if (els.turnPill.textContent !== nextTurnLabel) {
+    els.turnPill.textContent = nextTurnLabel;
+    els.turnPill.classList.remove("is-turn-change");
+    void els.turnPill.offsetWidth;
+    els.turnPill.classList.add("is-turn-change");
+  }
   els.actionHint.textContent = getActionHint();
+
+  const playerCommander = commanderNode("player");
+  const enemyCommander = commanderNode("enemy");
+  playerCommander?.classList.toggle("is-active-turn", state.currentTurn === "player" && state.phase !== PHASES.OVER);
+  enemyCommander?.classList.toggle("is-active-turn", state.currentTurn === "enemy" && state.phase !== PHASES.OVER);
 
   updateButtons();
   renderHand();

@@ -11,6 +11,7 @@
     />
     <link rel="icon" type="image/png" href="./Images/Logo%20Jeu/Spellaho.png" />
     <link rel="stylesheet" href="./styles.css?v=20260728-4" />
+    <link rel="stylesheet" href="./polish.css?v=20260728-3" />
   </head>
   <body>
     <aside id="orientation-gate" class="orientation-gate" aria-labelledby="orientation-title">
@@ -158,6 +159,7 @@
             <!-- Tapis adverse (rouge) : zones calées sur les cadres imprimés -->
             <section class="mat-side enemy-mat enemy-hero" aria-label="Tapis de l'adversaire">
               <div class="mat-zone mat-zone--library" title="Bibliothèque adverse">
+                <span class="zone-sign zone-sign--library" aria-hidden="true">▤</span>
                 <span class="library-card-back" aria-hidden="true"></span>
                 <span class="mat-zone-count"><strong id="enemy-deck">0</strong><span>cartes</span></span>
               </div>
@@ -167,6 +169,7 @@
                 data-pile="enemy:graveyard"
                 aria-label="Voir le cimetière adverse"
               >
+                <span class="zone-sign zone-sign--graveyard" aria-hidden="true">☠︎</span>
                 <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="enemy-graveyard">0</strong><span>cartes</span></span>
               </button>
@@ -176,6 +179,7 @@
                 data-pile="enemy:exile"
                 aria-label="Voir l'exil adverse"
               >
+                <span class="zone-sign zone-sign--exile" aria-hidden="true">✦</span>
                 <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="enemy-exile">0</strong><span>cartes</span></span>
               </button>
@@ -211,6 +215,7 @@
                 <div id="player-lands" class="land-row player-lands" aria-label="Tes terrains (mana)"></div>
               </div>
               <div class="mat-zone mat-zone--library" title="Ta bibliothèque">
+                <span class="zone-sign zone-sign--library" aria-hidden="true">▤</span>
                 <span class="library-card-back" aria-hidden="true"></span>
                 <span class="mat-zone-count"><strong id="player-deck">0</strong><span>cartes</span></span>
               </div>
@@ -220,6 +225,7 @@
                 data-pile="player:graveyard"
                 aria-label="Voir ton cimetière"
               >
+                <span class="zone-sign zone-sign--graveyard" aria-hidden="true">☠︎</span>
                 <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="player-graveyard">0</strong><span>cartes</span></span>
               </button>
@@ -229,6 +235,7 @@
                 data-pile="player:exile"
                 aria-label="Voir ton exil"
               >
+                <span class="zone-sign zone-sign--exile" aria-hidden="true">✦</span>
                 <span class="pile-card-mini" hidden aria-hidden="true"><span class="pile-card-mini-art"></span></span>
                 <span class="mat-zone-count"><strong id="player-exile">0</strong><span>cartes</span></span>
               </button>

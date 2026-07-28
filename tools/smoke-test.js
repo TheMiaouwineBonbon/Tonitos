@@ -177,6 +177,25 @@ async function main() {
       styles.includes("Plaques de compteurs") &&
       styles.includes("Navigation inférieure premium")
   );
+  res = await fetch(`${base}/polish.css`);
+  const polishStyles = await res.text();
+  check(
+    "Hiérarchie visuelle et tour actif renforcés",
+    polishStyles.includes("polish-active-hero") &&
+      polishStyles.includes("polish-end-turn-glow") &&
+      polishStyles.includes(".zone-sign") &&
+      gameSource.includes('classList.toggle("is-active-turn"') &&
+      gameSource.includes('classList.add("is-turn-change")')
+  );
+  check(
+    "Finition premium limitée au téléphone paysage",
+    html.includes("polish.css") &&
+      polishStyles.includes("@media (max-width: 950px) and (orientation: landscape)") &&
+      polishStyles.includes('body[data-mobile-view="board"] .board-stage') &&
+      polishStyles.includes(".zone-sign {") &&
+      polishStyles.includes("display: none;") &&
+      polishStyles.includes('body[data-mobile-view="board"] .zone-sign')
+  );
   check(
     "Cartes mobiles déplaçables au doigt",
     styles.includes("touch-action: none") &&
