@@ -214,7 +214,9 @@ async function main() {
   );
   check(
     "Les vidéos de carte se lancent sans commandes visibles",
-    ["roi-sorcier-connor", "fee", "kraken", "rena"].every((id) => cards.find((card) => card.id === id)?.video) &&
+    ["roi-sorcier-connor", "fee", "kraken", "rena", "noxis-bhaal-fusion"].every(
+      (id) => cards.find((card) => card.id === id)?.video
+    ) &&
       gameSource.includes("playCardDetailVideo") &&
       gameSource.includes('video.className = "card-art-video"') &&
       gameSource.includes("video.controls = false") &&
