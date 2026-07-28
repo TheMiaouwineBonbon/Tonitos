@@ -327,6 +327,7 @@ function bindEvents() {
   window.addEventListener("resize", () => {
     hideCardPreview();
     updatePhoneOrientation();
+    if (state.started) renderHand();
   });
   window.addEventListener("orientationchange", updatePhoneOrientation);
   screen.orientation?.addEventListener?.("change", updatePhoneOrientation);
@@ -2975,13 +2976,26 @@ function renderHand() {
 
   const fragment = document.createDocumentFragment();
   const handCenter = (side.hand.length - 1) / 2;
-  const overlap = side.hand.length > 9 ? -30 : side.hand.length > 7 ? -20 : -7;
+  const mobileLandscape = window.matchMedia("(max-width: 950px) and (orientation: landscape)").matches;
+  const handWidth = Math.max(320, els.playerHand.clientWidth || window.innerWidth);
+  const cardWidth = mobileLandscape
+    ? Math.max(84, Math.min(90, handWidth * 0.09))
+    : 160;
+  const maximumSpan = mobileLandscape ? handWidth * 0.76 : handWidth - 48;
+  const naturalSpan = cardWidth * side.hand.length;
+  const overlap = side.hand.length > 1
+    ? Math.max(-cardWidth * 0.55, Math.min(0, (maximumSpan - naturalSpan) / (side.hand.length - 1)))
+    : 0;
+  const maximumRotation = Math.min(8, 2.5 + side.hand.length * 0.65);
+  const maximumDrop = Math.min(9, 4 + side.hand.length * 0.45);
   for (const [index, card] of side.hand.entries()) {
     const node = renderCard(card, { mode: "hand" });
     const offset = index - handCenter;
-    node.style.setProperty("--hand-rotation", `${offset * 2.2}deg`);
-    node.style.setProperty("--hand-drop", `${Math.pow(Math.abs(offset), 1.45) * 2.6}px`);
-    node.style.setProperty("--hand-layer", `${20 + index}`);
+    const normalizedOffset = handCenter === 0 ? 0 : offset / handCenter;
+    node.style.setProperty("--hand-card-width", `${cardWidth}px`);
+    node.style.setProperty("--hand-rotation", `${normalizedOffset * maximumRotation}deg`);
+    node.style.setProperty("--hand-drop", `${Math.pow(Math.abs(normalizedOffset), 1.65) * maximumDrop}px`);
+    node.style.setProperty("--hand-layer", `${50 + Math.round(handCenter - Math.abs(offset))}`);
     node.style.setProperty("--hand-overlap", `${overlap}px`);
     // Surbrillance des cartes réellement jouables maintenant.
     if (isPlayableFromHand(side, card)) node.classList.add("is-playable");
@@ -3468,6 +3482,8 @@ function artImgStyle(card) {
 function renderCard(card, options = {}) {
   const article = document.createElement("article");
   article.className = options.mode === "gallery" ? "gallery-card" : "game-card";
+  if (card.name.length > 16) article.classList.add("long-card-title");
+  if (card.name.length > 22) article.classList.add("very-long-card-title");
   article.dataset.cardId = card.id;
   article.dataset.cardKind = card.kind;
   article.dataset.cardFamily = card.family;

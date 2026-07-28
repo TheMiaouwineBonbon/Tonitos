@@ -82,7 +82,13 @@ async function main() {
   check("Identité réseau Spellaho propre à chaque onglet", gameSource.includes('PLAYER_ID_KEY = "spellaho-player-id"'));
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));
-  check("Main en éventail calculée selon le nombre de cartes", gameSource.includes("--hand-rotation") && gameSource.includes("--hand-overlap"));
+  check(
+    "Main en éventail calculée selon le nombre de cartes et la largeur disponible",
+    gameSource.includes("--hand-rotation") &&
+      gameSource.includes("--hand-overlap") &&
+      gameSource.includes("--hand-card-width") &&
+      gameSource.includes("maximumSpan")
+  );
   check(
     "Glisser tactile capturé jusqu'au terrain du joueur actif",
     gameSource.includes("setPointerCapture") &&
@@ -163,6 +169,13 @@ async function main() {
     styles.includes("grid-template-rows: repeat(2, minmax(0, 1fr))") &&
       styles.includes("--phone-hand-height") &&
       styles.includes("--phone-board-card-width")
+  );
+  check(
+    "Finition mobile premium pour decks, compteurs et navigation",
+    styles.includes("premium-deck-float") &&
+      styles.includes("premium-smoke-breathe") &&
+      styles.includes("Plaques de compteurs") &&
+      styles.includes("Navigation inférieure premium")
   );
   check(
     "Cartes mobiles déplaçables au doigt",
