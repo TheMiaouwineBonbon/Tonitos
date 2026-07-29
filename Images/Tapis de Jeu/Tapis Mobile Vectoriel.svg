@@ -1,0 +1,261 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="frameGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b1b07"/>
+      <stop offset=".18" stop-color="#d9a84d"/>
+      <stop offset=".38" stop-color="#6d3811"/>
+      <stop offset=".62" stop-color="#f0cd75"/>
+      <stop offset=".82" stop-color="#8c4b19"/>
+      <stop offset="1" stop-color="#2a1004"/>
+    </linearGradient>
+    <linearGradient id="centerGold" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#f2d98e"/>
+      <stop offset=".32" stop-color="#8e4d19"/>
+      <stop offset=".7" stop-color="#dca950"/>
+      <stop offset="1" stop-color="#391804"/>
+    </linearGradient>
+    <radialGradient id="enemySurface" cx=".52" cy=".48" r=".68">
+      <stop stop-color="#3d1a45"/>
+      <stop offset=".4" stop-color="#241022"/>
+      <stop offset=".78" stop-color="#100910"/>
+      <stop offset="1" stop-color="#050407"/>
+    </radialGradient>
+    <radialGradient id="playerSurface" cx=".52" cy=".48" r=".68">
+      <stop stop-color="#133966"/>
+      <stop offset=".4" stop-color="#091d38"/>
+      <stop offset=".78" stop-color="#050d19"/>
+      <stop offset="1" stop-color="#030508"/>
+    </radialGradient>
+    <radialGradient id="enemyPortal">
+      <stop stop-color="#f4b8ff"/>
+      <stop offset=".1" stop-color="#8d39d8"/>
+      <stop offset=".42" stop-color="#36105f"/>
+      <stop offset=".72" stop-color="#10031e"/>
+      <stop offset="1" stop-color="#020105"/>
+    </radialGradient>
+    <radialGradient id="playerPortal">
+      <stop stop-color="#d5efff"/>
+      <stop offset=".1" stop-color="#4d9cff"/>
+      <stop offset=".42" stop-color="#123b86"/>
+      <stop offset=".72" stop-color="#03132d"/>
+      <stop offset="1" stop-color="#010308"/>
+    </radialGradient>
+    <radialGradient id="manaEnemy">
+      <stop stop-color="#5b2264"/>
+      <stop offset=".55" stop-color="#1b0b20"/>
+      <stop offset="1" stop-color="#070509"/>
+    </radialGradient>
+    <radialGradient id="manaPlayer">
+      <stop stop-color="#17487a"/>
+      <stop offset=".55" stop-color="#07172d"/>
+      <stop offset="1" stop-color="#03070d"/>
+    </radialGradient>
+    <pattern id="surfaceGrain" width="84" height="84" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="16" r="1" fill="#fff" opacity=".045"/>
+      <circle cx="52" cy="27" r=".8" fill="#fff" opacity=".055"/>
+      <circle cx="74" cy="66" r=".7" fill="#fff" opacity=".04"/>
+      <path d="M0 46Q20 32 43 47T84 44" fill="none" stroke="#fff" stroke-opacity=".018"/>
+      <path d="M16 0Q31 29 18 58T32 84" fill="none" stroke="#fff" stroke-opacity=".014"/>
+    </pattern>
+    <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="violetGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#8e3cff" flood-opacity=".66"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blueGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#318cff" flood-opacity=".62"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="innerBoard">
+      <rect x="26" y="25" width="1548" height="850" rx="23"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#innerBoard)">
+    <rect x="26" y="25" width="1548" height="425" fill="url(#enemySurface)"/>
+    <rect x="26" y="450" width="1548" height="425" fill="url(#playerSurface)"/>
+    <rect x="26" y="25" width="1548" height="850" fill="url(#surfaceGrain)"/>
+    <path d="M0 0H1600V148Q1330 70 1080 145T530 126Q250 78 0 170Z" fill="#63236b" opacity=".06"/>
+    <path d="M0 900H1600V758Q1310 838 1060 760T500 778Q240 830 0 740Z" fill="#1760a8" opacity=".07"/>
+    <g fill="#e9c975">
+      <circle cx="330" cy="105" r="1.3" opacity=".42"/>
+      <circle cx="485" cy="64" r="1" opacity=".36"/>
+      <circle cx="680" cy="138" r=".9" opacity=".38"/>
+      <circle cx="910" cy="72" r="1.2" opacity=".34"/>
+      <circle cx="1115" cy="128" r=".8" opacity=".4"/>
+      <circle cx="1190" cy="330" r="1.1" opacity=".32"/>
+      <circle cx="410" cy="344" r=".9" opacity=".35"/>
+      <circle cx="345" cy="790" r="1.2" opacity=".4"/>
+      <circle cx="520" cy="712" r=".8" opacity=".35"/>
+      <circle cx="770" cy="836" r="1.1" opacity=".34"/>
+      <circle cx="1010" cy="755" r=".9" opacity=".36"/>
+      <circle cx="1195" cy="815" r="1.2" opacity=".34"/>
+    </g>
+  </g>
+
+  <rect x="13" y="13" width="1574" height="874" rx="30" fill="none" stroke="#120804" stroke-width="28"/>
+  <rect x="21" y="21" width="1558" height="858" rx="24" fill="none" stroke="url(#frameGold)" stroke-width="8"/>
+  <rect x="31" y="31" width="1538" height="838" rx="17" fill="none" stroke="#2b1207" stroke-width="6"/>
+  <rect x="38" y="38" width="1524" height="824" rx="13" fill="none" stroke="#c28a36" stroke-opacity=".82" stroke-width="2"/>
+  <rect x="43" y="43" width="1514" height="814" rx="11" fill="none" stroke="#f2d588" stroke-opacity=".2"/>
+
+  <g fill="none" stroke="url(#frameGold)" stroke-width="4">
+    <path d="M27 92Q27 28 91 28M27 122Q52 50 124 28M27 145Q72 49 151 28"/>
+    <path d="M1573 92Q1573 28 1509 28M1573 122Q1548 50 1476 28M1573 145Q1528 49 1449 28"/>
+    <path d="M27 808Q27 872 91 872M27 778Q52 850 124 872M27 755Q72 851 151 872"/>
+    <path d="M1573 808Q1573 872 1509 872M1573 778Q1548 850 1476 872M1573 755Q1528 851 1449 872"/>
+  </g>
+
+  <path d="M22 444H1578" stroke="#080301" stroke-width="20"/>
+  <path d="M24 446H1576" stroke="url(#centerGold)" stroke-width="7"/>
+  <path d="M24 453H1576" stroke="#3a1707" stroke-width="4"/>
+  <g transform="translate(800 450)">
+    <rect x="-18" y="-18" width="36" height="36" rx="3" transform="rotate(45)" fill="#170821" stroke="url(#frameGold)" stroke-width="5"/>
+    <rect x="-9" y="-9" width="18" height="18" transform="rotate(45)" fill="#7430b7" stroke="#dcae5d" stroke-width="2"/>
+    <circle r="4" fill="#f0d88b" filter="url(#softGlow)"/>
+  </g>
+
+  <g fill="none" stroke="#b38b4d" stroke-opacity=".25" stroke-width="1.5">
+    <g transform="translate(760 224)">
+      <circle r="162"/><circle r="133"/><circle r="96"/><circle r="54"/>
+      <path d="M0-133 78 108-126-41 126-41-78 108Z"/>
+      <path d="M0-104 90 52-90 52ZM-104 0 52-90 52 90Z"/>
+    </g>
+    <g transform="translate(760 676)">
+      <circle r="162"/><circle r="133"/><circle r="96"/><circle r="54"/>
+      <path d="M0-133 78 108-126-41 126-41-78 108Z"/>
+      <path d="M0-104 90 52-90 52ZM-104 0 52-90 52 90Z"/>
+    </g>
+  </g>
+
+  <g id="mana-panels">
+    <g transform="translate(62 70)">
+      <rect width="188" height="310" rx="12" fill="url(#manaEnemy)" fill-opacity=".82" stroke="#1a0905" stroke-width="8"/>
+      <rect x="4" y="4" width="180" height="302" rx="9" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <rect x="13" y="13" width="162" height="284" rx="6" fill="none" stroke="#aa6c24" stroke-opacity=".62"/>
+      <path d="M4 31 31 4M157 4l27 27M4 279l27 27m126 0 27-27" stroke="#e2b85e" stroke-width="3"/>
+      <path d="M32 53H156" stroke="#c7933e" stroke-opacity=".55"/>
+      <text x="94" y="43" fill="#e9cb87" font-family="Georgia,serif" font-size="17" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#2b1207" stroke-width="2">MANA ADVERSE</text>
+      <circle cx="94" cy="169" r="60" fill="none" stroke="#a46b31" stroke-opacity=".18"/>
+      <path d="M94 106 130 188 58 188Z" fill="none" stroke="#bb8642" stroke-opacity=".2"/>
+    </g>
+    <g transform="translate(62 520)">
+      <rect width="188" height="310" rx="12" fill="url(#manaPlayer)" fill-opacity=".86" stroke="#1a0905" stroke-width="8"/>
+      <rect x="4" y="4" width="180" height="302" rx="9" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <rect x="13" y="13" width="162" height="284" rx="6" fill="none" stroke="#aa6c24" stroke-opacity=".62"/>
+      <path d="M4 31 31 4M157 4l27 27M4 279l27 27m126 0 27-27" stroke="#e2b85e" stroke-width="3"/>
+      <path d="M32 53H156" stroke="#c7933e" stroke-opacity=".55"/>
+      <text x="94" y="43" fill="#e9cb87" font-family="Georgia,serif" font-size="17" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#2b1207" stroke-width="2">MANA JOUEUR</text>
+      <circle cx="94" cy="169" r="60" fill="none" stroke="#4c91d9" stroke-opacity=".22"/>
+      <path d="M94 106 130 188 58 188Z" fill="none" stroke="#70a8df" stroke-opacity=".22"/>
+    </g>
+  </g>
+
+  <g id="battle-lanes" fill="none">
+    <path d="M286 262Q760 202 1238 262L1222 420Q760 377 302 420Z" fill="#050308" fill-opacity=".11" stroke="#bd8b43" stroke-opacity=".16" stroke-width="2"/>
+    <path d="M286 638Q760 698 1238 638L1222 480Q760 523 302 480Z" fill="#020711" fill-opacity=".12" stroke="#5793d2" stroke-opacity=".16" stroke-width="2"/>
+    <g stroke="#d4af68" stroke-opacity=".09">
+      <ellipse cx="400" cy="348" rx="61" ry="53"/><ellipse cx="520" cy="335" rx="61" ry="53"/>
+      <ellipse cx="640" cy="326" rx="61" ry="53"/><ellipse cx="760" cy="323" rx="61" ry="53"/>
+      <ellipse cx="880" cy="326" rx="61" ry="53"/><ellipse cx="1000" cy="335" rx="61" ry="53"/>
+      <ellipse cx="1120" cy="348" rx="61" ry="53"/>
+      <ellipse cx="400" cy="552" rx="61" ry="53"/><ellipse cx="520" cy="565" rx="61" ry="53"/>
+      <ellipse cx="640" cy="574" rx="61" ry="53"/><ellipse cx="760" cy="577" rx="61" ry="53"/>
+      <ellipse cx="880" cy="574" rx="61" ry="53"/><ellipse cx="1000" cy="565" rx="61" ry="53"/>
+      <ellipse cx="1120" cy="552" rx="61" ry="53"/>
+    </g>
+  </g>
+
+  <g id="right-rail">
+    <g transform="translate(1260 58)">
+      <rect width="132" height="178" rx="9" fill="#100817" stroke="#1b0c05" stroke-width="8"/>
+      <rect x="4" y="4" width="124" height="170" rx="7" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <rect x="14" y="15" width="104" height="140" rx="4" fill="none" stroke="#8c5520"/>
+      <text x="66" y="168" fill="#e6c47d" font-family="Georgia,serif" font-size="14" font-weight="700" text-anchor="middle">PIOCHE</text>
+    </g>
+    <g transform="translate(1260 664)">
+      <rect width="132" height="178" rx="9" fill="#061326" stroke="#1b0c05" stroke-width="8"/>
+      <rect x="4" y="4" width="124" height="170" rx="7" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <rect x="14" y="15" width="104" height="140" rx="4" fill="none" stroke="#8c5520"/>
+      <text x="66" y="168" fill="#e6c47d" font-family="Georgia,serif" font-size="14" font-weight="700" text-anchor="middle">PIOCHE</text>
+    </g>
+    <g transform="translate(1280 274)">
+      <circle r="55" fill="#08070b" stroke="#1b0c05" stroke-width="9"/>
+      <circle r="48" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <path d="M-18-20 18 20M18-20-18 20M0-31V31M-31 0H31" stroke="#765224" stroke-opacity=".5"/>
+      <circle r="21" fill="#030305" stroke="#4f3519"/>
+    </g>
+    <g transform="translate(1280 626)">
+      <circle r="55" fill="#050914" stroke="#1b0c05" stroke-width="9"/>
+      <circle r="48" fill="none" stroke="url(#frameGold)" stroke-width="4"/>
+      <path d="M-18-20 18 20M18-20-18 20M0-31V31M-31 0H31" stroke="#526d8f" stroke-opacity=".5"/>
+      <circle r="21" fill="#02050b" stroke="#354b68"/>
+    </g>
+  </g>
+
+  <g id="hero-portals">
+    <g transform="translate(1470 222)">
+      <circle r="91" fill="#08040a" stroke="#1b0b05" stroke-width="18"/>
+      <circle r="80" fill="none" stroke="url(#frameGold)" stroke-width="7"/>
+      <circle r="68" fill="url(#enemyPortal)" stroke="#8c3bd3" stroke-width="4"/>
+      <circle r="53" fill="none" stroke="#e7a6ff" stroke-opacity=".32" stroke-width="2"/>
+      <path d="M-48-29Q0-61 48-29T48 29Q0 61-48 29T-48-29" fill="none" stroke="#eeb8ff" stroke-opacity=".25" stroke-width="3"/>
+      <circle r="12" fill="#c060f2" opacity=".55" filter="url(#softGlow)"/>
+    </g>
+    <g transform="translate(1470 678)">
+      <circle r="91" fill="#03070d" stroke="#1b0b05" stroke-width="18"/>
+      <circle r="80" fill="none" stroke="url(#frameGold)" stroke-width="7"/>
+      <circle r="68" fill="url(#playerPortal)" stroke="#337fe3" stroke-width="4"/>
+      <circle r="53" fill="none" stroke="#a8d5ff" stroke-opacity=".34" stroke-width="2"/>
+      <path d="M-48-29Q0-61 48-29T48 29Q0 61-48 29T-48-29" fill="none" stroke="#b6ddff" stroke-opacity=".26" stroke-width="3"/>
+      <circle r="12" fill="#4e9cff" opacity=".58" filter="url(#softGlow)"/>
+    </g>
+  </g>
+
+  <g id="crystals" stroke-width="2">
+    <g transform="translate(270 22)" filter="url(#violetGlow)">
+      <path d="M0 92 20 8 42 92Z" fill="#5c1a96" stroke="#bd68ed"/>
+      <path d="M35 98 65 22 91 98Z" fill="#8a31ce" stroke="#df91f6"/>
+      <path d="M78 98 104 41 129 98Z" fill="#45106f" stroke="#a64be2"/>
+    </g>
+    <g transform="translate(18 656)" filter="url(#blueGlow)">
+      <path d="M0 92 20 8 42 92Z" fill="#0a438d" stroke="#5a9ce9"/>
+      <path d="M35 98 65 22 91 98Z" fill="#1765c1" stroke="#8fc5ff"/>
+    </g>
+    <g transform="translate(288 786) scale(.76)" filter="url(#blueGlow)">
+      <path d="M0 92 20 8 42 92Z" fill="#0a438d" stroke="#5a9ce9"/>
+      <path d="M35 98 65 22 91 98Z" fill="#1765c1" stroke="#8fc5ff"/>
+      <path d="M78 98 104 41 129 98Z" fill="#0b3773" stroke="#5792dc"/>
+    </g>
+    <g transform="translate(1510 330) scale(.7)" filter="url(#violetGlow)">
+      <path d="M0 92 20 8 42 92Z" fill="#5c1a96" stroke="#bd68ed"/>
+      <path d="M35 98 65 22 91 98Z" fill="#8a31ce" stroke="#df91f6"/>
+    </g>
+  </g>
+
+  <g id="hand-cradle">
+    <path d="M272 859Q800 728 1328 859" fill="#08060a" fill-opacity=".34" stroke="#170b05" stroke-width="18"/>
+    <path d="M276 856Q800 737 1324 856" fill="none" stroke="url(#frameGold)" stroke-width="5"/>
+    <path d="M326 850Q800 756 1274 850" fill="none" stroke="#f0d384" stroke-opacity=".24" stroke-width="2"/>
+    <g transform="translate(800 836)">
+      <path d="m0-22 17 17L0 22-17-5Z" fill="#32104a" stroke="url(#frameGold)" stroke-width="4"/>
+      <circle r="5" fill="#ac61e6" filter="url(#softGlow)"/>
+    </g>
+  </g>
+</svg>

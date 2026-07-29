@@ -179,6 +179,10 @@ async function main() {
   );
   res = await fetch(`${base}/polish.css`);
   const polishStyles = await res.text();
+  const mobilePlaymatPath = path.join(__dirname, "..", "Images/Tapis de Jeu/Tapis Mobile Vectoriel.svg");
+  const mobilePlaymatSource = fs.existsSync(mobilePlaymatPath)
+    ? fs.readFileSync(mobilePlaymatPath, "utf8")
+    : "";
   const phoneLandscapeMedia =
     "@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape)";
   const phoneLandscapeMediaCount = styles.split(phoneLandscapeMedia).length - 1;
@@ -207,9 +211,12 @@ async function main() {
       polishStyles.includes('body[data-mobile-view="board"] .zone-sign')
   );
   check(
-    "Tapis smartphone unique et navigation masquée en partie",
-    fs.existsSync(path.join(__dirname, "..", "Images/Tapis de Jeu/Tapis Mobile.png")) &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile.png"') &&
+    "Tapis smartphone vectoriel et navigation masquée en partie",
+    mobilePlaymatSource.includes('viewBox="0 0 1600 900"') &&
+      mobilePlaymatSource.includes('id="mana-panels"') &&
+      mobilePlaymatSource.includes('id="hero-portals"') &&
+      mobilePlaymatSource.includes('id="hand-cradle"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Vectoriel.svg"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
@@ -235,9 +242,9 @@ async function main() {
   );
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
-    gameSource.includes("Math.max(60, Math.min(69, handWidth * 0.14))") &&
-      gameSource.includes("handWidth * 0.9") &&
-      polishStyles.includes("calc(100dvh * 1.10222)") &&
+    gameSource.includes("Math.max(64, Math.min(74, window.innerHeight * 0.17))") &&
+      gameSource.includes("handWidth * 0.92") &&
+      polishStyles.includes("calc(100dvh * 1.02)") &&
       polishStyles.includes("--phone-board-card-height") &&
       polishStyles.includes("--phone-hand-row-height") &&
       polishStyles.includes("bottom: 2px;") &&
@@ -250,10 +257,18 @@ async function main() {
   );
   check(
     "Serviteurs mobiles lisibles sans badges surdimensionnés",
-    polishStyles.includes("--phone-board-card-width: clamp(52px, 13dvh, 60px);") &&
-      polishStyles.includes("--phone-board-card-height: clamp(58px, 15.5dvh, 70px);") &&
+    polishStyles.includes("--phone-board-card-width: clamp(52px, 14.5dvh, 66px);") &&
+      polishStyles.includes("--phone-board-card-height: clamp(72px, 19dvh, 86px);") &&
       polishStyles.includes("bottom: 21px;") &&
       polishStyles.includes("width: clamp(16px, 4.2dvh, 19px);")
+  );
+  check(
+    "Mana mobile dans des alcôves latérales indépendantes",
+    polishStyles.includes("grid-template-columns: repeat(2, minmax(0, 1fr));") &&
+      polishStyles.includes("left: 4%;") &&
+      polishStyles.includes("width: 12%;") &&
+      polishStyles.includes("left: 17%;") &&
+      polishStyles.includes("width: 62%;")
   );
   check(
     "Contour thématique de 3px autour des cartes",

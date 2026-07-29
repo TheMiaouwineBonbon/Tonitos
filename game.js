@@ -184,7 +184,7 @@ const PEERJS_MODULE_URL = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/+esm";
 const PLAYMATS = {
   player: "Images/Tapis de Jeu/Tapis de jeu Joueur.png",
   enemy: "Images/Tapis de Jeu/Taps de jeu Adversaire.png",
-  mobile: "Images/Tapis de Jeu/Tapis Mobile.png"
+  mobile: "Images/Tapis de Jeu/Tapis Mobile Vectoriel.svg"
 };
 const DEFAULT_PROFILES = {
   player: {
@@ -3127,9 +3127,9 @@ function renderHand() {
   const mobileLandscape = isPhoneLandscape();
   const handWidth = Math.max(320, els.playerHand.clientWidth || window.innerWidth);
   const cardWidth = mobileLandscape
-    ? Math.max(60, Math.min(69, handWidth * 0.14))
+    ? Math.max(64, Math.min(74, window.innerHeight * 0.17))
     : 160;
-  const maximumSpan = mobileLandscape ? handWidth * 0.9 : handWidth - 48;
+  const maximumSpan = mobileLandscape ? handWidth * 0.92 : handWidth - 48;
   const naturalSpan = cardWidth * side.hand.length;
   const overlap = side.hand.length > 1
     ? Math.max(-cardWidth * (mobileLandscape ? 0.72 : 0.55), Math.min(0, (maximumSpan - naturalSpan) / (side.hand.length - 1)))
@@ -4225,6 +4225,7 @@ function preloadImages() {
   const urls = new Set([
     PLAYMATS.player,
     PLAYMATS.enemy,
+    PLAYMATS.mobile,
     DEFAULT_PROFILES.player.avatar,
     DEFAULT_PROFILES.enemy.avatar,
     "Images/Tapis de Jeu/Carte Dos.png",
