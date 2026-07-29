@@ -123,10 +123,10 @@
 
 @media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   :root {
-    --phone-board-card-width: clamp(52px, 14.5dvh, 66px);
-    --phone-board-card-height: clamp(72px, 19dvh, 86px);
-    --phone-land-row-height: clamp(18px, 5.2dvh, 22px);
-    --phone-hand-row-height: clamp(86px, 23dvh, 100px);
+    --phone-board-card-width: clamp(56px, 8.375dvw, 78px);
+    --phone-board-card-height: clamp(66px, 9.875dvw, 92px);
+    --phone-land-row-height: clamp(12px, 1.75dvw, 17px);
+    --phone-hand-row-height: clamp(84px, 22.5dvh, 100px);
   }
 
   body[data-mobile-view="board"] .board-stage {
@@ -382,7 +382,7 @@
     background: rgba(48, 70, 111, 0.48);
   }
 
-  /* Plateau smartphone 16:9 : une seule image, entière et sans raccord central. */
+  /* Plateau mobile 1600:740 adapte de la maquette de reference. */
   body.game-running[data-mobile-view="board"] .app-shell {
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -392,21 +392,23 @@
     display: block;
     overflow: hidden;
     background:
-      radial-gradient(ellipse at center, rgba(62, 39, 96, 0.22), transparent 62%),
-      #030309;
+      radial-gradient(120% 80% at 50% 0%, rgba(74, 24, 86, 0.58), transparent 60%),
+      radial-gradient(120% 80% at 50% 100%, rgba(16, 55, 96, 0.58), transparent 60%),
+      radial-gradient(90% 60% at 50% 50%, #140a1c, #06040c 100%);
   }
 
   body.game-running[data-mobile-view="board"] .board-stage {
-    width: min(100%, calc(100dvh * 1.77778));
-    height: 100%;
+    width: min(100%, 216.216dvh);
+    height: min(100%, 46.25dvw);
+    aspect-ratio: 1600 / 740;
     margin-inline: auto;
+    grid-template-rows: 1fr 1fr;
     background:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.1)),
       var(--playmat-mobile) center / 100% 100% no-repeat,
       #05040a;
     box-shadow:
-      0 0 36px rgba(0, 0, 0, 0.92),
-      inset 0 0 0 1px rgba(224, 188, 105, 0.22);
+      0 12px 34px rgba(0, 0, 0, 0.76),
+      0 0 36px rgba(0, 0, 0, 0.72);
   }
 
   body.game-running[data-mobile-view="board"] .board-stage::before {
@@ -414,7 +416,28 @@
   }
 
   body.game-running[data-mobile-view="board"] .board-stage::after {
-    opacity: 0.035;
+    opacity: 0.025;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-side {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .enemy-mat {
+    grid-row: 1;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat {
+    grid-row: 2;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone {
@@ -424,226 +447,78 @@
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field {
-    top: 4%;
-    left: 15%;
-    width: 66%;
-    height: 92%;
-    border: 0;
-    border-radius: 8px;
-    background: radial-gradient(ellipse at center, rgba(7, 8, 14, 0.04), rgba(0, 0, 0, 0.13));
-    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.18);
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--library,
-  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
-    left: 4.2%;
-    width: 9%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--library {
-    top: 5%;
-    height: 43%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
-    top: 54%;
-    height: 40%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--exile {
-    display: none;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--commander {
-    top: 29%;
-    right: 4.2%;
-    width: 10.5%;
-    height: 47%;
-  }
-
-  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander {
-    top: 34%;
-  }
-
-  body.game-running[data-mobile-view="board"] .zone-sign {
-    display: none;
-  }
-
-  body.game-running[data-mobile-view="board"] .library-card-back {
-    top: 7%;
-    width: 58%;
-    max-height: 73%;
-  }
-
-  body.game-running[data-mobile-view="board"] .pile-card-mini {
-    top: 6%;
-    width: 55%;
-    max-height: 72%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone-count {
-    right: 12%;
-    bottom: 5%;
-    left: 12%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
-  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
-    top: 4%;
-    width: clamp(42px, 6.4vw, 58px);
-    height: clamp(42px, 6.4vw, 58px);
-  }
-
-  body.game-running[data-mobile-view="board"] .commander-info {
-    bottom: 3%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--field .empty-slot {
-    visibility: hidden;
-  }
-
-  body.game-running[data-mobile-view="board"] .centerline .primary-button {
-    right: calc(4.2% + 9px);
-  }
-
-  body.game-running[data-mobile-view="board"] .centerline .danger-button {
-    left: calc(4.2% + 9px);
-  }
-
-  /* La main recouvre uniquement le centre bas du tapis, comme dans Hearthstone. */
-  body.game-running[data-mobile-view="board"] .hand-wrap {
-    position: absolute;
-    z-index: 70;
-    bottom: 0;
-    left: 50%;
-    width: min(60%, calc(100dvh * 1.02), 580px);
-    height: var(--phone-hand-row-height);
-    overflow: visible;
-    border: 0;
-    background:
-      radial-gradient(ellipse at 50% 118%, rgba(81, 50, 24, 0.72), transparent 62%);
-    box-shadow: none;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-
-  body.game-running[data-mobile-view="board"] .hand-row,
-  body.game-running[data-mobile-view="board"] .hand-row .game-card {
-    pointer-events: auto;
-  }
-
-  body.game-running[data-mobile-view="board"] .hand-wrap .section-heading {
-    display: none;
-  }
-
-  body.game-running[data-mobile-view="board"] .hand-row {
-    bottom: 2px;
-    height: var(--phone-hand-row-height);
-    padding-inline: 6px;
-  }
-
-  body.game-running[data-mobile-view="board"] .hand-row .game-card {
-    flex-basis: var(--hand-card-width, 66px);
-    width: var(--hand-card-width, 66px);
-    min-width: var(--hand-card-width, 66px);
-    height: calc(var(--hand-card-width, 66px) * 1.32);
-  }
-
-  body.game-running[data-mobile-view="board"] .hand-row .game-card.is-playable {
-    translate: 0 -1px;
-  }
-
-  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
-    top: 0;
-    bottom: auto;
-    z-index: 8;
-    height: var(--phone-land-row-height);
-    overflow: visible;
-  }
-
-  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
-    top: calc(var(--phone-land-row-height) + 2px);
-    bottom: auto;
-    height: var(--phone-board-card-height);
-    align-items: flex-start;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
-    flex-basis: clamp(52px, 8dvw, 68px);
-    width: clamp(52px, 8dvw, 68px);
-    max-width: clamp(52px, 8dvw, 68px);
-    height: var(--phone-land-row-height);
-    min-height: var(--phone-land-row-height);
-  }
-
-  body.game-running[data-mobile-view="board"] .mobile-nav {
-    display: none;
-  }
-
-  /* Plateau vectoriel mobile : mana lateral, serviteurs au centre, piles a droite. */
-  body.game-running[data-mobile-view="board"] .mat-zone--field {
     inset: 0;
     width: 100%;
     height: 100%;
+    overflow: visible;
     pointer-events: none;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .board-row,
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-row {
     position: absolute;
+    right: auto;
+    bottom: auto;
     margin: 0;
+    overflow: visible;
     border: 0;
     border-radius: 0;
+    padding: 0;
     background: transparent;
     pointer-events: auto;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .board-row {
-    right: auto;
-    left: 17%;
+    left: 17.6875%;
     display: flex;
-    width: 62%;
+    width: 64.625%;
     height: var(--phone-board-card-height);
     align-items: center;
     justify-content: center;
-    gap: clamp(1px, 0.4vw, 4px);
-    overflow: visible;
-    padding: 0;
+    gap: clamp(1px, 0.32dvw, 3px);
   }
 
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .board-row {
     top: auto;
-    bottom: 6%;
+    bottom: 4.3%;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
-    top: 6%;
-    bottom: auto;
+    top: 7%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .board-row .game-card {
     flex: 0 1 var(--phone-board-card-width);
     width: var(--phone-board-card-width);
-    min-width: 48px;
+    min-width: 50px;
     max-width: var(--phone-board-card-width);
+    height: var(--phone-board-card-height);
   }
 
-  body.game-running[data-mobile-view="board"] .mat-zone--field .land-row,
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row,
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
-    top: 15%;
-    right: auto;
-    bottom: auto;
-    left: 4%;
     z-index: 8;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     grid-auto-rows: var(--phone-land-row-height);
-    width: 12%;
-    height: 70%;
-    align-content: start;
+    align-content: center;
     gap: 2px;
     overflow: hidden;
-    padding: 20px 3px 3px;
+    padding: 2px 4px;
+  }
+
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row {
+    top: 25.4%;
+    left: 13.75%;
+    width: 16.25%;
+    height: 16.8%;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
+    top: 61.1%;
+    left: 16.75%;
+    width: 11.5%;
+    height: 20%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
@@ -656,97 +531,251 @@
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-gem {
-    width: clamp(10px, 2.8dvh, 13px);
-    height: clamp(10px, 2.8dvh, 13px);
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--library {
-    right: 12.7%;
-    left: auto;
-    width: 8.2%;
-    height: 45%;
+    width: clamp(8px, 1.35dvw, 12px);
+    height: clamp(8px, 1.35dvw, 12px);
   }
 
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--library {
     top: 7%;
+    right: 2%;
+    left: auto;
+    width: 10%;
+    height: 44%;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--library {
-    top: 48%;
-  }
-
-  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
-    right: 13%;
+    top: 38.7%;
+    right: 2%;
     left: auto;
-    width: 7.6%;
-    height: 25%;
+    width: 10%;
+    height: 52%;
   }
 
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--graveyard {
-    top: 49%;
+    top: 10%;
+    right: auto;
+    left: 2.75%;
+    width: 11%;
+    height: 42%;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--graveyard {
-    top: 26%;
+    top: 4%;
+    right: 3%;
+    left: auto;
+    width: 10%;
+    height: 28%;
   }
 
-  body.game-running[data-mobile-view="board"] .mat-zone--commander,
+  body.game-running[data-mobile-view="board"] .mat-zone--exile {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .zone-sign {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .library-card-back {
+    top: 5%;
+    width: 58%;
+    max-height: 74%;
+  }
+
+  body.game-running[data-mobile-view="board"] .pile-card-mini {
+    top: 7%;
+    width: 56%;
+    max-height: 70%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone-count {
+    right: 8%;
+    bottom: 3%;
+    left: 8%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--library .mat-zone-count {
+    right: auto;
+    bottom: 0;
+    left: 50%;
+    width: 30px;
+    min-width: 30px;
+    height: 20px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard .mat-zone-count {
+    right: auto;
+    bottom: 18%;
+    left: 68%;
+    width: 28px;
+    min-width: 28px;
+    height: 20px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander {
+    top: 4.3%;
+    right: auto;
+    left: 43%;
+    width: 14%;
+    height: 45%;
+  }
+
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander {
-    top: 15%;
-    right: 0.8%;
-    width: 10.5%;
-    height: 70%;
+    top: 41%;
+    right: auto;
+    left: 2.75%;
+    width: 13%;
+    height: 53%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
-    top: 50%;
     left: 50%;
-    width: clamp(44px, 7dvh, 60px);
-    height: clamp(44px, 7dvh, 60px);
+    width: clamp(48px, 7.5dvw, 70px);
+    height: clamp(48px, 7.5dvw, 70px);
     transform: translate(-50%, -50%);
   }
 
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
+    top: 50%;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander .commander-portrait {
+    top: 50%;
+  }
+
   body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-info {
-    right: -4px;
+    right: auto;
     bottom: 0;
-    left: -4px;
+    left: 50%;
+    display: flex;
+    width: max-content;
+    max-width: 120%;
+    transform: translateX(-50%);
   }
 
-  body.game-running[data-mobile-view="board"] .library-card-back {
-    top: 4%;
-    width: 66%;
-    max-height: 76%;
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-info h2,
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .hero-caption {
+    display: none;
   }
 
-  body.game-running[data-mobile-view="board"] .pile-card-mini {
-    top: 8%;
-    width: 62%;
-    max-height: 76%;
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-stats {
+    width: auto;
+    min-width: max-content;
   }
 
+  body.game-running[data-mobile-view="board"] .mat-zone--field .empty-slot {
+    visibility: hidden;
+  }
+
+  body.game-running[data-mobile-view="board"] .centerline {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    transform: none;
+    pointer-events: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .centerline .danger-button,
+  body.game-running[data-mobile-view="board"] .centerline .turn-pill,
   body.game-running[data-mobile-view="board"] .centerline .primary-button {
-    right: 11.5%;
-    width: clamp(66px, 8.5vw, 76px);
-    min-height: 28px;
-    padding-inline: 4px;
+    pointer-events: auto;
   }
 
   body.game-running[data-mobile-view="board"] .centerline .danger-button {
+    top: 50%;
+    bottom: auto;
     left: 17%;
+    width: clamp(84px, 12dvw, 108px);
+    min-height: 28px;
+    transform: translateY(-50%);
   }
 
   body.game-running[data-mobile-view="board"] .centerline .turn-pill {
-    width: clamp(92px, 12vw, 108px);
-    height: 18px;
-    min-height: 18px;
+    top: calc(50% + 1px);
+    left: 50%;
+    width: clamp(92px, 12dvw, 108px);
+    height: 16px;
+    min-height: 16px;
     padding: 1px 5px;
-    font-size: clamp(8px, 1vw, 10px);
+    font-size: clamp(8px, 1dvw, 10px);
     transform: translate(-50%, -50%);
   }
 
   body.game-running[data-mobile-view="board"] .centerline .turn-pill.is-turn-change {
     animation: polish-mobile-turn-reveal 0.8s ease-out both;
+  }
+
+  body.game-running[data-mobile-view="board"] .centerline .primary-button {
+    top: auto;
+    right: 17%;
+    bottom: 9.5%;
+    width: 15.75%;
+    height: 10%;
+    min-height: 30px;
+    max-height: 44px;
+    padding-inline: 4px;
+    border-radius: 7px;
+    transform: none;
+  }
+
+  /* La main suit le berceau du SVG et descend sous le cadre sur les iPhone courts. */
+  body.game-running[data-mobile-view="board"] .hand-wrap {
+    position: absolute;
+    z-index: 70;
+    bottom: max(-2px, calc(100% - min(100%, 46.25dvw) - 18px));
+    left: 49.25%;
+    width: min(33.5%, 340px);
+    height: var(--phone-hand-row-height);
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-wrap .section-heading {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row {
+    bottom: 0;
+    height: var(--phone-hand-row-height);
+    padding-inline: 4px;
+    pointer-events: auto;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row .game-card {
+    flex-basis: var(--hand-card-width, 66px);
+    width: var(--hand-card-width, 66px);
+    min-width: var(--hand-card-width, 66px);
+    height: calc(var(--hand-card-width, 66px) * 1.32);
+    pointer-events: auto;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row .game-card.is-playable {
+    translate: 0 -1px;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row .game-card:hover,
+  body.game-running[data-mobile-view="board"] .hand-row .game-card:focus-within {
+    z-index: var(--hand-layer, 50);
+    filter: brightness(1.08);
+    transform:
+      translateY(min(var(--hand-drop, 0px), 9px))
+      rotate(var(--hand-rotation, 0deg));
+  }
+
+  body.game-running[data-mobile-view="board"] .mobile-nav {
+    display: none;
   }
 }
 

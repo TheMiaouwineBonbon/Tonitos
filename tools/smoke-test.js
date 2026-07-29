@@ -179,7 +179,7 @@ async function main() {
   );
   res = await fetch(`${base}/polish.css`);
   const polishStyles = await res.text();
-  const mobilePlaymatPath = path.join(__dirname, "..", "Images/Tapis de Jeu/Tapis Mobile Vectoriel.svg");
+  const mobilePlaymatPath = path.join(__dirname, "..", "Images/Tapis de Jeu/Tapis Mobile Pro.svg");
   const mobilePlaymatSource = fs.existsSync(mobilePlaymatPath)
     ? fs.readFileSync(mobilePlaymatPath, "utf8")
     : "";
@@ -212,11 +212,13 @@ async function main() {
   );
   check(
     "Tapis smartphone vectoriel et navigation masquée en partie",
-    mobilePlaymatSource.includes('viewBox="0 0 1600 900"') &&
-      mobilePlaymatSource.includes('id="mana-panels"') &&
+    mobilePlaymatSource.includes('viewBox="0 0 1600 740"') &&
+      mobilePlaymatSource.includes('id="battlefield-slots"') &&
+      mobilePlaymatSource.includes('id="mana-trays"') &&
       mobilePlaymatSource.includes('id="hero-portals"') &&
-      mobilePlaymatSource.includes('id="hand-cradle"') &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Vectoriel.svg"') &&
+      mobilePlaymatSource.includes('id="hand-lane"') &&
+      (mobilePlaymatSource.match(/CIMETIERE/g) || []).length === 2 &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
@@ -243,11 +245,13 @@ async function main() {
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
     gameSource.includes("Math.max(64, Math.min(74, window.innerHeight * 0.17))") &&
+      gameSource.includes("Math.max(220, measuredHandWidth)") &&
       gameSource.includes("handWidth * 0.92") &&
-      polishStyles.includes("calc(100dvh * 1.02)") &&
+      polishStyles.includes("width: min(33.5%, 340px);") &&
+      polishStyles.includes("46.25dvw") &&
       polishStyles.includes("--phone-board-card-height") &&
       polishStyles.includes("--phone-hand-row-height") &&
-      polishStyles.includes("bottom: 2px;") &&
+      polishStyles.includes("bottom: max(-2px, calc(100%") &&
       polishStyles.includes("translate: 0 -1px;")
   );
   check(
@@ -257,18 +261,19 @@ async function main() {
   );
   check(
     "Serviteurs mobiles lisibles sans badges surdimensionnés",
-    polishStyles.includes("--phone-board-card-width: clamp(52px, 14.5dvh, 66px);") &&
-      polishStyles.includes("--phone-board-card-height: clamp(72px, 19dvh, 86px);") &&
+    polishStyles.includes("--phone-board-card-width: clamp(56px, 8.375dvw, 78px);") &&
+      polishStyles.includes("--phone-board-card-height: clamp(66px, 9.875dvw, 92px);") &&
       polishStyles.includes("bottom: 21px;") &&
       polishStyles.includes("width: clamp(16px, 4.2dvh, 19px);")
   );
   check(
-    "Mana mobile dans des alcôves latérales indépendantes",
-    polishStyles.includes("grid-template-columns: repeat(2, minmax(0, 1fr));") &&
-      polishStyles.includes("left: 4%;") &&
-      polishStyles.includes("width: 12%;") &&
-      polishStyles.includes("left: 17%;") &&
-      polishStyles.includes("width: 62%;")
+    "Mana et cimetière joueur alignés sur la maquette mobile",
+      polishStyles.includes("grid-template-columns: repeat(5, minmax(0, 1fr));") &&
+      polishStyles.includes("left: 16.75%;") &&
+      polishStyles.includes("width: 11.5%;") &&
+      polishStyles.includes(".player-mat .mat-zone--graveyard") &&
+      polishStyles.includes("right: 3%;") &&
+      polishStyles.includes("height: 28%;")
   );
   check(
     "Contour thématique de 3px autour des cartes",
