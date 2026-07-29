@@ -641,6 +641,12 @@ a:hover {
     0 14px 34px rgba(0, 0, 0, 0.5);
 }
 
+.game-card .card-content,
+.gallery-card .card-content {
+  outline: 3px solid var(--tone-2, rgba(232, 198, 119, 0.84));
+  outline-offset: -3px;
+}
+
 .compact .card-content {
   grid-template-rows: auto auto auto;
   min-height: 206px;
@@ -5182,7 +5188,7 @@ body.is-dragging {
 /* ===================================================================== */
 /* Téléphone paysage : arène continue et main dans un viewport, sans scroll. */
 /* ===================================================================== */
-@media (max-width: 950px) and (orientation: landscape) {
+@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   body:not([data-mobile-view="board"]) {
     min-height: 100dvh;
     padding-bottom: 30px;
@@ -5583,23 +5589,7 @@ body.phone-portrait-blocked .orientation-gate {
   62%, 100% { transform: rotate(90deg); }
 }
 
-@media (max-width: 950px) and (orientation: portrait) and (hover: none) {
-  .orientation-gate {
-    position: fixed;
-    inset: 0;
-    z-index: 2200;
-    display: grid;
-    place-items: center;
-    padding:
-      max(18px, env(safe-area-inset-top))
-      max(18px, env(safe-area-inset-right))
-      max(18px, env(safe-area-inset-bottom))
-      max(18px, env(safe-area-inset-left));
-    background: #070a11;
-  }
-}
-
-@media (max-width: 950px) and (orientation: landscape) {
+@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   :root {
     --phone-nav-height: 30px;
     --phone-hand-height: 112px;
@@ -6602,7 +6592,7 @@ body.phone-portrait-blocked .orientation-gate {
   50% { opacity: 0.78; }
 }
 
-@media (max-width: 950px) and (orientation: landscape) {
+@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   :root {
     --phone-nav-height: 32px;
     --phone-hand-height: clamp(100px, 26dvh, 118px);

@@ -101,9 +101,11 @@
   animation: none;
 }
 
-@media (max-width: 950px) and (orientation: landscape) {
+@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   :root {
-    --phone-board-card-width: clamp(58px, 8.2vw, 80px);
+    --phone-board-card-width: clamp(35px, 9dvh, 44px);
+    --phone-board-card-height: clamp(52px, 13.5dvh, 66px);
+    --phone-land-row-height: clamp(28px, 8dvh, 34px);
   }
 
   body[data-mobile-view="board"] .board-stage {
@@ -205,13 +207,13 @@
   }
 
   body[data-mobile-view="board"] .mat-zone--field .game-card {
-    min-width: 50px;
-    height: clamp(68px, 19dvh, 90px);
+    min-width: var(--phone-board-card-width);
+    height: var(--phone-board-card-height);
     filter: brightness(1.08) saturate(1.05);
   }
 
   body[data-mobile-view="board"] .mat-zone--field .game-card .card-content {
-    height: clamp(68px, 19dvh, 90px);
+    height: var(--phone-board-card-height);
     border-width: 2px;
     border-color: rgba(255, 218, 134, 0.96);
     box-shadow:
@@ -304,8 +306,16 @@
   }
 
   body[data-mobile-view="board"] .hand-row .card-title-lockup {
-    height: 18%;
+    right: 6%;
+    left: 6%;
+    height: 26%;
+    overflow: hidden;
     padding-inline: 2px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .cost-badge,
+  body[data-mobile-view="board"] .hand-row .family-ribbon {
+    top: 36%;
   }
 
   body[data-mobile-view="board"] .hand-row .card-type {
@@ -317,11 +327,20 @@
   body[data-mobile-view="board"] .hand-row .very-long-card-title .card-name {
     display: -webkit-box;
     overflow: hidden;
-    font-size: clamp(8px, 1.05vw, 10px);
-    line-height: 0.92;
+    font-size: clamp(8px, 10cqw, 9px);
+    line-height: 1;
     text-overflow: clip;
-    overflow-wrap: normal;
+    overflow-wrap: anywhere;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body[data-mobile-view="board"] .hand-row .long-card-title .card-name {
+    font-size: clamp(8px, 9cqw, 8.5px);
+  }
+
+  body[data-mobile-view="board"] .hand-row .very-long-card-title .card-name {
+    font-size: clamp(7px, 8.5cqw, 8px);
     -webkit-line-clamp: 3;
   }
 
@@ -470,7 +489,7 @@
     z-index: 70;
     bottom: 0;
     left: 50%;
-    width: min(64%, 620px);
+    width: min(62%, calc(100dvh * 1.10222), 620px);
     height: 100px;
     overflow: visible;
     border: 0;
@@ -491,30 +510,34 @@
   }
 
   body.game-running[data-mobile-view="board"] .hand-row {
-    bottom: max(14px, env(safe-area-inset-bottom));
-    height: 112px;
+    bottom: max(4px, env(safe-area-inset-bottom));
+    height: 100px;
     padding-inline: 6px;
   }
 
   body.game-running[data-mobile-view="board"] .hand-row .game-card {
-    flex-basis: 80px !important;
-    width: 80px !important;
-    min-width: 80px !important;
-    height: 116px !important;
+    flex-basis: var(--hand-card-width, 66px);
+    width: var(--hand-card-width, 66px);
+    min-width: var(--hand-card-width, 66px);
+    height: calc(var(--hand-card-width, 66px) * 1.45);
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row .game-card.is-playable {
+    translate: 0 -2px;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
     top: 0;
     bottom: auto;
     z-index: 8;
-    height: 23%;
+    height: var(--phone-land-row-height);
     overflow: visible;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
-    top: 22%;
+    top: calc(var(--phone-land-row-height) + 4px);
     bottom: auto;
-    height: 52%;
+    height: var(--phone-board-card-height);
     align-items: flex-start;
   }
 

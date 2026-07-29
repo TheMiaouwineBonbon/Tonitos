@@ -179,6 +179,16 @@ async function main() {
   );
   res = await fetch(`${base}/polish.css`);
   const polishStyles = await res.text();
+  const phoneLandscapeMedia =
+    "@media (max-width: 960px) and (max-height: 540px) and (orientation: landscape)";
+  const phoneLandscapeMediaCount = styles.split(phoneLandscapeMedia).length - 1;
+  check(
+    "Seuil téléphone paysage cohérent entre JavaScript et CSS",
+    gameSource.includes("const PHONE_LANDSCAPE_MAX_WIDTH = 960;") &&
+      gameSource.includes("const PHONE_LANDSCAPE_MAX_HEIGHT = 540;") &&
+      phoneLandscapeMediaCount === 3 &&
+      polishStyles.includes(phoneLandscapeMedia)
+  );
   check(
     "Hiérarchie visuelle et tour actif renforcés",
     polishStyles.includes("polish-active-hero") &&
@@ -190,7 +200,7 @@ async function main() {
   check(
     "Finition premium limitée au téléphone paysage",
     html.includes("polish.css") &&
-      polishStyles.includes("@media (max-width: 950px) and (orientation: landscape)") &&
+      polishStyles.includes(phoneLandscapeMedia) &&
       polishStyles.includes('body[data-mobile-view="board"] .board-stage') &&
       polishStyles.includes(".zone-sign {") &&
       polishStyles.includes("display: none;") &&
@@ -210,6 +220,31 @@ async function main() {
     styles.includes("touch-action: none") &&
       styles.includes(".game-card.is-drag-source") &&
       styles.includes(".mat-zone--field.is-drop-ready")
+  );
+  check(
+    "Redimensionnement différé pendant un glisser",
+    gameSource.includes("if (dragState.pending) {") &&
+      gameSource.includes("handRenderPending = true;") &&
+      gameSource.includes("flushPendingHandRender();")
+  );
+  check(
+    "Titres mobiles extrêmes visibles sur trois lignes",
+    polishStyles.includes(".very-long-card-title .card-name") &&
+      polishStyles.includes("-webkit-line-clamp: 3;") &&
+      polishStyles.includes("height: 26%;")
+  );
+  check(
+    "Main iPhone séparée du terrain et alignée sur le tapis",
+    gameSource.includes("Math.max(60, Math.min(69, handWidth * 0.14))") &&
+      gameSource.includes("handWidth * 0.9") &&
+      polishStyles.includes("calc(100dvh * 1.10222)") &&
+      polishStyles.includes("--phone-board-card-height") &&
+      polishStyles.includes("translate: 0 -2px;")
+  );
+  check(
+    "Contour thématique de 3px autour des cartes",
+    styles.includes("outline: 3px solid var(--tone-2") &&
+      styles.includes("outline-offset: -3px;")
   );
   check(
     "Verrouillage paysage sans plein écran forcé",

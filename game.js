@@ -20,6 +20,8 @@ const PHASES = {
 };
 const PLAYER_ID_KEY = "spellaho-player-id";
 const LEGACY_PLAYER_ID_KEY = "tonitos-player-id";
+const PHONE_LANDSCAPE_MAX_WIDTH = 960;
+const PHONE_LANDSCAPE_MAX_HEIGHT = 540;
 const storedPlayerId = sessionStorage.getItem(PLAYER_ID_KEY) || sessionStorage.getItem(LEGACY_PLAYER_ID_KEY) || "";
 if (storedPlayerId && !sessionStorage.getItem(PLAYER_ID_KEY)) {
   sessionStorage.setItem(PLAYER_ID_KEY, storedPlayerId);
@@ -329,10 +331,25 @@ function bindEvents() {
   window.addEventListener("resize", () => {
     hideCardPreview();
     updatePhoneOrientation();
-    if (state.started) renderHand();
+    if (!state.started) return;
+    if (dragState.pending) {
+      handRenderPending = true;
+      return;
+    }
+    renderHand();
   });
-  window.addEventListener("orientationchange", updatePhoneOrientation);
-  screen.orientation?.addEventListener?.("change", updatePhoneOrientation);
+  const handleOrientationChange = () => {
+    hideCardPreview();
+    const shouldRefreshHand = state.started && (dragState.pending || handRenderPending);
+    if (dragState.pending) resetDrag();
+    updatePhoneOrientation();
+    if (shouldRefreshHand) {
+      handRenderPending = false;
+      renderHand();
+    }
+  };
+  window.addEventListener("orientationchange", handleOrientationChange);
+  screen.orientation?.addEventListener?.("change", handleOrientationChange);
   window.addEventListener("scroll", hideCardPreview, true);
   window.addEventListener("pointermove", onDragPointerMove, { passive: false });
   window.addEventListener("pointerup", onDragPointerUp);
@@ -340,14 +357,17 @@ function bindEvents() {
 }
 
 function isPhoneViewport() {
-  const compactViewport =
-    Math.min(window.innerWidth, window.innerHeight) <= 760 &&
-    Math.max(window.innerWidth, window.innerHeight) <= 1200;
   return (
-    compactViewport ||
-    window.matchMedia("(max-width: 950px) and (hover: none)").matches ||
-    (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) <= 950)
+    Math.min(window.innerWidth, window.innerHeight) <= PHONE_LANDSCAPE_MAX_HEIGHT &&
+    Math.max(window.innerWidth, window.innerHeight) <= PHONE_LANDSCAPE_MAX_WIDTH
   );
+}
+
+function isPhoneLandscape() {
+  return window.matchMedia(
+    `(max-width: ${PHONE_LANDSCAPE_MAX_WIDTH}px) and ` +
+    `(max-height: ${PHONE_LANDSCAPE_MAX_HEIGHT}px) and (orientation: landscape)`
+  ).matches;
 }
 
 let orientationLockFailed = false;
@@ -3104,18 +3124,20 @@ function renderHand() {
 
   const fragment = document.createDocumentFragment();
   const handCenter = (side.hand.length - 1) / 2;
-  const mobileLandscape = window.matchMedia("(max-width: 950px) and (orientation: landscape)").matches;
+  const mobileLandscape = isPhoneLandscape();
   const handWidth = Math.max(320, els.playerHand.clientWidth || window.innerWidth);
   const cardWidth = mobileLandscape
-    ? Math.max(84, Math.min(90, handWidth * 0.09))
+    ? Math.max(60, Math.min(69, handWidth * 0.14))
     : 160;
-  const maximumSpan = mobileLandscape ? handWidth * 0.76 : handWidth - 48;
+  const maximumSpan = mobileLandscape ? handWidth * 0.9 : handWidth - 48;
   const naturalSpan = cardWidth * side.hand.length;
   const overlap = side.hand.length > 1
-    ? Math.max(-cardWidth * 0.55, Math.min(0, (maximumSpan - naturalSpan) / (side.hand.length - 1)))
+    ? Math.max(-cardWidth * (mobileLandscape ? 0.72 : 0.55), Math.min(0, (maximumSpan - naturalSpan) / (side.hand.length - 1)))
     : 0;
-  const maximumRotation = Math.min(8, 2.5 + side.hand.length * 0.65);
-  const maximumDrop = Math.min(9, 4 + side.hand.length * 0.45);
+  const maximumRotation = mobileLandscape
+    ? Math.min(3, 1.2 + side.hand.length * 0.25)
+    : Math.min(8, 2.5 + side.hand.length * 0.65);
+  const maximumDrop = mobileLandscape ? 2 : Math.min(9, 4 + side.hand.length * 0.45);
   for (const [index, card] of side.hand.entries()) {
     const node = renderCard(card, { mode: "hand" });
     const offset = index - handCenter;
@@ -3281,6 +3303,7 @@ const dragState = {
   ghost: null,
   suppressClick: false
 };
+let handRenderPending = false;
 
 function attachPlayDrag(node, card, side) {
   node.addEventListener("pointerdown", (event) => {
@@ -3378,6 +3401,7 @@ function onDragPointerUp(event) {
     else finishAttackDrag(event);
   }
   resetDrag();
+  flushPendingHandRender();
   if (suppressClick) {
     // Empêche le clic « fiche » de suivre un vrai glisser.
     const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
@@ -3389,6 +3413,7 @@ function onDragPointerUp(event) {
 function onDragPointerCancel(event) {
   if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
   resetDrag();
+  flushPendingHandRender();
 }
 
 function finishPlayDrag(event) {
@@ -3436,6 +3461,12 @@ function resetDrag() {
   dragState.pointerType = "";
   dragState.ghost = null;
   dragState.suppressClick = false;
+}
+
+function flushPendingHandRender() {
+  if (!handRenderPending || dragState.pending || !state.started) return;
+  handRenderPending = false;
+  renderHand();
 }
 
 function playDropField() {
