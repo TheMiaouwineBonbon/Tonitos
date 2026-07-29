@@ -643,7 +643,7 @@ a:hover {
 
 .game-card .card-content,
 .gallery-card .card-content {
-  outline: 3px solid var(--tone-2, rgba(232, 198, 119, 0.84));
+  outline: 3px solid var(--family-accent, var(--tone-2, rgba(232, 198, 119, 0.84)));
   outline-offset: -3px;
 }
 

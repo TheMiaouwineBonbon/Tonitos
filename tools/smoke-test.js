@@ -239,11 +239,25 @@ async function main() {
       gameSource.includes("handWidth * 0.9") &&
       polishStyles.includes("calc(100dvh * 1.10222)") &&
       polishStyles.includes("--phone-board-card-height") &&
-      polishStyles.includes("translate: 0 -2px;")
+      polishStyles.includes("--phone-hand-row-height") &&
+      polishStyles.includes("bottom: 2px;") &&
+      polishStyles.includes("translate: 0 -1px;")
+  );
+  check(
+    "Zone sûre iPhone comptée une seule fois",
+    polishStyles.includes("padding-bottom: env(safe-area-inset-bottom);") &&
+      !polishStyles.includes("bottom: max(4px, env(safe-area-inset-bottom));")
+  );
+  check(
+    "Serviteurs mobiles lisibles sans badges surdimensionnés",
+    polishStyles.includes("--phone-board-card-width: clamp(52px, 13dvh, 60px);") &&
+      polishStyles.includes("--phone-board-card-height: clamp(58px, 15.5dvh, 70px);") &&
+      polishStyles.includes("bottom: 21px;") &&
+      polishStyles.includes("width: clamp(16px, 4.2dvh, 19px);")
   );
   check(
     "Contour thématique de 3px autour des cartes",
-    styles.includes("outline: 3px solid var(--tone-2") &&
+    styles.includes("outline: 3px solid var(--family-accent") &&
       styles.includes("outline-offset: -3px;")
   );
   check(

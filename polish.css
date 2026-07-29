@@ -103,9 +103,10 @@
 
 @media (max-width: 960px) and (max-height: 540px) and (orientation: landscape) {
   :root {
-    --phone-board-card-width: clamp(35px, 9dvh, 44px);
-    --phone-board-card-height: clamp(52px, 13.5dvh, 66px);
-    --phone-land-row-height: clamp(28px, 8dvh, 34px);
+    --phone-board-card-width: clamp(52px, 13dvh, 60px);
+    --phone-board-card-height: clamp(58px, 15.5dvh, 70px);
+    --phone-land-row-height: clamp(22px, 6dvh, 26px);
+    --phone-hand-row-height: clamp(84px, 22dvh, 92px);
   }
 
   body[data-mobile-view="board"] .board-stage {
@@ -233,13 +234,19 @@
     -webkit-line-clamp: 2;
   }
 
+  body[data-mobile-view="board"] .mat-zone--field .card-title-lockup {
+    bottom: 21px;
+    min-height: 13px;
+    padding: 1px 2px;
+  }
+
   body[data-mobile-view="board"] .mat-zone--field .cost-badge,
   body[data-mobile-view="board"] .mat-zone--field .stat-badge {
-    width: clamp(21px, 2.6vw, 25px);
-    min-width: clamp(21px, 2.6vw, 25px);
-    height: clamp(21px, 2.6vw, 25px);
-    border-width: 2px;
-    font-size: clamp(10px, 1.25vw, 12px);
+    width: clamp(16px, 4.2dvh, 19px);
+    min-width: clamp(16px, 4.2dvh, 19px);
+    height: clamp(16px, 4.2dvh, 19px);
+    border-width: 1px;
+    font-size: clamp(8px, 2.2dvh, 10px);
   }
 
   body[data-mobile-view="board"] .mat-zone--field .land-permanent {
@@ -490,7 +497,7 @@
     bottom: 0;
     left: 50%;
     width: min(62%, calc(100dvh * 1.10222), 620px);
-    height: 100px;
+    height: var(--phone-hand-row-height);
     overflow: visible;
     border: 0;
     background:
@@ -510,8 +517,8 @@
   }
 
   body.game-running[data-mobile-view="board"] .hand-row {
-    bottom: max(4px, env(safe-area-inset-bottom));
-    height: 100px;
+    bottom: 2px;
+    height: var(--phone-hand-row-height);
     padding-inline: 6px;
   }
 
@@ -519,11 +526,11 @@
     flex-basis: var(--hand-card-width, 66px);
     width: var(--hand-card-width, 66px);
     min-width: var(--hand-card-width, 66px);
-    height: calc(var(--hand-card-width, 66px) * 1.45);
+    height: calc(var(--hand-card-width, 66px) * 1.35);
   }
 
   body.game-running[data-mobile-view="board"] .hand-row .game-card.is-playable {
-    translate: 0 -2px;
+    translate: 0 -1px;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
@@ -535,18 +542,18 @@
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
-    top: calc(var(--phone-land-row-height) + 4px);
+    top: calc(var(--phone-land-row-height) + 2px);
     bottom: auto;
     height: var(--phone-board-card-height);
     align-items: flex-start;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
-    flex-basis: 70px;
-    width: 70px;
-    max-width: 70px;
-    height: 32px;
-    min-height: 32px;
+    flex-basis: clamp(52px, 8dvw, 68px);
+    width: clamp(52px, 8dvw, 68px);
+    max-width: clamp(52px, 8dvw, 68px);
+    height: var(--phone-land-row-height);
+    min-height: var(--phone-land-row-height);
   }
 
   body.game-running[data-mobile-view="board"] .mobile-nav {
