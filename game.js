@@ -184,7 +184,7 @@ const PEERJS_MODULE_URL = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/+esm";
 const PLAYMATS = {
   player: "Images/Tapis de Jeu/Tapis de jeu Joueur.png",
   enemy: "Images/Tapis de Jeu/Taps de jeu Adversaire.png",
-  mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg"
+  mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260729-harmony-2"
 };
 const DEFAULT_PROFILES = {
   player: {
@@ -3093,8 +3093,10 @@ function rematch() {
 
 function updateButtons() {
   const playing = state.phase !== PHASES.OVER && isCurrentSideHuman();
+  const waitingForOpponent = state.phase !== PHASES.OVER && !playing;
   els.endTurn.disabled = !playing;
-  els.endTurn.textContent = "Fin du tour";
+  els.endTurn.classList.toggle("is-opponent-turn", waitingForOpponent);
+  els.endTurn.textContent = waitingForOpponent ? "Tour adverse" : "Fin du tour";
 
   // Le bouton rouge frappe directement le commandant avec l'attaquant choisi.
   const attacker = state.selectedAttackerId
@@ -3130,7 +3132,7 @@ function renderHand() {
     ? Math.max(220, measuredHandWidth)
     : Math.max(320, measuredHandWidth);
   const cardWidth = mobileLandscape
-    ? Math.max(64, Math.min(74, window.innerHeight * 0.17))
+    ? Math.max(58, Math.min(68, window.innerHeight * 0.155))
     : 160;
   const maximumSpan = mobileLandscape ? handWidth * 0.92 : handWidth - 48;
   const naturalSpan = cardWidth * side.hand.length;

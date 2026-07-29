@@ -1,234 +1,339 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 740" role="img" aria-labelledby="title description">
-  <title id="title">Tapis mobile Spellaho</title>
-  <desc id="description">Tapis fantasy compact pour smartphone paysage, avec deux camps, sept emplacements de creatures et une main centrale.</desc>
-  <defs>
-    <linearGradient id="gold" x1="0" y1="0" x2=".35" y2="1">
-      <stop offset="0" stop-color="#3d1d07"/>
-      <stop offset=".18" stop-color="#e8bd63"/>
-      <stop offset=".36" stop-color="#8a5418"/>
-      <stop offset=".58" stop-color="#f6d891"/>
-      <stop offset=".78" stop-color="#7c4713"/>
-      <stop offset="1" stop-color="#2c1405"/>
-    </linearGradient>
-    <linearGradient id="gold-soft" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f6d891" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#8a5418" stop-opacity=".65"/>
-    </linearGradient>
-    <radialGradient id="foe-felt" cx=".5" cy="-.05" r="1.05">
-      <stop offset="0" stop-color="#5b2168"/>
-      <stop offset=".45" stop-color="#2c1033"/>
-      <stop offset="1" stop-color="#120716"/>
-    </radialGradient>
-    <radialGradient id="ally-felt" cx=".5" cy="1.05" r="1.05">
-      <stop offset="0" stop-color="#17558f"/>
-      <stop offset=".45" stop-color="#0a2846"/>
-      <stop offset="1" stop-color="#050f1e"/>
-    </radialGradient>
-    <radialGradient id="foe-portal">
-      <stop offset="0" stop-color="#f5c8ff"/>
-      <stop offset=".14" stop-color="#a03fe0"/>
-      <stop offset=".52" stop-color="#33064f"/>
-      <stop offset="1" stop-color="#120020" stop-opacity=".65"/>
-    </radialGradient>
-    <radialGradient id="ally-portal">
-      <stop offset="0" stop-color="#cfe9ff"/>
-      <stop offset=".14" stop-color="#2f8bff"/>
-      <stop offset=".52" stop-color="#062a63"/>
-      <stop offset="1" stop-color="#001028" stop-opacity=".65"/>
-    </radialGradient>
-    <linearGradient id="slot-foe" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#08040c" stop-opacity=".72"/>
-      <stop offset="1" stop-color="#431750" stop-opacity=".18"/>
-    </linearGradient>
-    <linearGradient id="slot-ally" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#04080f" stop-opacity=".72"/>
-      <stop offset="1" stop-color="#0d3a6a" stop-opacity=".18"/>
-    </linearGradient>
-    <linearGradient id="hand-well" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0b111c" stop-opacity=".35"/>
-      <stop offset=".48" stop-color="#08070c" stop-opacity=".72"/>
-      <stop offset="1" stop-color="#020205" stop-opacity=".96"/>
-    </linearGradient>
-    <radialGradient id="vignette" cx=".5" cy=".5" r=".78">
-      <stop offset=".55" stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity=".62"/>
-    </radialGradient>
-    <pattern id="grain" width="120" height="120" patternUnits="userSpaceOnUse">
-      <circle cx="11" cy="17" r="1.1" fill="#fff" opacity=".05"/>
-      <circle cx="72" cy="29" r=".9" fill="#fff" opacity=".06"/>
-      <circle cx="99" cy="88" r=".8" fill="#fff" opacity=".05"/>
-      <circle cx="38" cy="103" r="1" fill="#fff" opacity=".04"/>
-      <path d="M0 58Q30 42 62 62T120 55" fill="none" stroke="#fff" opacity=".018"/>
-    </pattern>
-    <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="7" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <clipPath id="mat-clip">
-      <rect x="10" y="10" width="1580" height="720" rx="26"/>
-    </clipPath>
-    <symbol id="slot-rune" viewBox="0 0 100 100">
-      <g fill="none" stroke="#a8804a" stroke-opacity=".38">
-        <circle cx="50" cy="50" r="34"/>
-        <circle cx="50" cy="50" r="24"/>
-        <path d="M50 16 76 84 24 84Z"/>
-        <path d="M50 84 76 16 24 16Z"/>
-      </g>
-    </symbol>
-    <symbol id="card-stack" viewBox="0 0 120 168">
-      <rect x="12" y="14" width="96" height="140" rx="7" fill="#0d0812" stroke="#6b4318" stroke-width="3"/>
-      <rect x="8" y="9" width="96" height="140" rx="7" fill="#150c1d" stroke="#7d4f1c" stroke-width="3"/>
-      <rect x="4" y="4" width="96" height="140" rx="7" fill="#1c1026" stroke="url(#gold)" stroke-width="4"/>
-      <path d="M52 46 76 74 52 102 28 74Z" fill="none" stroke="#c99a41" stroke-width="3.5"/>
-      <circle cx="52" cy="74" r="8" fill="#b46bff" opacity=".85"/>
-    </symbol>
-    <symbol id="mana-diamond" viewBox="0 0 36 36">
-      <path d="M18 2 34 18 18 34 2 18Z" fill="#08111e" stroke="#76501f" stroke-width="2"/>
-      <path d="M18 8 28 18 18 28 8 18Z" fill="#15243b" stroke="#a77a34" stroke-opacity=".55"/>
-    </symbol>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 740" preserveAspectRatio="none"
+     role="img" aria-labelledby="titre desc">
+<title id="titre">Tapis mobile Spellaho</title>
+<desc id="desc">Tapis fantasy pour smartphone en paysage : deux camps, tablettes de créatures, terrains, cimetières, bibliothèques et portails de commandant.</desc>
+<!--
+  ============================================================================
+  Spellaho — tapis mobile (téléphone en paysage)
+  ============================================================================
+  RÔLE : fond appliqué en background-image sur .board-stage (vue mobile
+  « board »). Le jeu dessine PAR-DESSUS : compteurs, dos de cartes, portraits,
+  créatures, terrains, main et boutons.
 
-  <g clip-path="url(#mat-clip)">
-    <rect x="10" y="10" width="1580" height="360" fill="url(#foe-felt)"/>
-    <rect x="10" y="370" width="1580" height="360" fill="url(#ally-felt)"/>
-    <g opacity=".14">
-      <path d="M300 10H560L250 730H60Z" fill="#c68bff"/>
-      <path d="M1180 10H1420L1560 730H1330Z" fill="#6fb6ff"/>
-    </g>
-    <g fill="none" stroke="#a8804a" stroke-opacity=".25">
-      <g transform="translate(800 186)">
-        <circle r="150"/><circle r="126"/><circle r="86"/>
-        <path d="M0-126 109 63-109 63Z"/><path d="M0 126 109-63-109-63Z"/>
-      </g>
-      <g transform="translate(800 554)">
-        <circle r="150"/><circle r="126"/><circle r="86"/>
-        <path d="M0-126 109 63-109 63Z"/><path d="M0 126 109-63-109-63Z"/>
-      </g>
-    </g>
-    <rect x="10" y="10" width="1580" height="720" fill="url(#grain)"/>
-    <g fill="#d9a6ff" opacity=".55">
-      <circle cx="94" cy="242" r="2"/><circle cx="294" cy="76" r="1.4"/><circle cx="518" cy="178" r="1.7"/>
-      <circle cx="1084" cy="104" r="1.5"/><circle cx="1262" cy="246" r="2"/><circle cx="1498" cy="182" r="1.3"/>
-    </g>
-    <g fill="#a8d8ff" opacity=".48">
-      <circle cx="84" cy="518" r="1.8"/><circle cx="322" cy="678" r="1.4"/><circle cx="668" cy="476" r="1.6"/>
-      <circle cx="1012" cy="638" r="2"/><circle cx="1304" cy="506" r="1.5"/><circle cx="1514" cy="662" r="1.7"/>
-    </g>
-    <rect x="10" y="10" width="1580" height="720" fill="url(#vignette)"/>
+  GÉOMÉTRIE — relevée dans le DOM, PARTIE LANCÉE.
+  Piège à connaître : les règles de mise en page sont conditionnées à
+  `body.game-running[data-mobile-view="board"]`. Mesurer depuis le menu donne
+  une TOUTE AUTRE disposition (bibliothèque à gauche, commandant à droite) et
+  conduit à un tapis désaligné. Les valeurs ci-dessous ont été relevées en
+  partie, puis confirmées stables sur trois relevés successifs.
+
+  Coordonnées en unités de ce viewBox (1600 × 740) :
+
+    élément              camp haut (adverse)        camp bas (joueur)
+    tablette créatures   288 ; 221 · 1024 × 131     285 ; 397 · 1024 × 131
+    terrains             226 ; 111 ·  258 × 36      274 ; 611 ·  182 × 36
+    cimetière             48 ;  41 ·  176 × 154    1389 ; 385 ·  160 × 102
+    bibliothèque        1405 ;  30 ·  160 × 161    1405 ; 511 ·  160 × 190
+    portrait (centre)    800 ; 104                  149 ; 619
+    main                        —                   480 ; 574 ·  704 × 159
+    socle fin de tour           —                  1126 ; 370 ·  168 ×  53
+
+  POURQUOI preserveAspectRatio="none"
+  Le fond est étiré par `background-size: 100% 100%` et le conteneur suit le
+  ratio de l'écran (1,78 sur un 16:9 jusqu'à 2,33 sur un 21:9). Sans cet
+  attribut, la valeur par défaut « meet » réduit l'art et le centre, alors que
+  les zones du jeu — positionnées en pourcentages — ne bougent pas : l'art se
+  désaligne sur tout téléphone dont le ratio n'est pas 2,16. Avec « none »,
+  l'art et les zones subissent la même transformation, donc l'alignement tient
+  partout, sans bandes noires. En contrepartie le décor doit tolérer un
+  étirement de ±10 %, d'où des rectangles arrondis, des losanges et des
+  dégradés plutôt que des cercles fins isolés.
+
+  DEUX RÈGLES DE FOND
+  1. Aucun texte : réduit à ~0,53 x il est illisible, et il serait recouvert
+     par le contenu du jeu (le cimetière affiche la carte du dessus, la rangée
+     de terrains affiche les cartes de terrain).
+  2. Aucune case de créature fixe : les créatures sont centrées en flex, donc
+     sept cases dessinées se désalignent dès qu'il y en a moins de sept. On
+     dessine une tablette continue, juste quel que soit leur nombre.
+
+  PERFORMANCE : aucun filtre SVG (feGaussianBlur est coûteux au rendu). Les
+  halos passent par des dégradés radiaux, nets à petite taille.
+-->
+<defs>
+  <linearGradient id="or" x1="0" y1="0" x2=".4" y2="1">
+    <stop offset="0" stop-color="#3b1b07"/>
+    <stop offset=".18" stop-color="#e6bb62"/>
+    <stop offset=".38" stop-color="#7d4413"/>
+    <stop offset=".62" stop-color="#f4d488"/>
+    <stop offset=".82" stop-color="#8c4b19"/>
+    <stop offset="1" stop-color="#2a1004"/>
+  </linearGradient>
+  <linearGradient id="orFin" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f4d488" stop-opacity=".95"/>
+    <stop offset="1" stop-color="#8a5418" stop-opacity=".6"/>
+  </linearGradient>
+  <linearGradient id="orLigne" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#8a5418" stop-opacity="0"/>
+    <stop offset=".14" stop-color="#e6bb62"/>
+    <stop offset=".5" stop-color="#f4d488"/>
+    <stop offset=".86" stop-color="#e6bb62"/>
+    <stop offset="1" stop-color="#8a5418" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="lueur" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#f4d488" stop-opacity="0"/>
+    <stop offset=".5" stop-color="#f4d488" stop-opacity=".45"/>
+    <stop offset="1" stop-color="#f4d488" stop-opacity="0"/>
+  </linearGradient>
+
+  <radialGradient id="feutreFoe" cx=".5" cy="-.02" r="1.05">
+    <stop offset="0" stop-color="#5b2168"/>
+    <stop offset=".45" stop-color="#2c1033"/>
+    <stop offset="1" stop-color="#120716"/>
+  </radialGradient>
+  <radialGradient id="feutreAlly" cx=".5" cy="1.02" r="1.05">
+    <stop offset="0" stop-color="#17558f"/>
+    <stop offset=".45" stop-color="#0a2846"/>
+    <stop offset="1" stop-color="#050f1e"/>
+  </radialGradient>
+
+  <!-- Creux d'une zone : ombre portée en haut, lumière rasante en bas. -->
+  <linearGradient id="creuxFoe" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#05030a" stop-opacity=".88"/>
+    <stop offset=".55" stop-color="#1c0c22" stop-opacity=".52"/>
+    <stop offset="1" stop-color="#431750" stop-opacity=".26"/>
+  </linearGradient>
+  <linearGradient id="creuxAlly" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#02050b" stop-opacity=".88"/>
+    <stop offset=".55" stop-color="#0a2038" stop-opacity=".52"/>
+    <stop offset="1" stop-color="#0d3a6a" stop-opacity=".26"/>
+  </linearGradient>
+
+  <!-- Tablette de jeu : bords sombres, centre éclairé. -->
+  <linearGradient id="tableFoe" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#08040c" stop-opacity=".62"/>
+    <stop offset=".5" stop-color="#3a1444" stop-opacity=".2"/>
+    <stop offset="1" stop-color="#08040c" stop-opacity=".5"/>
+  </linearGradient>
+  <linearGradient id="tableAlly" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#04080f" stop-opacity=".62"/>
+    <stop offset=".5" stop-color="#0f3f6d" stop-opacity=".2"/>
+    <stop offset="1" stop-color="#04080f" stop-opacity=".5"/>
+  </linearGradient>
+
+  <radialGradient id="portailFoe">
+    <stop offset="0" stop-color="#f5c8ff" stop-opacity=".92"/>
+    <stop offset=".16" stop-color="#a03fe0" stop-opacity=".82"/>
+    <stop offset=".55" stop-color="#33064f" stop-opacity=".7"/>
+    <stop offset="1" stop-color="#120020" stop-opacity=".5"/>
+  </radialGradient>
+  <radialGradient id="portailAlly">
+    <stop offset="0" stop-color="#cfe9ff" stop-opacity=".92"/>
+    <stop offset=".16" stop-color="#2f8bff" stop-opacity=".82"/>
+    <stop offset=".55" stop-color="#062a63" stop-opacity=".7"/>
+    <stop offset="1" stop-color="#001028" stop-opacity=".5"/>
+  </radialGradient>
+
+  <linearGradient id="puitsMain" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0b111c" stop-opacity=".3"/>
+    <stop offset=".48" stop-color="#08070c" stop-opacity=".68"/>
+    <stop offset="1" stop-color="#020205" stop-opacity=".94"/>
+  </linearGradient>
+
+  <radialGradient id="vignette" cx=".5" cy=".5" r=".76">
+    <stop offset=".52" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity=".6"/>
+  </radialGradient>
+
+  <pattern id="grain" width="96" height="96" patternUnits="userSpaceOnUse">
+    <circle cx="11" cy="17" r="1.1" fill="#fff" opacity=".05"/>
+    <circle cx="63" cy="29" r=".9" fill="#fff" opacity=".055"/>
+    <circle cx="82" cy="74" r=".8" fill="#fff" opacity=".045"/>
+    <circle cx="34" cy="85" r="1" fill="#fff" opacity=".04"/>
+    <path d="M0 52Q26 38 54 55T96 49" fill="none" stroke="#fff" stroke-opacity=".018"/>
+    <path d="M18 0Q34 32 20 62T36 96" fill="none" stroke="#fff" stroke-opacity=".014"/>
+  </pattern>
+
+  <!-- Sceau arcanique en losanges : il s'étire sans trahir la déformation,
+       contrairement à des cercles concentriques. Défini en <g> et non en
+       <symbol viewBox> : un <use> de symbole sans width/height se
+       redimensionnerait à tout le canvas. -->
+  <g id="sceau" fill="none">
+    <rect x="-150" y="-64" width="300" height="128" rx="52"/>
+    <rect x="-112" y="-48" width="224" height="96" rx="40"/>
+    <rect x="-58" y="-26" width="116" height="52" rx="22"/>
+    <path d="M0-64 150 0 0 64-150 0Z"/>
+    <path d="M0-48 112 0 0 48-112 0Z"/>
+    <path d="M-150 0H-112M112 0H150"/>
+    <path d="M-104-44 104 44M104-44-104 44" stroke-opacity=".45"/>
   </g>
 
-  <g id="ornate-frame">
-    <rect x="12" y="12" width="1576" height="716" rx="24" fill="none" stroke="#1a0d05" stroke-width="22"/>
-    <rect x="20" y="20" width="1560" height="700" rx="18" fill="none" stroke="url(#gold)" stroke-width="7"/>
-    <rect x="28" y="28" width="1544" height="684" rx="13" fill="none" stroke="#3a1c08" stroke-width="4"/>
-    <rect x="33" y="33" width="1534" height="674" rx="11" fill="none" stroke="#bf8330" stroke-width="1.6"/>
-    <g fill="none" stroke="url(#gold-soft)" stroke-width="3" stroke-linecap="round">
-      <path d="M40 96Q40 40 96 40M40 124Q52 52 124 40M40 150Q64 62 150 40"/>
-      <path d="M1560 96Q1560 40 1504 40M1560 124Q1548 52 1476 40M1560 150Q1536 62 1450 40"/>
-      <path d="M40 644Q40 700 96 700M40 616Q52 688 124 700M40 590Q64 678 150 700"/>
-      <path d="M1560 644Q1560 700 1504 700M1560 616Q1548 688 1476 700M1560 590Q1536 678 1450 700"/>
-    </g>
+  <!-- Rivet en losange : silhouette franche même étirée. -->
+  <g id="rivet">
+    <path d="M0-5 5 0 0 5-5 0Z" fill="#1d1006" stroke="url(#orFin)" stroke-width="1.5"/>
+    <path d="M0-1.8 1.8 0 0 1.8-1.8 0Z" fill="#f4d488" opacity=".9"/>
   </g>
 
-  <g id="center-divider">
-    <path d="M34 370H1566" stroke="#0a0510" stroke-width="16"/>
-    <path d="M34 366H1566" stroke="url(#gold)" stroke-width="4"/>
-    <path d="M34 374H1566" stroke="#3f1f0a" stroke-width="2.5"/>
-    <g transform="translate(800 370)">
-      <rect x="-26" y="-26" width="52" height="52" transform="rotate(45)" fill="#160726" stroke="url(#gold)" stroke-width="4.5"/>
-      <rect x="-12" y="-12" width="24" height="24" transform="rotate(45)" fill="#8a2fd6" opacity=".75"/>
-    </g>
+  <clipPath id="interieur"><rect x="12" y="12" width="1576" height="716" rx="16"/></clipPath>
+</defs>
+
+<!-- ======================== SURFACES DES DEUX CAMPS ======================== -->
+<g clip-path="url(#interieur)">
+  <rect x="12" y="12" width="1576" height="358" fill="url(#feutreFoe)"/>
+  <rect x="12" y="370" width="1576" height="358" fill="url(#feutreAlly)"/>
+
+  <!-- Rais de lumière : profondeur du feutre. -->
+  <g opacity=".13">
+    <path d="M300 12H560L250 728H60Z" fill="#c68bff"/>
+    <path d="M1180 12H1420L1560 728H1330Z" fill="#6fb6ff"/>
   </g>
 
-  <g id="battlefield-slots">
-    <g fill="url(#slot-foe)" stroke="#7c5220" stroke-width="2" stroke-opacity=".55">
-      <rect x="283" y="196" width="134" height="158" rx="10"/><rect x="433" y="196" width="134" height="158" rx="10"/>
-      <rect x="583" y="196" width="134" height="158" rx="10"/><rect x="733" y="196" width="134" height="158" rx="10"/>
-      <rect x="883" y="196" width="134" height="158" rx="10"/><rect x="1033" y="196" width="134" height="158" rx="10"/>
-      <rect x="1183" y="196" width="134" height="158" rx="10"/>
-    </g>
-    <g fill="url(#slot-ally)" stroke="#7c5220" stroke-width="2" stroke-opacity=".55">
-      <rect x="283" y="396" width="134" height="158" rx="10"/><rect x="433" y="396" width="134" height="158" rx="10"/>
-      <rect x="583" y="396" width="134" height="158" rx="10"/><rect x="733" y="396" width="134" height="158" rx="10"/>
-      <rect x="883" y="396" width="134" height="158" rx="10"/><rect x="1033" y="396" width="134" height="158" rx="10"/>
-      <rect x="1183" y="396" width="134" height="158" rx="10"/>
-    </g>
-    <g opacity=".38">
-      <use href="#slot-rune" x="311" y="236" width="78" height="78"/><use href="#slot-rune" x="461" y="236" width="78" height="78"/>
-      <use href="#slot-rune" x="611" y="236" width="78" height="78"/><use href="#slot-rune" x="761" y="236" width="78" height="78"/>
-      <use href="#slot-rune" x="911" y="236" width="78" height="78"/><use href="#slot-rune" x="1061" y="236" width="78" height="78"/>
-      <use href="#slot-rune" x="1211" y="236" width="78" height="78"/>
-      <use href="#slot-rune" x="311" y="436" width="78" height="78"/><use href="#slot-rune" x="461" y="436" width="78" height="78"/>
-      <use href="#slot-rune" x="611" y="436" width="78" height="78"/><use href="#slot-rune" x="761" y="436" width="78" height="78"/>
-      <use href="#slot-rune" x="911" y="436" width="78" height="78"/><use href="#slot-rune" x="1061" y="436" width="78" height="78"/>
-      <use href="#slot-rune" x="1211" y="436" width="78" height="78"/>
-    </g>
+  <!-- Sceaux centrés sur les tablettes de créatures (y 287 et 462). -->
+  <use href="#sceau" x="800" y="287" stroke="#a8804a" stroke-opacity=".22" stroke-width="1.5"/>
+  <use href="#sceau" x="797" y="462" stroke="#7ba8d8" stroke-opacity=".22" stroke-width="1.5"/>
+
+  <rect x="12" y="12" width="1576" height="716" fill="url(#grain)"/>
+
+  <!-- Poussière magique, cantonnée aux espaces restés libres. -->
+  <g fill="#d9a6ff" opacity=".5">
+    <circle cx="620" cy="46" r="1.6"/><circle cx="1000" cy="40" r="1.3"/>
+    <circle cx="1340" cy="240" r="1.5"/><circle cx="250" cy="238" r="1.4"/>
+    <circle cx="1080" cy="180" r="1.2"/><circle cx="520" cy="180" r="1.3"/>
+  </g>
+  <g fill="#a8d8ff" opacity=".45">
+    <circle cx="330" cy="700" r="1.5"/><circle cx="1240" cy="700" r="1.3"/>
+    <circle cx="1350" cy="440" r="1.4"/><circle cx="120" cy="450" r="1.3"/>
+    <circle cx="640" cy="560" r="1.2"/><circle cx="1010" cy="556" r="1.3"/>
   </g>
 
-  <g id="hero-portals">
-    <g transform="translate(800 102)">
-      <circle r="64" fill="#0b0510" stroke="#1a0d05" stroke-width="13"/>
-      <circle r="56" fill="none" stroke="url(#gold)" stroke-width="6"/>
-      <circle r="46" fill="url(#foe-portal)"/>
-      <circle r="44" fill="none" stroke="#a03fe0" stroke-width="2.5" opacity=".8"/>
-      <circle r="30" fill="none" stroke="#e2a8ff" stroke-opacity=".3"/>
-    </g>
-    <g transform="translate(148 620)">
-      <circle r="62" fill="#04080f" stroke="#1a0d05" stroke-width="13"/>
-      <circle r="54" fill="none" stroke="url(#gold)" stroke-width="6"/>
-      <circle r="44" fill="url(#ally-portal)"/>
-      <circle r="42" fill="none" stroke="#2f8bff" stroke-width="2.5" opacity=".8"/>
-      <circle r="29" fill="none" stroke="#a8d8ff" stroke-opacity=".3"/>
-    </g>
-  </g>
+  <rect x="12" y="12" width="1576" height="716" fill="url(#vignette)"/>
+</g>
 
-  <g id="deck-wells">
-    <g transform="translate(1468 48)"><use href="#card-stack" width="120" height="168" transform="scale(.72)"/></g>
-    <g transform="translate(1468 516)"><use href="#card-stack" width="120" height="168" transform="scale(.72)"/></g>
-    <g transform="translate(132 104)">
-      <rect x="-40" y="-52" width="80" height="104" rx="8" fill="#0e0714" stroke="#6f4519" stroke-width="3"/>
-      <path d="M-24-30H16M-24-14H16M-24 2H16M-24 18H16" stroke="#8a5a24" stroke-width="5" stroke-linecap="round" opacity=".8"/>
-      <text y="76" fill="#e8cd93" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700">CIMETIERE</text>
-    </g>
-    <g transform="translate(1470 430)">
-      <rect x="-34" y="-40" width="68" height="80" rx="7" fill="#07101d" stroke="#6f4519" stroke-width="3"/>
-      <path d="M-20-22H14M-20-8H14M-20 6H14M-20 20H14" stroke="#8a5a24" stroke-width="4.5" stroke-linecap="round" opacity=".82"/>
-      <text y="62" fill="#e8cd93" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700">CIMETIERE</text>
-    </g>
+<!-- ============ TABLETTES DE CRÉATURES (alignées sur .board-row) ============
+     Tablette continue : reste juste quel que soit le nombre de créatures,
+     contrairement à sept cases dessinées. -->
+<g id="tablettes">
+  <g>
+    <rect x="288" y="221" width="1024" height="131" rx="12" fill="url(#tableFoe)"/>
+    <rect x="288" y="221" width="1024" height="131" rx="12" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="290.5" y="223.5" width="1019" height="126" rx="10" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M345 225H1255" stroke="url(#lueur)" stroke-width="1.6"/>
+    <path d="M345 348H1255" stroke="url(#lueur)" stroke-width="1.2" stroke-opacity=".6"/>
+    <use href="#rivet" x="300" y="233"/><use href="#rivet" x="1300" y="233"/>
+    <use href="#rivet" x="300" y="340"/><use href="#rivet" x="1300" y="340"/>
   </g>
+  <g>
+    <rect x="285" y="397" width="1024" height="131" rx="12" fill="url(#tableAlly)"/>
+    <rect x="285" y="397" width="1024" height="131" rx="12" fill="none" stroke="#050a12" stroke-width="4"/>
+    <rect x="287.5" y="399.5" width="1019" height="126" rx="10" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M342 401H1252" stroke="url(#lueur)" stroke-width="1.6"/>
+    <path d="M342 524H1252" stroke="url(#lueur)" stroke-width="1.2" stroke-opacity=".6"/>
+    <use href="#rivet" x="297" y="409"/><use href="#rivet" x="1297" y="409"/>
+    <use href="#rivet" x="297" y="516"/><use href="#rivet" x="1297" y="516"/>
+  </g>
+</g>
 
-  <g id="mana-trays">
-    <g transform="translate(220 94)">
-      <rect width="260" height="62" rx="10" fill="#100919" fill-opacity=".7" stroke="url(#gold-soft)" stroke-width="2.5"/>
-      <text x="130" y="-10" fill="#e8cd93" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700">MANA ADVERSE</text>
-      <use href="#mana-diamond" x="12" y="13" width="34" height="34"/><use href="#mana-diamond" x="61" y="13" width="34" height="34"/>
-      <use href="#mana-diamond" x="110" y="13" width="34" height="34"/><use href="#mana-diamond" x="159" y="13" width="34" height="34"/>
-      <use href="#mana-diamond" x="208" y="13" width="34" height="34"/>
-    </g>
-    <g transform="translate(268 596)">
-      <rect width="184" height="74" rx="10" fill="#040a14" fill-opacity=".76" stroke="url(#gold-soft)" stroke-width="2.5"/>
-      <text x="92" y="-10" fill="#e8cd93" text-anchor="middle" font-family="Georgia,serif" font-size="21" font-weight="700">TERRAINS</text>
-      <use href="#mana-diamond" x="4" y="8" width="28" height="28"/><use href="#mana-diamond" x="41" y="8" width="28" height="28"/>
-      <use href="#mana-diamond" x="78" y="8" width="28" height="28"/><use href="#mana-diamond" x="115" y="8" width="28" height="28"/>
-      <use href="#mana-diamond" x="152" y="8" width="28" height="28"/>
-      <use href="#mana-diamond" x="4" y="39" width="28" height="28"/><use href="#mana-diamond" x="41" y="39" width="28" height="28"/>
-      <use href="#mana-diamond" x="78" y="39" width="28" height="28"/><use href="#mana-diamond" x="115" y="39" width="28" height="28"/>
-      <use href="#mana-diamond" x="152" y="39" width="28" height="28"/>
-    </g>
+<!-- ================= TERRAINS (alignés sur .land-row) ================= -->
+<g id="terrains">
+  <g>
+    <rect x="226" y="111" width="258" height="36" rx="8" fill="url(#creuxFoe)"/>
+    <rect x="226" y="111" width="258" height="36" rx="8" fill="none" stroke="#0a0510" stroke-width="3"/>
+    <rect x="228" y="113" width="254" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
   </g>
+  <g>
+    <rect x="274" y="611" width="182" height="36" rx="8" fill="url(#creuxAlly)"/>
+    <rect x="274" y="611" width="182" height="36" rx="8" fill="none" stroke="#050a12" stroke-width="3"/>
+    <rect x="276" y="613" width="178" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
+  </g>
+</g>
 
-  <g id="hand-lane">
-    <path d="M520 724V606Q520 582 548 580H1028Q1056 582 1056 606V724Z" fill="url(#hand-well)" stroke="#6f4519" stroke-width="3"/>
-    <path d="M538 714V620Q538 598 562 596H1014Q1038 598 1038 620V714" fill="none" stroke="#d8a84a" stroke-opacity=".32" stroke-width="2"/>
-    <path d="M566 716Q788 654 1010 716" fill="none" stroke="url(#gold-soft)" stroke-width="3" stroke-opacity=".42"/>
+<!-- ============== CIMETIÈRES ET BIBLIOTHÈQUES (piles de cartes) ============== -->
+<g id="piles">
+  <!-- Cimetière adverse : 48 ; 41 · 176 × 154 -->
+  <g>
+    <rect x="48" y="41" width="176" height="154" rx="9" fill="url(#creuxFoe)"/>
+    <rect x="48" y="41" width="176" height="154" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="50.5" y="43.5" width="171" height="149" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M50 60 67 43M205 43l17 17M50 176l17 17m138 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
   </g>
+  <!-- Bibliothèque adverse : 1405 ; 30 · 160 × 161 -->
+  <g>
+    <rect x="1405" y="30" width="160" height="161" rx="9" fill="url(#creuxFoe)"/>
+    <rect x="1405" y="30" width="160" height="161" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="1407.5" y="32.5" width="155" height="156" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1407 49 1424 32M1546 32l17 17M1407 172l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+  </g>
+  <!-- Cimetière joueur : 1389 ; 385 · 160 × 102 -->
+  <g>
+    <rect x="1389" y="385" width="160" height="102" rx="9" fill="url(#creuxAlly)"/>
+    <rect x="1389" y="385" width="160" height="102" rx="9" fill="none" stroke="#050a12" stroke-width="4"/>
+    <rect x="1391.5" y="387.5" width="155" height="97" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1391 402 1408 385M1530 385l17 17M1391 470l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+  </g>
+  <!-- Bibliothèque joueur : 1405 ; 511 · 160 × 190 -->
+  <g>
+    <rect x="1405" y="511" width="160" height="190" rx="9" fill="url(#creuxAlly)"/>
+    <rect x="1405" y="511" width="160" height="190" rx="9" fill="none" stroke="#050a12" stroke-width="4"/>
+    <rect x="1407.5" y="513.5" width="155" height="185" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1407 530 1424 513M1546 513l17 17M1407 682l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+  </g>
+</g>
 
-  <g id="end-turn-well" transform="translate(1076 596)">
-    <rect width="252" height="74" rx="13" fill="#1b0f06" stroke="#1a0d05" stroke-width="7"/>
-    <rect x="5" y="5" width="242" height="64" rx="10" fill="#151017" stroke="url(#gold)" stroke-width="3" opacity=".84"/>
+<!-- ===================== PORTAILS DE COMMANDANT =====================
+     Centrés sur .commander-portrait : (800 ; 104) en haut, (149 ; 619) en bas.
+     Cercles acceptés ici : ils encadrent un portrait rond, qui subit
+     exactement la même déformation qu'eux. -->
+<g id="portails">
+  <g transform="translate(800 104)">
+    <circle r="78" fill="#0b0510" stroke="#1a0d05" stroke-width="12"/>
+    <circle r="70" fill="none" stroke="url(#or)" stroke-width="6"/>
+    <circle r="62" fill="url(#portailFoe)"/>
+    <circle r="62" fill="none" stroke="#a03fe0" stroke-width="2.5" opacity=".75"/>
+    <circle r="43" fill="none" stroke="#e2a8ff" stroke-opacity=".28"/>
   </g>
+  <g transform="translate(149 619)">
+    <circle r="78" fill="#04080f" stroke="#1a0d05" stroke-width="12"/>
+    <circle r="70" fill="none" stroke="url(#or)" stroke-width="6"/>
+    <circle r="62" fill="url(#portailAlly)"/>
+    <circle r="62" fill="none" stroke="#2f8bff" stroke-width="2.5" opacity=".75"/>
+    <circle r="43" fill="none" stroke="#a8d8ff" stroke-opacity=".28"/>
+  </g>
+</g>
+
+<!-- ============================ LIGNE CENTRALE ============================ -->
+<!-- Interrompue à droite : le bouton HTML de fin de tour occupe 1126 → 1294. -->
+<g id="ligne-centrale">
+  <path d="M30 370H1110" stroke="#0a0510" stroke-width="12"/>
+  <path d="M30 367H1110" stroke="url(#orLigne)" stroke-width="3.2"/>
+  <path d="M30 373.5H1110" stroke="#3f1f0a" stroke-opacity=".85" stroke-width="1.8"/>
+  <path d="M1310 370H1570" stroke="#0a0510" stroke-width="12"/>
+  <path d="M1310 367H1570" stroke="url(#orLigne)" stroke-width="3.2"/>
+  <g transform="translate(560 370)">
+    <path d="M0-14 14 0 0 14-14 0Z" fill="#160726" stroke="url(#or)" stroke-width="3.2"/>
+    <path d="M0-6.5 6.5 0 0 6.5-6.5 0Z" fill="#8a2fd6" opacity=".8"/>
+  </g>
+  <g transform="translate(1010 370)">
+    <path d="M0-14 14 0 0 14-14 0Z" fill="#160726" stroke="url(#or)" stroke-width="3.2"/>
+    <path d="M0-6.5 6.5 0 0 6.5-6.5 0Z" fill="#2f8bff" opacity=".8"/>
+  </g>
+</g>
+
+<!-- ================== MAIN ET SOCLE DU BOUTON DE FIN DE TOUR ==================
+     Berceau de la main : 480 ; 574 · 704 × 159 (déborde volontairement en bas).
+     Socle : 1126 ; 370 · 168 × 53, sous le bouton HTML #end-turn. -->
+<g id="main">
+  <path d="M480 740V604Q480 578 510 576H1154Q1184 578 1184 604V740Z" fill="url(#puitsMain)" stroke="#6f4519" stroke-width="3"/>
+  <path d="M500 740V618Q500 594 528 592H1136Q1164 594 1164 618V740" fill="none" stroke="#d8a84a" stroke-opacity=".3" stroke-width="2"/>
+  <path d="M530 716Q832 652 1134 716" fill="none" stroke="url(#orFin)" stroke-width="2.6" stroke-opacity=".4"/>
+</g>
+<g id="socle-fin-tour">
+  <rect x="1127" y="374" width="168" height="42" rx="10" fill="#1b0f06" stroke="#1a0d05" stroke-width="6"/>
+  <rect x="1130" y="377" width="162" height="36" rx="8" fill="#151017" fill-opacity=".8" stroke="url(#or)" stroke-width="2.4"/>
+</g>
+
+<!-- ========================= CADRE EXTÉRIEUR =========================
+     Maintenu sous 28 unités : la Bibliothèque adverse commence à y = 30. -->
+<rect x="6" y="6" width="1588" height="728" rx="16" fill="none" stroke="#1a0d05" stroke-width="12"/>
+<rect x="14" y="14" width="1572" height="712" rx="12" fill="none" stroke="url(#or)" stroke-width="6"/>
+<rect x="19" y="19" width="1562" height="702" rx="10" fill="none" stroke="#3a1c08" stroke-width="2.6"/>
+<rect x="22" y="22" width="1556" height="696" rx="9" fill="none" stroke="#bf8330" stroke-opacity=".7" stroke-width="1.2"/>
+
+<!-- Filigranes d'angle, confinés aux angles pour ne rien recouvrir. -->
+<g fill="none" stroke="url(#orFin)" stroke-width="2.4" stroke-linecap="round">
+  <path d="M26 62Q26 26 62 26M26 84Q36 36 84 26"/>
+  <path d="M1574 62Q1574 26 1538 26M1574 84Q1564 36 1516 26"/>
+  <path d="M26 678Q26 714 62 714M26 656Q36 704 84 714"/>
+  <path d="M1574 678Q1574 714 1538 714M1574 656Q1564 704 1516 714"/>
+</g>
 </svg>

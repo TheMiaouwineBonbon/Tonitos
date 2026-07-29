@@ -205,20 +205,24 @@ async function main() {
     "Finition premium limitée au téléphone paysage",
     html.includes("polish.css") &&
       polishStyles.includes(phoneLandscapeMedia) &&
-      polishStyles.includes('body[data-mobile-view="board"] .board-stage') &&
+      polishStyles.includes('body.game-running[data-mobile-view="board"] .board-stage') &&
       polishStyles.includes(".zone-sign {") &&
       polishStyles.includes("display: none;") &&
-      polishStyles.includes('body[data-mobile-view="board"] .zone-sign')
+      polishStyles.includes('body.game-running[data-mobile-view="board"] .zone-sign')
   );
   check(
     "Tapis smartphone vectoriel et navigation masquée en partie",
     mobilePlaymatSource.includes('viewBox="0 0 1600 740"') &&
-      mobilePlaymatSource.includes('id="battlefield-slots"') &&
-      mobilePlaymatSource.includes('id="mana-trays"') &&
-      mobilePlaymatSource.includes('id="hero-portals"') &&
-      mobilePlaymatSource.includes('id="hand-lane"') &&
-      (mobilePlaymatSource.match(/CIMETIERE/g) || []).length === 2 &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg"') &&
+      mobilePlaymatSource.includes('preserveAspectRatio="none"') &&
+      mobilePlaymatSource.includes('id="tablettes"') &&
+      mobilePlaymatSource.includes('id="terrains"') &&
+      mobilePlaymatSource.includes('id="piles"') &&
+      mobilePlaymatSource.includes('id="portails"') &&
+      mobilePlaymatSource.includes('id="main"') &&
+      mobilePlaymatSource.includes('id="ligne-centrale"') &&
+      mobilePlaymatSource.includes('id="sceau"') &&
+      !mobilePlaymatSource.includes('id="end-turn-well"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260729-harmony-2"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
@@ -244,15 +248,14 @@ async function main() {
   );
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
-    gameSource.includes("Math.max(64, Math.min(74, window.innerHeight * 0.17))") &&
+    gameSource.includes("Math.max(58, Math.min(68, window.innerHeight * 0.155))") &&
       gameSource.includes("Math.max(220, measuredHandWidth)") &&
       gameSource.includes("handWidth * 0.92") &&
-      polishStyles.includes("width: min(33.5%, 340px);") &&
-      polishStyles.includes("46.25dvw") &&
+      polishStyles.includes("width: min(44%, 480px);") &&
       polishStyles.includes("--phone-board-card-height") &&
       polishStyles.includes("--phone-hand-row-height") &&
-      polishStyles.includes("bottom: max(-2px, calc(100%") &&
-      polishStyles.includes("translate: 0 -1px;")
+      polishStyles.includes("height: calc(var(--hand-card-width, 64px) * 1.27);") &&
+      polishStyles.includes("transform: translateY(-4px) rotate(0deg) scale(1.025);")
   );
   check(
     "Zone sûre iPhone comptée une seule fois",
@@ -261,19 +264,29 @@ async function main() {
   );
   check(
     "Serviteurs mobiles lisibles sans badges surdimensionnés",
-    polishStyles.includes("--phone-board-card-width: clamp(56px, 8.375dvw, 78px);") &&
-      polishStyles.includes("--phone-board-card-height: clamp(66px, 9.875dvw, 92px);") &&
+    polishStyles.includes("--phone-board-card-width: clamp(50px, 7.2dvw, 68px);") &&
+      polishStyles.includes("--phone-board-card-height: clamp(60px, 8.2dvw, 82px);") &&
       polishStyles.includes("bottom: 21px;") &&
       polishStyles.includes("width: clamp(16px, 4.2dvh, 19px);")
   );
   check(
-    "Mana et cimetière joueur alignés sur la maquette mobile",
-      polishStyles.includes("grid-template-columns: repeat(5, minmax(0, 1fr));") &&
-      polishStyles.includes("left: 16.75%;") &&
-      polishStyles.includes("width: 11.5%;") &&
+    "Piles, cimetières et héros alignés sur le tapis mobile",
+    polishStyles.includes(".enemy-mat .mat-zone--graveyard") &&
+      polishStyles.includes(".enemy-mat .mat-zone--library") &&
       polishStyles.includes(".player-mat .mat-zone--graveyard") &&
-      polishStyles.includes("right: 3%;") &&
-      polishStyles.includes("height: 28%;")
+      polishStyles.includes(".player-mat .mat-zone--library") &&
+      polishStyles.includes("left: 43.5%;") &&
+      polishStyles.includes("left: 2.8%;") &&
+      polishStyles.includes("content: \"CIMETIERE\";") &&
+      polishStyles.includes("grid-template-columns: 8px 1fr;")
+  );
+  check(
+    "Bouton de tour compact avec états complets",
+    gameSource.includes('classList.toggle("is-opponent-turn", waitingForOpponent)') &&
+      polishStyles.includes("width: clamp(76px, 10.5dvw, 102px);") &&
+      polishStyles.includes(".primary-button:hover:not(:disabled)") &&
+      polishStyles.includes(".primary-button:active:not(:disabled)") &&
+      polishStyles.includes(".primary-button.is-opponent-turn")
   );
   check(
     "Contour thématique de 3px autour des cartes",
