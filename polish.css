@@ -335,6 +335,200 @@
     color: #fff3cf;
     background: rgba(48, 70, 111, 0.48);
   }
+
+  /* Plateau smartphone 16:9 : une seule image, entière et sans raccord central. */
+  body.game-running[data-mobile-view="board"] .app-shell {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  body.game-running[data-mobile-view="board"] .arena {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at center, rgba(62, 39, 96, 0.22), transparent 62%),
+      #030309;
+  }
+
+  body.game-running[data-mobile-view="board"] .board-stage {
+    width: min(100%, calc(100dvh * 1.77778));
+    height: 100%;
+    margin-inline: auto;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.1)),
+      var(--playmat-mobile) center / 100% 100% no-repeat,
+      #05040a;
+    box-shadow:
+      0 0 36px rgba(0, 0, 0, 0.92),
+      inset 0 0 0 1px rgba(224, 188, 105, 0.22);
+  }
+
+  body.game-running[data-mobile-view="board"] .board-stage::before {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .board-stage::after {
+    opacity: 0.035;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--field {
+    top: 4%;
+    left: 15%;
+    width: 66%;
+    height: 92%;
+    border: 0;
+    border-radius: 8px;
+    background: radial-gradient(ellipse at center, rgba(7, 8, 14, 0.04), rgba(0, 0, 0, 0.13));
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.18);
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--library,
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
+    left: 4.2%;
+    width: 9%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--library {
+    top: 5%;
+    height: 43%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
+    top: 54%;
+    height: 40%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--exile {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--commander {
+    top: 29%;
+    right: 4.2%;
+    width: 10.5%;
+    height: 47%;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander {
+    top: 34%;
+  }
+
+  body.game-running[data-mobile-view="board"] .zone-sign {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .library-card-back {
+    top: 7%;
+    width: 58%;
+    max-height: 73%;
+  }
+
+  body.game-running[data-mobile-view="board"] .pile-card-mini {
+    top: 6%;
+    width: 55%;
+    max-height: 72%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone-count {
+    right: 12%;
+    bottom: 5%;
+    left: 12%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
+    top: 4%;
+    width: clamp(42px, 6.4vw, 58px);
+    height: clamp(42px, 6.4vw, 58px);
+  }
+
+  body.game-running[data-mobile-view="board"] .commander-info {
+    bottom: 3%;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--field .empty-slot {
+    visibility: hidden;
+  }
+
+  body.game-running[data-mobile-view="board"] .centerline .primary-button {
+    right: calc(4.2% + 9px);
+  }
+
+  body.game-running[data-mobile-view="board"] .centerline .danger-button {
+    left: calc(4.2% + 9px);
+  }
+
+  /* La main recouvre uniquement le centre bas du tapis, comme dans Hearthstone. */
+  body.game-running[data-mobile-view="board"] .hand-wrap {
+    position: absolute;
+    z-index: 70;
+    bottom: 0;
+    left: 50%;
+    width: min(64%, 620px);
+    height: 100px;
+    overflow: visible;
+    border: 0;
+    background:
+      radial-gradient(ellipse at 50% 118%, rgba(81, 50, 24, 0.72), transparent 62%);
+    box-shadow: none;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row,
+  body.game-running[data-mobile-view="board"] .hand-row .game-card {
+    pointer-events: auto;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-wrap .section-heading {
+    display: none;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row {
+    bottom: max(14px, env(safe-area-inset-bottom));
+    height: 112px;
+    padding-inline: 6px;
+  }
+
+  body.game-running[data-mobile-view="board"] .hand-row .game-card {
+    flex-basis: 80px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    height: 116px !important;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
+    top: 0;
+    bottom: auto;
+    z-index: 8;
+    height: 23%;
+    overflow: visible;
+  }
+
+  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
+    top: 22%;
+    bottom: auto;
+    height: 52%;
+    align-items: flex-start;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
+    flex-basis: 70px;
+    width: 70px;
+    max-width: 70px;
+    height: 32px;
+    min-height: 32px;
+  }
+
+  body.game-running[data-mobile-view="board"] .mobile-nav {
+    display: none;
+  }
 }
 
 .orientation-gate-panel {

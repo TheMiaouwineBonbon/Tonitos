@@ -531,5 +531,61 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     }
+  },
+  {
+    "id": "entree-ruche",
+    "kind": "land",
+    "name": "Entrée de la ruche",
+    "subtitle": "Forêt contaminée",
+    "family": "Vert",
+    "type": "Terrain - Forêt Ruche",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana vert",
+      "Ruche"
+    ],
+    "abilityName": "Source de spores",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Les racines s'écartent seulement pour ceux que la ruche reconnaît.",
+    "image": "Images/Entrée de ruche.png",
+    "palette": {
+      "primary": "#4d7139",
+      "secondary": "#bbd477",
+      "deep": "#10190d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "nid-ruche",
+    "kind": "land",
+    "name": "Nid de la ruche",
+    "subtitle": "Forêt organique",
+    "family": "Vert",
+    "type": "Terrain - Forêt Ruche",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana vert",
+      "Ruche"
+    ],
+    "abilityName": "Cœur de la colonie",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Chaque battement sous la terre annonce une nouvelle éclosion.",
+    "image": "Images/Nid de la ruche.png",
+    "palette": {
+      "primary": "#405f31",
+      "secondary": "#a8cb6e",
+      "deep": "#0d150b"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
   }
 ]

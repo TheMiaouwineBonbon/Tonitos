@@ -1106,5 +1106,310 @@
       "fit": "contain",
       "position": "50% 50%"
     }
+  },
+  {
+    "id": "aventurier",
+    "name": "Aventurier",
+    "subtitle": "Éclaireur des routes oubliées",
+    "family": "Blanc",
+    "type": "Créature - Humain Aventurier",
+    "cost": 2,
+    "attack": 2,
+    "life": 3,
+    "keywords": [
+      "Vigilance",
+      "Exploration"
+    ],
+    "abilityName": "Premier secours",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tu gagnes 2 points de vie.",
+    "flavor": "Chaque chemin inconnu mérite un premier pas.",
+    "image": "Images/Aventurier.PNG",
+    "palette": {
+      "primary": "#b88b45",
+      "secondary": "#f1d990",
+      "deep": "#2b2114"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "envoye-bhaal",
+    "name": "Envoyé de Bhaal",
+    "subtitle": "Héraut du dieu meurtrier",
+    "family": "Noir",
+    "type": "Créature - Avatar Assassin",
+    "cost": 4,
+    "attack": 4,
+    "life": 3,
+    "keywords": [
+      "Contact mortel",
+      "Pacte"
+    ],
+    "abilityName": "Message sanglant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures au héros adverse et 1 blessure à ton héros.",
+    "flavor": "Son arrivée est une sentence, jamais une invitation.",
+    "image": "Images/Envoyé de Bhaal.PNG",
+    "palette": {
+      "primary": "#6d2637",
+      "secondary": "#c26a78",
+      "deep": "#14080d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 40%"
+    }
+  },
+  {
+    "id": "homme-requin",
+    "name": "Homme Requin",
+    "subtitle": "Prédateur des cités noyées",
+    "family": "Bleu",
+    "type": "Créature - Requin Guerrier",
+    "cost": 5,
+    "attack": 5,
+    "life": 5,
+    "keywords": [
+      "Prédateur",
+      "Gel"
+    ],
+    "abilityName": "Chasse sous-marine",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
+    "flavor": "Il sent la peur bien avant que le sang touche l'eau.",
+    "image": "Images/Homme Requin.PNG",
+    "palette": {
+      "primary": "#1f728f",
+      "secondary": "#79cee8",
+      "deep": "#081d29"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "hero-rena",
+    "name": "Héro de Rena",
+    "subtitle": "Champion de la déesse nature",
+    "family": "Vert",
+    "type": "Créature légendaire - Chevalier de Rena",
+    "cost": 5,
+    "attack": 5,
+    "life": 6,
+    "keywords": [
+      "Vigilance",
+      "Champion de Rena"
+    ],
+    "abilityName": "Serment de la ruche",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres créatures Parasite gagnent +1/+1.",
+    "flavor": "Il protège la vie, même lorsqu'elle choisit une forme terrifiante.",
+    "image": "Images/Héro de Rena.PNG",
+    "palette": {
+      "primary": "#4d733b",
+      "secondary": "#b6d67a",
+      "deep": "#111d0e"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 38%"
+    }
+  },
+  {
+    "id": "chevalier-parasite",
+    "name": "Chevalier parasité",
+    "subtitle": "Armure reprise par la canopée",
+    "family": "Vert",
+    "type": "Créature - Chevalier Parasite",
+    "cost": 3,
+    "attack": 3,
+    "life": 4,
+    "keywords": [
+      "Parasite",
+      "Défenseur"
+    ],
+    "abilityName": "Carapace enracinée",
+    "abilityText": "Défenseur : cette créature protège ton héros et doit être attaquée en priorité.",
+    "flavor": "Son serment appartient désormais à une reine plus ancienne.",
+    "image": "Images/Chevalier parasité.png",
+    "palette": {
+      "primary": "#526b34",
+      "secondary": "#bdd47a",
+      "deep": "#11180c"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "gardien-parasite",
+    "name": "Gardien parasite",
+    "subtitle": "Rempart vivant de la ruche",
+    "family": "Vert",
+    "type": "Créature - Gardien Parasite",
+    "cost": 4,
+    "attack": 3,
+    "life": 7,
+    "keywords": [
+      "Parasite",
+      "Défenseur",
+      "Portée"
+    ],
+    "abilityName": "Mur de chitine",
+    "abilityText": "Défenseur et portée : il protège ton héros et peut intercepter les créatures avec le vol.",
+    "flavor": "La ruche ne ferme jamais les yeux.",
+    "image": "Images/Gardien parasite.png",
+    "palette": {
+      "primary": "#4f6832",
+      "secondary": "#b9d275",
+      "deep": "#10170b"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "orc-contamine",
+    "name": "Orc contaminé",
+    "subtitle": "Brute conquise par les spores",
+    "family": "Vert",
+    "type": "Créature - Orc Parasite",
+    "cost": 3,
+    "attack": 5,
+    "life": 3,
+    "keywords": [
+      "Parasite",
+      "Célérité"
+    ],
+    "abilityName": "Charge infectée",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 1 blessure à la créature adverse la plus faible.",
+    "flavor": "Sa rage sert enfin quelque chose de plus ancien que la guerre.",
+    "image": "Images/Orc contaminé.PNG",
+    "palette": {
+      "primary": "#587038",
+      "secondary": "#c2d87b",
+      "deep": "#11190c"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 44%"
+    }
+  },
+  {
+    "id": "zombie-parasite",
+    "name": "Zombie parasité",
+    "subtitle": "Cadavre fertile de la ruche",
+    "family": "Vert",
+    "type": "Créature - Zombie Parasite",
+    "cost": 2,
+    "attack": 2,
+    "life": 2,
+    "keywords": [
+      "Parasite",
+      "Horde"
+    ],
+    "abilityName": "Éclosion funèbre",
+    "abilityText": "Quand cette créature meurt, crée une Larve parasite 1/1.",
+    "flavor": "Pour la ruche, la mort n'est qu'une porte ouverte.",
+    "image": "Images/Zombie parasité.PNG",
+    "palette": {
+      "primary": "#536c35",
+      "secondary": "#bfd67a",
+      "deep": "#10180c"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 43%"
+    }
+  },
+  {
+    "id": "reine-parasite",
+    "name": "Reine Parasite",
+    "subtitle": "Matrice souveraine de la ruche",
+    "family": "Vert",
+    "type": "Créature légendaire - Reine Parasite",
+    "cost": 7,
+    "attack": 7,
+    "life": 9,
+    "keywords": [
+      "Parasite",
+      "Progéniture",
+      "Défenseur"
+    ],
+    "abilityName": "Ponte souveraine",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, crée jusqu'à deux Larves parasites 1/1.",
+    "flavor": "Sous ses racines, la vengeance apprend à respirer.",
+    "image": "Images/Reine Parasite.PNG",
+    "palette": {
+      "primary": "#405a2c",
+      "secondary": "#a9c967",
+      "deep": "#0d1409"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 46%"
+    }
+  },
+  {
+    "id": "parasite",
+    "name": "Parasite",
+    "subtitle": "Vengeance vivante de Rena",
+    "family": "Vert",
+    "type": "Créature légendaire - Avatar Parasite",
+    "cost": 8,
+    "attack": 9,
+    "life": 10,
+    "keywords": [
+      "Parasite",
+      "Vol",
+      "Défenseur"
+    ],
+    "abilityName": "Vengeance de Rena",
+    "abilityText": "Tant que cette carte est sur ton champ de bataille, chaque créature ennemie qui attaque subit 2 blessures après le combat.",
+    "flavor": "Rena pardonne aux égarés. La nature, elle, se souvient.",
+    "image": "Images/Parasite.PNG",
+    "palette": {
+      "primary": "#4e6a35",
+      "secondary": "#c1d77d",
+      "deep": "#0f170b"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 44%"
+    }
+  },
+  {
+    "id": "terreur-rena",
+    "name": "Terreur de Rena",
+    "subtitle": "Châtiment de la nature blessée",
+    "family": "Vert",
+    "type": "Créature légendaire - Colosse de Rena",
+    "cost": 7,
+    "attack": 8,
+    "life": 9,
+    "keywords": [
+      "Imposant",
+      "Portée",
+      "Vengeance"
+    ],
+    "abilityName": "Jugement des profanateurs",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 3 blessures à toutes les créatures adverses.",
+    "flavor": "Quand les arbres cessent de murmurer, il est déjà trop tard.",
+    "image": "Images/Terreur de Rena.jpg",
+    "palette": {
+      "primary": "#3f6636",
+      "secondary": "#aacf7a",
+      "deep": "#0d180d"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 44%"
+    }
   }
 ]

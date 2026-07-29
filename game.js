@@ -181,7 +181,8 @@ const ONLINE_POLL_MS = 1000;
 const PEERJS_MODULE_URL = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/+esm";
 const PLAYMATS = {
   player: "Images/Tapis de Jeu/Tapis de jeu Joueur.png",
-  enemy: "Images/Tapis de Jeu/Taps de jeu Adversaire.png"
+  enemy: "Images/Tapis de Jeu/Taps de jeu Adversaire.png",
+  mobile: "Images/Tapis de Jeu/Tapis Mobile.png"
 };
 const DEFAULT_PROFILES = {
   player: {
@@ -260,6 +261,7 @@ function applyPlaymats() {
   if (!els.boardStage) return;
   els.boardStage.style.setProperty("--playmat-player", cssUrl(PLAYMATS.player));
   els.boardStage.style.setProperty("--playmat-enemy", cssUrl(PLAYMATS.enemy));
+  els.boardStage.style.setProperty("--playmat-mobile", cssUrl(PLAYMATS.mobile));
 }
 
 function bindEvents() {
@@ -581,6 +583,7 @@ function openStartMenu() {
   if (!els.startMenu) return;
   els.startMenu.hidden = false;
   document.body.classList.add("menu-open");
+  document.body.classList.remove("game-running");
   state.handoffPending = false;
   document.body.classList.remove("handoff-open");
   if (els.turnHandoff) els.turnHandoff.hidden = true;
@@ -593,6 +596,7 @@ function closeStartMenu() {
   if (!els.startMenu) return;
   els.startMenu.hidden = true;
   document.body.classList.remove("menu-open");
+  document.body.classList.toggle("game-running", state.started);
 }
 
 async function startGameFromMenu() {
@@ -1686,6 +1690,42 @@ function createGuardian(owner) {
   };
 }
 
+function createParasiteLarva(owner) {
+  const source = state.cards.find((card) => card.id === "parasite");
+  return {
+    id: "larve-parasite",
+    kind: "creature",
+    uid: `${owner}-parasite-larva-${crypto.randomUUID()}`,
+    owner,
+    name: "Larve parasite",
+    subtitle: "Progéniture de la ruche",
+    family: "Vert",
+    type: "Créature - Larve Parasite",
+    cost: 0,
+    attack: 1,
+    life: 1,
+    maxLife: 1,
+    currentLife: 1,
+    keywords: ["Parasite"],
+    abilityName: "Éclosion",
+    abilityText: "Jeton créé par la ruche de Rena.",
+    flavor: "",
+    image: "Images/Parasite.PNG",
+    palette: source?.palette || {
+      primary: "#4e6a35",
+      secondary: "#c1d77d",
+      deep: "#0f170b"
+    },
+    tapped: false,
+    stunTurns: 0,
+    createdTurn: state.turn,
+    attacking: false,
+    blocking: null,
+    blockedBy: null,
+    token: true
+  };
+}
+
 function applySpellEffect(card, side) {
   const opponent = getOpponent(side);
 
@@ -2169,6 +2209,66 @@ function triggerOnPlay(unit, side) {
     }
   }
 
+  if (unit.id === "aventurier") {
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    pushVisualEffect("buff", side.side, "+2 vie");
+    logEvent(`L'Aventurier apporte des soins : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
+  }
+
+  if (unit.id === "envoye-bhaal") {
+    opponent.life -= 2;
+    side.life -= 1;
+    pushVisualEffect("hit", opponent.side, "-2");
+    logEvent("L'Envoyé de Bhaal inflige 2 blessures au héros adverse et réclame 1 point de vie à son maître.");
+  }
+
+  if (unit.id === "homme-requin") {
+    const target = strongestCreature(opponent.board);
+    if (target) {
+      freezeCreature(target);
+      pushVisualEffect("freeze", opponent.side, "Chasse");
+      logEvent(`L'Homme Requin traque ${target.name}, qui ne se dégagera pas au prochain tour.`);
+    }
+  }
+
+  if (unit.id === "hero-rena") {
+    const parasites = side.board.filter((ally) => ally.uid !== unit.uid && hasKeyword(ally, "Parasite"));
+    buffTeam(parasites, 1, 1);
+    if (parasites.length > 0) {
+      pushVisualEffect("buff", side.side, "Ruche +1/+1");
+      logEvent(`Le Héro de Rena renforce ${parasites.length} créature(s) Parasite de +1/+1.`);
+    }
+  }
+
+  if (unit.id === "orc-contamine") {
+    const target = [...opponent.board].sort((a, b) => a.currentLife - b.currentLife || a.attack - b.attack)[0];
+    if (target) {
+      target.currentLife -= 1;
+      pushVisualEffect("hit", opponent.side, "-1");
+      logEvent(`L'Orc contaminé percute ${target.name} pour 1 blessure.`);
+    }
+  }
+
+  if (unit.id === "reine-parasite") {
+    let larvae = 0;
+    while (side.board.length < MAX_BOARD && larvae < 2) {
+      side.board.push(createParasiteLarva(side.side));
+      larvae += 1;
+    }
+    if (larvae > 0) {
+      pushVisualEffect("summon", side.side, `${larvae} larve${larvae > 1 ? "s" : ""}`);
+      logEvent(`La Reine Parasite fait éclore ${larvae} Larve${larvae > 1 ? "s" : ""} parasite${larvae > 1 ? "s" : ""}.`);
+    }
+  }
+
+  if (unit.id === "terreur-rena") {
+    for (const enemy of opponent.board) enemy.currentLife -= 3;
+    if (opponent.board.length > 0) {
+      pushVisualEffect("hit", opponent.side, "-3");
+      logEvent(`La Terreur de Rena inflige 3 blessures à ${opponent.board.length} créature(s) adverse(s).`);
+    }
+  }
+
   checkVictory();
 }
 
@@ -2341,9 +2441,20 @@ function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
     logEvent(`${attacker.name} attaque ${target.name} : ${attacker.attack} contre ${target.attack}.`);
   }
 
+  triggerParasiteVengeance(attacker, defendingSide);
   cleanupBoards();
   checkVictory();
   render();
+}
+
+function triggerParasiteVengeance(attacker, defendingSide) {
+  if (!attacker || attacker.currentLife <= 0) return;
+  const avenger = defendingSide.board.find((unit) => unit.id === "parasite");
+  if (!avenger) return;
+
+  attacker.currentLife -= 2;
+  pushVisualEffect("hit", attacker.owner, "-2");
+  logEvent(`La vengeance de Rena frappe ${attacker.name} pour 2 blessures.`);
 }
 
 function endCurrentTurn() {
@@ -2623,6 +2734,12 @@ function cleanupBoards() {
       });
       pushVisualEffect(unit.exiled ? "exile" : "death", side.side, unit.exiled ? "Exil" : "Cimetière");
       logEvent(`${unit.name} va ${unit.exiled ? "en exil" : "au cimetière"}.`);
+
+      if (unit.id === "zombie-parasite" && !unit.exiled && side.board.length < MAX_BOARD) {
+        side.board.push(createParasiteLarva(side.side));
+        pushVisualEffect("summon", side.side, "Éclosion");
+        logEvent("Le Zombie parasité éclot et laisse une Larve parasite 1/1.");
+      }
     }
   }
 

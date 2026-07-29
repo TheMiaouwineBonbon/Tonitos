@@ -197,6 +197,15 @@ async function main() {
       polishStyles.includes('body[data-mobile-view="board"] .zone-sign')
   );
   check(
+    "Tapis smartphone unique et navigation masquée en partie",
+    fs.existsSync(path.join(__dirname, "..", "Images/Tapis de Jeu/Tapis Mobile.png")) &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile.png"') &&
+      gameSource.includes('"--playmat-mobile"') &&
+      polishStyles.includes("var(--playmat-mobile)") &&
+      polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
+      polishStyles.includes("display: none;")
+  );
+  check(
     "Cartes mobiles déplaçables au doigt",
     styles.includes("touch-action: none") &&
       styles.includes(".game-card.is-drag-source") &&
@@ -219,7 +228,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 41 créatures", Array.isArray(cards) && cards.length === 41);
+  check("cards.json = 52 créatures", Array.isArray(cards) && cards.length === 52);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -252,6 +261,37 @@ async function main() {
   check("Fée = Vert", cards.find((c) => c.id === "fee")?.family === "Vert");
   check("Ours-hibou = Vert", cards.find((c) => c.id === "ours-hibou")?.family === "Vert");
   check("Valerius = Noir", cards.find((c) => c.id === "valerius")?.family === "Noir");
+  check(
+    "Les 11 nouvelles créatures respectent leur identité",
+    [
+      ["aventurier", "Blanc"],
+      ["envoye-bhaal", "Noir"],
+      ["homme-requin", "Bleu"],
+      ["hero-rena", "Vert"],
+      ["chevalier-parasite", "Vert"],
+      ["gardien-parasite", "Vert"],
+      ["orc-contamine", "Vert"],
+      ["zombie-parasite", "Vert"],
+      ["reine-parasite", "Vert"],
+      ["parasite", "Vert"],
+      ["terreur-rena", "Vert"]
+    ].every(([id, family]) => cards.find((card) => card.id === id)?.family === family)
+  );
+  const parasite = cards.find((card) => card.id === "parasite");
+  check(
+    "Le Parasite incarne la vengeance de Rena",
+    parasite?.abilityName === "Vengeance de Rena" &&
+      parasite?.keywords?.includes("Parasite") &&
+      gameSource.includes("triggerParasiteVengeance") &&
+      gameSource.includes('attacker.currentLife -= 2')
+  );
+  check(
+    "La ruche crée et renforce ses larves",
+    gameSource.includes("createParasiteLarva") &&
+      gameSource.includes('unit.id === "reine-parasite"') &&
+      gameSource.includes('unit.id === "zombie-parasite"') &&
+      gameSource.includes('unit.id === "hero-rena"')
+  );
   const fusion = cards.find((c) => c.id === "noxis-bhaal-fusion");
   check(
     "Fusion complète = carte la plus forte",
@@ -320,6 +360,10 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
+  check(
+    "Entrée et Nid de la ruche = terrains verts",
+    ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
+  );
   const allCards = [...cards, ...lands, ...spells];
   check("Toutes les illustrations existent", allCards.every((card) => fs.existsSync(path.join(__dirname, "..", card.image))));
   check(
