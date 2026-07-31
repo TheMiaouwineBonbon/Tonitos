@@ -276,15 +276,30 @@ async function main() {
       polishStyles.includes(".enemy-mat .mat-zone--library") &&
       polishStyles.includes(".player-mat .mat-zone--graveyard") &&
       polishStyles.includes(".player-mat .mat-zone--library") &&
-      polishStyles.includes("left: 43.5%;") &&
-      polishStyles.includes("left: 2.8%;") &&
+      // Grille symétrique : une seule définition de colonne sert les deux
+      // camps, et aucune coordonnée propre à un camp ne doit réapparaître.
+      polishStyles.includes("--lane-hero-left:") &&
+      polishStyles.includes("left: var(--lane-hero-left);") &&
+      !polishStyles.includes("left: 43.5%;") &&
       polishStyles.includes("content: \"CIMETIERE\";") &&
       polishStyles.includes("grid-template-columns: 8px 1fr;")
   );
   check(
+    "Symétrie stricte des deux camps par ancrage miroir",
+    // Le camp adverse s'ancre par bottom, le joueur par top, avec les
+    // mêmes variables : la symétrie ne peut plus diverger.
+    ["--row-field-gap", "--row-land-gap", "--row-hero-gap", "--row-grave-gap", "--row-library-gap"]
+      .every((v) => polishStyles.includes(`${v}:`)) &&
+      polishStyles.includes("bottom: var(--row-field-gap);") &&
+      polishStyles.includes("top: var(--row-field-gap);") &&
+      polishStyles.includes("bottom: var(--row-hero-gap);") &&
+      polishStyles.includes("top: var(--row-hero-gap);") &&
+      polishStyles.includes("width: var(--lane-field-width);")
+  );
+  check(
     "Bouton de tour compact avec états complets",
     gameSource.includes('classList.toggle("is-opponent-turn", waitingForOpponent)') &&
-      polishStyles.includes("width: clamp(76px, 10.5dvw, 102px);") &&
+      polishStyles.includes("width: var(--centerband-button-width);") &&
       polishStyles.includes(".primary-button:hover:not(:disabled)") &&
       polishStyles.includes(".primary-button:active:not(:disabled)") &&
       polishStyles.includes(".primary-button.is-opponent-turn")

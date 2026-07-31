@@ -127,6 +127,41 @@
     --phone-board-card-height: clamp(60px, 8.2dvw, 82px);
     --phone-land-row-height: clamp(17px, 4.8dvh, 22px);
     --phone-hand-row-height: clamp(78px, 21.5dvh, 96px);
+
+    /* ---------------------------------------------------------------
+       GRILLE SYMÉTRIQUE DU PLATEAU
+       Une seule définition sert les deux camps. Les colonnes (axe X)
+       sont strictement identiques ; les rangées (axe Y) sont exprimées
+       en distance au bord INTÉRIEUR du tapis, c'est-à-dire à la ligne
+       centrale. Le camp adverse s'ancre par `bottom`, le joueur par
+       `top`, avec les mêmes valeurs : la symétrie est donc garantie
+       par construction et ne peut plus diverger au fil des retouches.
+       --------------------------------------------------------------- */
+
+    /* Colonnes : mêmes coordonnées gauche/droite pour les deux camps. */
+    --lane-hero-left: 2.8%;
+    --lane-hero-width: 13%;
+    --lane-land-left: 17%;
+    --lane-land-width: 22%;
+    --lane-field-left: 18%;
+    --lane-field-width: 64%;
+    --lane-pile-right: 2.2%;
+    --lane-pile-width: 10%;
+
+    /* Rangées : distance à la ligne centrale, en % de la hauteur du tapis. */
+    --row-field-gap: 7.5%;
+    --row-field-height: 36%;
+    --row-land-gap: 45%;
+    --row-hero-gap: 35%;
+    --row-hero-height: 59%;
+    --row-grave-gap: 4%;
+    --row-grave-height: 28%;
+    --row-library-gap: 38%;
+    --row-library-height: 51%;
+
+    /* Bande centrale : commandes alignées sur les bords des terrains. */
+    --centerband-button-width: clamp(84px, 11.5dvw, 108px);
+    --centerband-button-height: clamp(20px, 5.2dvh, 24px);
   }
 
   body[data-mobile-view="board"] .library-card-back {
@@ -379,18 +414,22 @@
     gap: clamp(2px, 0.45dvw, 4px);
   }
 
+  /* Terrains : géométrie définie UNE SEULE FOIS pour les deux camps.
+     Seul l'ancrage vertical est inversé, si bien que largeur, bords
+     gauche/droite et distance à la ligne centrale sont identiques. */
+  body.game-running[data-mobile-view="board"] .mat-zone--field .board-row {
+    left: var(--lane-field-left);
+    width: var(--lane-field-width);
+  }
+
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .board-row {
-    top: 59.7%;
-    bottom: auto;
-    left: 18%;
-    width: 64%;
+    top: auto;
+    bottom: var(--row-field-gap);
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .board-row {
-    top: 7.3%;
+    top: var(--row-field-gap);
     bottom: auto;
-    left: 17.8%;
-    width: 64.3%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .board-row .game-card {
@@ -412,18 +451,21 @@
     padding-inline: 4px;
   }
 
+  /* Barres de terrain : même largeur, mêmes bords, même distance au
+     centre. Elles se répondent en miroir exact. */
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-row {
+    left: var(--lane-land-left);
+    width: var(--lane-land-width);
+  }
+
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row {
-    top: calc(34.9% - var(--phone-land-row-height) / 2);
-    bottom: auto;
-    left: 14.1%;
-    width: 16.1%;
+    top: auto;
+    bottom: var(--row-land-gap);
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
-    top: calc(70% - var(--phone-land-row-height) / 2);
+    top: var(--row-land-gap);
     bottom: auto;
-    left: 17.1%;
-    width: 11.4%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
@@ -453,35 +495,41 @@
     visibility: hidden;
   }
 
+  /* Piles : même colonne à droite pour les deux camps. Le cimetière
+     adverse était à gauche, ce qui cassait la lecture en miroir. */
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard,
+  body.game-running[data-mobile-view="board"] .mat-zone--library {
+    right: var(--lane-pile-right);
+    left: auto;
+    width: var(--lane-pile-width);
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
+    height: var(--row-grave-height);
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--library {
+    height: var(--row-library-height);
+  }
+
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--graveyard {
-    top: 11.1%;
-    left: 3%;
-    width: 11%;
-    height: 41.6%;
+    top: auto;
+    bottom: var(--row-grave-gap);
   }
 
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--library {
-    top: 8.1%;
-    right: 2.2%;
-    left: auto;
-    width: 10%;
-    height: 43.5%;
+    top: auto;
+    bottom: var(--row-library-gap);
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--graveyard {
-    top: 4.1%;
-    right: 3.2%;
-    left: auto;
-    width: 10%;
-    height: 27.6%;
+    top: var(--row-grave-gap);
+    bottom: auto;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--library {
-    top: 38.1%;
-    right: 2.2%;
-    left: auto;
-    width: 10%;
-    height: 51.4%;
+    top: var(--row-library-gap);
+    bottom: auto;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--exile {
@@ -555,35 +603,49 @@
     min-width: 28px;
   }
 
-  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander {
-    top: 0;
+  /* Héros : même axe vertical, mêmes dimensions, même distance à la
+     ligne centrale. La colonne de gauche est la seule libre dans les
+     deux moitiés — la main occupe le centre bas du camp joueur. */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander {
     right: auto;
-    left: 43.5%;
-    width: 13%;
-    height: 56%;
+    left: var(--lane-hero-left);
+    width: var(--lane-hero-width);
+    height: var(--row-hero-height);
+  }
+
+  body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander {
+    top: auto;
+    bottom: var(--row-hero-gap);
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander {
-    top: 35%;
-    right: auto;
-    left: 2.8%;
-    width: 13%;
-    height: 59%;
+    top: var(--row-hero-gap);
+    bottom: auto;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait,
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--commander .commander-portrait {
-    top: 26.5%;
+    /* Médaillon centré dans son cadre : la distance au centre du plateau
+       devient identique des deux côtés, quelle que soit la taille du
+       portrait. Un ancrage par le haut créait 2,2px d'écart, le cadre
+       étant en miroir mais pas son contenu. */
+    top: 50%;
     left: 50%;
     width: clamp(44px, 6.5dvw, 62px);
     height: clamp(44px, 6.5dvw, 62px);
     aspect-ratio: 1;
     border-radius: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
 
-  body.game-running[data-mobile-view="board"] .player-mat .mat-zone--commander .commander-portrait {
-    top: 31%;
+  /* L'illustration remplit le médaillon sans déformation ni décentrage,
+     quel que soit le format de l'image source. */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 32%;
   }
 
   body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-info {
@@ -673,24 +735,32 @@
     pointer-events: auto;
   }
 
+  /* Bande centrale : les deux commandes sont calées sur les bords des
+     terrains, l'indicateur de tour exactement au milieu. Même hauteur,
+     même largeur, même axe vertical : plus aucun chevauchement avec le
+     bord des terrains ni avec la séparation centrale. */
+  /* Centrage par `top` calculé et non par translateY : les animations de
+     survol et de tour animent `transform`, ce qui écrasait la translation
+     et faisait retomber les boutons sur le bord du terrain. */
   body.game-running[data-mobile-view="board"] .centerline .danger-button {
-    top: 50.5%;
+    top: calc(50% - var(--centerband-button-height) / 2);
+    right: auto;
     bottom: auto;
-    left: 15%;
-    width: clamp(84px, 12dvw, 108px);
-    height: 22px;
-    min-height: 22px;
-    transform: translateY(-50%);
+    left: var(--lane-field-left);
+    width: var(--centerband-button-width);
+    height: var(--centerband-button-height);
+    min-height: var(--centerband-button-height);
+    transform: none;
   }
 
   body.game-running[data-mobile-view="board"] .centerline .turn-pill {
     top: 50%;
-    left: 48%;
+    left: 50%;
     width: max-content;
-    min-width: clamp(92px, 12dvw, 108px);
-    max-width: 42%;
-    height: 20px;
-    min-height: 20px;
+    min-width: var(--centerband-button-width);
+    max-width: 30%;
+    height: var(--centerband-button-height);
+    min-height: var(--centerband-button-height);
     padding: 2px 8px;
     border: 1px solid rgba(236, 202, 123, 0.78);
     border-radius: 6px;
@@ -709,12 +779,13 @@
   }
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button {
-    top: 50.5%;
-    right: 19%;
+    top: calc(50% - var(--centerband-button-height) / 2);
+    right: var(--lane-field-left);
     bottom: auto;
-    width: clamp(76px, 10.5dvw, 102px);
-    height: 22px;
-    min-height: 22px;
+    left: auto;
+    width: var(--centerband-button-width);
+    height: var(--centerband-button-height);
+    min-height: var(--centerband-button-height);
     padding: 2px 6px;
     border-radius: 6px;
     font-size: clamp(8px, 1.05dvw, 10px);
@@ -725,19 +796,19 @@
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button:hover:not(:disabled) {
     filter: brightness(1.08);
-    transform: translateY(calc(-50% - 1px));
+    transform: translateY(-1px);
   }
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button:active:not(:disabled) {
     filter: brightness(0.94);
-    transform: translateY(calc(-50% + 1px)) scale(0.98);
+    transform: translateY(1px) scale(0.98);
   }
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button:disabled {
     opacity: 0.48;
     filter: grayscale(0.42) brightness(0.72);
     animation: none;
-    transform: translateY(-50%);
+    transform: none;
   }
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button.is-opponent-turn {
