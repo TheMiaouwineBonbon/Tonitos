@@ -9,6 +9,7 @@ import {
   setActiveAccountId,
   updateAccount
 } from "./progression.js?v=20260726-1";
+import { sound } from "./audio.js?v=20260730-audio-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {
@@ -354,6 +355,12 @@ function bindEvents() {
   window.addEventListener("pointermove", onDragPointerMove, { passive: false });
   window.addEventListener("pointerup", onDragPointerUp);
   window.addEventListener("pointercancel", onDragPointerCancel);
+  // Perte de focus / passage en arrière-plan : le pointerup n'arrive pas
+  // toujours sur mobile, donc on purge le ciblage nous-mêmes.
+  window.addEventListener("blur", () => resetAttackState());
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) resetAttackState();
+  });
 }
 
 function isPhoneViewport() {
@@ -701,6 +708,8 @@ function normalizeClientProfile(sideName, profile = {}) {
 
 function newGame(config = {}) {
   clearCinematicEffects();
+  // Nouvelle partie ou retour au menu : aucun ciblage ne doit survivre.
+  clearAttackPreview();
   state.mode = config.mode || state.mode || "pve";
   state.playerDeckId = config.playerDeckId || state.playerDeckId || "blanc-vert";
   state.enemyDeckId = config.enemyDeckId || state.enemyDeckId || "rouge-noir";
@@ -1103,6 +1112,8 @@ function applyOnlineState(snapshot, version, room) {
   state.enemyDeckId = snapshot.enemyDeckId || state.enemyDeckId;
   state.player = snapshot.player;
   state.enemy = snapshot.enemy;
+  // L'état distant fait autorité : on purge le ciblage local avant de l'appliquer.
+  clearAttackPreview();
   state.selectedBlockerId = snapshot.selectedBlockerId || null;
   state.selectedAttackerId = snapshot.selectedAttackerId || null;
   state.currentTurn = snapshot.currentTurn || "player";
@@ -1438,6 +1449,8 @@ function playCardFromHand(side, uid) {
   if (cardIndex < 0) return;
 
   const card = side.hand[cardIndex];
+  // Timbre distinct selon la nature de la carte posee.
+  sound.play(isLand(card) ? "card.place" : isSpell(card) ? "spell.cast" : "creature.summon");
   if (isLand(card)) {
     playLand(side, cardIndex);
     return;
@@ -2347,21 +2360,31 @@ function selectAttacker(uid) {
   }
 
   markOnlineDirty();
-  state.selectedAttackerId = state.selectedAttackerId === uid ? null : uid;
+  const wasSelected = state.selectedAttackerId === uid;
+  state.selectedAttackerId = wasSelected ? null : uid;
+  sound.play(wasSelected ? "card.deselect" : "card.select");
   render();
 }
 
 function attackUnit(targetUid) {
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) return;
+  // Toute sortie anticipée doit purger le ciblage, sinon la flèche et la
+  // surbrillance survivent à une attaque qui n'a jamais eu lieu.
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
+    resetAttackState();
+    return;
+  }
   const attackingSide = getCurrentSide();
   const defendingSide = getDefendingSide();
   const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
   const target = defendingSide.board.find((unit) => unit.uid === targetUid);
-  if (!attacker || !target) return;
+  if (!attacker || !target) {
+    resetAttackState();
+    return;
+  }
 
   if (!canTargetUnit(attacker, target, defendingSide)) {
     logEvent(`${target.name} est protégé : frappe d'abord une créature avec Défenseur.`);
-    render();
+    resetAttackState();
     return;
   }
 
@@ -2375,15 +2398,22 @@ function attackUnit(targetUid) {
 }
 
 function attackHero() {
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) return;
+  // Mêmes garanties de purge que attackUnit : aucune sortie sans nettoyage.
+  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
+    resetAttackState();
+    return;
+  }
   const attackingSide = getCurrentSide();
   const defendingSide = getDefendingSide();
   const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
-  if (!attacker) return;
+  if (!attacker) {
+    resetAttackState();
+    return;
+  }
 
   if (!canTargetHero(attacker, defendingSide)) {
     logEvent(`${sideDisplayName(defendingSide.side)} est protégé par une créature avec Défenseur.`);
-    render();
+    resetAttackState();
     return;
   }
 
@@ -2429,6 +2459,7 @@ function playLunge(attackerNode, targetRect, done) {
 }
 
 function flashImpact(sideName) {
+  sound.play("attack.impact");
   const mat = document.querySelector(`.${sideName}-mat`);
   if (!mat) return;
   mat.classList.remove("is-hit-shake");
@@ -2441,6 +2472,8 @@ function flashImpact(sideName) {
 function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
   if (!hasKeyword(attacker, "Vigilance")) attacker.tapped = true;
   attacker.hasAttacked = true;
+  // Attaque résolue : le ciblage disparaît avant même l'application des dégâts.
+  clearAttackPreview();
   state.selectedAttackerId = null;
 
   if (!target) {
@@ -2479,6 +2512,7 @@ function triggerParasiteVengeance(attacker, defendingSide) {
 
 function endCurrentTurn() {
   const nextSide = getDefendingSide();
+  sound.play("turn.end");
   clearCombatFlags();
   if (state.currentTurn === "enemy") state.turn += 1;
 
@@ -2734,6 +2768,7 @@ function cleanupBoards() {
 
   for (const side of [state.player, state.enemy]) {
     const dead = side.board.filter((unit) => unit.currentLife <= 0);
+    if (dead.length > 0) sound.play("creature.death");
     side.board = side.board.filter((unit) => unit.currentLife > 0);
     for (const unit of dead) {
       const destination = unit.exiled ? side.exile : side.graveyard;
@@ -2763,6 +2798,14 @@ function cleanupBoards() {
     }
   }
 
+  // L'attaquant sélectionné a pu mourir ou quitter le plateau : le ciblage suit.
+  if (
+    state.selectedAttackerId &&
+    ![...state.player.board, ...state.enemy.board].some((unit) => unit.uid === state.selectedAttackerId)
+  ) {
+    resetAttackState({ rerender: false });
+  }
+
   const deaths = allBefore.filter((unit) => unit.currentLife <= 0).length;
   if (deaths > 0) {
     for (const noxis of [...state.player.board, ...state.enemy.board].filter((unit) => unit.id === "noxis")) {
@@ -2772,6 +2815,8 @@ function cleanupBoards() {
 }
 
 function clearCombatFlags() {
+  // Un changement de tour doit toujours effacer un ciblage en cours.
+  clearAttackPreview();
   state.selectedBlockerId = null;
   state.selectedAttackerId = null;
   for (const unit of [...state.player.board, ...state.enemy.board]) {
@@ -2913,6 +2958,8 @@ function checkVictory() {
 
   state.phase = PHASES.OVER;
   state.winner = playerDead && enemyDead ? "draw" : playerDead ? "enemy" : "player";
+  sound.play("hero.death");
+  window.setTimeout(() => sound.play(state.winner === "player" ? "game.victory" : "game.defeat"), 320);
   if (state.winner === "draw") {
     logEvent("Les deux héros tombent en même temps : égalité !");
   } else {
@@ -3431,8 +3478,9 @@ function finishPlayDrag(event) {
 function finishAttackDrag(event) {
   const target = attackTargetAt(event.clientX, event.clientY);
   const attackerUid = dragState.uid;
+  // Relâchement hors d'une cible valide : on annule tout le ciblage.
   if (!target) {
-    render();
+    resetAttackState();
     return;
   }
   state.selectedAttackerId = attackerUid;
@@ -3466,6 +3514,26 @@ function resetDrag() {
   dragState.pointerType = "";
   dragState.ghost = null;
   dragState.suppressClick = false;
+}
+
+// Nettoyage purement visuel du ciblage : flèche, surbrillances, capture de
+// pointeur. Ne touche pas à l'état logique, donc appelable pendant un rendu.
+function clearAttackPreview() {
+  if (dragArrowEl) dragArrowEl.hidden = true;
+  clearAttackTargetHighlight();
+  resetDrag();
+}
+
+// Point d'entrée unique pour annuler un ciblage, quelle qu'en soit la raison.
+// Tout chemin qui interrompt une attaque doit passer par ici.
+function resetAttackState({ rerender = true } = {}) {
+  clearAttackPreview();
+  if (!state.selectedAttackerId) return;
+  state.selectedAttackerId = null;
+  for (const unit of [...(state.player?.board || []), ...(state.enemy?.board || [])]) {
+    unit.attacking = false;
+  }
+  if (rerender) render();
 }
 
 function flushPendingHandRender() {
@@ -3811,6 +3879,7 @@ function renderDivinePanel(card, context) {
 
 function openCardDetail(card, context) {
   if (!els.cardModal) return;
+  sound.play("ui.menuOpen");
   hideCardPreview();
   state.detailContext = { card, context };
 
@@ -3878,6 +3947,7 @@ function playCardDetailVideo(card, detailCard) {
 function closeCardDetail() {
   state.detailContext = null;
   if (!els.cardModal) return;
+  if (!els.cardModal.hidden) sound.play("ui.menuClose");
   els.cardModal.hidden = true;
   els.cardModalCard.innerHTML = "";
   if (!els.pileModal || els.pileModal.hidden) document.body.classList.remove("modal-open");
@@ -4101,6 +4171,8 @@ function validEffectRect(node) {
 }
 
 function animateDrawCard(sideName, card, delay = 0) {
+  // Le son de pioche reste joue meme si les effets visuels sont reduits.
+  if (state.started) window.setTimeout(() => sound.play("card.draw"), delay);
   if (!state.started || prefersReducedEffects()) return;
   const library = matZone(sideName, "library");
   const source = validEffectRect(library);

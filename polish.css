@@ -222,12 +222,17 @@
     font-size: clamp(8px, 1vw, 10px);
   }
 
+  /* 30 % : trois lignes de 7px tiennent même sur un viewport de 360px de haut
+     (26 % les rognait de 1,8px en dessous de 410px de hauteur). */
   body[data-mobile-view="board"] .hand-row .card-title-lockup {
     right: 6%;
     left: 6%;
-    height: 26%;
+    height: 30%;
     overflow: hidden;
+    border-radius: 3px;
     padding-inline: 2px;
+    /* Voile sombre : contraste garanti quelle que soit la clarté de l'illustration. */
+    background: linear-gradient(180deg, rgba(6, 4, 12, 0.86), rgba(6, 4, 12, 0.66));
   }
 
   body[data-mobile-view="board"] .hand-row .cost-badge,
@@ -244,9 +249,12 @@
   body[data-mobile-view="board"] .hand-row .very-long-card-title .card-name {
     display: -webkit-box;
     overflow: hidden;
+    color: #fff6df;
     font-size: clamp(8px, 10cqw, 9px);
+    font-weight: 700;
     line-height: 1;
     text-overflow: clip;
+    text-shadow: 0 1px 2px #000, 0 0 4px rgba(0, 0, 0, 0.9);
     overflow-wrap: anywhere;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -261,9 +269,18 @@
     -webkit-line-clamp: 3;
   }
 
+  /* Coût et statistiques : lisibles d'un coup d'œil sur un petit écran. */
   body[data-mobile-view="board"] .hand-row .cost-badge,
   body[data-mobile-view="board"] .hand-row .stat-badge {
     border-width: 2px;
+    color: #fff8e4;
+    background:
+      radial-gradient(circle at 50% 34%, rgba(72, 58, 96, 0.98), rgba(8, 6, 13, 0.99));
+    font-weight: 800;
+    text-shadow: 0 1px 2px #000;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 2px 4px rgba(0, 0, 0, 0.8);
   }
 
   body[data-mobile-view="board"] .mobile-nav button:hover,

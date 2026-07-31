@@ -244,7 +244,8 @@ async function main() {
     "Titres mobiles extrêmes visibles sur trois lignes",
     polishStyles.includes(".very-long-card-title .card-name") &&
       polishStyles.includes("-webkit-line-clamp: 3;") &&
-      polishStyles.includes("height: 26%;")
+      // 30 % : 3 lignes de 7px tiennent aussi sous 410px de hauteur de viewport.
+      polishStyles.includes("height: 30%;")
   );
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
@@ -307,6 +308,78 @@ async function main() {
   check("GET /progression.js -> 200", res.status === 200);
   check("Progression avec XP, niveaux et grades", progressionSource.includes("XP_REWARDS") && progressionSource.includes("getLevelProgress"));
   check("Une partie ne peut attribuer l'XP qu'une fois", progressionSource.includes("rewardedMatches"));
+
+  // --- Flèche d'attaque : purge centralisée ---
+  check(
+    "Réinitialisation centrale du ciblage d'attaque",
+    gameSource.includes("function resetAttackState(") &&
+      gameSource.includes("function clearAttackPreview(") &&
+      gameSource.includes('window.addEventListener("blur"') &&
+      gameSource.includes('document.addEventListener("visibilitychange"')
+  );
+  // Les gardes de attackUnit/attackHero doivent purger le ciblage au lieu de
+  // sortir sèchement : c'est la cause d'origine de la flèche persistante.
+  const attackSource = gameSource.slice(
+    gameSource.indexOf("function attackUnit("),
+    gameSource.indexOf("// --- Animations de combat")
+  );
+  check(
+    "Aucune sortie d'attaque ne laisse un ciblage actif",
+    attackSource.length > 0 &&
+      !/!state\.selectedAttackerId\) return;/.test(attackSource) &&
+      (attackSource.match(/resetAttackState\(\)/g) || []).length >= 5
+  );
+
+  // --- Moteur sonore ---
+  res = await fetch(`${base}/audio.js`);
+  const audioSource = await res.text();
+  check("GET /audio.js -> 200", res.status === 200);
+  check(
+    "Moteur sonore avec bus séparés, limite de voix et variations",
+    audioSource.includes("class SoundManager") &&
+      audioSource.includes("MAX_VOICES") &&
+      audioSource.includes("MAX_VOICES_PER_SOUND") &&
+      audioSource.includes("music") &&
+      audioSource.includes("sfx") &&
+      audioSource.includes("preload(") &&
+      gameSource.includes('import { sound } from "./audio.js')
+  );
+  check(
+    "Sons branchés sur les actions clés",
+    ["card.draw", "card.place", "creature.summon", "spell.cast", "attack.impact", "turn.end", "game.victory"]
+      .every((id) => gameSource.includes(`"${id}"`) || audioSource.includes(`"${id}"`))
+  );
+
+  // --- Système de drop ---
+  const drop = await import("../drop.js");
+  const readData = (file) => JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", file), "utf8"));
+  const cardsForDrop = readData("cards.json");
+  const landsForDrop = readData("lands.json");
+  const weightTotal = Object.values(drop.DROP_CONFIG.weights).reduce((sum, w) => sum + w, 0);
+  check("Somme des probabilités de drop = exactement 100 %", weightTotal === drop.RARITY_SCALE);
+  check("Configuration de drop unique et valide", drop.assertWeightsValid() === true);
+  check(
+    "Tirage reproductible et rareté avant carte",
+    (() => {
+      const pool = [...cardsForDrop, ...landsForDrop];
+      const a = drop.createDropSystem(pool, { seed: 42, resolve: drop.inferRarity });
+      const b = drop.createDropSystem(pool, { seed: 42, resolve: drop.inferRarity });
+      const first = a.draw();
+      const second = b.draw();
+      return Boolean(first) && first.card.id === second.card.id && first.rarity === second.rarity;
+    })()
+  );
+  check(
+    "Aucune rareté vide ne rend une carte inatteignable",
+    (() => {
+      const table = drop.buildLootTable(cardsForDrop, drop.inferRarity);
+      const rng = drop.createRng(7);
+      for (let i = 0; i < 500; i += 1) {
+        if (!drop.drawCard(table, rng, null, drop.DROP_CONFIG)) return false;
+      }
+      return true;
+    })()
+  );
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();

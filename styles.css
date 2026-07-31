@@ -647,6 +647,15 @@ a:hover {
   outline-offset: -3px;
 }
 
+/* Le contour thématique ci-dessus remplace l'anneau de focus par défaut du
+   navigateur : on en redonne un, distinct, sinon la navigation clavier
+   devient invisible sur toutes les cartes. */
+.game-card .card-content:focus-visible,
+.gallery-card .card-content:focus-visible {
+  outline: 3px solid #fff6d5;
+  outline-offset: 2px;
+}
+
 .compact .card-content {
   grid-template-rows: auto auto auto;
   min-height: 206px;
