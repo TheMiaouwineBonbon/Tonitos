@@ -274,7 +274,7 @@ async function main() {
       mobilePlaymatSource.includes('id="ligne-centrale"') &&
       mobilePlaymatSource.includes('id="sceau"') &&
       !mobilePlaymatSource.includes('id="end-turn-well"') &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-finition-1"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-terrains-1"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&

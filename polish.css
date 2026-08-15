@@ -147,9 +147,9 @@
   :root {
     --phone-board-card-width: clamp(50px, 7.2dvw, 68px);
     --phone-board-card-height: clamp(60px, 8.2dvw, 82px);
-    /* Légèrement affinée pour rester entre le terrain et la main agrandie :
-       à 360px de haut, l'ancienne valeur passait 5,7px sous les cartes. */
-    --phone-land-row-height: clamp(15px, 4.4dvh, 21px);
+    /* Hauteur de la zone de terrains : c'est LA dimension à faire grandir.
+       17px auparavant, soit une simple réglette. */
+    --phone-land-row-height: clamp(44px, 16dvh, 70px);
     /* Suit l'agrandissement de 7 % des cartes : à 78px de plancher, une
        carte de 62px (donc 81,9px de haut) dépassait sa rangée de 2,2px. */
     --phone-hand-row-height: clamp(84px, 22.5dvh, 100px);
@@ -172,10 +172,12 @@
     /* Colonnes : mêmes coordonnées gauche/droite pour les deux camps. */
     --lane-hero-left: 2.8%;
     --lane-hero-width: 13%;
-    --lane-land-left: 17%;
-    /* 28 % : la barre de terrains doit se lire comme un vrai emplacement.
-       Elle reste au-dessus de la main (1,1px) et sous le terrain central. */
-    --lane-land-width: 28%;
+    /* Zone de terrains : colonne VERTICALE accolée au héros, et non plus
+       une bande horizontale plate. Elle occupe la colonne de gauche, que
+       le terrain central (18 %) et la main ne touchent pas, ce qui libère
+       toute la hauteur disponible de ce côté. */
+    --lane-land-left: 2.8%;
+    --lane-land-width: 14%;
     --lane-field-left: 18%;
     --lane-field-width: 64%;
     --lane-pile-right: 2.2%;
@@ -184,7 +186,9 @@
     /* Rangées : distance à la ligne centrale, en % de la hauteur du tapis. */
     --row-field-gap: 7.5%;
     --row-field-height: 36%;
-    --row-land-gap: 43.5%;
+    /* Collée au bord intérieur : la zone se loge entre la ligne centrale
+       et le héros, du côté où rien d'autre n'occupe la colonne. */
+    --row-land-gap: 1.5%;
     --row-hero-gap: 35%;
     --row-hero-height: 59%;
     --row-grave-gap: 4%;
@@ -547,6 +551,48 @@
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-row {
     left: var(--lane-land-left);
     width: var(--lane-land-width);
+    /* Grille souple : les terrains s'empilent sur plusieurs rangs plutôt
+       que de rétrécir indéfiniment. Zéro débordement jusqu'à 6 cartes. */
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 3px;
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow:
+      inset 0 2px 8px rgba(0, 0, 0, 0.55),
+      inset 0 -1px 0 rgba(255, 226, 160, 0.08);
+  }
+
+  /* Terrains lisibles : vraie vignette au format carte, pas une pastille.
+     La couleur de famille reste identifiable d'un coup d'œil. */
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
+    flex: 0 0 auto;
+    width: clamp(20px, 4.6dvh, 30px);
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 5 / 7;
+    border-radius: 4px;
+    box-shadow:
+      inset 0 0 0 1px rgba(8, 5, 14, 0.9),
+      0 2px 4px rgba(0, 0, 0, 0.6);
+    transition: transform 0.16s ease-out, box-shadow 0.16s ease-out;
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent:hover,
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent:focus-visible {
+    z-index: 3;
+    transform: translateY(-2px) scale(1.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(8, 5, 14, 0.9),
+      0 0 8px rgba(226, 184, 94, 0.5),
+      0 3px 6px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Terrain déjà engagé : lisible mais visiblement dépensé. */
+  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent.is-tapped {
+    filter: grayscale(0.5) brightness(0.68);
   }
 
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row {
@@ -559,15 +605,9 @@
     bottom: auto;
   }
 
-  body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
-    flex: 1 1 0;
-    width: auto;
-    min-width: 8px;
-    max-width: 18px;
-    height: var(--phone-land-row-height);
-    min-height: var(--phone-land-row-height);
-    border-radius: 4px;
-  }
+  /* Ancienne réglette (max-width 18px, hauteur = toute la bande) retirée :
+     elle écrasait le format carte des terrains, qui apparaissaient comme
+     de fines lamelles verticales illisibles. */
 
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-gem {
     width: clamp(6px, 1.2dvw, 11px);
