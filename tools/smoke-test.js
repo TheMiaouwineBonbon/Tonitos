@@ -258,11 +258,32 @@ async function main() {
     gameSource.includes("Math.max(58, Math.min(68, window.innerHeight * 0.155))") &&
       gameSource.includes("Math.max(220, measuredHandWidth)") &&
       gameSource.includes("handWidth * 0.92") &&
-      polishStyles.includes("width: min(44%, 480px);") &&
+      polishStyles.includes("left: var(--lane-field-left);") &&
+      polishStyles.includes("width: var(--lane-field-width);") &&
+      polishStyles.includes("width: min(68%, 480px);") &&
       polishStyles.includes("--phone-board-card-height") &&
       polishStyles.includes("--phone-hand-row-height") &&
       polishStyles.includes("height: calc(var(--hand-card-width, 64px) * 1.27);") &&
       polishStyles.includes("transform: translateY(-4px) rotate(0deg) scale(1.025);")
+  );
+  check(
+    "Bande centrale structurée sur la même grille que les terrains",
+    polishStyles.includes("grid-template-columns:\n      var(--centerband-button-width)") &&
+      polishStyles.includes("grid-column: 1;") &&
+      polishStyles.includes("grid-column: 2;") &&
+      polishStyles.includes("grid-column: 3;") &&
+      polishStyles.includes("width: var(--lane-field-width);")
+  );
+  check(
+    "Fiche mobile bornée et texte de carte ajusté sans troncature",
+    polishStyles.includes("width: 100dvw;") &&
+      polishStyles.includes("height: 100dvh;") &&
+      polishStyles.includes("overflow-y: auto;") &&
+      polishStyles.includes("--detail-ability-font-size") &&
+      polishStyles.includes("-webkit-line-clamp: unset;") &&
+      gameSource.includes("function fitCardDetailText()") &&
+      gameSource.includes("textBox.scrollHeight > textBox.clientHeight") &&
+      gameSource.includes('content.dataset.textFits = String(')
   );
   check(
     "Zone sûre iPhone comptée une seule fois",

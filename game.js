@@ -343,6 +343,7 @@ function bindEvents() {
   window.addEventListener("resize", () => {
     hideCardPreview();
     updatePhoneOrientation();
+    scheduleCardDetailFit();
     if (!state.started) return;
     if (dragState.pending) {
       handRenderPending = true;
@@ -359,6 +360,7 @@ function bindEvents() {
       handRenderPending = false;
       renderHand();
     }
+    scheduleCardDetailFit();
   };
   window.addEventListener("orientationchange", handleOrientationChange);
   screen.orientation?.addEventListener?.("change", handleOrientationChange);
@@ -3913,6 +3915,63 @@ function openCardDetail(card, context) {
 
   els.cardModal.hidden = false;
   document.body.classList.add("modal-open");
+  scheduleCardDetailFit();
+}
+
+let cardDetailFitFrame = 0;
+
+function scheduleCardDetailFit() {
+  if (!els.cardModal || els.cardModal.hidden) return;
+  cancelAnimationFrame(cardDetailFitFrame);
+  cardDetailFitFrame = requestAnimationFrame(fitCardDetailText);
+}
+
+// La carte conserve son ratio et son cadre. Sur les écrans bas, seules les
+// tailles typographiques internes sont ajustées, selon le débordement réel.
+// Cela évite les corrections propres à chaque modèle de téléphone.
+function fitCardDetailText() {
+  cardDetailFitFrame = 0;
+  if (!els.cardModal || els.cardModal.hidden) return;
+
+  const content = els.cardModalCard?.querySelector(".card-content");
+  const titleBox = content?.querySelector(".card-title-lockup");
+  const title = content?.querySelector(".card-name");
+  const textBox = content?.querySelector(".card-scroll");
+  if (!content || !titleBox || !title || !textBox) return;
+
+  content.style.removeProperty("--detail-title-font-size");
+  content.style.removeProperty("--detail-ability-font-size");
+  content.style.removeProperty("--detail-tag-font-size");
+
+  const cardWidth = content.getBoundingClientRect().width;
+  let titleSize = Math.min(16, Math.max(8, cardWidth * 0.062));
+  let abilitySize = Math.min(12, Math.max(7, cardWidth * 0.041));
+  let tagSize = Math.min(9, Math.max(6, cardWidth * 0.031));
+
+  const applySizes = () => {
+    content.style.setProperty("--detail-title-font-size", `${titleSize.toFixed(2)}px`);
+    content.style.setProperty("--detail-ability-font-size", `${abilitySize.toFixed(2)}px`);
+    content.style.setProperty("--detail-tag-font-size", `${tagSize.toFixed(2)}px`);
+  };
+
+  applySizes();
+  while (title.scrollHeight > titleBox.clientHeight + 0.5 && titleSize > 7) {
+    titleSize -= 0.4;
+    applySizes();
+  }
+
+  let attempts = 0;
+  while (textBox.scrollHeight > textBox.clientHeight + 0.5 && attempts < 18) {
+    abilitySize = Math.max(5.8, abilitySize - 0.35);
+    tagSize = Math.max(5.2, tagSize - 0.2);
+    applySizes();
+    attempts += 1;
+  }
+
+  content.dataset.textFits = String(
+    title.scrollHeight <= titleBox.clientHeight + 0.5 &&
+    textBox.scrollHeight <= textBox.clientHeight + 0.5
+  );
 }
 
 function playCardDetailVideo(card, detailCard) {
@@ -3958,6 +4017,8 @@ function playCardDetailVideo(card, detailCard) {
 function closeCardDetail() {
   state.detailContext = null;
   if (!els.cardModal) return;
+  cancelAnimationFrame(cardDetailFitFrame);
+  cardDetailFitFrame = 0;
   if (!els.cardModal.hidden) sound.play("ui.menuClose");
   els.cardModal.hidden = true;
   els.cardModalCard.innerHTML = "";
