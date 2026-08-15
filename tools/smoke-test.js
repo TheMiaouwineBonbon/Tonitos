@@ -411,6 +411,11 @@ async function main() {
     "Un soin ne ressuscite pas un héros mort de fatigue",
     (gameSource.match(/draw\(side, [12]\);\s+if \(state.phase === PHASES.OVER\) return;/g) || []).length >= 3
   );
+  check(
+    "Le glisser du joueur 2 cible le camp qui défend réellement",
+    gameSource.includes('defender.side === "player" ? els.playerBoard : els.enemyBoard') &&
+      gameSource.includes("commanderNode(defender.side)")
+  );
 
   // --- Moteur sonore ---
   res = await fetch(`${base}/audio.js`);

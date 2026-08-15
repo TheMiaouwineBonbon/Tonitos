@@ -10,6 +10,25 @@ import {
   updateAccount
 } from "./progression.js?v=20260726-1";
 import { sound } from "./audio.js?v=20260730-audio-1";
+import {
+  buffUnits,
+  canPayCard,
+  canTakeMainAction,
+  canUnitAttack,
+  determineWinner,
+  drawFromDeck,
+  finiteNumber,
+  keywordKey as normalizeKeyword,
+  makeTurnStartKey,
+  parasiteVengeanceDamage,
+  partitionDeadUnits,
+  payCardCost,
+  resolveCreatureCombat,
+  unitHasKeyword,
+  untappedLandsForCard,
+  validateGameState
+} from "./engine-core.mjs?v=20260815-engine-1";
+import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {
@@ -70,6 +89,27 @@ const state = {
     dirty: false
   }
 };
+
+installDebugApi(() => state);
+
+const pendingGameTimers = new Set();
+let lastTurnStartKey = "";
+let gameplayPaused = true;
+
+function scheduleGameTask(callback, delay, matchId = state.matchId) {
+  const timer = window.setTimeout(() => {
+    pendingGameTimers.delete(timer);
+    if (gameplayPaused || (matchId && state.matchId !== matchId)) return;
+    callback();
+  }, delay);
+  pendingGameTimers.add(timer);
+  return timer;
+}
+
+function clearGameTimers() {
+  for (const timer of pendingGameTimers) window.clearTimeout(timer);
+  pendingGameTimers.clear();
+}
 
 const els = {
   orientationGate: document.querySelector("#orientation-gate"),
@@ -298,10 +338,12 @@ function bindEvents() {
   els.enemyAccountSelect?.addEventListener("change", selectEnemyAccount);
   els.endTurn?.addEventListener("click", advancePhase);
   els.attackHero?.addEventListener("click", attackHero);
-  // Le commandant adverse est une cible cliquable quand un attaquant est choisi.
-  els.enemyHero?.querySelector(".mat-zone--commander")?.addEventListener("click", () => {
-    if (state.selectedAttackerId) attackHero();
-  });
+  // Le commandant qui défend est cliquable, quel que soit le camp contrôlé.
+  for (const [sideName, hero] of [["player", els.playerHero], ["enemy", els.enemyHero]]) {
+    hero?.querySelector(".mat-zone--commander")?.addEventListener("click", () => {
+      if (state.selectedAttackerId && getDefendingSide()?.side === sideName) attackHero();
+    });
+  }
   els.clearLog?.addEventListener("click", () => {
     state.log = [];
     markOnlineDirty();
@@ -621,6 +663,10 @@ function setMobileView(view = "board") {
 
 function openStartMenu() {
   if (!els.startMenu) return;
+  gameplayPaused = true;
+  clearGameTimers();
+  isAnimating = false;
+  clearAttackPreview();
   els.startMenu.hidden = false;
   document.body.classList.add("menu-open");
   document.body.classList.remove("game-running");
@@ -637,6 +683,7 @@ function closeStartMenu() {
   els.startMenu.hidden = true;
   document.body.classList.remove("menu-open");
   document.body.classList.toggle("game-running", state.started);
+  if (state.started) gameplayPaused = false;
 }
 
 async function startGameFromMenu() {
@@ -720,6 +767,10 @@ function normalizeClientProfile(sideName, profile = {}) {
 }
 
 function newGame(config = {}) {
+  clearGameTimers();
+  isAnimating = false;
+  lastTurnStartKey = "";
+  gameplayPaused = false;
   clearCinematicEffects();
   // Nouvelle partie ou retour au menu : aucun ciblage ne doit survivre.
   clearAttackPreview();
@@ -750,6 +801,8 @@ function newGame(config = {}) {
   beginTurn(state.player, true);
   const modeLabel = state.mode === "online" ? "2 joueurs en ligne" : state.mode === "pvp" ? "2 joueurs local" : "1 joueur contre IA";
   logEvent(`Spellaho commence en mode ${modeLabel} : 20 points de vie, 7 cartes, un terrain par tour.`);
+  debugEvent("GAME_START", { matchId: state.matchId, mode: state.mode });
+  debugCheckpoint(state, "newGame");
   render();
 }
 
@@ -1107,6 +1160,12 @@ function serializeGameState() {
 }
 
 function applyOnlineState(snapshot, version, room) {
+  const snapshotErrors = validateGameState(snapshot);
+  if (snapshotErrors.length > 0) {
+    debugEvent("ONLINE_STATE_REJECTED", { version, errors: snapshotErrors });
+    setOnlineStatus("État distant invalide ignoré. Nouvelle synchronisation en attente...", true);
+    return false;
+  }
   const network = { ...state.network, suppressPublish: true, version, dirty: false };
   const incomingMatchId = snapshot.matchId || "";
   const remoteArrivals =
@@ -1145,6 +1204,8 @@ function applyOnlineState(snapshot, version, room) {
     animateSummonArrival(unit, Boolean(unit.sacrificeOnCast?.length));
   }
   state.network.suppressPublish = false;
+  debugCheckpoint(state, "applyOnlineState");
+  return true;
 }
 
 function animateOnlineStateTransitions(snapshot) {
@@ -1237,10 +1298,16 @@ async function publishOnlineState() {
       body: JSON.stringify({
         code: state.network.code,
         playerId: state.network.playerId,
+        version: state.network.version,
         state: serializeGameState()
       })
     });
     const payload = await response.json();
+    if (response.status === 409 && payload.room?.state) {
+      applyOnlineState(payload.room.state, payload.room.version, payload.room);
+      setOnlineStatus("Une action plus récente a été conservée.", true);
+      return;
+    }
     if (!response.ok) throw new Error(payload.error || "Publication impossible");
     state.network.version = payload.version || state.network.version;
     setOnlineStatus(`Salon 1234 synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
@@ -1398,26 +1465,37 @@ function shuffle(cards) {
 }
 
 function beginTurn(side, firstTurn = false) {
+  if (!side || state.phase === PHASES.OVER) return false;
+  const turnKey = makeTurnStartKey(state.matchId, state.turn, side.side);
+  if (turnKey === lastTurnStartKey) {
+    debugEvent("TURN_START_REJECTED", { reason: "duplicate", turnKey });
+    return false;
+  }
+  lastTurnStartKey = turnKey;
   state.currentTurn = side.side;
   state.phase = PHASES.MAIN_1;
   side.landPlayed = false;
+  debugEvent("TURN_START", { side: side.side, turn: state.turn, firstTurn });
   advanceSurvivalCounters(side);
   untapPermanents(side);
 
   if (!firstTurn) draw(side, 1);
 
+  if (state.phase === PHASES.OVER) return false;
+
   logEvent(`${sideDisplayName(side.side)} commence son tour. Phase principale : pose un terrain ou lance une carte.`);
+  debugCheckpoint(state, "beginTurn");
+  return true;
 }
 
 function advanceSurvivalCounters(side) {
   for (const creature of side.board) {
     creature.survivedTurns = Math.max(0, Number(creature.survivedTurns) || 0) + 1;
     if (creature.id === "roi-sorcier-connor") {
-      creature.attack += 1;
-      creature.maxLife += 1;
-      creature.currentLife += 1;
+      buffUnits([creature], 1, 1);
       pushVisualEffect("buff", side.side, "Connor +1/+1");
       logEvent(`La foi grandissante renforce ${creature.name} : +1/+1.`);
+      debugEvent("BUFF", { source: creature.id, target: creature.uid, attack: 1, life: 1, permanent: true });
     }
   }
 }
@@ -1442,17 +1520,20 @@ function untapPermanents(side) {
 }
 
 function draw(side, amount, options = {}) {
-  for (let i = 0; i < amount; i += 1) {
-    const next = side.deck.shift();
-    if (!next) {
-      side.life -= 1;
+  const events = drawFromDeck(side, amount);
+  let drawIndex = 0;
+  for (const event of events) {
+    if (event.type === "fatigue") {
       logEvent(`${sideDisplayName(side.side)} n'a plus de cartes en bibliothèque et perd 1 point de vie.`);
+      debugEvent("DAMAGE", { source: "fatigue", target: side.side, amount: event.damage });
       continue;
     }
-    side.hand.push(next);
-    if (options.animate !== false) animateDrawCard(side.side, next, i * 110);
+    if (options.animate !== false) animateDrawCard(side.side, event.card, drawIndex * 110);
+    debugEvent("DRAW", { side: side.side, cardId: event.card.id, uid: event.card.uid });
+    drawIndex += 1;
   }
   checkVictory();
+  return events;
 }
 
 function playCardFromHand(side, uid) {
@@ -1478,11 +1559,13 @@ function playCardFromHand(side, uid) {
 }
 
 function playLand(side, cardIndex) {
+  if (isAnimating || !canActInMain(side)) return false;
   const land = side.hand[cardIndex];
+  if (!land || !isLand(land)) return false;
   if (side.landPlayed) {
     logEvent(`${sideDisplayName(side.side)} a déjà joué un terrain ce tour-ci.`);
     render();
-    return;
+    return false;
   }
 
   markOnlineDirty();
@@ -1494,43 +1577,51 @@ function playLand(side, cardIndex) {
   });
   side.landPlayed = true;
   logEvent(`${sideDisplayName(side.side)} pose ${land.name}.`);
+  debugEvent("CARD_PLAYED", { side: side.side, cardId: land.id, uid: land.uid, kind: "land" });
+  debugCheckpoint(state, "playLand");
   render();
+  return true;
 }
 
 function playCreature(side, cardIndex) {
+  if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
+  if (!card || !isCreature(card)) return false;
 
   if (!isDivineUnlocked(side, card)) {
     logEvent(`${card.name} reste verrouillé : sa condition d'invocation divine n'est pas remplie.`);
     render();
-    return;
+    return false;
   }
 
   if (!canFitCreatureOnBoard(side, card)) {
     logEvent("Le champ de bataille est plein.");
     render();
-    return;
+    return false;
   }
 
   if (!canPay(side, card)) {
     logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
-    return;
+    return false;
   }
 
   markOnlineDirty();
-  payMana(side, card);
+  if (!payMana(side, card)) return false;
   side.hand.splice(cardIndex, 1);
   sacrificeInvocationMaterials(side, card);
   const unit = createUnit(card, side.side);
   side.board.push(unit);
   pushVisualEffect("summon", side.side, "Invocation");
   logEvent(`${sideDisplayName(side.side)} lance ${unit.name}.`);
+  debugEvent("CARD_PLAYED", { side: side.side, cardId: card.id, uid: unit.uid, kind: "creature" });
   triggerOnPlay(unit, side);
   cleanupBoards();
   checkVictory();
   render();
   animateSummonArrival(unit, Boolean(card.sacrificeOnCast?.length));
+  debugCheckpoint(state, "playCreature");
+  return true;
 }
 
 function invocationMaterialUnits(side, card) {
@@ -1569,51 +1660,51 @@ function sacrificeInvocationMaterials(side, card) {
 }
 
 function playSpell(side, cardIndex) {
+  if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
+  if (!card || !isSpell(card)) return false;
 
   if (!canPay(side, card)) {
     logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
-    return;
+    return false;
   }
 
   markOnlineDirty();
-  payMana(side, card);
+  if (!payMana(side, card)) return false;
   side.hand.splice(cardIndex, 1);
   side.graveyard.push({ ...card, uid: `${side.side}-grave-${card.id}-${crypto.randomUUID()}` });
   animateGraveyardArrival(side.side, card, 180);
   pushVisualEffect("spell", side.side, "Sort");
   logEvent(`${sideDisplayName(side.side)} lance ${card.name}.`);
+  debugEvent("CARD_PLAYED", { side: side.side, cardId: card.id, uid: card.uid, kind: "spell" });
   applySpellEffect(card, side);
   cleanupBoards();
   checkVictory();
   render();
+  debugCheckpoint(state, "playSpell");
+  return true;
 }
 
 // Style Hearthstone : pendant tout ton tour tu peux poser des cartes.
 function canActInMain(side) {
-  return !state.handoffPending && state.currentTurn === side.side && state.phase !== PHASES.OVER;
+  return !gameplayPaused && Boolean(side) && canTakeMainAction(state, side.side);
 }
 
 // Mana coloré : une carte d'une couleur exige autant de terrains DE CETTE
 // COULEUR que son coût. Seules les cartes incolores acceptent n'importe quel
 // terrain.
 function untappedLandsFor(side, card) {
-  const untapped = side.lands.filter((land) => !land.tapped);
-  if (card.family === "Incolore") return untapped;
-  return untapped.filter((land) => land.family === card.family);
+  return untappedLandsForCard(side, card);
 }
 
 function canPay(side, card) {
   if (isLand(card)) return canActInMain(side) && !side.landPlayed;
-  return untappedLandsFor(side, card).length >= card.cost;
+  return canPayCard(side, card);
 }
 
 function payMana(side, card) {
-  const landsToTap = untappedLandsFor(side, card).slice(0, card.cost);
-  for (const land of landsToTap) {
-    land.tapped = true;
-  }
+  return payCardCost(side, card);
 }
 
 // Mana disponible dans la couleur de la carte (pour les messages d'aide).
@@ -1774,6 +1865,7 @@ function createParasiteLarva(owner) {
 
 function applySpellEffect(card, side) {
   const opponent = getOpponent(side);
+  debugEvent("EFFECT_TRIGGERED", { source: card.id, effect: card.effect, controller: side.side });
 
   if (card.effect === "dealHero3") {
     opponent.life -= 3;
@@ -1870,6 +1962,7 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "drawOneGainOne") {
     draw(side, 1);
+    if (state.phase === PHASES.OVER) return;
     side.life = Math.min(MAX_LIFE, side.life + 1);
     logEvent(`${card.name} fait piocher une carte et rend 1 point de vie.`);
   }
@@ -1929,6 +2022,7 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "naturalMemory") {
     draw(side, 2);
+    if (state.phase === PHASES.OVER) return;
     side.life = Math.min(MAX_LIFE, side.life + 2);
     pushVisualEffect("buff", side.side, "+2 vie");
     logEvent(`${card.name} fait piocher deux cartes et rend 2 points de vie.`);
@@ -2010,6 +2104,7 @@ function reanimateBestCreatures(side, amount) {
 
 function triggerOnPlay(unit, side) {
   const opponent = side.side === "player" ? state.enemy : state.player;
+  debugEvent("EFFECT_TRIGGERED", { source: unit.id, trigger: "onPlay", controller: side.side });
 
   if (unit.id === "marinehote" && side.board.length < MAX_BOARD) {
     side.board.push(createToken(side.side));
@@ -2139,6 +2234,7 @@ function triggerOnPlay(unit, side) {
 
   if (unit.id === "pirates") {
     draw(side, 1);
+    if (state.phase === PHASES.OVER) return;
     side.life -= 1;
     logEvent("Les Pirates pillent une carte, puis leur audace coûte 1 point de vie.");
   }
@@ -2330,7 +2426,7 @@ function pullLandFromDeck(side, preferredFamily) {
 // Pendant ton tour tu poses tes cartes et tu attaques librement : tu cliques une
 // créature prête (surbrillance verte) puis sa cible (créature adverse ou commandant).
 function advancePhase() {
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
+  if (gameplayPaused || isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
   endCurrentTurn();
 }
 
@@ -2357,7 +2453,7 @@ function canTargetHero(attacker, defendingSide) {
 }
 
 function selectAttacker(uid) {
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
+  if (gameplayPaused || isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman()) return;
   const attacker = getCurrentSide().board.find((unit) => unit.uid === uid);
   if (!attacker) return;
 
@@ -2375,6 +2471,7 @@ function selectAttacker(uid) {
   markOnlineDirty();
   const wasSelected = state.selectedAttackerId === uid;
   state.selectedAttackerId = wasSelected ? null : uid;
+  debugEvent("TARGET_SELECTED", { attacker: wasSelected ? null : uid, kind: "attacker" });
   sound.play(wasSelected ? "card.deselect" : "card.select");
   render();
 }
@@ -2382,7 +2479,7 @@ function selectAttacker(uid) {
 function attackUnit(targetUid) {
   // Toute sortie anticipée doit purger le ciblage, sinon la flèche et la
   // surbrillance survivent à une attaque qui n'a jamais eu lieu.
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
+  if (gameplayPaused || isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
     resetAttackState();
     return;
   }
@@ -2391,6 +2488,12 @@ function attackUnit(targetUid) {
   const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
   const target = defendingSide.board.find((unit) => unit.uid === targetUid);
   if (!attacker || !target) {
+    resetAttackState();
+    return;
+  }
+
+  if (!canAttack(attacker)) {
+    debugEvent("ATTACK_REJECTED", { reason: "attacker-not-ready", attacker: attacker.uid });
     resetAttackState();
     return;
   }
@@ -2412,7 +2515,7 @@ function attackUnit(targetUid) {
 
 function attackHero() {
   // Mêmes garanties de purge que attackUnit : aucune sortie sans nettoyage.
-  if (isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
+  if (gameplayPaused || isAnimating || state.phase === PHASES.OVER || !isCurrentSideHuman() || !state.selectedAttackerId) {
     resetAttackState();
     return;
   }
@@ -2420,6 +2523,12 @@ function attackHero() {
   const defendingSide = getDefendingSide();
   const attacker = attackingSide.board.find((unit) => unit.uid === state.selectedAttackerId);
   if (!attacker) {
+    resetAttackState();
+    return;
+  }
+
+  if (!canAttack(attacker)) {
+    debugEvent("ATTACK_REJECTED", { reason: "attacker-not-ready", attacker: attacker.uid });
     resetAttackState();
     return;
   }
@@ -2453,6 +2562,7 @@ function commanderNode(sideName) {
 
 function playLunge(attackerNode, targetRect, done) {
   if (!attackerNode || !targetRect) { done(); return; }
+  const matchId = state.matchId;
   const a = attackerNode.getBoundingClientRect();
   const dx = targetRect.left + targetRect.width / 2 - (a.left + a.width / 2);
   const dy = targetRect.top + targetRect.height / 2 - (a.top + a.height / 2);
@@ -2464,11 +2574,12 @@ function playLunge(attackerNode, targetRect, done) {
   const finish = () => {
     if (finished) return;
     finished = true;
+    if (gameplayPaused || state.matchId !== matchId) return;
     isAnimating = false;
     done();
   };
   attackerNode.addEventListener("animationend", finish, { once: true });
-  setTimeout(finish, 380);
+  scheduleGameTask(finish, 380, matchId);
 }
 
 function flashImpact(sideName) {
@@ -2483,6 +2594,19 @@ function flashImpact(sideName) {
 
 // Résolution immédiate d'une attaque : l'attaquant frappe, la cible riposte.
 function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
+  if (
+    state.phase === PHASES.OVER ||
+    state.currentTurn !== attackingSide.side ||
+    !attackingSide.board.some((unit) => unit.uid === attacker?.uid) ||
+    !canAttack(attacker) ||
+    (target && !defendingSide.board.some((unit) => unit.uid === target.uid)) ||
+    (target && !canTargetUnit(attacker, target, defendingSide)) ||
+    (!target && !canTargetHero(attacker, defendingSide))
+  ) {
+    debugEvent("ATTACK_REJECTED", { reason: "stale-resolution", attacker: attacker?.uid, target: target?.uid });
+    resetAttackState();
+    return false;
+  }
   if (!hasKeyword(attacker, "Vigilance")) attacker.tapped = true;
   attacker.hasAttacked = true;
   // Attaque résolue : le ciblage disparaît avant même l'application des dégâts.
@@ -2490,56 +2614,67 @@ function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
   state.selectedAttackerId = null;
 
   if (!target) {
-    defendingSide.life -= attacker.attack;
-    gainLifeFromDamage(attacker, attackingSide, attacker.attack);
+    const damage = Math.max(0, finiteNumber(attacker.attack));
+    defendingSide.life -= damage;
+    gainLifeFromDamage(attacker, attackingSide, damage);
     pushVisualEffect("attack", attackingSide.side, "Assaut");
-    pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
-    logEvent(`${attacker.name} frappe ${sideDisplayName(defendingSide.side)} pour ${attacker.attack} blessure(s).`);
+    pushVisualEffect("hit", defendingSide.side, `-${damage}`);
+    logEvent(`${attacker.name} frappe ${sideDisplayName(defendingSide.side)} pour ${damage} blessure(s).`);
+    debugEvent("DAMAGE", { source: attacker.uid, target: defendingSide.side, amount: damage });
   } else {
-    target.currentLife -= attacker.attack;
-    if (attacker.attack > 0 && hasKeyword(attacker, "Contact mortel")) target.currentLife = 0;
-    attacker.currentLife -= target.attack;
-    if (target.attack > 0 && hasKeyword(target, "Contact mortel")) attacker.currentLife = 0;
-    gainLifeFromDamage(attacker, attackingSide, attacker.attack);
-    gainLifeFromDamage(target, defendingSide, target.attack);
-    pushVisualEffect("hit", defendingSide.side, `-${attacker.attack}`);
-    if (target.attack > 0) pushVisualEffect("hit", attackingSide.side, `-${target.attack}`);
-    logEvent(`${attacker.name} attaque ${target.name} : ${attacker.attack} contre ${target.attack}.`);
+    const combat = resolveCreatureCombat(attacker, target);
+    gainLifeFromDamage(attacker, attackingSide, combat.attackDamage);
+    gainLifeFromDamage(target, defendingSide, combat.retaliationDamage);
+    pushVisualEffect("hit", defendingSide.side, `-${combat.attackDamage}`);
+    if (combat.retaliationDamage > 0) pushVisualEffect("hit", attackingSide.side, `-${combat.retaliationDamage}`);
+    logEvent(`${attacker.name} attaque ${target.name} : ${combat.attackDamage} contre ${combat.retaliationDamage}.`);
+    debugEvent("DAMAGE", { source: attacker.uid, target: target.uid, amount: combat.attackDamage });
+    debugEvent("DAMAGE", { source: target.uid, target: attacker.uid, amount: combat.retaliationDamage });
   }
+
+  debugEvent("ATTACK", { attacker: attacker.uid, target: target?.uid || defendingSide.side });
 
   triggerParasiteVengeance(attacker, defendingSide);
   cleanupBoards();
   checkVictory();
   render();
+  debugCheckpoint(state, "resolveSingleAttack");
+  return true;
 }
 
 function triggerParasiteVengeance(attacker, defendingSide) {
   if (!attacker || attacker.currentLife <= 0) return;
-  const avenger = defendingSide.board.find((unit) => unit.id === "parasite");
-  if (!avenger) return;
+  const damage = parasiteVengeanceDamage(defendingSide.board);
+  if (damage <= 0) return;
 
-  attacker.currentLife -= 2;
-  pushVisualEffect("hit", attacker.owner, "-2");
-  logEvent(`La vengeance de Rena frappe ${attacker.name} pour 2 blessures.`);
+  attacker.currentLife -= damage;
+  pushVisualEffect("hit", attacker.owner, `-${damage}`);
+  logEvent(`La vengeance de Rena frappe ${attacker.name} pour ${damage} blessures.`);
+  debugEvent("EFFECT_TRIGGERED", { source: "parasite", target: attacker.uid, damage });
 }
 
 function endCurrentTurn() {
+  if (gameplayPaused || state.phase === PHASES.OVER || state.handoffPending) return false;
+  markOnlineDirty();
+  const endingSide = state.currentTurn;
   const nextSide = getDefendingSide();
   sound.play("turn.end");
   clearCombatFlags();
   if (state.currentTurn === "enemy") state.turn += 1;
+  debugEvent("TURN_END", { side: endingSide, turn: state.turn });
 
   if (state.mode === "pve" && nextSide.side === "enemy") {
     state.currentTurn = "enemy";
     state.phase = PHASES.MAIN_1;
     render();
-    setTimeout(enemyTurn, 450);
-    return;
+    scheduleGameTask(enemyTurn, 450);
+    return true;
   }
 
-  beginTurn(nextSide);
-  if (state.mode === "pvp") showTurnHandoff(nextSide);
+  const started = beginTurn(nextSide);
+  if (started && state.mode === "pvp" && state.phase !== PHASES.OVER) showTurnHandoff(nextSide);
   render();
+  return started;
 }
 
 function showTurnHandoff(nextSide) {
@@ -2561,17 +2696,20 @@ function confirmTurnHandoff() {
 }
 
 function enemyTurn() {
-  if (state.mode !== "pve") return;
-  beginTurn(state.enemy);
+  if (gameplayPaused || state.mode !== "pve" || state.currentTurn !== "enemy" || state.phase === PHASES.OVER) return;
+  if (!beginTurn(state.enemy) || state.phase === PHASES.OVER) {
+    render();
+    return;
+  }
   enemyPlayMainPhase();
   render();
-  setTimeout(enemyAttackStep, 350);
+  if (state.phase !== PHASES.OVER) scheduleGameTask(enemyAttackStep, 350);
 }
 
 // L'IA attaque une créature à la fois, avec animation, puis enchaîne — comme
 // un vrai tour Hearthstone. Échanges favorables privilégiés, provocations gérées.
 function enemyAttackStep() {
-  if (state.phase === PHASES.OVER) {
+  if (gameplayPaused || state.mode !== "pve" || state.currentTurn !== "enemy" || state.phase === PHASES.OVER) {
     render();
     return;
   }
@@ -2609,13 +2747,15 @@ function enemyAttackStep() {
   const targetRect = (target ? boardCardNode(target.uid, "player") : commanderNode("player"))?.getBoundingClientRect();
   playLunge(attackerNode, targetRect, () => {
     flashImpact("player");
-    resolveSingleAttack(attacker, target, me, foe);
-    setTimeout(enemyAttackStep, 280);
+    const resolved = resolveSingleAttack(attacker, target, me, foe);
+    if (resolved && state.phase !== PHASES.OVER) scheduleGameTask(enemyAttackStep, 280);
   });
 }
 
 function enemyPlayMainPhase() {
+  if (state.phase === PHASES.OVER || state.currentTurn !== "enemy") return;
   enemyPlayLand();
+  if (state.phase === PHASES.OVER) return;
   enemyPlaySpells();
 }
 
@@ -2634,7 +2774,9 @@ function enemyPlayLand() {
 
 function enemyPlaySpells() {
   let played = true;
-  while (played) {
+  let guard = 0;
+  while (played && state.phase !== PHASES.OVER && state.currentTurn === "enemy" && guard < 80) {
+    guard += 1;
     played = false;
     const affordable = state.enemy.hand
       .filter(
@@ -2649,11 +2791,12 @@ function enemyPlaySpells() {
 
     if (affordable) {
       const index = state.enemy.hand.findIndex((card) => card.uid === affordable.uid);
-      if (isSpell(affordable)) playSpell(state.enemy, index);
-      else playCreature(state.enemy, index);
-      played = true;
+      played = isSpell(affordable)
+        ? playSpell(state.enemy, index)
+        : playCreature(state.enemy, index);
     }
   }
+  if (guard >= 80) debugEvent("AI_LOOP_GUARD", { hand: state.enemy.hand.length });
 }
 
 // Évite que l'IA gaspille un sort sans aucune cible ni effet utile.
@@ -2710,23 +2853,19 @@ function scoreAiPlay(card) {
 }
 
 function finishEnemyTurn() {
+  if (state.mode !== "pve" || state.currentTurn !== "enemy" || state.phase === PHASES.OVER) return;
   endCurrentTurn();
 }
 
 function gainLifeFromDamage(unit, side, amount) {
   if (amount <= 0 || !hasKeyword(unit, "Lien de vie")) return;
   side.life = Math.min(MAX_LIFE, side.life + amount);
+  debugEvent("HEAL", { source: unit.uid, target: side.side, amount });
   logEvent(`${sideDisplayName(side.side)} gagne ${amount} point${amount > 1 ? "s" : ""} de vie grâce à ${unit.name}.`);
 }
 
 function canAttack(unit) {
-  return (
-    !unit.tapped &&
-    !unit.hasAttacked &&
-    unit.currentLife > 0 &&
-    !hasKeyword(unit, "Défenseur") &&
-    (unit.createdTurn < state.turn || hasKeyword(unit, "Célérité"))
-  );
+  return canUnitAttack(unit, state.turn);
 }
 
 function getSide(sideName) {
@@ -2769,10 +2908,9 @@ function freezeCreature(unit) {
 }
 
 function buffTeam(units, attack, life) {
-  for (const unit of units) {
-    unit.attack += attack;
-    unit.maxLife += life;
-    unit.currentLife += life;
+  buffUnits(units, attack, life);
+  if (units.length > 0) {
+    debugEvent("BUFF", { targets: units.map((unit) => unit.uid), attack, life, permanent: true });
   }
 }
 
@@ -2780,9 +2918,9 @@ function cleanupBoards() {
   const allBefore = [...state.player.board, ...state.enemy.board];
 
   for (const side of [state.player, state.enemy]) {
-    const dead = side.board.filter((unit) => unit.currentLife <= 0);
+    const { living, dead } = partitionDeadUnits(side.board);
     if (dead.length > 0) sound.play("creature.death");
-    side.board = side.board.filter((unit) => unit.currentLife > 0);
+    side.board = living;
     for (const unit of dead) {
       const destination = unit.exiled ? side.exile : side.graveyard;
       if (!unit.invocationSacrifice) {
@@ -2802,6 +2940,8 @@ function cleanupBoards() {
       });
       pushVisualEffect(unit.exiled ? "exile" : "death", side.side, unit.exiled ? "Exil" : "Cimetière");
       logEvent(`${unit.name} va ${unit.exiled ? "en exil" : "au cimetière"}.`);
+      debugEvent("DEATH", { side: side.side, cardId: unit.id, uid: unit.uid, exiled: Boolean(unit.exiled) });
+      debugEvent(unit.exiled ? "CARD_TO_EXILE" : "CARD_TO_GRAVEYARD", { side: side.side, cardId: unit.id });
 
       if (unit.id === "zombie-parasite" && !unit.exiled && side.board.length < MAX_BOARD) {
         side.board.push(createParasiteLarva(side.side));
@@ -2840,15 +2980,11 @@ function clearCombatFlags() {
 }
 
 function hasKeyword(unit, keyword) {
-  const wanted = keywordKey(keyword);
-  return unit.keywords.some((candidate) => keywordKey(candidate) === wanted);
+  return unitHasKeyword(unit, keyword);
 }
 
 function keywordKey(keyword) {
-  return String(keyword)
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+  return normalizeKeyword(keyword);
 }
 
 function isLand(card) {
@@ -2965,20 +3101,24 @@ function describeDivineClause(side, clause) {
 
 function checkVictory() {
   if (state.phase === PHASES.OVER || !state.player || !state.enemy) return;
-  const playerDead = state.player.life <= 0;
-  const enemyDead = state.enemy.life <= 0;
-  if (!playerDead && !enemyDead) return;
+  const winner = determineWinner(state.player, state.enemy);
+  if (!winner) return;
 
   state.phase = PHASES.OVER;
-  state.winner = playerDead && enemyDead ? "draw" : playerDead ? "enemy" : "player";
+  state.winner = winner;
+  clearGameTimers();
+  isAnimating = false;
   sound.play("hero.death");
-  window.setTimeout(() => sound.play(state.winner === "player" ? "game.victory" : "game.defeat"), 320);
+  const soundWinner = state.winner;
+  scheduleGameTask(() => sound.play(soundWinner === "player" ? "game.victory" : "game.defeat"), 320);
   if (state.winner === "draw") {
     logEvent("Les deux héros tombent en même temps : égalité !");
   } else {
     const loser = state.winner === "player" ? "enemy" : "player";
     logEvent(`${sideDisplayName(loser)} tombe à 0 point de vie. ${sideDisplayName(state.winner)} remporte la partie !`);
   }
+  debugEvent("GAME_OVER", { winner: state.winner, turn: state.turn });
+  debugCheckpoint(state, "checkVictory");
   awardMatchProgress();
 }
 
@@ -3575,14 +3715,16 @@ function attackTargetAt(x, y) {
   const attacker = getCurrentSide().board.find((u) => u.uid === dragState.uid);
   if (!attacker) return null;
   const defender = getDefendingSide();
+  const defendingBoard = defender.side === "player" ? els.playerBoard : els.enemyBoard;
+  const defendingCommander = commanderNode(defender.side);
 
   const enemyCard = el.closest("#enemy-board .game-card, #player-board .game-card");
-  if (enemyCard && els.enemyBoard.contains(enemyCard)) {
+  if (enemyCard && defendingBoard?.contains(enemyCard)) {
     const unit = defender.board.find((u) => u.uid === enemyCard.dataset.uid);
     if (unit && canTargetUnit(attacker, unit, defender)) return { type: "unit", uid: unit.uid };
     return null;
   }
-  if (el.closest(".enemy-mat .mat-zone--commander") && canTargetHero(attacker, defender)) {
+  if (defendingCommander?.contains(el) && canTargetHero(attacker, defender)) {
     return { type: "hero" };
   }
   return null;
@@ -3593,15 +3735,17 @@ function highlightAttackTarget(x, y) {
   const target = attackTargetAt(x, y);
   if (!target) return;
   if (target.type === "hero") {
-    els.enemyHero?.querySelector(".mat-zone--commander")?.classList.add("is-drop-target");
+    commanderNode(getDefendingSide().side)?.classList.add("is-drop-target");
   } else {
-    const node = els.enemyBoard.querySelector(`.game-card[data-uid="${cssAttr(target.uid)}"]`);
+    const board = getDefendingSide().side === "player" ? els.playerBoard : els.enemyBoard;
+    const node = board?.querySelector(`.game-card[data-uid="${cssAttr(target.uid)}"]`);
     node?.classList.add("is-drop-hit");
   }
 }
 
 function clearAttackTargetHighlight() {
-  els.enemyHero?.querySelector(".mat-zone--commander")?.classList.remove("is-drop-target");
+  commanderNode("player")?.classList.remove("is-drop-target");
+  commanderNode("enemy")?.classList.remove("is-drop-target");
   for (const n of document.querySelectorAll(".game-card.is-drop-hit")) n.classList.remove("is-drop-hit");
 }
 

@@ -12,6 +12,7 @@ const types = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".png": "image/png",
   ".jpg": "image/jpeg",
@@ -151,6 +152,16 @@ async function handleApi(req, res, url) {
     const slot = findPlayerSlot(room, String(body.playerId || ""));
     if (!slot) {
       sendJson(res, 403, { error: "Joueur non reconnu dans le salon." });
+      return true;
+    }
+
+    const clientVersion = Number(body.version);
+    if (Number.isFinite(clientVersion) && clientVersion !== room.version) {
+      sendJson(res, 409, {
+        error: "État obsolète : la partie a déjà avancé.",
+        version: room.version,
+        room: publicRoom(room)
+      });
       return true;
     }
 
