@@ -470,7 +470,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 53 créatures", Array.isArray(cards) && cards.length === 53);
+  check("cards.json = 61 créatures", Array.isArray(cards) && cards.length === 61);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -515,7 +515,7 @@ async function main() {
       gameSource.includes("tickDelayedReturns")
   );
   check(
-    "Les 11 nouvelles créatures respectent leur identité",
+    "Les 19 nouvelles créatures respectent leur identité",
     [
       ["aventurier", "Blanc"],
       ["envoye-bhaal", "Noir"],
@@ -527,8 +527,22 @@ async function main() {
       ["zombie-parasite", "Vert"],
       ["reine-parasite", "Vert"],
       ["parasite", "Vert"],
-      ["terreur-rena", "Vert"]
+      ["terreur-rena", "Vert"],
+      ["robot-antique-aigle", "Rouge"],
+      ["robot-antique-mage", "Vert"],
+      ["robot-antique-maitre-haches", "Vert"],
+      ["robot-antique-creation-divine", "Blanc"],
+      ["robot-antique-chien", "Blanc"],
+      ["robot-antique-gardien", "Blanc"],
+      ["robot-antique-fleau-flammes", "Rouge"],
+      ["robot-antique-chasseur", "Bleu"]
     ].every(([id, family]) => cards.find((card) => card.id === id)?.family === family)
+  );
+  check(
+    "Les Robots antiques possèdent une synergie de tribu jouable",
+    ["robot-antique-mage", "robot-antique-maitre-haches", "robot-antique-creation-divine", "robot-antique-chien"].every(
+      (id) => gameSource.includes(`unit.id === "${id}"`)
+    ) && gameSource.includes("ancientRobotAllies")
   );
   const parasite = cards.find((card) => card.id === "parasite");
   check(
@@ -585,7 +599,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("21 sorts avec illustrations autonomes", spells.length === 21);
+  check("25 sorts avec illustrations autonomes", spells.length === 25);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -605,6 +619,10 @@ async function main() {
   check("Couronne d'Ulgod = Rouge", spells.find((s) => s.id === "couronne-ulgod")?.family === "Rouge");
   check("Ancien corps de Bhaal = Noir", spells.find((s) => s.id === "ancien-corps-bhaal")?.family === "Noir");
   check("Esprits vengeurs = Noir", spells.find((s) => s.id === "esprits-vengeurs")?.family === "Noir");
+  check("Égo des hommes = Noir", spells.find((s) => s.id === "ego-des-hommes")?.family === "Noir");
+  check("Aucune limite = Rouge", spells.find((s) => s.id === "aucune-limite")?.family === "Rouge");
+  check("Sommeil menaçant = Bleu", spells.find((s) => s.id === "sommeil-menacant")?.family === "Bleu");
+  check("Terrible découverte = Bleu", spells.find((s) => s.id === "terrible-decouverte")?.family === "Bleu");
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
@@ -614,9 +632,18 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
+  check("lands.json = 28 terrains", lands.length === 28);
   check(
     "Entrée et Nid de la ruche = terrains verts",
     ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
+  );
+  check(
+    "Les trois temples antiques respectent leur couleur",
+    [
+      ["temple-antique-desert", "Rouge"],
+      ["temple-antique-naturel", "Vert"],
+      ["temple-antique-mers", "Bleu"]
+    ].every(([id, family]) => lands.find((land) => land.id === id)?.family === family)
   );
   const allCards = [...cards, ...lands, ...spells];
   check("Toutes les illustrations existent", allCards.every((card) => fs.existsSync(path.join(__dirname, "..", card.image))));

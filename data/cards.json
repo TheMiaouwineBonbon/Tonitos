@@ -1440,5 +1440,228 @@
       "fit": "cover",
       "position": "66% 46%"
     }
+  },
+  {
+    "id": "robot-antique-aigle",
+    "name": "Robot antique Aigle",
+    "subtitle": "Sentinelle du soleil mécanique",
+    "family": "Rouge",
+    "type": "Créature - Robot antique Aigle",
+    "cost": 4,
+    "attack": 4,
+    "life": 3,
+    "keywords": [
+      "Robot antique",
+      "Vol",
+      "Célérité"
+    ],
+    "abilityName": "Piqué solaire",
+    "abilityText": "Cette créature peut attaquer dès le tour où elle arrive et survole les défenses terrestres.",
+    "flavor": "Son œil bleu se ralluma le jour où le désert oublia son premier nom.",
+    "image": "Images/Robot antique Aigle.jpg",
+    "palette": {
+      "primary": "#b85324",
+      "secondary": "#65c7ff",
+      "deep": "#25120b"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "55% 44%"
+    }
+  },
+  {
+    "id": "robot-antique-mage",
+    "name": "Robot antique mage",
+    "subtitle": "Archiviste de la forêt oubliée",
+    "family": "Vert",
+    "type": "Créature - Robot antique Mage",
+    "cost": 4,
+    "attack": 2,
+    "life": 5,
+    "keywords": [
+      "Robot antique",
+      "Mage",
+      "Portée"
+    ],
+    "abilityName": "Mémoire des circuits",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, si tu contrôles un autre Robot antique, pioche une carte.",
+    "flavor": "Les racines ont effacé son empire, jamais les formules gravées dans son métal.",
+    "image": "Images/Robot antique mage.jpg",
+    "palette": {
+      "primary": "#426b4d",
+      "secondary": "#6ccfff",
+      "deep": "#0b1812"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "robot-antique-maitre-haches",
+    "name": "Robot antique maître des haches",
+    "subtitle": "Titan des clairières englouties",
+    "family": "Vert",
+    "type": "Créature - Robot antique Guerrier",
+    "cost": 6,
+    "attack": 6,
+    "life": 7,
+    "keywords": [
+      "Robot antique",
+      "Imposant",
+      "Portée"
+    ],
+    "abilityName": "Protocole de guerre",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres Robots antiques gagnent +1 force.",
+    "flavor": "Chaque hache fut forgée pour une guerre dont aucun vivant ne se souvient.",
+    "image": "Images/Robot antique maître des haches.jpg",
+    "palette": {
+      "primary": "#4f6f43",
+      "secondary": "#a9c98a",
+      "deep": "#10170d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "robot-antique-creation-divine",
+    "name": "Robot antique Création divine",
+    "subtitle": "Premier ouvrage des dieux",
+    "family": "Blanc",
+    "type": "Créature légendaire - Robot antique Divin",
+    "cost": 8,
+    "attack": 9,
+    "life": 11,
+    "keywords": [
+      "Robot antique",
+      "Divin",
+      "Vigilance"
+    ],
+    "abilityName": "Commandement originel",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres Robots antiques gagnent +1/+1 et tu gagnes 3 points de vie.",
+    "flavor": "Avant les temples et les prières, les dieux façonnèrent un gardien pour porter leur volonté.",
+    "image": "Images/Robot antique Création divine.jpg",
+    "palette": {
+      "primary": "#d1b86f",
+      "secondary": "#75ccff",
+      "deep": "#18150d"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 43%"
+    }
+  },
+  {
+    "id": "robot-antique-chien",
+    "name": "Robot antique Chien",
+    "subtitle": "Compagnon de l'éternelle veille",
+    "family": "Blanc",
+    "type": "Créature - Robot antique Chien",
+    "cost": 2,
+    "attack": 2,
+    "life": 3,
+    "keywords": [
+      "Robot antique",
+      "Vigilance"
+    ],
+    "abilityName": "Fidélité programmée",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, si tu contrôles un autre Robot antique, gagne 2 points de vie.",
+    "flavor": "Il attend toujours le retour de maîtres disparus depuis des millénaires.",
+    "image": "Images/Robot antique Chien.jpg",
+    "palette": {
+      "primary": "#c8b987",
+      "secondary": "#e9dcba",
+      "deep": "#191711"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "65% 48%"
+    }
+  },
+  {
+    "id": "robot-antique-gardien",
+    "name": "Robot antique gardien",
+    "subtitle": "Rempart de la porte immobile",
+    "family": "Blanc",
+    "type": "Créature - Robot antique Gardien",
+    "cost": 5,
+    "attack": 3,
+    "life": 8,
+    "keywords": [
+      "Robot antique",
+      "Défenseur",
+      "Portée"
+    ],
+    "abilityName": "Directive inviolable",
+    "abilityText": "Cette créature ne peut pas attaquer, mais elle peut protéger le champ de bataille contre les créatures avec le vol.",
+    "flavor": "La forteresse est vide. Son ordre de garde, lui, demeure absolu.",
+    "image": "Images/Robot antique gardien.jpg",
+    "palette": {
+      "primary": "#b9ac83",
+      "secondary": "#71c4e8",
+      "deep": "#171714"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "55% 44%"
+    }
+  },
+  {
+    "id": "robot-antique-fleau-flammes",
+    "name": "Robot antique fléau des flammes",
+    "subtitle": "Moissonneur de la fournaise",
+    "family": "Rouge",
+    "type": "Créature - Robot antique Colosse",
+    "cost": 7,
+    "attack": 8,
+    "life": 7,
+    "keywords": [
+      "Robot antique",
+      "Imposant",
+      "Feu"
+    ],
+    "abilityName": "Purge volcanique",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à toutes les créatures adverses.",
+    "flavor": "Il ne distingue plus les ennemis du paysage qu'il transforme en cendres.",
+    "image": "Images/Robot antique fléau des flammes.jpg",
+    "palette": {
+      "primary": "#b6361f",
+      "secondary": "#ff8f42",
+      "deep": "#260906"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "53% 45%"
+    }
+  },
+  {
+    "id": "robot-antique-chasseur",
+    "name": "Robot antique Chasseur",
+    "subtitle": "Traqueur des cols gelés",
+    "family": "Bleu",
+    "type": "Créature - Robot antique Chasseur",
+    "cost": 5,
+    "attack": 5,
+    "life": 5,
+    "keywords": [
+      "Robot antique",
+      "Gel"
+    ],
+    "abilityName": "Verrouillage cryogénique",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, engage la créature adverse la plus puissante. Elle ne se dégage pas au prochain tour.",
+    "flavor": "Le froid ralentit sa proie, jamais les calculs de son œil ancien.",
+    "image": "Images/Robot antique Chasseur.jpg",
+    "palette": {
+      "primary": "#477ca8",
+      "secondary": "#b9e5ff",
+      "deep": "#0c1823"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "62% 45%"
+    }
   }
 ]

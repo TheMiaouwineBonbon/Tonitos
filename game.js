@@ -1931,6 +1931,19 @@ function applySpellEffect(card, side) {
     }
   }
 
+  if (card.effect === "hubrisFall") {
+    const creatures = opponent.board.length;
+    const target = strongestCreature(opponent.board);
+    if (target) target.currentLife = 0;
+    opponent.life -= creatures;
+    if (creatures > 0) pushVisualEffect("hit", opponent.side, `-${creatures}`);
+    logEvent(
+      target
+        ? `${card.name} détruit ${target.name} et inflige ${creatures} blessure(s) au héros adverse.`
+        : `${card.name} ne trouve aucun orgueil à abattre.`
+    );
+  }
+
   if (card.effect === "createTwoZombies") {
     let created = 0;
     while (created < 2 && side.board.length < MAX_BOARD) {
@@ -1988,6 +2001,17 @@ function applySpellEffect(card, side) {
   if (card.effect === "buffTeam1") {
     buffTeam(side.board, 1, 1);
     logEvent(`${card.name} donne +1/+1 aux créatures alliées.`);
+  }
+
+  if (card.effect === "limitlessAssault") {
+    const targets = [...side.board]
+      .sort((a, b) => b.attack - a.attack || b.currentLife - a.currentLife)
+      .slice(0, 2);
+    for (const target of targets) target.attack += 2;
+    if (targets.length > 0) {
+      pushVisualEffect("buff", side.side, "+2 force");
+      logEvent(`${card.name} donne +2 force à ${targets.map((target) => target.name).join(" et ")}.`);
+    }
   }
 
   if (card.effect === "drawOneGainOne") {
@@ -2441,7 +2465,62 @@ function triggerOnPlay(unit, side) {
     }
   }
 
+  if (unit.id === "robot-antique-mage") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    if (allies.length > 0) {
+      draw(side, 1);
+      logEvent(`${unit.name} consulte la mémoire de ${allies[0].name} : une carte est piochée.`);
+    }
+  }
+
+  if (unit.id === "robot-antique-maitre-haches") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    for (const ally of allies) ally.attack += 1;
+    if (allies.length > 0) {
+      pushVisualEffect("buff", side.side, "Robots +1 force");
+      logEvent(`${unit.name} donne +1 force à ${allies.length} autre(s) Robot(s) antique(s).`);
+    }
+  }
+
+  if (unit.id === "robot-antique-creation-divine") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    buffTeam(allies, 1, 1);
+    side.life = Math.min(MAX_LIFE, side.life + 3);
+    pushVisualEffect("buff", side.side, "Commandement divin");
+    logEvent(`${unit.name} renforce ${allies.length} autre(s) Robot(s) antique(s) et rend 3 points de vie.`);
+  }
+
+  if (unit.id === "robot-antique-chien") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    if (allies.length > 0) {
+      side.life = Math.min(MAX_LIFE, side.life + 2);
+      pushVisualEffect("buff", side.side, "+2 vie");
+      logEvent(`${unit.name} reconnaît un ancien allié et rend 2 points de vie.`);
+    }
+  }
+
+  if (unit.id === "robot-antique-fleau-flammes") {
+    for (const enemy of opponent.board) enemy.currentLife -= 2;
+    if (opponent.board.length > 0) {
+      pushVisualEffect("hit", opponent.side, "-2");
+      logEvent(`${unit.name} inflige 2 blessures à ${opponent.board.length} créature(s) adverse(s).`);
+    }
+  }
+
+  if (unit.id === "robot-antique-chasseur") {
+    const target = strongestCreature(opponent.board);
+    if (target) {
+      freezeCreature(target);
+      pushVisualEffect("freeze", opponent.side, "Traque glacée");
+      logEvent(`${unit.name} verrouille ${target.name}, qui ne se dégagera pas au prochain tour.`);
+    }
+  }
+
   checkVictory();
+}
+
+function ancientRobotAllies(side, excludedUid = null) {
+  return side.board.filter((unit) => unit.uid !== excludedUid && hasKeyword(unit, "Robot antique"));
 }
 
 function pullLandFromDeck(side, preferredFamily) {
@@ -2843,6 +2922,7 @@ function isSpellWorthCasting(card, side, opponent) {
       return opponent.board.some((unit) => !unit.tapped);
     case "destroyStrongest":
     case "destroyTappedOrWeakest":
+    case "hubrisFall":
       return opponent.board.length > 0;
     case "restoreTeam":
       return side.board.some((unit) => unit.currentLife < unit.maxLife);
@@ -2851,6 +2931,7 @@ function isSpellWorthCasting(card, side, opponent) {
     case "toughTeam":
     case "vengeanceUldrid":
     case "crownUlgod":
+    case "limitlessAssault":
       return side.board.length > 0;
     case "createTwoZombies":
     case "createGuardian":

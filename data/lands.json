@@ -587,5 +587,89 @@
       "fit": "cover",
       "position": "50% 48%"
     }
+  },
+  {
+    "id": "temple-antique-desert",
+    "kind": "land",
+    "name": "Temple antique du désert",
+    "subtitle": "Montagne des mécanismes enfouis",
+    "family": "Rouge",
+    "type": "Terrain - Montagne antique",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana rouge",
+      "Antique"
+    ],
+    "abilityName": "Cœur solaire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "Sous le sable, les forges attendent encore l'ordre de se réveiller.",
+    "image": "Images/Terrain rouge temple antique du désert.jpg",
+    "palette": {
+      "primary": "#aa4727",
+      "secondary": "#ffad55",
+      "deep": "#24100a"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "56% 48%"
+    }
+  },
+  {
+    "id": "temple-antique-naturel",
+    "kind": "land",
+    "name": "Temple antique naturel",
+    "subtitle": "Forêt des jardins mécaniques",
+    "family": "Vert",
+    "type": "Terrain - Forêt antique",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana vert",
+      "Antique"
+    ],
+    "abilityName": "Harmonie ancienne",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "La nature n'a pas détruit la machine. Elle lui a appris à fleurir.",
+    "image": "Images/Terrain vert - temple antique Naturel.jpg",
+    "palette": {
+      "primary": "#4c804f",
+      "secondary": "#e1a4c8",
+      "deep": "#102016"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "54% 48%"
+    }
+  },
+  {
+    "id": "temple-antique-mers",
+    "kind": "land",
+    "name": "Temple antique des mers",
+    "subtitle": "Île de la porte boréale",
+    "family": "Bleu",
+    "type": "Terrain - Île antique",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana bleu",
+      "Antique"
+    ],
+    "abilityName": "Flux cryogénique",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "La mer gelée garde une porte qu'aucun royaume ne se souvient avoir bâtie.",
+    "image": "Images/Terrain bleu - temple antique des mers.jpg",
+    "palette": {
+      "primary": "#397fae",
+      "secondary": "#a9ddff",
+      "deep": "#091b2b"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "55% 48%"
+    }
   }
 ]

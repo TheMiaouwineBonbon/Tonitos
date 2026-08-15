@@ -546,5 +546,117 @@
       "fit": "contain",
       "position": "50% 50%"
     }
+  },
+  {
+    "id": "ego-des-hommes",
+    "kind": "spell",
+    "name": "Égo des hommes",
+    "subtitle": "La tour qui voulut toucher les dieux",
+    "family": "Noir",
+    "type": "Rituel - Sort de destruction",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Orgueil",
+      "Destruction"
+    ],
+    "abilityName": "Chute des orgueilleux",
+    "abilityText": "Détruis la créature adverse la plus puissante. Son héros perd 1 point de vie pour chaque créature qu'il contrôle.",
+    "flavor": "Plus la tour montait, plus sa chute devenait certaine.",
+    "image": "Images/égo des hommes.jpg",
+    "palette": {
+      "primary": "#65535f",
+      "secondary": "#d8c9bb",
+      "deep": "#151116"
+    },
+    "effect": "hubrisFall",
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "aucune-limite",
+    "kind": "spell",
+    "name": "Aucune limite",
+    "subtitle": "Fureur au-delà de la raison",
+    "family": "Rouge",
+    "type": "Rituel - Amélioration offensive",
+    "cost": 4,
+    "slot": "upgrade",
+    "keywords": [
+      "Fureur",
+      "Assaut"
+    ],
+    "abilityName": "Force déchaînée",
+    "abilityText": "Jusqu'à deux de tes créatures les plus puissantes gagnent définitivement +2 force.",
+    "flavor": "Ils ne trouvèrent pas leur limite. Ils trouvèrent seulement le prochain ennemi.",
+    "image": "Images/Sort Rouge - Aucune limite.jpg",
+    "palette": {
+      "primary": "#9e2d27",
+      "secondary": "#ee7a58",
+      "deep": "#240a09"
+    },
+    "effect": "limitlessAssault",
+    "art": {
+      "fit": "cover",
+      "position": "50% 44%"
+    }
+  },
+  {
+    "id": "sommeil-menacant",
+    "kind": "spell",
+    "name": "Sommeil menaçant",
+    "subtitle": "Le titan sous les abysses",
+    "family": "Bleu",
+    "type": "Rituel - Sort de contrôle",
+    "cost": 5,
+    "slot": "defense",
+    "keywords": [
+      "Sommeil",
+      "Gel"
+    ],
+    "abilityName": "Rêve du colosse",
+    "abilityText": "Engage toutes les créatures adverses.",
+    "flavor": "Même endormi, son souffle fait trembler les ruines.",
+    "image": "Images/Sort bleu - Sommeil ménaçant.jpg",
+    "palette": {
+      "primary": "#255b9b",
+      "secondary": "#74bfff",
+      "deep": "#071527"
+    },
+    "effect": "freezeAll",
+    "art": {
+      "fit": "cover",
+      "position": "58% 48%"
+    }
+  },
+  {
+    "id": "terrible-decouverte",
+    "kind": "spell",
+    "name": "Terrible découverte",
+    "subtitle": "Ce qui dormait sous les eaux",
+    "family": "Bleu",
+    "type": "Rituel - Pioche",
+    "cost": 3,
+    "slot": "draw",
+    "keywords": [
+      "Savoir",
+      "Antique"
+    ],
+    "abilityName": "Secret englouti",
+    "abilityText": "Pioche deux cartes.",
+    "flavor": "Daemon cherchait une réponse. L'océan lui révéla une civilisation entière.",
+    "image": "Images/Sort bleu - Terrible découverte.jpg",
+    "palette": {
+      "primary": "#247c98",
+      "secondary": "#75dbe8",
+      "deep": "#071b24"
+    },
+    "effect": "drawTwo",
+    "art": {
+      "fit": "cover",
+      "position": "53% 48%"
+    }
   }
 ]
