@@ -311,7 +311,7 @@ async function main() {
   );
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
-    gameSource.includes("Math.max(58, Math.min(68, window.innerHeight * 0.155))") &&
+    gameSource.includes("Math.max(62, Math.min(73, window.innerHeight * 0.166))") &&
       gameSource.includes("Math.max(220, measuredHandWidth)") &&
       gameSource.includes("handWidth * 0.92") &&
       polishStyles.includes("left: var(--lane-field-left);") &&
@@ -520,7 +520,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 61 créatures", Array.isArray(cards) && cards.length === 61);
+  check("cards.json = 66 créatures", Array.isArray(cards) && cards.length === 66);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -565,7 +565,7 @@ async function main() {
       gameSource.includes("tickDelayedReturns")
   );
   check(
-    "Les 19 nouvelles créatures respectent leur identité",
+    "Les 24 nouvelles créatures respectent leur identité",
     [
       ["aventurier", "Blanc"],
       ["envoye-bhaal", "Noir"],
@@ -585,14 +585,36 @@ async function main() {
       ["robot-antique-chien", "Blanc"],
       ["robot-antique-gardien", "Blanc"],
       ["robot-antique-fleau-flammes", "Rouge"],
-      ["robot-antique-chasseur", "Bleu"]
+      ["robot-antique-chasseur", "Bleu"],
+      ["robot-antique-petit-compagnon", "Blanc"],
+      ["robot-antique-argonien", "Bleu"],
+      ["robot-antique-khajiit", "Vert"],
+      ["mage-supreme-claudia", "Bleu"],
+      ["mage-supreme-dominica", "Noir"]
     ].every(([id, family]) => cards.find((card) => card.id === id)?.family === family)
   );
   check(
     "Les Robots antiques possèdent une synergie de tribu jouable",
-    ["robot-antique-mage", "robot-antique-maitre-haches", "robot-antique-creation-divine", "robot-antique-chien"].every(
+    [
+      "robot-antique-mage",
+      "robot-antique-maitre-haches",
+      "robot-antique-creation-divine",
+      "robot-antique-chien",
+      "robot-antique-petit-compagnon",
+      "robot-antique-argonien",
+      "robot-antique-khajiit"
+    ].every(
       (id) => gameSource.includes(`unit.id === "${id}"`)
-    ) && gameSource.includes("ancientRobotAllies")
+    ) &&
+      gameSource.includes("ancientRobotAllies") &&
+      gameSource.includes("createAncientDrone")
+  );
+  check(
+    "Claudia et Dominica déclenchent leurs pouvoirs de mage suprême",
+    cards.find((card) => card.id === "mage-supreme-claudia")?.deckCopies === 1 &&
+      cards.find((card) => card.id === "mage-supreme-dominica")?.deckCopies === 1 &&
+      gameSource.includes('unit.id === "mage-supreme-claudia"') &&
+      gameSource.includes('unit.id === "mage-supreme-dominica"')
   );
   const parasite = cards.find((card) => card.id === "parasite");
   check(
@@ -649,7 +671,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("25 sorts avec illustrations autonomes", spells.length === 25);
+  check("27 sorts avec illustrations autonomes", spells.length === 27);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -673,6 +695,16 @@ async function main() {
   check("Aucune limite = Rouge", spells.find((s) => s.id === "aucune-limite")?.family === "Rouge");
   check("Sommeil menaçant = Bleu", spells.find((s) => s.id === "sommeil-menacant")?.family === "Bleu");
   check("Terrible découverte = Bleu", spells.find((s) => s.id === "terrible-decouverte")?.family === "Bleu");
+  check(
+    "Générateur antique = artefact incolore créateur de Robots",
+    spells.find((spell) => spell.id === "generateur-antique")?.family === "Incolore" &&
+      spells.find((spell) => spell.id === "generateur-antique")?.effect === "createAncientDrones"
+  );
+  check(
+    "Conseil des sages = sort bleu de pioche",
+    spells.find((spell) => spell.id === "conseil-des-sages")?.family === "Bleu" &&
+      spells.find((spell) => spell.id === "conseil-des-sages")?.effect === "drawThree"
+  );
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
@@ -701,7 +733,7 @@ async function main() {
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 115 cartes possèdent exactement un SVG généré",
+    "Les 122 cartes possèdent exactement un SVG généré",
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );

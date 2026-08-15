@@ -1857,6 +1857,42 @@ function createGuardian(owner) {
   };
 }
 
+function createAncientDrone(owner) {
+  const source = state.spells.find((card) => card.id === "generateur-antique");
+  return {
+    id: "drone-antique",
+    kind: "creature",
+    uid: `${owner}-ancient-drone-${crypto.randomUUID()}`,
+    owner,
+    name: "Drone antique",
+    subtitle: "Serviteur de la chaîne d'assemblage",
+    family: "Incolore",
+    type: "Créature-artefact - Robot antique Drone",
+    cost: 0,
+    attack: 1,
+    life: 1,
+    maxLife: 1,
+    currentLife: 1,
+    keywords: ["Robot antique"],
+    abilityName: "Protocole auxiliaire",
+    abilityText: "Jeton créé par le Générateur antique.",
+    flavor: "",
+    image: "Images/Artefact Générateur antique.jpg",
+    palette: source?.palette || {
+      primary: "#4f6672",
+      secondary: "#54cfff",
+      deep: "#07131b"
+    },
+    tapped: false,
+    stunTurns: 0,
+    createdTurn: state.turn,
+    attacking: false,
+    blocking: null,
+    blockedBy: null,
+    token: true
+  };
+}
+
 function createParasiteLarva(owner) {
   const source = state.cards.find((card) => card.id === "parasite");
   return {
@@ -1964,6 +2000,11 @@ function applySpellEffect(card, side) {
     logEvent(`${card.name} fait piocher deux cartes.`);
   }
 
+  if (card.effect === "drawThree") {
+    draw(side, 3);
+    logEvent(`${card.name} fait piocher trois cartes.`);
+  }
+
   if (card.effect === "freezeTwo") {
     const targets = [...opponent.board].filter((unit) => !unit.tapped).sort((a, b) => b.attack - a.attack).slice(0, 2);
     for (const target of targets) freezeCreature(target);
@@ -1996,6 +2037,18 @@ function applySpellEffect(card, side) {
   if (card.effect === "createGuardian" && side.board.length < MAX_BOARD) {
     side.board.push(createGuardian(side.side));
     logEvent(`${card.name} crée un Gardien 2/2 avec portée.`);
+  }
+
+  if (card.effect === "createAncientDrones") {
+    let created = 0;
+    while (created < 2 && side.board.length < MAX_BOARD) {
+      side.board.push(createAncientDrone(side.side));
+      created += 1;
+    }
+    if (created > 0) {
+      pushVisualEffect("summon", side.side, `${created} drone${created > 1 ? "s" : ""}`);
+      logEvent(`${card.name} crée ${created} Drone${created > 1 ? "s" : ""} antique${created > 1 ? "s" : ""} 1/1.`);
+    }
   }
 
   if (card.effect === "buffTeam1") {
@@ -2516,6 +2569,48 @@ function triggerOnPlay(unit, side) {
     }
   }
 
+  if (unit.id === "robot-antique-petit-compagnon") {
+    const target = strongestCreature(ancientRobotAllies(side, unit.uid));
+    if (target) {
+      buffTeam([target], 0, 1);
+      side.life = Math.min(MAX_LIFE, side.life + 1);
+      pushVisualEffect("buff", side.side, "+0/+1");
+      logEvent(`${unit.name} encourage ${target.name}, qui gagne +0/+1, et rend 1 point de vie.`);
+    }
+  }
+
+  if (unit.id === "robot-antique-argonien") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    const target = strongestCreature(opponent.board);
+    if (allies.length > 0 && target) {
+      freezeCreature(target);
+      pushVisualEffect("freeze", opponent.side, "Marée calculée");
+      logEvent(`${unit.name} engage ${target.name} grâce aux calculs de son réseau antique.`);
+    }
+  }
+
+  if (unit.id === "robot-antique-khajiit") {
+    const allies = ancientRobotAllies(side, unit.uid);
+    buffTeam(allies, 0, 1);
+    if (allies.length > 0) {
+      pushVisualEffect("buff", side.side, "Robots +0/+1");
+      logEvent(`${unit.name} donne +0/+1 à ${allies.length} autre(s) Robot(s) antique(s).`);
+    }
+  }
+
+  if (unit.id === "mage-supreme-claudia") {
+    draw(side, 2);
+    logEvent(`${unit.name} ouvre les archives célestes : deux cartes sont piochées.`);
+  }
+
+  if (unit.id === "mage-supreme-dominica") {
+    opponent.life -= 2;
+    side.life = Math.min(MAX_LIFE, side.life + 2);
+    pushVisualEffect("hit", opponent.side, "-2");
+    pushVisualEffect("buff", side.side, "+2 vie");
+    logEvent(`${unit.name} draine 2 points de vie au héros adverse.`);
+  }
+
   checkVictory();
 }
 
@@ -2935,6 +3030,7 @@ function isSpellWorthCasting(card, side, opponent) {
       return side.board.length > 0;
     case "createTwoZombies":
     case "createGuardian":
+    case "createAncientDrones":
       return side.board.length < MAX_BOARD;
     case "reanimate":
     case "reanimateTwo":
@@ -2945,6 +3041,9 @@ function isSpellWorthCasting(card, side, opponent) {
       );
     case "naturalMemory":
       return side.deck.length > 0 || side.life < MAX_LIFE;
+    case "drawTwo":
+    case "drawThree":
+      return side.deck.length > 0;
     case "vengefulSpirits":
       return opponent.board.length > 0 || opponent.life > 0;
     case "gainLife4":
@@ -3449,8 +3548,11 @@ function renderHand() {
   const handWidth = mobileLandscape
     ? Math.max(220, measuredHandWidth)
     : Math.max(320, measuredHandWidth);
+  // Cartes de main agrandies de 7 % : les trois bornes suivent le même
+  // facteur pour que le gain soit constant à toutes les hauteurs d'écran
+  // (58 -> 62, 68 -> 73, 0.155 -> 0.166).
   const cardWidth = mobileLandscape
-    ? Math.max(58, Math.min(68, window.innerHeight * 0.155))
+    ? Math.max(62, Math.min(73, window.innerHeight * 0.166))
     : 160;
   const maximumSpan = mobileLandscape ? handWidth * 0.92 : handWidth - 48;
   const naturalSpan = cardWidth * side.hand.length;

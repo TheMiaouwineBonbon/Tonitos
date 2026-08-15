@@ -148,7 +148,9 @@
     --phone-board-card-width: clamp(50px, 7.2dvw, 68px);
     --phone-board-card-height: clamp(60px, 8.2dvw, 82px);
     --phone-land-row-height: clamp(17px, 4.8dvh, 22px);
-    --phone-hand-row-height: clamp(78px, 21.5dvh, 96px);
+    /* Suit l'agrandissement de 7 % des cartes : à 78px de plancher, une
+       carte de 62px (donc 81,9px de haut) dépassait sa rangée de 2,2px. */
+    --phone-hand-row-height: clamp(84px, 22.5dvh, 100px);
 
     /* ---------------------------------------------------------------
        GRILLE SYMÉTRIQUE DU PLATEAU
