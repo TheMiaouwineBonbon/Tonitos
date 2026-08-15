@@ -470,7 +470,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 52 créatures", Array.isArray(cards) && cards.length === 52);
+  check("cards.json = 53 créatures", Array.isArray(cards) && cards.length === 53);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -483,7 +483,7 @@ async function main() {
   );
   check(
     "Les vidéos de carte se lancent sans commandes visibles",
-    ["roi-sorcier-connor", "fee", "kraken", "rena", "noxis-bhaal-fusion"].every(
+    ["roi-sorcier-connor", "fee", "kraken", "rena", "noxis-bhaal-fusion", "aventurier-mythique-daemon"].every(
       (id) => cards.find((card) => card.id === id)?.video
     ) &&
       gameSource.includes("playCardDetailVideo") &&
@@ -502,6 +502,18 @@ async function main() {
   check("Fée = Vert", cards.find((c) => c.id === "fee")?.family === "Vert");
   check("Ours-hibou = Vert", cards.find((c) => c.id === "ours-hibou")?.family === "Vert");
   check("Valerius = Noir", cards.find((c) => c.id === "valerius")?.family === "Noir");
+  const daemon = cards.find((card) => card.id === "aventurier-mythique-daemon");
+  check(
+    "Aventurier Mythique Daemon = Blanc 3/4 immortel à 3 terrains",
+    daemon?.family === "Blanc" &&
+      daemon.cost === 3 &&
+      daemon.attack === 3 &&
+      daemon.life === 4 &&
+      daemon.returnDelayTurns === 3 &&
+      daemon.video === "Images/Vidéos/aventurier-mythique-daemon.mp4" &&
+      gameSource.includes("advanceDelayedReturns") &&
+      gameSource.includes("tickDelayedReturns")
+  );
   check(
     "Les 11 nouvelles créatures respectent leur identité",
     [

@@ -12,6 +12,7 @@ import {
   partitionDeadUnits,
   payCardCost,
   resolveCreatureCombat,
+  tickDelayedReturns,
   unitHasKeyword,
   validateGameState
 } from "../engine-core.mjs";
@@ -141,6 +142,20 @@ test("les morts sont séparées du plateau en une seule passe", () => {
   const result = partitionDeadUnits([deadA, alive, deadB]);
   assert.deepEqual(result.living.map((unit) => unit.uid), ["alive"]);
   assert.deepEqual(result.dead.map((unit) => unit.uid), ["dead-a", "dead-b"]);
+});
+
+test("Daemon revient au troisième tour de son propriétaire", () => {
+  const daemon = { id: "aventurier-mythique-daemon", uid: "daemon-grave", returnInTurns: 3 };
+  const ordinary = { id: "soldat", uid: "soldat-grave", returnInTurns: null };
+  const graveyard = [daemon, ordinary];
+  assert.deepEqual(tickDelayedReturns(graveyard), []);
+  assert.equal(daemon.returnInTurns, 2);
+  assert.deepEqual(tickDelayedReturns(graveyard), []);
+  assert.equal(daemon.returnInTurns, 1);
+  assert.deepEqual(tickDelayedReturns(graveyard).map((card) => card.id), ["aventurier-mythique-daemon"]);
+  assert.equal(daemon.returnInTurns, 0);
+  assert.deepEqual(tickDelayedReturns(graveyard).map((card) => card.id), ["aventurier-mythique-daemon"]);
+  assert.equal(ordinary.returnInTurns, null);
 });
 
 test("chaque Parasite présent au déclenchement applique sa propre vengeance", () => {

@@ -1411,5 +1411,34 @@
       "fit": "cover",
       "position": "50% 44%"
     }
+  },
+  {
+    "id": "aventurier-mythique-daemon",
+    "name": "Aventurier Mythique Daemon",
+    "subtitle": "L'Éternel errant",
+    "family": "Blanc",
+    "type": "Créature légendaire - Aventurier maudit",
+    "cost": 3,
+    "attack": 3,
+    "life": 4,
+    "keywords": [
+      "Immortel"
+    ],
+    "abilityName": "Malédiction d'éternité",
+    "abilityText": "Quand Daemon est vaincu, il revient automatiquement du cimetière après 3 de tes tours. S'il n'y a pas de place, il attend ton prochain tour.",
+    "flavor": "À cause de sa soif de connaissance, il fut maudit à ne jamais mourir et à errer éternellement.",
+    "image": "Images/Aventurier Mythique Daemon.JPEG",
+    "video": "Images/Vidéos/aventurier-mythique-daemon.mp4",
+    "returnDelayTurns": 3,
+    "palette": {
+      "primary": "#d8c48e",
+      "secondary": "#73b9ff",
+      "deep": "#111827"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "66% 46%"
+    }
   }
 ]

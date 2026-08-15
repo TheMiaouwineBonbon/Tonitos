@@ -124,6 +124,18 @@ export function partitionDeadUnits(board) {
   return { living, dead };
 }
 
+export function tickDelayedReturns(graveyard) {
+  const ready = [];
+  for (const card of Array.isArray(graveyard) ? graveyard : []) {
+    if (card?.returnInTurns === null || card?.returnInTurns === undefined || card?.returnInTurns === "") continue;
+    const remaining = Number(card?.returnInTurns);
+    if (!Number.isFinite(remaining) || remaining < 0) continue;
+    card.returnInTurns = Math.max(0, Math.trunc(remaining) - 1);
+    if (card.returnInTurns === 0) ready.push(card);
+  }
+  return ready;
+}
+
 export function parasiteVengeanceDamage(board, damagePerParasite = 2) {
   const count = (Array.isArray(board) ? board : []).filter(
     (unit) => unit?.id === "parasite"

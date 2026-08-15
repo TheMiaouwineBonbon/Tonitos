@@ -24,10 +24,11 @@ import {
   partitionDeadUnits,
   payCardCost,
   resolveCreatureCombat,
+  tickDelayedReturns,
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260815-engine-1";
+} from "./engine-core.mjs?v=20260815-daemon-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -1478,6 +1479,7 @@ function beginTurn(side, firstTurn = false) {
   debugEvent("TURN_START", { side: side.side, turn: state.turn, firstTurn });
   advanceSurvivalCounters(side);
   untapPermanents(side);
+  advanceDelayedReturns(side);
 
   if (!firstTurn) draw(side, 1);
 
@@ -1497,6 +1499,32 @@ function advanceSurvivalCounters(side) {
       logEvent(`La foi grandissante renforce ${creature.name} : +1/+1.`);
       debugEvent("BUFF", { source: creature.id, target: creature.uid, attack: 1, life: 1, permanent: true });
     }
+  }
+}
+
+function advanceDelayedReturns(side) {
+  const ready = tickDelayedReturns(side.graveyard);
+  for (const buried of ready) {
+    if (side.board.length >= MAX_BOARD) {
+      if (!buried.returnBlockedNotified) {
+        buried.returnBlockedNotified = true;
+        logEvent(`${buried.name} a terminé son errance, mais attend une place sur le champ de bataille.`);
+      }
+      continue;
+    }
+
+    const index = side.graveyard.findIndex((entry) => entry.uid === buried.uid);
+    if (index < 0) continue;
+    side.graveyard.splice(index, 1);
+    const source = state.cards.find((entry) => entry.id === buried.id) || buried;
+    const unit = createUnit(source, side.side);
+    side.board.push(unit);
+    triggerOnPlay(unit, side);
+    cleanupBoards();
+    pushVisualEffect("summon", side.side, "Retour éternel");
+    logEvent(`${unit.name} revient de sa malédiction après trois tours.`);
+    debugEvent("EFFECT_TRIGGERED", { source: unit.id, trigger: "delayedReturn", controller: side.side });
+    scheduleGameTask(() => animateSummonArrival(unit, false), 80);
   }
 }
 
@@ -1720,6 +1748,8 @@ function createUnit(card, owner) {
     maxLife: card.life,
     currentLife: card.life,
     survivedTurns: 0,
+    returnInTurns: null,
+    returnBlockedNotified: false,
     tapped: false,
     stunTurns: 0,
     createdTurn: state.turn,
@@ -2932,6 +2962,10 @@ function cleanupBoards() {
       destination.push({
         ...unit,
         invocationSacrifice: false,
+        returnInTurns: !unit.exiled && Number.isFinite(Number(unit.returnDelayTurns))
+          ? Math.max(1, Math.trunc(Number(unit.returnDelayTurns)))
+          : null,
+        returnBlockedNotified: false,
         attacking: false,
         blocking: null,
         blockedBy: null,
@@ -2940,6 +2974,9 @@ function cleanupBoards() {
       });
       pushVisualEffect(unit.exiled ? "exile" : "death", side.side, unit.exiled ? "Exil" : "Cimetière");
       logEvent(`${unit.name} va ${unit.exiled ? "en exil" : "au cimetière"}.`);
+      if (!unit.exiled && Number.isFinite(Number(unit.returnDelayTurns))) {
+        logEvent(`${unit.name} reviendra après ${Math.max(1, Math.trunc(Number(unit.returnDelayTurns)))} de ses tours.`);
+      }
       debugEvent("DEATH", { side: side.side, cardId: unit.id, uid: unit.uid, exiled: Boolean(unit.exiled) });
       debugEvent(unit.exiled ? "CARD_TO_EXILE" : "CARD_TO_GRAVEYARD", { side: side.side, cardId: unit.id });
 
@@ -4180,6 +4217,14 @@ function openPileViewer(sideName, zone) {
   const fragment = document.createDocumentFragment();
   for (const card of cards) {
     const node = renderCard(card, { mode: "gallery" });
+    if (card.returnInTurns !== null && card.returnInTurns !== undefined && Number.isFinite(Number(card.returnInTurns))) {
+      const timer = document.createElement("span");
+      timer.className = "delayed-return-timer";
+      timer.textContent = Number(card.returnInTurns) > 0
+        ? `Retour dans ${card.returnInTurns} tour${Number(card.returnInTurns) > 1 ? "s" : ""}`
+        : "Retour prêt";
+      node.append(timer);
+    }
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => openCardDetail(card, { zone: "pile" }));
     fragment.append(node);

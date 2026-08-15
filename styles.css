@@ -1789,6 +1789,27 @@ button.zone-pile:hover {
   gap: 12px;
 }
 
+.pile-modal-grid .gallery-card {
+  position: relative;
+}
+
+.delayed-return-timer {
+  position: absolute;
+  z-index: 5;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  padding: 0.38rem 0.62rem;
+  border: 1px solid #e4c06a;
+  border-radius: 999px;
+  color: #fff4c9;
+  background: rgb(5 8 17 / 92%);
+  box-shadow: 0 0 14px rgb(101 165 255 / 38%);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+}
+
 @media (max-width: 1240px) {
   .game-layout {
     grid-template-columns: 1fr;
