@@ -75,10 +75,16 @@ async function main() {
       html.includes('id="orientation-lock"') &&
       html.includes('id="orientation-status"')
   );
-
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
   check("GET /game.js -> 200", res.status === 200);
+  check(
+    "Le lancement reste verrouillé jusqu'à la fin du chargement",
+    html.includes('id="start-game"') &&
+      html.includes('disabled aria-busy="true"') &&
+      gameSource.includes('els.startGame.disabled = false') &&
+      gameSource.includes('handleInitializationError')
+  );
   check("Identité réseau Spellaho propre à chaque onglet", gameSource.includes('PLAYER_ID_KEY = "spellaho-player-id"'));
   check("Secours WebRTC pour GitHub Pages", gameSource.includes("joinPeerRoom") && gameSource.includes("peerjs@1.5.5"));
   check("Aperçu du cimetière et de l'exil mis à jour", gameSource.includes("renderPilePreviews"));

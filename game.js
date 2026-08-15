@@ -235,7 +235,7 @@ const DECKS = [
   }
 ];
 
-init();
+init().catch(handleInitializationError);
 
 async function init() {
   if (!els.startMenu) return;
@@ -256,8 +256,19 @@ async function init() {
   renderGallery();
   renderDeckAudit();
   bindEvents();
+  els.startGame.disabled = false;
+  els.startGame.removeAttribute("aria-busy");
+  els.startGame.textContent = "Lancer Spellaho";
   updatePhoneOrientation();
   openStartMenu();
+}
+
+function handleInitializationError(error) {
+  console.error("Impossible d'initialiser Spellaho.", error);
+  if (!els.startGame) return;
+  els.startGame.disabled = true;
+  els.startGame.removeAttribute("aria-busy");
+  els.startGame.textContent = "Chargement impossible";
 }
 
 function applyPlaymats() {
