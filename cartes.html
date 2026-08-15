@@ -3,83 +3,153 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cartes SVG - Spellaho</title>
+    <meta name="theme-color" content="#080912" />
+    <meta name="description" content="Collection complète des créatures, sorts et terrains de Spellaho." />
+    <title>Collection de cartes - Spellaho</title>
     <link rel="icon" type="image/png" href="./Images/Logo%20Jeu/Spellaho.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260726-3" />
-    <style>
-      body {
-        background: #11100e;
-      }
-
-      .cards-page {
-        width: min(1400px, 100%);
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      .print-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 18px;
-        margin-top: 18px;
-      }
-
-      .print-card {
-        border: 1px solid rgba(232, 194, 118, 0.26);
-        border-radius: 8px;
-        padding: 12px;
-        background: rgba(21, 17, 14, 0.9);
-      }
-
-      .print-card img {
-        display: block;
-        width: 100%;
-        border-radius: 8px;
-      }
-
-      .print-card a {
-        display: block;
-        margin-top: 10px;
-        color: var(--amber);
-        font-weight: 800;
-        text-decoration: none;
-      }
-    </style>
+    <link rel="stylesheet" href="./cartes.css?v=20260816-collection-1" />
   </head>
-  <body>
-    <main class="cards-page">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Cartes générées</p>
-          <h1 class="topbar-title">
-            <img class="topbar-logo" src="./Images/Logo%20Jeu/Spellaho.png" alt="Spellaho" />
-          </h1>
-        </div>
-        <a class="ghost-button" href="./index.html">Retour au jeu</a>
-      </header>
+  <body class="collection-page">
+    <header class="collection-header">
+      <div class="collection-header-side collection-header-side--start">
+        <a class="collection-command collection-command--back" href="./index.html">
+          <span aria-hidden="true">←</span>
+          <span>Retour au jeu</span>
+        </a>
+      </div>
 
-      <section id="svg-list" class="print-grid" aria-label="Cartes SVG imprimables"></section>
+      <a class="collection-brand" href="./index.html" aria-label="Spellaho, retour au jeu">
+        <img src="./Images/Logo%20Jeu/Spellaho.png" alt="Spellaho" />
+      </a>
+
+      <div class="collection-header-side collection-header-side--end">
+        <span class="collection-total"><strong id="header-total">0</strong> cartes</span>
+        <button id="header-reset" class="collection-command" type="button">Réinitialiser</button>
+      </div>
+    </header>
+
+    <main class="collection-main">
+      <section class="collection-intro" aria-labelledby="collection-title">
+        <div>
+          <p class="collection-eyebrow">Archives de Spellaho</p>
+          <h1 id="collection-title">Collection de cartes</h1>
+        </div>
+        <p id="collection-total" class="collection-intro-count" aria-live="polite">Chargement de la collection...</p>
+      </section>
+
+      <section class="collection-tools" aria-label="Recherche et filtres de la collection">
+        <label class="collection-search" for="card-search">
+          <span class="collection-tool-label">Recherche</span>
+          <span class="collection-search-field">
+            <span class="collection-search-icon" aria-hidden="true">⌕</span>
+            <input id="card-search" type="search" placeholder="Rechercher une carte..." autocomplete="off" />
+            <button id="clear-search" type="button" aria-label="Effacer la recherche" hidden>×</button>
+          </span>
+        </label>
+
+        <fieldset class="collection-filter collection-filter--category">
+          <legend>Catégorie</legend>
+          <div class="collection-segments" role="group" aria-label="Filtrer par catégorie">
+            <button type="button" data-category="all" aria-pressed="true">Toutes</button>
+            <button type="button" data-category="creature" aria-pressed="false">Créatures</button>
+            <button type="button" data-category="spell" aria-pressed="false">Sorts</button>
+            <button type="button" data-category="land" aria-pressed="false">Terrains</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="collection-filter collection-filter--family">
+          <legend>Couleur</legend>
+          <div class="collection-colors" role="group" aria-label="Filtrer par couleur">
+            <button type="button" data-family="all" aria-pressed="true">
+              <span class="mana-mark mana-mark--all" aria-hidden="true"></span><span>Toutes</span>
+            </button>
+            <button type="button" data-family="Blanc" aria-pressed="false">
+              <span class="mana-mark mana-mark--white" aria-hidden="true"></span><span>Blanc</span>
+            </button>
+            <button type="button" data-family="Bleu" aria-pressed="false">
+              <span class="mana-mark mana-mark--blue" aria-hidden="true"></span><span>Bleu</span>
+            </button>
+            <button type="button" data-family="Noir" aria-pressed="false">
+              <span class="mana-mark mana-mark--black" aria-hidden="true"></span><span>Noir</span>
+            </button>
+            <button type="button" data-family="Rouge" aria-pressed="false">
+              <span class="mana-mark mana-mark--red" aria-hidden="true"></span><span>Rouge</span>
+            </button>
+            <button type="button" data-family="Vert" aria-pressed="false">
+              <span class="mana-mark mana-mark--green" aria-hidden="true"></span><span>Vert</span>
+            </button>
+            <button type="button" data-family="Incolore" aria-pressed="false">
+              <span class="mana-mark mana-mark--colorless" aria-hidden="true"></span><span>Incolore</span>
+            </button>
+          </div>
+        </fieldset>
+
+        <label class="collection-sort" for="card-sort">
+          <span class="collection-tool-label">Tri</span>
+          <select id="card-sort">
+            <option value="name-asc">Nom A → Z</option>
+            <option value="name-desc">Nom Z → A</option>
+            <option value="cost-asc">Coût croissant</option>
+            <option value="cost-desc">Coût décroissant</option>
+            <option value="type-asc">Type</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="collection-results-head">
+        <p id="results-count" aria-live="polite">Préparation des archives...</p>
+        <p id="active-filters">Toutes les cartes</p>
+      </div>
+
+      <section id="collection-loading" class="collection-message" aria-live="polite">
+        <span class="collection-loader" aria-hidden="true"></span>
+        <strong>Ouverture des archives...</strong>
+      </section>
+
+      <section id="collection-error" class="collection-message collection-message--error" hidden>
+        <strong>La collection n'a pas pu être chargée.</strong>
+        <button id="retry-load" class="collection-command" type="button">Réessayer</button>
+      </section>
+
+      <section id="card-grid" class="collection-grid" aria-label="Cartes de la collection"></section>
+
+      <section id="collection-empty" class="collection-message collection-message--empty" hidden>
+        <strong>Aucune carte trouvée</strong>
+        <button id="empty-reset" class="collection-command" type="button">Réinitialiser les filtres</button>
+      </section>
     </main>
 
-    <script type="module">
-      const dataVersion = Date.now();
-      const [cards, lands, spells] = await Promise.all([
-        fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json()),
-        fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json()),
-        fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" }).then((response) => response.json())
-      ]);
-      const list = document.querySelector("#svg-list");
+    <div id="collection-modal" class="collection-modal" hidden aria-hidden="true">
+      <button class="collection-modal-backdrop" type="button" data-close-modal aria-label="Fermer l'aperçu"></button>
+      <section class="collection-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button id="modal-close" class="collection-modal-close" type="button" aria-label="Fermer">×</button>
 
-      for (const card of [...cards, ...lands, ...spells]) {
-        const file = `./Images/Cartes/${encodeURIComponent(card.name)}.svg`;
-        const article = document.createElement("article");
-        article.className = "print-card";
-        article.innerHTML = `
-          <img src="${file}" alt="${card.name}" />
-          <a href="${file}" download="${card.name}.svg">Télécharger ${card.name}</a>
-        `;
-        list.append(article);
-      }
-    </script>
+        <div class="collection-modal-visual">
+          <object id="modal-card-image" type="image/svg+xml" role="img" aria-label=""></object>
+        </div>
+
+        <div class="collection-modal-details">
+          <p id="modal-eyebrow" class="collection-eyebrow"></p>
+          <h2 id="modal-title"></h2>
+          <p id="modal-subtitle" class="collection-modal-subtitle"></p>
+          <dl id="modal-facts" class="collection-modal-facts"></dl>
+
+          <div class="collection-modal-ability">
+            <h3 id="modal-ability-name"></h3>
+            <p id="modal-ability-text"></p>
+          </div>
+
+          <div id="modal-keywords" class="collection-modal-keywords" aria-label="Mots-clés"></div>
+          <p id="modal-flavor" class="collection-modal-flavor"></p>
+
+          <a id="modal-download" class="collection-download" href="" download>
+            <span aria-hidden="true">⇩</span>
+            <span>Télécharger le SVG</span>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./cartes.js?v=20260816-collection-1"></script>
   </body>
 </html>

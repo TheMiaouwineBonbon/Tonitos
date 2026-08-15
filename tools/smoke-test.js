@@ -44,6 +44,41 @@ async function main() {
   const html = await res.text();
   check("GET / -> 200", res.status === 200);
   check("index.html contient Spellaho", html.includes("Spellaho") && !html.includes(">Tonitos<"));
+  res = await fetch(`${base}/cartes.html`);
+  const collectionHtml = await res.text();
+  check("GET /cartes.html -> 200", res.status === 200);
+  res = await fetch(`${base}/cartes.js`);
+  const collectionSource = await res.text();
+  check("GET /cartes.js -> 200", res.status === 200);
+  res = await fetch(`${base}/cartes.css`);
+  const collectionStyles = await res.text();
+  check("GET /cartes.css -> 200", res.status === 200);
+  check(
+    "Collection PC avec recherche, catégories, couleurs et tri",
+    collectionHtml.includes('id="card-search"') &&
+      collectionHtml.includes('data-category="creature"') &&
+      collectionHtml.includes('data-family="Incolore"') &&
+      collectionHtml.includes('id="card-sort"')
+  );
+  check(
+    "Galerie SVG en grille premium sans anciens panneaux",
+    collectionStyles.includes("repeat(auto-fill, minmax(260px, 1fr))") &&
+      collectionStyles.includes("translateY(-6px) scale(1.02)") &&
+      !collectionHtml.includes("print-card")
+  );
+  check(
+    "Aperçu de carte accessible avec téléchargement et fermeture clavier",
+    collectionHtml.includes('id="collection-modal"') &&
+      collectionHtml.includes('id="modal-download"') &&
+      collectionSource.includes('event.key === "Escape"') &&
+      collectionSource.includes("trapModalFocus")
+  );
+  check(
+    "Filtres dynamiques et état sans résultat implémentés",
+    collectionSource.includes("filteredCards") &&
+      collectionSource.includes("resetFilters") &&
+      collectionHtml.includes('id="collection-empty"')
+  );
   check(
     "index.html référence les cinq zones des tapis",
     ["mat-side", "mat-zone--library", "mat-zone--graveyard", "mat-zone--field", "mat-zone--exile", "mat-zone--commander"]
@@ -662,6 +697,14 @@ async function main() {
     ].every(([id, family]) => lands.find((land) => land.id === id)?.family === family)
   );
   const allCards = [...cards, ...lands, ...spells];
+  const svgFileName = (name) => `${name}.svg`.replace(/[<>:"/\\|?*]/g, "-");
+  const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
+    .filter((file) => file.toLowerCase().endsWith(".svg"));
+  check(
+    "Les 115 cartes possèdent exactement un SVG généré",
+    generatedSvgFiles.length === allCards.length &&
+      allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
+  );
   check("Toutes les illustrations existent", allCards.every((card) => fs.existsSync(path.join(__dirname, "..", card.image))));
   check(
     "Toutes les vidéos de carte existent en MP4",
