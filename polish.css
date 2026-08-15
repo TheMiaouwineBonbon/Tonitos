@@ -147,7 +147,9 @@
   :root {
     --phone-board-card-width: clamp(50px, 7.2dvw, 68px);
     --phone-board-card-height: clamp(60px, 8.2dvw, 82px);
-    --phone-land-row-height: clamp(17px, 4.8dvh, 22px);
+    /* Légèrement affinée pour rester entre le terrain et la main agrandie :
+       à 360px de haut, l'ancienne valeur passait 5,7px sous les cartes. */
+    --phone-land-row-height: clamp(15px, 4.4dvh, 21px);
     /* Suit l'agrandissement de 7 % des cartes : à 78px de plancher, une
        carte de 62px (donc 81,9px de haut) dépassait sa rangée de 2,2px. */
     --phone-hand-row-height: clamp(84px, 22.5dvh, 100px);
@@ -171,7 +173,9 @@
     --lane-hero-left: 2.8%;
     --lane-hero-width: 13%;
     --lane-land-left: 17%;
-    --lane-land-width: 22%;
+    /* 28 % : la barre de terrains doit se lire comme un vrai emplacement.
+       Elle reste au-dessus de la main (1,1px) et sous le terrain central. */
+    --lane-land-width: 28%;
     --lane-field-left: 18%;
     --lane-field-width: 64%;
     --lane-pile-right: 2.2%;
@@ -180,7 +184,7 @@
     /* Rangées : distance à la ligne centrale, en % de la hauteur du tapis. */
     --row-field-gap: 7.5%;
     --row-field-height: 36%;
-    --row-land-gap: 45%;
+    --row-land-gap: 43.5%;
     --row-hero-gap: 35%;
     --row-hero-height: 59%;
     --row-grave-gap: 4%;
@@ -627,9 +631,12 @@
     display: none;
   }
 
+  /* Crâne et compteur : 4,6px les séparaient, ils se touchaient presque.
+     Répartition calculée sur la largeur de zone — marges égales d'environ
+     9,6px et un écart de 15px, sans coller le chiffre au bord droit. */
   body.game-running[data-mobile-view="board"] .mat-zone--graveyard .zone-sign {
     top: 12%;
-    left: 32%;
+    left: 24.5%;
     display: grid;
     width: clamp(18px, 2.6dvw, 24px);
     height: clamp(18px, 2.6dvw, 24px);
@@ -685,7 +692,7 @@
   body.game-running[data-mobile-view="board"] .mat-zone--graveyard .mat-zone-count {
     top: 12%;
     bottom: auto;
-    left: 68%;
+    left: 72%;
     width: 28px;
     min-width: 28px;
   }
@@ -723,6 +730,61 @@
     aspect-ratio: 1;
     border-radius: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  /* ---------------------------------------------------------------
+     MÉDAILLON DE HÉROS
+     Anneau construit en couches concentriques plutôt qu'une bordure
+     épaisse unique : liseré sombre extérieur, jonc doré, cerne interne
+     et ombre portée. Le relief vient de l'empilement, pas de l'épaisseur.
+     Aucune animation permanente : tout est statique.
+     --------------------------------------------------------------- */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait {
+    border: 0;
+    box-shadow:
+      /* cerne intérieur, sépare le portrait de son cadre */
+      inset 0 0 0 1px rgba(12, 7, 20, 0.92),
+      inset 0 3px 8px rgba(0, 0, 0, 0.55),
+      inset 0 -2px 6px rgba(255, 226, 160, 0.12),
+      /* jonc doré */
+      0 0 0 2px rgba(18, 11, 26, 0.96),
+      0 0 0 4px rgba(226, 184, 94, 0.92),
+      0 0 0 5.5px rgba(120, 84, 32, 0.85),
+      /* halo mystique et ancrage au tapis */
+      0 0 12px rgba(150, 96, 226, 0.28),
+      0 4px 10px rgba(0, 0, 0, 0.68);
+  }
+
+  /* Ornement supérieur : petite gemme sertie dans le jonc, alignée sur
+     l'axe du médaillon plutôt que posée par-dessus. */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -7px;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 35%, #fff3cf 0 18%, #e2b85e 42%, #7a5220 78%, #2a1808 100%);
+    box-shadow:
+      0 0 0 1.5px rgba(18, 11, 26, 0.95),
+      0 0 7px rgba(226, 184, 94, 0.55);
+    translate: -50% 0;
+  }
+
+  /* Tour actif : le halo se renforce, sans clignotement. */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander.is-active-turn .commander-portrait {
+    box-shadow:
+      inset 0 0 0 1px rgba(12, 7, 20, 0.92),
+      inset 0 3px 8px rgba(0, 0, 0, 0.5),
+      inset 0 -2px 7px rgba(255, 232, 176, 0.2),
+      0 0 0 2px rgba(18, 11, 26, 0.96),
+      0 0 0 4px rgba(246, 214, 130, 0.98),
+      0 0 0 5.5px rgba(150, 108, 44, 0.9),
+      0 0 18px rgba(178, 126, 255, 0.5),
+      0 4px 12px rgba(0, 0, 0, 0.7);
   }
 
   /* L'illustration remplit le médaillon sans déformation ni décentrage,

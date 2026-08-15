@@ -227,14 +227,14 @@
 <!-- ================= TERRAINS (alignés sur .land-row) ================= -->
 <g id="terrains">
   <g>
-    <rect x="274" y="93" width="182" height="36" rx="8" fill="url(#creuxFoe)"/>
-    <rect x="274" y="93" width="182" height="36" rx="8" fill="none" stroke="#0a0510" stroke-width="3"/>
-    <rect x="276" y="95" width="178" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
+    <rect x="274" y="93" width="448" height="36" rx="8" fill="url(#creuxFoe)"/>
+    <rect x="274" y="93" width="448" height="36" rx="8" fill="none" stroke="#0a0510" stroke-width="3"/>
+    <rect x="276" y="95" width="444" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
   </g>
   <g>
-    <rect x="274" y="611" width="182" height="36" rx="8" fill="url(#creuxAlly)"/>
-    <rect x="274" y="611" width="182" height="36" rx="8" fill="none" stroke="#050a12" stroke-width="3"/>
-    <rect x="276" y="613" width="178" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
+    <rect x="274" y="611" width="448" height="36" rx="8" fill="url(#creuxAlly)"/>
+    <rect x="274" y="611" width="448" height="36" rx="8" fill="none" stroke="#050a12" stroke-width="3"/>
+    <rect x="276" y="613" width="444" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
   </g>
 </g>
 

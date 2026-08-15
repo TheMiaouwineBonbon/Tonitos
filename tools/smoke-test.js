@@ -67,9 +67,11 @@ async function main() {
       !collectionHtml.includes("print-card")
   );
   check(
-    "Aperçu de carte accessible avec téléchargement et fermeture clavier",
+    "Aperçu de carte accessible avec visuel fiable, téléchargement et fermeture clavier",
     collectionHtml.includes('id="collection-modal"') &&
+      collectionHtml.includes('id="modal-card-image"') &&
       collectionHtml.includes('id="modal-download"') &&
+      collectionSource.includes("modalImage.src = url") &&
       collectionSource.includes('event.key === "Escape"') &&
       collectionSource.includes("trapModalFocus")
   );
@@ -269,7 +271,7 @@ async function main() {
       mobilePlaymatSource.includes('id="ligne-centrale"') &&
       mobilePlaymatSource.includes('id="sceau"') &&
       !mobilePlaymatSource.includes('id="end-turn-well"') &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-mirror-3"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-finition-1"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
