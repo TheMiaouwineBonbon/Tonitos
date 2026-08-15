@@ -34,8 +34,10 @@ const elements = {
   retryLoad: document.querySelector("#retry-load"),
   categoryButtons: [...document.querySelectorAll("[data-category]")],
   familyButtons: [...document.querySelectorAll("[data-family]")],
+  pageRegions: [document.querySelector(".collection-header"), document.querySelector(".collection-main")],
   modal: document.querySelector("#collection-modal"),
   modalPanel: document.querySelector(".collection-modal-panel"),
+  modalVisual: document.querySelector(".collection-modal-visual"),
   modalClose: document.querySelector("#modal-close"),
   modalImage: document.querySelector("#modal-card-image"),
   modalEyebrow: document.querySelector("#modal-eyebrow"),
@@ -54,8 +56,7 @@ const svgObserver = "IntersectionObserver" in window
     for (const entry of entries) {
       if (!entry.isIntersecting) continue;
       const object = entry.target;
-      object.data = object.dataset.src;
-      delete object.dataset.src;
+      loadCardSvg(object);
       svgObserver.unobserve(object);
     }
   }, { rootMargin: "600px 0px" })
@@ -145,10 +146,34 @@ function cardCostLabel(card) {
   return card.category === "land" ? "M" : String(card.cost ?? 0);
 }
 
+function finishCardLoading(object, broken = false) {
+  const article = object.closest(".collection-card");
+  if (!article) return;
+  article.classList.remove("is-loading");
+  article.classList.toggle("is-broken", broken);
+  article.removeAttribute("aria-busy");
+}
+
+async function loadCardSvg(object) {
+  const url = object.dataset.src;
+  if (!url) return;
+  delete object.dataset.src;
+  try {
+    const response = await fetch(url, { cache: "force-cache" });
+    if (!response.ok) throw new Error(`SVG indisponible (${response.status})`);
+    if (!object.isConnected) return;
+    object.data = url;
+  } catch (error) {
+    console.warn("Impossible de charger une carte SVG", url, error);
+    finishCardLoading(object, true);
+  }
+}
+
 function createCardTile(card, index) {
   const article = document.createElement("article");
-  article.className = "collection-card";
+  article.className = "collection-card is-loading";
   article.dataset.cardId = card.id;
+  article.setAttribute("aria-busy", "true");
   article.style.setProperty("--card-accent", safeAccent(card.palette?.secondary));
   article.style.animationDelay = `${Math.min(index, 10) * 12}ms`;
 
@@ -156,13 +181,17 @@ function createCardTile(card, index) {
   art.className = "collection-card-art";
   const svg = document.createElement("object");
   svg.type = "image/svg+xml";
+  svg.tabIndex = -1;
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", `Carte ${card.name}`);
+  svg.addEventListener("load", () => finishCardLoading(svg));
+  svg.addEventListener("error", () => finishCardLoading(svg, true));
   if (svgObserver) {
     svg.dataset.src = svgUrl(card);
     svgObserver.observe(svg);
   } else {
-    svg.data = svgUrl(card);
+    svg.dataset.src = svgUrl(card);
+    loadCardSvg(svg);
   }
   art.append(svg);
 
@@ -214,7 +243,8 @@ function renderCollection() {
 
   const visible = visibleCards.length;
   const total = state.cards.length;
-  elements.resultsCount.textContent = `${visible} carte${visible > 1 ? "s" : ""} affichée${visible > 1 ? "s" : ""} sur ${total}`;
+  const plural = visible !== 1;
+  elements.resultsCount.textContent = `${visible} carte${plural ? "s" : ""} affichée${plural ? "s" : ""} sur ${total}`;
   elements.activeFilters.textContent = activeFilterText();
   elements.empty.hidden = visible !== 0;
   elements.grid.hidden = visible === 0;
@@ -248,8 +278,36 @@ function addModalFact(label, value) {
 function populateModal(card) {
   const url = svgUrl(card);
   elements.modalPanel.style.setProperty("--modal-accent", safeAccent(card.palette?.secondary));
-  elements.modalImage.data = url;
-  elements.modalImage.setAttribute("aria-label", `Carte ${card.name}`);
+  elements.modalVisual.classList.add("is-loading");
+  elements.modalVisual.classList.remove("is-broken");
+  const image = document.createElement("object");
+  image.id = "modal-card-image";
+  image.type = "image/svg+xml";
+  image.tabIndex = -1;
+  image.setAttribute("role", "img");
+  image.setAttribute("aria-label", `Carte ${card.name}`);
+  image.addEventListener("load", () => {
+    if (elements.modalImage !== image) return;
+    elements.modalVisual.classList.remove("is-loading", "is-broken");
+    image.classList.add("is-loaded");
+  });
+  image.addEventListener("error", () => {
+    if (elements.modalImage !== image) return;
+    elements.modalVisual.classList.remove("is-loading");
+    elements.modalVisual.classList.add("is-broken");
+    image.classList.add("is-broken");
+  });
+  elements.modalImage.replaceWith(image);
+  elements.modalImage = image;
+  fetch(url, { cache: "force-cache" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`SVG indisponible (${response.status})`);
+      if (elements.modalImage === image) image.data = url;
+    })
+    .catch((error) => {
+      console.warn("Impossible de charger l'aperçu SVG", url, error);
+      image.dispatchEvent(new Event("error"));
+    });
   elements.modalEyebrow.textContent = `${categorySingular(card.category)} · ${card.family}`;
   elements.modalTitle.textContent = card.name;
   elements.modalSubtitle.textContent = card.subtitle || "";
@@ -281,6 +339,10 @@ function openModal(card, trigger) {
   populateModal(card);
   elements.modal.hidden = false;
   elements.modal.setAttribute("aria-hidden", "false");
+  for (const region of elements.pageRegions) {
+    region.setAttribute("inert", "");
+    region.setAttribute("aria-hidden", "true");
+  }
   document.body.classList.add("collection-modal-open");
   requestAnimationFrame(() => {
     elements.modal.classList.add("is-open");
@@ -296,6 +358,13 @@ function closeModal() {
   window.setTimeout(() => {
     elements.modal.hidden = true;
     elements.modalImage.removeAttribute("data");
+    elements.modalImage.setAttribute("aria-label", "");
+    elements.modalImage.classList.remove("is-loaded", "is-broken");
+    elements.modalVisual.classList.remove("is-loading", "is-broken");
+    for (const region of elements.pageRegions) {
+      region.removeAttribute("inert");
+      region.removeAttribute("aria-hidden");
+    }
     state.previousFocus?.focus?.();
     state.activeCard = null;
   }, 190);

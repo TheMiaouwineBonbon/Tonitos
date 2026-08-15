@@ -67,11 +67,14 @@ async function main() {
       !collectionHtml.includes("print-card")
   );
   check(
-    "Aperçu de carte accessible avec visuel fiable, téléchargement et fermeture clavier",
+    "Aperçu de carte fiable, isolé et protégé contre les SVG manquants",
     collectionHtml.includes('id="collection-modal"') &&
       collectionHtml.includes('id="modal-card-image"') &&
       collectionHtml.includes('id="modal-download"') &&
-      collectionSource.includes("modalImage.src = url") &&
+      collectionSource.includes('document.createElement("object")') &&
+      collectionSource.includes("image.data = url") &&
+      collectionSource.includes("loadCardSvg") &&
+      collectionSource.includes('setAttribute("inert", "")') &&
       collectionSource.includes('event.key === "Escape"') &&
       collectionSource.includes("trapModalFocus")
   );

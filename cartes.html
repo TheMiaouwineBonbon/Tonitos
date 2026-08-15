@@ -4,10 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#080912" />
+    <meta name="spellaho-build" content="20260816-collection-debug-6" />
     <meta name="description" content="Collection complète des créatures, sorts et terrains de Spellaho." />
     <title>Collection de cartes - Spellaho</title>
     <link rel="icon" type="image/png" href="./Images/Logo%20Jeu/Spellaho.png" />
-    <link rel="stylesheet" href="./cartes.css?v=20260816-collection-1" />
+    <link rel="stylesheet" href="./cartes.css?v=20260816-collection-debug-6" />
   </head>
   <body class="collection-page">
     <header class="collection-header">
@@ -124,8 +125,8 @@
       <section class="collection-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <button id="modal-close" class="collection-modal-close" type="button" aria-label="Fermer">×</button>
 
-        <div class="collection-modal-visual">
-          <object id="modal-card-image" type="image/svg+xml" role="img" aria-label=""></object>
+        <div class="collection-modal-visual is-loading" aria-live="polite">
+          <object id="modal-card-image" type="image/svg+xml" role="img" aria-label="" tabindex="-1"></object>
         </div>
 
         <div class="collection-modal-details">
@@ -150,6 +151,6 @@
       </section>
     </div>
 
-    <script type="module" src="./cartes.js?v=20260816-collection-1"></script>
+    <script type="module" src="./cartes.js?v=20260816-collection-debug-6"></script>
   </body>
 </html>
