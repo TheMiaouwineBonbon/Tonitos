@@ -658,5 +658,62 @@
       "fit": "cover",
       "position": "53% 48%"
     }
+  },
+  {
+    "id": "generateur-antique",
+    "kind": "spell",
+    "name": "Générateur antique",
+    "subtitle": "Cœur de la cité oubliée",
+    "family": "Incolore",
+    "type": "Artefact - Générateur de robots",
+    "cost": 4,
+    "slot": "upgrade",
+    "keywords": [
+      "Artefact",
+      "Robot antique",
+      "Invocation"
+    ],
+    "abilityName": "Chaîne d'assemblage",
+    "abilityText": "Crée jusqu'à deux Drones antiques 1/1.",
+    "flavor": "Son cœur continue de battre pour une armée dont les maîtres ont disparu.",
+    "image": "Images/Artefact Générateur antique.jpg",
+    "palette": {
+      "primary": "#4f6672",
+      "secondary": "#54cfff",
+      "deep": "#07131b"
+    },
+    "effect": "createAncientDrones",
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "conseil-des-sages",
+    "kind": "spell",
+    "name": "Conseil des sages",
+    "subtitle": "Délibération au-dessus des nuages",
+    "family": "Bleu",
+    "type": "Rituel - Pioche",
+    "cost": 5,
+    "slot": "draw",
+    "keywords": [
+      "Savoir",
+      "Conseil"
+    ],
+    "abilityName": "Trois voix, une vérité",
+    "abilityText": "Pioche trois cartes.",
+    "flavor": "Les royaumes attendaient une prophétie. Les sages demandèrent simplement davantage de thé.",
+    "image": "Images/Sort - Conseil des sages.jpg",
+    "palette": {
+      "primary": "#526caa",
+      "secondary": "#d8d6ff",
+      "deep": "#11152a"
+    },
+    "effect": "drawThree",
+    "art": {
+      "fit": "cover",
+      "position": "50% 47%"
+    }
   }
 ]

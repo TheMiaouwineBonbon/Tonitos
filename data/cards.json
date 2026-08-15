@@ -1663,5 +1663,142 @@
       "fit": "cover",
       "position": "62% 45%"
     }
+  },
+  {
+    "id": "robot-antique-petit-compagnon",
+    "name": "Robot antique petit compagnon",
+    "subtitle": "Porte-lame au cœur neuf",
+    "family": "Blanc",
+    "type": "Créature - Robot antique Compagnon",
+    "cost": 1,
+    "attack": 1,
+    "life": 2,
+    "keywords": [
+      "Robot antique",
+      "Vigilance"
+    ],
+    "abilityName": "Courage en miniature",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, si tu contrôles un autre Robot antique, celui-ci gagne +0/+1 et tu gagnes 1 point de vie.",
+    "flavor": "Il est trop petit pour la lame qu'il porte, jamais pour la mission qu'on lui confie.",
+    "image": "Images/Robot antique petit compagnon.jpg",
+    "palette": {
+      "primary": "#c9b57b",
+      "secondary": "#77cfff",
+      "deep": "#151a18"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "42% 50%"
+    }
+  },
+  {
+    "id": "robot-antique-argonien",
+    "name": "Robot antique argonien",
+    "subtitle": "Veilleur des rivages anciens",
+    "family": "Bleu",
+    "type": "Créature - Robot antique Argonien",
+    "cost": 3,
+    "attack": 2,
+    "life": 4,
+    "keywords": [
+      "Robot antique",
+      "Gel"
+    ],
+    "abilityName": "Calcul des marées",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, si tu contrôles un autre Robot antique, engage la créature adverse la plus puissante.",
+    "flavor": "Il contemple chaque coucher de soleil comme s'il attendait le retour d'un monde englouti.",
+    "image": "Images/Robot antique argonien.jpg",
+    "palette": {
+      "primary": "#356b9d",
+      "secondary": "#79d3ff",
+      "deep": "#081827"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "32% 48%"
+    }
+  },
+  {
+    "id": "robot-antique-khajiit",
+    "name": "Robot antique khajiit",
+    "subtitle": "Barde des mécanismes perdus",
+    "family": "Vert",
+    "type": "Créature - Robot antique Khajiit",
+    "cost": 3,
+    "attack": 3,
+    "life": 3,
+    "keywords": [
+      "Robot antique",
+      "Soutien"
+    ],
+    "abilityName": "Chant des engrenages",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, tes autres Robots antiques gagnent +0/+1.",
+    "flavor": "Sa musique réveille des souvenirs dans les machines qui n'ont jamais eu d'âme.",
+    "image": "Images/Robot antique khajiit.jpg",
+    "palette": {
+      "primary": "#4c784c",
+      "secondary": "#77cfe4",
+      "deep": "#0c1810"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "35% 48%"
+    }
+  },
+  {
+    "id": "mage-supreme-claudia",
+    "name": "Mage suprême Claudia",
+    "subtitle": "Gardienne des archives célestes",
+    "family": "Bleu",
+    "type": "Créature légendaire - Mage suprême",
+    "cost": 5,
+    "attack": 3,
+    "life": 6,
+    "keywords": [
+      "Mage",
+      "Savoir"
+    ],
+    "abilityName": "Clarté absolue",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, pioche deux cartes.",
+    "flavor": "Sous son masque d'or, chaque question trouve une réponse et chaque réponse un nouveau prix.",
+    "image": "Images/Mage suprême Claudia.jpg",
+    "palette": {
+      "primary": "#345f94",
+      "secondary": "#d8b865",
+      "deep": "#091426"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "38% 47%"
+    }
+  },
+  {
+    "id": "mage-supreme-dominica",
+    "name": "Mage suprême Dominica",
+    "subtitle": "Méditante du voile pourpre",
+    "family": "Noir",
+    "type": "Créature légendaire - Mage suprême",
+    "cost": 5,
+    "attack": 4,
+    "life": 5,
+    "keywords": [
+      "Mage",
+      "Lien de vie"
+    ],
+    "abilityName": "Méditation du Néant",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, draine 2 points de vie au héros adverse.",
+    "flavor": "Elle trouva dans le silence entre deux pensées une magie que les vivants n'auraient jamais dû entendre.",
+    "image": "Images/Mage suprême Dominica.jpg",
+    "palette": {
+      "primary": "#6f3b83",
+      "secondary": "#dd7be7",
+      "deep": "#13091a"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
   }
 ]

@@ -177,16 +177,16 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 16                | 4             | 5                | Base atteinte                    |
-| Bleu    | 9                 | 6             | 5                | Base atteinte                    |
-| Noir    | 11                | 5             | 6                | Base atteinte                    |
+| Blanc   | 17                | 4             | 5                | Base atteinte                    |
+| Bleu    | 11                | 7             | 5                | Base atteinte                    |
+| Noir    | 12                | 5             | 6                | Base atteinte                    |
 | Rouge   | 9                 | 5             | 5                | Base atteinte                    |
-| Vert    | 16                | 4             | 8                | Base atteinte                    |
+| Vert    | 17                | 4             | 8                | Base atteinte                    |
 
-Sorts incolores polyvalents (jouables dans tous les decks) : **1** (Pierre de Norne).
+Sorts incolores polyvalents (jouables dans tous les decks) : **2** (Pierre de Norne et Générateur antique).
 
 Les cinq bases mono-couleur atteignent désormais les quotas : **aucune carte ne
-manque** pour cette base de construction. Les 25 sorts disposent tous de leur propre
+manque** pour cette base de construction. Les 27 sorts disposent tous de leur propre
 illustration.
 
 Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :
