@@ -138,6 +138,11 @@
        par construction et ne peut plus diverger au fil des retouches.
        --------------------------------------------------------------- */
 
+    /* Marges sûres iOS, identiques des deux côtés : le centre du plateau
+       reste donc le centre de l'écran, et la symétrie ne dépend pas du
+       sens de rotation du téléphone. */
+    --safe-x: max(env(safe-area-inset-left), env(safe-area-inset-right));
+
     /* Colonnes : mêmes coordonnées gauche/droite pour les deux camps. */
     --lane-hero-left: 2.8%;
     --lane-hero-width: 13%;
@@ -338,10 +343,20 @@
   }
 
   body.game-running[data-mobile-view="board"] .board-stage {
+    /* Zones de sécurité iOS. En paysage, l'encoche n'est que d'un côté :
+       on applique la MÊME marge à gauche et à droite (et en haut/bas) pour
+       que la grille interne reste symétrique quel que soit le sens de
+       rotation. Le tapis, lui, continue de couvrir tout l'écran puisque le
+       fond est peint sur la border-box. */
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     aspect-ratio: auto;
     margin: 0;
+    /* Marge horizontale seule : en paysage c'est l'encoche latérale qui
+       masque la colonne des héros. Le bas est déjà géré par .app-shell, et
+       un padding vertical décalerait la ligne centrale. */
+    padding-inline: var(--safe-x);
     grid-template-rows: 1fr 1fr;
     background:
       var(--playmat-mobile) center / 100% 100% no-repeat,
@@ -836,9 +851,17 @@
   body.game-running[data-mobile-view="board"] .hand-wrap {
     position: absolute;
     z-index: 70;
+    /* La main est un frère de .board-stage : elle ne bénéficie donc pas de
+       son padding de sécurité. On reproduit ici le même calcul pour qu'elle
+       reste calée sur la colonne centrale du plateau, encoche comprise.
+       left + right avec width:auto centre sans recourir à transform, que
+       les animations de survol écrasent. */
+    /* Pas de env(safe-area-inset-bottom) ici : .app-shell l'applique déjà,
+       le compter deux fois remonterait la main d'autant. */
     bottom: 4px;
-    left: var(--lane-field-left);
-    width: var(--lane-field-width);
+    left: calc(var(--safe-x) + (100% - 2 * var(--safe-x)) * 0.18);
+    right: calc(var(--safe-x) + (100% - 2 * var(--safe-x)) * 0.18);
+    width: auto;
     height: var(--phone-hand-row-height);
     overflow: visible;
     border: 0;

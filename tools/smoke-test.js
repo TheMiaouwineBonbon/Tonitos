@@ -78,6 +78,9 @@ async function main() {
   res = await fetch(`${base}/game.js`);
   const gameSource = await res.text();
   check("GET /game.js -> 200", res.status === 200);
+  res = await fetch(`${base}/engine-core.mjs`);
+  const engineSource = await res.text();
+  check("GET /engine-core.mjs -> 200", res.status === 200);
   check(
     "Le lancement reste verrouillé jusqu'à la fin du chargement",
     html.includes('id="start-game"') &&
@@ -103,7 +106,10 @@ async function main() {
       gameSource.includes("onDragPointerCancel")
   );
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
-  check("Vigilance reste limitée à une attaque par tour", gameSource.includes("!unit.hasAttacked"));
+  check(
+    "Vigilance reste limitée à une attaque par tour",
+    gameSource.includes("canUnitAttack(unit, state.turn)") && engineSource.includes("!unit.hasAttacked")
+  );
   check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
   check(
     "La Fusion sacrifie réellement Noxis et Bhaal",
@@ -324,6 +330,16 @@ async function main() {
       polishStyles.includes("width: var(--lane-field-width);")
   );
   check(
+    "Zones de sécurité iOS symétriques sur le plateau",
+    // En paysage l'encoche n'est que d'un côté : on applique la même marge
+    // des deux côtés, sinon le plateau se décale et la symétrie casse.
+    polishStyles.includes("--safe-x: max(env(safe-area-inset-left), env(safe-area-inset-right));") &&
+      polishStyles.includes("padding-inline: var(--safe-x);") &&
+      // La main est hors de .board-stage : elle doit refaire le même calcul.
+      polishStyles.includes("left: calc(var(--safe-x) + (100% - 2 * var(--safe-x)) * 0.18);") &&
+      polishStyles.includes("right: calc(var(--safe-x) + (100% - 2 * var(--safe-x)) * 0.18);")
+  );
+  check(
     "Bouton de tour compact avec états complets",
     gameSource.includes('classList.toggle("is-opponent-turn", waitingForOpponent)') &&
       polishStyles.includes("width: var(--centerband-button-width);") &&
@@ -370,6 +386,30 @@ async function main() {
     attackSource.length > 0 &&
       !/!state\.selectedAttackerId\) return;/.test(attackSource) &&
       (attackSource.match(/resetAttackState\(\)/g) || []).length >= 5
+  );
+  check(
+    "Les actions de carte sont refusées par le moteur hors tour",
+    (gameSource.match(/if \(isAnimating \|\| !canActInMain\(side\)\) return false;/g) || []).length >= 3
+  );
+  check(
+    "Une pioche fatale arrête immédiatement le tour de l'IA",
+    gameSource.includes("!beginTurn(state.enemy) || state.phase === PHASES.OVER")
+  );
+  check(
+    "Les minuteurs de jeu sont liés à la partie active",
+    gameSource.includes("pendingGameTimers") && gameSource.includes("state.matchId !== matchId")
+  );
+  check(
+    "Le menu de nouvelle partie suspend le moteur",
+    gameSource.includes("gameplayPaused = true") && gameSource.includes("clearGameTimers();")
+  );
+  check(
+    "La fin de tour est publiée au second joueur",
+    /function endCurrentTurn\(\) \{[\s\S]{0,240}markOnlineDirty\(\)/.test(gameSource)
+  );
+  check(
+    "Un soin ne ressuscite pas un héros mort de fatigue",
+    (gameSource.match(/draw\(side, [12]\);\s+if \(state.phase === PHASES.OVER\) return;/g) || []).length >= 3
   );
 
   // --- Moteur sonore ---
@@ -434,8 +474,7 @@ async function main() {
       connor.life === 2 &&
       connor.video === "Images/Vidéos/roi-sorcier-connor.mp4" &&
       gameSource.includes('creature.id === "roi-sorcier-connor"') &&
-      gameSource.includes("creature.maxLife += 1") &&
-      gameSource.includes("creature.currentLife += 1")
+      gameSource.includes("buffUnits([creature], 1, 1)")
   );
   check(
     "Les vidéos de carte se lancent sans commandes visibles",
@@ -480,7 +519,8 @@ async function main() {
     parasite?.abilityName === "Vengeance de Rena" &&
       parasite?.keywords?.includes("Parasite") &&
       gameSource.includes("triggerParasiteVengeance") &&
-      gameSource.includes('attacker.currentLife -= 2')
+      gameSource.includes("parasiteVengeanceDamage") &&
+      engineSource.includes('unit?.id === "parasite"')
   );
   check(
     "La ruche crée et renforce ses larves",
@@ -600,13 +640,20 @@ async function main() {
   const st = await res.json();
   check("Les deux joueurs sont dans le salon", Boolean(st.room.players.player && st.room.players.enemy));
 
-  res = await fetch(`${base}/api/room/state`, json({ code: "1234", playerId: p1.playerId, state: { started: true, turn: 1, marker: "sync-ok" } }));
+  res = await fetch(`${base}/api/room/state`, json({ code: "1234", playerId: p1.playerId, version: 0, state: { started: true, turn: 1, marker: "sync-ok" } }));
   const pub = await res.json();
   check("Publication de l'état -> version 1", res.status === 200 && pub.version === 1);
 
   res = await fetch(`${base}/api/room/state?code=1234&playerId=${encodeURIComponent(p2.playerId)}`);
   const st2 = await res.json();
   check("Le joueur 2 reçoit l'état synchronisé", st2.room.state?.marker === "sync-ok" && st2.room.version === 1);
+
+  res = await fetch(`${base}/api/room/state`, json({ code: "1234", playerId: p2.playerId, version: 0, state: { marker: "obsolete" } }));
+  const stale = await res.json();
+  check(
+    "Un état réseau obsolète ne peut pas écraser la partie",
+    res.status === 409 && stale.room?.state?.marker === "sync-ok" && stale.room?.version === 1
+  );
 
   res = await fetch(`${base}/api/room/join`, json({ code: "0000" }));
   check("Code invalide -> 403", res.status === 403);
