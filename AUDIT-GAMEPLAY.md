@@ -176,7 +176,7 @@ Les nettoyages de zone et le Gel permettent des retours, mais un joueur avec plu
 
 ### Terrains et héros
 
-Les 28 terrains offrent cinq comportements mécaniques seulement : chacun produit un mana de sa couleur. Choisir une illustration plutôt qu'une autre ne change aucune décision. Ils sont une contrainte de tirage, pas encore une signature stratégique.
+Les 29 terrains offrent cinq comportements mécaniques seulement : chacun produit un mana de sa couleur. Choisir une illustration plutôt qu'une autre ne change aucune décision. Ils sont une contrainte de tirage, pas encore une signature stratégique.
 
 Le héros est aujourd'hui un portrait, un nom et une réserve de PV. Il ne définit pas les règles du deck, n'a ni capacité active ni passive et n'est pas une condition alternative de victoire.
 
@@ -229,7 +229,7 @@ Spellaho est actuellement plus proche de Hearthstone dans le combat et plus proc
 
 ### G3. Un terrain signature par deck
 
-**Problème résolu :** 28 terrains visuels mais seulement cinq décisions mécaniques.
+**Problème résolu :** 29 terrains visuels mais seulement cinq décisions mécaniques.
 **Fonctionnement :** garder les terrains de base simples et autoriser un seul terrain signature en 1 ou 2 exemplaires : soin léger, compteur d'évolution, création différée, ou bonus conditionnel.  
 **Pourquoi :** valorise les tapis, les mondes et les archétypes sans transformer chaque terrain en texte à mémoriser.  
 **Impact stratégique :** choix du moment de pose et identité du deck.  

@@ -177,7 +177,7 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 16                | 4             | 4                | Base atteinte                    |
+| Blanc   | 16                | 4             | 5                | Base atteinte                    |
 | Bleu    | 9                 | 6             | 5                | Base atteinte                    |
 | Noir    | 11                | 5             | 6                | Base atteinte                    |
 | Rouge   | 9                 | 5             | 5                | Base atteinte                    |

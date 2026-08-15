@@ -647,8 +647,8 @@
   {
     "id": "temple-antique-mers",
     "kind": "land",
-    "name": "Temple antique des mers",
-    "subtitle": "Île de la porte boréale",
+    "name": "Temple antique caché d'UMI",
+    "subtitle": "Île du sanctuaire englouti",
     "family": "Bleu",
     "type": "Terrain - Île antique",
     "cost": 0,
@@ -658,14 +658,42 @@
       "Mana bleu",
       "Antique"
     ],
-    "abilityName": "Flux cryogénique",
+    "abilityName": "Courant du sanctuaire",
     "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
-    "flavor": "La mer gelée garde une porte qu'aucun royaume ne se souvient avoir bâtie.",
-    "image": "Images/Terrain bleu - temple antique des mers.jpg",
+    "flavor": "Sous les eaux d'UMI, Daemon découvre une porte que le monde avait choisi d'oublier.",
+    "image": "Images/Terrain bleu - temple antique caché d'UMI.jpg",
     "palette": {
-      "primary": "#397fae",
-      "secondary": "#a9ddff",
-      "deep": "#091b2b"
+      "primary": "#235f8d",
+      "secondary": "#e18a44",
+      "deep": "#071521"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "55% 48%"
+    }
+  },
+  {
+    "id": "temple-antique-aube-polaire",
+    "kind": "land",
+    "name": "Temple antique de l'Aube polaire",
+    "subtitle": "Plaine du sanctuaire boréal",
+    "family": "Blanc",
+    "type": "Terrain - Plaine antique",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana blanc",
+      "Antique"
+    ],
+    "abilityName": "Lueur boréale",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "À l'aube, même les pierres gelées se souviennent de la lumière.",
+    "image": "Images/Terrain blanc - temple antique de l'Aube polaire.jpg",
+    "palette": {
+      "primary": "#c7b882",
+      "secondary": "#d8efff",
+      "deep": "#171a22"
     },
     "art": {
       "fit": "cover",

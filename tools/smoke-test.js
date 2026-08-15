@@ -647,17 +647,18 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
-  check("lands.json = 28 terrains", lands.length === 28);
+  check("lands.json = 29 terrains", lands.length === 29);
   check(
     "Entrée et Nid de la ruche = terrains verts",
     ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
   );
   check(
-    "Les trois temples antiques respectent leur couleur",
+    "Les quatre temples antiques respectent leur couleur",
     [
       ["temple-antique-desert", "Rouge"],
       ["temple-antique-naturel", "Vert"],
-      ["temple-antique-mers", "Bleu"]
+      ["temple-antique-mers", "Bleu"],
+      ["temple-antique-aube-polaire", "Blanc"]
     ].every(([id, family]) => lands.find((land) => land.id === id)?.family === family)
   );
   const allCards = [...cards, ...lands, ...spells];
