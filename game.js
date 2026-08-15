@@ -226,7 +226,7 @@ const PEERJS_MODULE_URL = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/+esm";
 const PLAYMATS = {
   player: "Images/Tapis de Jeu/Tapis de jeu Joueur.png",
   enemy: "Images/Tapis de Jeu/Taps de jeu Adversaire.png",
-  mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260729-harmony-2"
+  mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-mirror-2"
 };
 const DEFAULT_PROFILES = {
   player: {

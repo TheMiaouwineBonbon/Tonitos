@@ -358,8 +358,13 @@
        un padding vertical décalerait la ligne centrale. */
     padding-inline: var(--safe-x);
     grid-template-rows: 1fr 1fr;
+    /* content-box : le tapis se replie AVEC le contenu. En padding-box il
+       restait plein écran pendant que les zones se décalaient de la largeur
+       de l'encoche, et les emplacements dessinés (portails, cadres de piles)
+       ne tombaient plus en face des éléments du DOM. */
+    background-origin: content-box;
     background:
-      var(--playmat-mobile) center / 100% 100% no-repeat,
+      var(--playmat-mobile) center / 100% 100% no-repeat content-box,
       #05040a;
     box-shadow: none;
   }

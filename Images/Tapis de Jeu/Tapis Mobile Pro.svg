@@ -205,13 +205,13 @@
      contrairement à sept cases dessinées. -->
 <g id="tablettes">
   <g>
-    <rect x="288" y="221" width="1024" height="131" rx="12" fill="url(#tableFoe)"/>
-    <rect x="288" y="221" width="1024" height="131" rx="12" fill="none" stroke="#0a0510" stroke-width="4"/>
-    <rect x="290.5" y="223.5" width="1019" height="126" rx="10" fill="none" stroke="url(#orFin)" stroke-width="2"/>
-    <path d="M345 225H1255" stroke="url(#lueur)" stroke-width="1.6"/>
-    <path d="M345 348H1255" stroke="url(#lueur)" stroke-width="1.2" stroke-opacity=".6"/>
-    <use href="#rivet" x="300" y="233"/><use href="#rivet" x="1300" y="233"/>
-    <use href="#rivet" x="300" y="340"/><use href="#rivet" x="1300" y="340"/>
+    <rect x="285" y="212" width="1024" height="131" rx="12" fill="url(#tableFoe)"/>
+    <rect x="285" y="212" width="1024" height="131" rx="12" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="287.5" y="214.5" width="1019" height="126" rx="10" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M342 216H1252" stroke="url(#lueur)" stroke-width="1.6"/>
+    <path d="M342 339H1252" stroke="url(#lueur)" stroke-width="1.2" stroke-opacity=".6"/>
+    <use href="#rivet" x="297" y="224"/><use href="#rivet" x="1297" y="224"/>
+    <use href="#rivet" x="297" y="331"/><use href="#rivet" x="1297" y="331"/>
   </g>
   <g>
     <rect x="285" y="397" width="1024" height="131" rx="12" fill="url(#tableAlly)"/>
@@ -227,9 +227,9 @@
 <!-- ================= TERRAINS (alignés sur .land-row) ================= -->
 <g id="terrains">
   <g>
-    <rect x="226" y="111" width="258" height="36" rx="8" fill="url(#creuxFoe)"/>
-    <rect x="226" y="111" width="258" height="36" rx="8" fill="none" stroke="#0a0510" stroke-width="3"/>
-    <rect x="228" y="113" width="254" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
+    <rect x="274" y="93" width="182" height="36" rx="8" fill="url(#creuxFoe)"/>
+    <rect x="274" y="93" width="182" height="36" rx="8" fill="none" stroke="#0a0510" stroke-width="3"/>
+    <rect x="276" y="95" width="178" height="32" rx="6" fill="none" stroke="url(#orFin)" stroke-width="1.6"/>
   </g>
   <g>
     <rect x="274" y="611" width="182" height="36" rx="8" fill="url(#creuxAlly)"/>
@@ -240,26 +240,30 @@
 
 <!-- ============== CIMETIÈRES ET BIBLIOTHÈQUES (piles de cartes) ============== -->
 <g id="piles">
-  <!-- Cimetière adverse : 48 ; 41 · 176 × 154 -->
+  <!-- Cimetière adverse : 1389 ; 253 · 160 × 102 -->
+  <!-- Miroir exact du cimetière joueur (740 - 385 - 102 = 253). Il était
+       dessiné à gauche (48 ; 41), héritage d'une disposition où les piles
+       adverses occupaient ce coin : le DOM les place désormais à droite
+       pour les deux camps, ce cadre restait donc vide. -->
   <g>
-    <rect x="48" y="41" width="176" height="154" rx="9" fill="url(#creuxFoe)"/>
-    <rect x="48" y="41" width="176" height="154" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
-    <rect x="50.5" y="43.5" width="171" height="149" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
-    <path d="M50 60 67 43M205 43l17 17M50 176l17 17m138 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+    <rect x="1405" y="253" width="160" height="102" rx="9" fill="url(#creuxFoe)"/>
+    <rect x="1405" y="253" width="160" height="102" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="1407.5" y="255.5" width="155" height="97" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1407 270 1424 253M1546 253l17 17M1407 338l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
   </g>
-  <!-- Bibliothèque adverse : 1405 ; 30 · 160 × 161 -->
+  <!-- Bibliothèque adverse : 1405 ; 39 · 160 × 190 (miroir de 511 ; 190) -->
   <g>
-    <rect x="1405" y="30" width="160" height="161" rx="9" fill="url(#creuxFoe)"/>
-    <rect x="1405" y="30" width="160" height="161" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
-    <rect x="1407.5" y="32.5" width="155" height="156" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
-    <path d="M1407 49 1424 32M1546 32l17 17M1407 172l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+    <rect x="1405" y="39" width="160" height="190" rx="9" fill="url(#creuxFoe)"/>
+    <rect x="1405" y="39" width="160" height="190" rx="9" fill="none" stroke="#0a0510" stroke-width="4"/>
+    <rect x="1407.5" y="41.5" width="155" height="185" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1407 58 1424 41M1546 41l17 17M1407 210l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
   </g>
   <!-- Cimetière joueur : 1389 ; 385 · 160 × 102 -->
   <g>
-    <rect x="1389" y="385" width="160" height="102" rx="9" fill="url(#creuxAlly)"/>
-    <rect x="1389" y="385" width="160" height="102" rx="9" fill="none" stroke="#050a12" stroke-width="4"/>
-    <rect x="1391.5" y="387.5" width="155" height="97" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
-    <path d="M1391 402 1408 385M1530 385l17 17M1391 470l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
+    <rect x="1405" y="385" width="160" height="102" rx="9" fill="url(#creuxAlly)"/>
+    <rect x="1405" y="385" width="160" height="102" rx="9" fill="none" stroke="#050a12" stroke-width="4"/>
+    <rect x="1407.5" y="387.5" width="155" height="97" rx="7" fill="none" stroke="url(#orFin)" stroke-width="2"/>
+    <path d="M1407 402 1424 385M1546 385l17 17M1407 470l17 17m121 0 17-17" fill="none" stroke="#e2b85e" stroke-opacity=".6" stroke-width="2"/>
   </g>
   <!-- Bibliothèque joueur : 1405 ; 511 · 160 × 190 -->
   <g>
@@ -271,18 +275,19 @@
 </g>
 
 <!-- ===================== PORTAILS DE COMMANDANT =====================
-     Centrés sur .commander-portrait : (800 ; 104) en haut, (149 ; 619) en bas.
+     Centrés sur .commander-portrait : (149 ; 121) en haut, (149 ; 619) en bas.
+     Même axe X pour les deux camps, et 121 = 740 - 619 : miroir exact.
      Cercles acceptés ici : ils encadrent un portrait rond, qui subit
      exactement la même déformation qu'eux. -->
 <g id="portails">
-  <g transform="translate(800 104)">
+  <g transform="translate(149 133)">
     <circle r="78" fill="#0b0510" stroke="#1a0d05" stroke-width="12"/>
     <circle r="70" fill="none" stroke="url(#or)" stroke-width="6"/>
     <circle r="62" fill="url(#portailFoe)"/>
     <circle r="62" fill="none" stroke="#a03fe0" stroke-width="2.5" opacity=".75"/>
     <circle r="43" fill="none" stroke="#e2a8ff" stroke-opacity=".28"/>
   </g>
-  <g transform="translate(149 619)">
+  <g transform="translate(149 607)">
     <circle r="78" fill="#04080f" stroke="#1a0d05" stroke-width="12"/>
     <circle r="70" fill="none" stroke="url(#or)" stroke-width="6"/>
     <circle r="62" fill="url(#portailAlly)"/>
@@ -317,10 +322,9 @@
   <path d="M500 740V618Q500 594 528 592H1136Q1164 594 1164 618V740" fill="none" stroke="#d8a84a" stroke-opacity=".3" stroke-width="2"/>
   <path d="M530 716Q832 652 1134 716" fill="none" stroke="url(#orFin)" stroke-width="2.6" stroke-opacity=".4"/>
 </g>
-<g id="socle-fin-tour">
-  <rect x="1127" y="374" width="168" height="42" rx="10" fill="#1b0f06" stroke="#1a0d05" stroke-width="6"/>
-  <rect x="1130" y="377" width="162" height="36" rx="8" fill="#151017" fill-opacity=".8" stroke="url(#or)" stroke-width="2.4"/>
-</g>
+<!-- Pas de socle dessiné sous « Fin du tour » : le bouton HTML porte déjà son
+     propre fond, et le socle (1127 ; 374) débordait sous lui de 25 unités,
+     d'où le rectangle sombre visible en dessous. -->
 
 <!-- ========================= CADRE EXTÉRIEUR =========================
      Maintenu sous 28 unités : la Bibliothèque adverse commence à y = 30. -->

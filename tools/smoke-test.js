@@ -234,11 +234,26 @@ async function main() {
       mobilePlaymatSource.includes('id="ligne-centrale"') &&
       mobilePlaymatSource.includes('id="sceau"') &&
       !mobilePlaymatSource.includes('id="end-turn-well"') &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260729-harmony-2"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-mirror-2"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
       polishStyles.includes("display: none;")
+  );
+  check(
+    "Tapis dessiné en miroir exact des deux camps",
+    // Les emplacements peints doivent tomber en face des éléments du DOM.
+    // Portails de commandant : même axe X, et 133 + 607 = 740 (miroir).
+    mobilePlaymatSource.includes("translate(149 133)") &&
+      mobilePlaymatSource.includes("translate(149 607)") &&
+      // Piles : même colonne à droite pour les deux camps.
+      (mobilePlaymatSource.match(/x="1405"/g) || []).length >= 4 &&
+      // Le cimetière adverse ne doit pas revenir dans le coin haut gauche.
+      !mobilePlaymatSource.includes('x="48" y="41"') &&
+      // Aucun socle peint sous le bouton : il déborderait sous lui.
+      !mobilePlaymatSource.includes('id="socle-fin-tour"') &&
+      // Le tapis se replie avec le contenu, sinon l'encoche les désaligne.
+      polishStyles.includes("background-origin: content-box;")
   );
   check(
     "Cartes mobiles déplaçables au doigt",
