@@ -188,6 +188,11 @@ export const SOUND_LIBRARY = {
   } },
   "ui.menuClose": { bus: "sfx", render: (c, d, t) =>
     tone(c, d, t, { freq: 587, type: "triangle", dur: 0.15, gain: 0.06, sweepTo: 294 }) },
+  // Refus : timbre mat et bas, sans agressivite.
+  "ui.reject": { bus: "sfx", render: (c, d, t) => {
+    noise(c, d, t, { dur: 0.1, gain: 0.09, filter: "lowpass", freq: 900, sweepTo: 260 });
+    return tone(c, d, t, { freq: 196, type: "square", dur: 0.13, gain: 0.07, sweepTo: 130 });
+  } },
   "reward.open": { bus: "sfx", render: (c, d, t) => {
     noise(c, d, t, { dur: 0.4, gain: 0.1, filter: "bandpass", freq: 900, sweepTo: 4200, q: 0.7 });
     return sequence(c, d, t, [

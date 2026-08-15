@@ -82,6 +82,28 @@
   }
 }
 
+/* Refus d'action : secousse brève et teinte d'erreur, 380ms au total.
+   Assez visible pour être compris, assez court pour ne pas gêner. */
+@keyframes polish-card-reject {
+  0%, 100% { translate: 0 0; }
+  15% { translate: -5px 0; }
+  35% { translate: 4px 0; }
+  55% { translate: -3px 0; }
+  75% { translate: 2px 0; }
+}
+
+.game-card.is-rejected {
+  animation: polish-card-reject 0.38s ease-out both;
+}
+
+.game-card.is-rejected .card-content {
+  outline-color: #ff6b5e;
+  box-shadow:
+    0 0 0 2px rgba(255, 88, 74, 0.42),
+    0 0 12px rgba(255, 78, 64, 0.5);
+  transition: box-shadow 0.18s ease-out;
+}
+
 @keyframes polish-orientation-runes {
   to {
     transform: rotate(360deg);
@@ -171,6 +193,34 @@
 
   body[data-mobile-view="board"] .library-card-back {
     filter: brightness(1.08) saturate(1.08);
+  }
+
+  /* ---------------------------------------------------------------
+     PROFONDEUR : fond → plateau → zones → cartes
+     Les zones de terrain et les héros n'avaient aucune ombre, d'où un
+     rendu plat où tout semblait peint sur le même calque. Ombres
+     internes pour creuser les zones, ombres portées pour faire flotter
+     ce qui est interactif. Tout reste discret et sans coût d'animation.
+     --------------------------------------------------------------- */
+  body.game-running[data-mobile-view="board"] .mat-zone--field .board-row {
+    border-radius: 10px;
+    box-shadow:
+      inset 0 2px 10px rgba(0, 0, 0, 0.5),
+      inset 0 -1px 0 rgba(255, 226, 160, 0.07);
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--commander {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.62));
+  }
+
+  body.game-running[data-mobile-view="board"] .mat-zone--library,
+  body.game-running[data-mobile-view="board"] .mat-zone--graveyard {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+  }
+
+  /* Les créatures posées doivent décoller du tapis. */
+  body.game-running[data-mobile-view="board"] .board-row .game-card {
+    filter: drop-shadow(0 4px 7px rgba(0, 0, 0, 0.72));
   }
 
   body[data-mobile-view="board"] .mat-zone-count {
@@ -309,7 +359,22 @@
     -webkit-line-clamp: 3;
   }
 
-  /* Coût et statistiques : lisibles d'un coup d'œil sur un petit écran. */
+  /* Coût et statistiques : lisibles d'un coup d'œil sur un petit écran.
+     Le coût tombait à 4,4px de police dans une pastille de 10px : le
+     chiffre le plus consulté de la carte était illisible en jeu. */
+  body[data-mobile-view="board"] .hand-row .cost-badge {
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  body[data-mobile-view="board"] .hand-row .stat-badge {
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+
   body[data-mobile-view="board"] .hand-row .cost-badge,
   body[data-mobile-view="board"] .hand-row .stat-badge {
     border-width: 2px;
@@ -814,6 +879,22 @@
 
   body.game-running[data-mobile-view="board"] .centerline .turn-pill.is-turn-change {
     animation: polish-mobile-turn-reveal 0.8s ease-out both;
+  }
+
+  /* Zone tactile confortable sans changer la taille visuelle : les deux
+     commandes ne font que 22px de haut, sous le seuil du pouce. Le
+     pseudo-élément élargit la cible à 44px sans déplacer le bouton ni
+     empiéter visuellement sur les terrains. */
+  body.game-running[data-mobile-view="board"] .centerline .primary-button::before,
+  body.game-running[data-mobile-view="board"] .centerline .danger-button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 44px;
+    translate: -50% -50%;
+    border-radius: inherit;
   }
 
   body.game-running[data-mobile-view="board"] .centerline .primary-button {

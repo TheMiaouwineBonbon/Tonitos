@@ -1629,7 +1629,7 @@ function playCreature(side, cardIndex) {
   }
 
   if (!canPay(side, card)) {
-    logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
+    rejectCardAction(card.uid, `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
     return false;
   }
@@ -1693,7 +1693,7 @@ function playSpell(side, cardIndex) {
   if (!card || !isSpell(card)) return false;
 
   if (!canPay(side, card)) {
-    logEvent(`Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
+    rejectCardAction(card.uid, `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
     render();
     return false;
   }
@@ -3628,10 +3628,45 @@ const dragState = {
 };
 let handRenderPending = false;
 
+// Raison courte et actionnable d'un refus, affichée au joueur.
+function unplayableReason(side, card) {
+  if (!canActInMain(side)) return "Ce n'est pas le moment de jouer cette carte.";
+  if (isLand(card)) return "Tu as déjà posé un terrain ce tour.";
+  if (card.divine && !isDivineUnlocked(side, card)) {
+    return `${card.name} exige encore ses conditions d'invocation.`;
+  }
+  if (!canPay(side, card)) {
+    return `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s).`;
+  }
+  if (!isSpell(card) && !canFitCreatureOnBoard(side, card)) return "Ton terrain est déjà plein.";
+  return "Cette carte ne peut pas être jouée maintenant.";
+}
+
 function attachPlayDrag(node, card, side) {
   node.addEventListener("pointerdown", (event) => {
     if (event.button !== 0 || event.pointerType === "mouse" && event.buttons !== 1) return;
-    if (!isPlayableFromHand(side, card)) return;
+    if (!isPlayableFromHand(side, card)) {
+      // Une carte injouable ne doit pas rester muette. Le refus n'apparaît
+      // qu'au premier vrai geste de jeu : un simple tap continue d'ouvrir
+      // la fiche sans déclencher d'alerte.
+      const seuil = event.pointerType === "touch" ? 5 : 9;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const cleanup = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", cleanup);
+        window.removeEventListener("pointercancel", cleanup);
+      };
+      const onMove = (move) => {
+        if (Math.hypot(move.clientX - startX, move.clientY - startY) < seuil) return;
+        cleanup();
+        rejectCardAction(node, unplayableReason(side, card));
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", cleanup);
+      window.addEventListener("pointercancel", cleanup);
+      return;
+    }
     beginDragCandidate(event, { mode: "play", node, card, side });
   });
 }
@@ -3789,6 +3824,27 @@ function resetDrag() {
 
 // Nettoyage purement visuel du ciblage : flèche, surbrillances, capture de
 // pointeur. Ne touche pas à l'état logique, donc appelable pendant un rendu.
+// Refus d'action : le joueur doit comprendre POURQUOI rien ne se passe.
+// Secousse courte sur la carte concernée + teinte d'erreur + son, plutôt
+// qu'un échec silencieux ou une boîte de dialogue bloquante.
+// `cible` accepte le nœud directement (cas du glisser, où on l'a déjà) ou
+// un uid (cas des refus levés depuis le moteur). Les cartes en main ne
+// portent pas de data-uid, d'où la recherche par uid qui échouait seule.
+function rejectCardAction(cible, message) {
+  const node = cible instanceof Element
+    ? cible
+    : els.playerHand?.querySelector(`.game-card[data-uid="${cssAttr(cible)}"]`);
+  if (node && !prefersReducedEffects()) {
+    node.classList.remove("is-rejected");
+    void node.offsetWidth;
+    node.classList.add("is-rejected");
+    window.setTimeout(() => node.classList.remove("is-rejected"), 420);
+  }
+  sound.play("ui.reject");
+  navigator.vibrate?.(18);
+  if (message) logEvent(message);
+}
+
 function clearAttackPreview() {
   if (dragArrowEl) dragArrowEl.hidden = true;
   clearAttackTargetHighlight();
