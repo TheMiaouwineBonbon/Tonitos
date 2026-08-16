@@ -28,7 +28,7 @@ import {
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260815-daemon-1";
+} from "./engine-core.mjs?v=20260816-multicolor-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -774,6 +774,7 @@ function newGame(config = {}) {
   lastTurnStartKey = "";
   gameplayPaused = false;
   clearCinematicEffects();
+  clearEnemyFlights();
   // Nouvelle partie ou retour au menu : aucun ciblage ne doit survivre.
   clearAttackPreview();
   state.mode = config.mode || state.mode || "pve";
@@ -1341,8 +1342,14 @@ function getDeckSpec(id) {
   return DECKS.find((deck) => deck.id === id) || DECKS[0];
 }
 
+function cardFitsDeckColors(card, colors) {
+  if (card.family === "Incolore") return true;
+  const identity = Array.isArray(card.colors) && card.colors.length > 0 ? card.colors : [card.family];
+  return identity.every((family) => colors.includes(family));
+}
+
 function getDeckComposition(deckSpec) {
-  const spellPool = state.spells.filter((card) => deckSpec.colors.includes(card.family) || card.family === "Incolore");
+  const spellPool = state.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const spells = Math.min(DECK_SPELLS, spellPool.length * MAX_NONLAND_COPIES);
   return {
     lands: DECK_LANDS,
@@ -1357,7 +1364,7 @@ function makeDeck(side, deckSpec) {
     ...pickCopies(state.lands.filter((land) => land.family === deckSpec.colors[1]), DECK_LANDS / 2, Infinity)
   ];
   const creaturePool = state.cards.filter((card) => deckSpec.colors.includes(card.family));
-  const spellPool = state.spells.filter((card) => deckSpec.colors.includes(card.family) || card.family === "Incolore");
+  const spellPool = state.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const composition = getDeckComposition(deckSpec);
   const creatures = pickCreatures(creaturePool, composition.creatures);
   const spells = pickSpells(spellPool, composition.spells);
@@ -1386,12 +1393,23 @@ function pickCreatures(pool, count) {
 }
 
 function pickSpells(pool, count) {
-  const interactive = pool.filter((card) => card.slot === "offense" || card.slot === "defense");
-  const utility = pool.filter((card) => card.slot === "draw" || card.slot === "upgrade");
-  const counts = new Map();
+  const signatureCards = pool.filter((card) => Number(card.deckCopies) === 1);
+  const signatureIds = new Set(signatureCards.map((card) => card.id));
+  const interactive = pool.filter(
+    (card) => !signatureIds.has(card.id) && (card.slot === "offense" || card.slot === "defense")
+  );
+  const utility = pool.filter(
+    (card) => !signatureIds.has(card.id) && (card.slot === "draw" || card.slot === "upgrade")
+  );
+  const signatureInteractive = signatureCards.filter(
+    (card) => card.slot === "offense" || card.slot === "defense"
+  ).length;
+  const signatureUtility = signatureCards.length - signatureInteractive;
+  const counts = countCopies(signatureCards);
   const picks = [
-    ...pickCopiesSoft(interactive, 10, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(utility, 4, MAX_NONLAND_COPIES, counts)
+    ...signatureCards,
+    ...pickCopiesSoft(interactive, Math.max(0, 10 - signatureInteractive), MAX_NONLAND_COPIES, counts),
+    ...pickCopiesSoft(utility, Math.max(0, 4 - signatureUtility), MAX_NONLAND_COPIES, counts)
   ];
   return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
 }
@@ -1591,7 +1609,7 @@ function playLand(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const land = side.hand[cardIndex];
   if (!land || !isLand(land)) return false;
-  if (side.side === "enemy") animateEnemyPlay(els.enemyLands);
+  if (side.side === "enemy") animateEnemyPlay(els.enemyLands, land);
   if (side.landPlayed) {
     logEvent(`${sideDisplayName(side.side)} a déjà joué un terrain ce tour-ci.`);
     render();
@@ -1617,7 +1635,7 @@ function playCreature(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
   if (!card || !isCreature(card)) return false;
-  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard);
+  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard, card);
 
   if (!isDivineUnlocked(side, card)) {
     logEvent(`${card.name} reste verrouillé : sa condition d'invocation divine n'est pas remplie.`);
@@ -1632,7 +1650,7 @@ function playCreature(side, cardIndex) {
   }
 
   if (!canPay(side, card)) {
-    rejectCardAction(card.uid, `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
+    rejectCardAction(card.uid, manaPaymentError(side, card, ` pour lancer ${card.name}`));
     render();
     return false;
   }
@@ -1694,10 +1712,10 @@ function playSpell(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
   if (!card || !isSpell(card)) return false;
-  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard);
+  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard, card);
 
   if (!canPay(side, card)) {
-    rejectCardAction(card.uid, `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
+    rejectCardAction(card.uid, manaPaymentError(side, card, ` pour lancer ${card.name}`));
     render();
     return false;
   }
@@ -1723,9 +1741,8 @@ function canActInMain(side) {
   return !gameplayPaused && Boolean(side) && canTakeMainAction(state, side.side);
 }
 
-// Mana coloré : une carte d'une couleur exige autant de terrains DE CETTE
-// COULEUR que son coût. Seules les cartes incolores acceptent n'importe quel
-// terrain.
+// Le moteur accepte le coût mono-couleur historique et les exigences
+// multicolores explicites des cartes qui définissent `manaCost`.
 function untappedLandsFor(side, card) {
   return untappedLandsForCard(side, card);
 }
@@ -1742,6 +1759,18 @@ function payMana(side, card) {
 // Mana disponible dans la couleur de la carte (pour les messages d'aide).
 function manaShortfall(side, card) {
   return Math.max(0, card.cost - untappedLandsFor(side, card).length);
+}
+
+function manaPaymentError(side, card, suffix = "") {
+  if (card.manaCost && typeof card.manaCost === "object") {
+    const colored = Object.entries(card.manaCost)
+      .filter(([family, amount]) => family !== "generic" && Number(amount) > 0)
+      .map(([family, amount]) => `${amount} ${family.toLowerCase()}`);
+    const generic = Number(card.manaCost.generic) || 0;
+    if (generic > 0) colored.push(`${generic} libre${generic > 1 ? "s" : ""}`);
+    return `Mana insuffisant${suffix} : il faut ${colored.join(" + ")}.`;
+  }
+  return `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s)${suffix}.`;
 }
 
 function createUnit(card, owner) {
@@ -2007,6 +2036,23 @@ function applySpellEffect(card, side) {
   if (card.effect === "drawThree") {
     draw(side, 3);
     logEvent(`${card.name} fait piocher trois cartes.`);
+  }
+
+  if (card.effect === "timelessRivalry") {
+    const ally = strongestCreature(side.board);
+    const enemy = strongestCreature(opponent.board);
+    if (!ally || !enemy) {
+      logEvent(`${card.name} ne trouve pas deux rivaux à opposer.`);
+    } else {
+      resolveCreatureCombat(ally, enemy);
+      pushVisualEffect("hit", side.side, "Duel");
+      pushVisualEffect("hit", opponent.side, "Duel");
+      const survivors = [ally, enemy].filter((unit) => unit.currentLife > 0);
+      buffTeam(survivors, 2, 2);
+      logEvent(
+        `${ally.name} et ${enemy.name} s'affrontent${survivors.length > 0 ? "; chaque survivant gagne +2/+2" : " et tombent ensemble"}.`
+      );
+    }
   }
 
   if (card.effect === "freezeTwo") {
@@ -3023,6 +3069,8 @@ function isSpellWorthCasting(card, side, opponent) {
     case "destroyTappedOrWeakest":
     case "hubrisFall":
       return opponent.board.length > 0;
+    case "timelessRivalry":
+      return side.board.length > 0 && opponent.board.length > 0;
     case "restoreTeam":
       return side.board.some((unit) => unit.currentLife < unit.maxLife);
     case "buffTeam1":
@@ -3609,7 +3657,9 @@ function renderEnemyHand() {
   const foe = state.enemy;
   const total = foe?.hand?.length || 0;
   const affichees = Math.min(total, 7);
-  const existantes = els.enemyHand.children.length;
+  // On ne compte que les dos : le badge de surplus ne doit pas fausser
+  // la comparaison, sinon l'éventail se reconstruit à chaque rendu.
+  const existantes = els.enemyHand.querySelectorAll(".enemy-hand-card").length;
   if (existantes === affichees) return; // évite de reconstruire à chaque rendu
 
   els.enemyHand.innerHTML = "";
@@ -3624,6 +3674,14 @@ function renderEnemyHand() {
     els.enemyHand.append(dos);
   }
   els.enemyHand.dataset.count = String(total);
+  // Au-delà du plafond d'affichage, un badge dit combien de cartes ne sont
+  // pas représentées : le joueur ne doit pas croire qu'il en reste sept.
+  if (total > affichees) {
+    const surplus = document.createElement("span");
+    surplus.className = "enemy-hand-overflow";
+    surplus.textContent = `+${total - affichees}`;
+    els.enemyHand.append(surplus);
+  }
 
   // Le dernier dos arrivé s'installe brièvement : la main adverse réagit
   // visiblement à la pioche au lieu de changer silencieusement de taille.
@@ -3637,14 +3695,17 @@ function renderEnemyHand() {
 // L'adversaire joue : le dos de carte quitte sa main, traverse le plateau
 // et se pose. Sans cela la carte apparaît d'un coup, ce qui empêche de
 // comprendre ce qui vient de se passer.
-function animateEnemyPlay(destination, delay = 0) {
+function animateEnemyPlay(destination, card = null, delay = 0) {
   if (!els.enemyHand || prefersReducedEffects()) return;
   const source = els.enemyHand.lastElementChild;
   const cible = validEffectRect(destination) || validEffectRect(els.enemyBoard);
   const depart = validEffectRect(source) || validEffectRect(els.enemyHand);
-  if (!cible || !depart) return;
+  if (!cible || !depart || !els.effectLayer) return;
 
-  if (!els.effectLayer) return;
+  // Le dos quitte VRAIMENT l'éventail : sans cela la carte serait visible
+  // à deux endroits pendant tout son vol, ce qui casse l'illusion.
+  source?.remove();
+
   const vol = document.createElement("span");
   vol.className = "enemy-hand-card is-flying";
   vol.style.left = `${depart.left}px`;
@@ -3654,9 +3715,28 @@ function animateEnemyPlay(destination, delay = 0) {
   vol.style.setProperty("--foe-fly-x", `${cible.left + cible.width / 2 - depart.left - depart.width / 2}px`);
   vol.style.setProperty("--foe-fly-y", `${cible.top + cible.height / 2 - depart.top - depart.height / 2}px`);
   vol.style.animationDelay = `${delay}ms`;
+  // Deux faces : le dos reste visible jusqu'au retournement, près de la
+  // destination. La face n'est jamais révélée au départ.
+  const dos = document.createElement("span");
+  dos.className = "foe-side foe-side--back";
+  const face = document.createElement("span");
+  face.className = "foe-side foe-side--front";
+  if (card?.image) face.style.setProperty("--foe-art", cssUrl(card.image));
+  vol.append(dos, face);
   els.effectLayer.append(vol);
-  source?.classList.add("is-leaving");
-  window.setTimeout(() => vol.remove(), 520 + delay);
+  enemyFlights.add(vol);
+  window.setTimeout(() => {
+    vol.remove();
+    enemyFlights.delete(vol);
+  }, 560 + delay);
+}
+
+// Toute carte adverse encore en vol, pour pouvoir les purger sur reset.
+const enemyFlights = new Set();
+
+function clearEnemyFlights() {
+  for (const vol of enemyFlights) vol.remove();
+  enemyFlights.clear();
 }
 
 function renderLands(container, lands, sideName) {
@@ -3801,7 +3881,7 @@ function unplayableReason(side, card) {
     return `${card.name} exige encore ses conditions d'invocation.`;
   }
   if (!canPay(side, card)) {
-    return `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s).`;
+    return manaPaymentError(side, card);
   }
   if (!isSpell(card) && !canFitCreatureOnBoard(side, card)) return "Ton terrain est déjà plein.";
   return "Cette carte ne peut pas être jouée maintenant.";

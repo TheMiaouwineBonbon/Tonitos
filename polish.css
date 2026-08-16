@@ -109,17 +109,61 @@
   transform-origin: 50% 120%;
 }
 
-/* Le dos qui part rejoindre le plateau : translation + fondu, 460ms. */
+/* Le dos part vers le plateau et se retourne près de sa destination :
+   la face n'est jamais visible au départ. 500ms au total, flip à 78 %. */
 .enemy-hand-card.is-flying {
   position: fixed;
   z-index: 90;
-  animation: foe-card-fly 0.46s cubic-bezier(0.32, 0.72, 0.3, 1) both;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  transform-style: preserve-3d;
+  animation: foe-card-fly 0.5s cubic-bezier(0.32, 0.72, 0.3, 1) both;
   pointer-events: none;
+}
+
+.foe-side {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(226, 184, 94, 0.55);
+  border-radius: 3px;
+  backface-visibility: hidden;
+}
+
+.foe-side--back {
+  background:
+    linear-gradient(150deg, rgba(96, 58, 158, 0.95), rgba(28, 14, 48, 0.98)),
+    #180b28;
+  box-shadow: inset 0 1px 0 rgba(255, 236, 190, 0.16);
+}
+
+.foe-side--front {
+  background:
+    var(--foe-art, linear-gradient(180deg, #6b4bb0, #241338)) center / cover no-repeat,
+    #1a0f2c;
+  box-shadow:
+    inset 0 0 0 1px rgba(12, 7, 20, 0.85),
+    0 0 10px rgba(226, 184, 94, 0.45);
+  transform: rotateY(180deg);
 }
 
 .enemy-hand-card.is-leaving {
   opacity: 0.35;
   transition: opacity 0.2s ease-out;
+}
+
+/* Cartes adverses non représentées dans l'éventail. */
+.enemy-hand-overflow {
+  align-self: center;
+  margin-inline-start: 4px;
+  padding: 1px 4px;
+  border: 1px solid rgba(226, 184, 94, 0.55);
+  border-radius: 6px;
+  color: #f2dcab;
+  background: rgba(12, 7, 20, 0.88);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 /* Dos qui vient d'être pioché : il se glisse dans l'éventail. */
@@ -137,14 +181,19 @@
 }
 
 @keyframes foe-card-fly {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0; }
+  0% { transform: translate(0, 0) scale(1) rotateY(0deg); opacity: 0; }
   12% { opacity: 1; }
-  70% {
-    transform: translate(calc(var(--foe-fly-x) * 0.92), calc(var(--foe-fly-y) * 0.92)) scale(1.28) rotate(6deg);
+  62% {
+    transform: translate(calc(var(--foe-fly-x) * 0.86), calc(var(--foe-fly-y) * 0.86)) scale(1.3) rotateY(0deg);
+    opacity: 1;
+  }
+  /* Retournement court, une fois la carte arrivée près de sa zone. */
+  80% {
+    transform: translate(calc(var(--foe-fly-x) * 0.96), calc(var(--foe-fly-y) * 0.96)) scale(1.32) rotateY(90deg);
     opacity: 1;
   }
   100% {
-    transform: translate(var(--foe-fly-x), var(--foe-fly-y)) scale(0.72) rotate(0deg);
+    transform: translate(var(--foe-fly-x), var(--foe-fly-y)) scale(0.8) rotateY(180deg);
     opacity: 0;
   }
 }
