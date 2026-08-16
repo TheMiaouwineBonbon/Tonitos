@@ -52,6 +52,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
+const SVG_ASSET_VERSION = "20260816-gold-names-1";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
@@ -76,7 +77,7 @@ function svgFileName(name) {
 }
 
 function svgUrl(card) {
-  return `./Images/Cartes/${encodeURIComponent(svgFileName(card.name))}`;
+  return `./Images/Cartes/${encodeURIComponent(svgFileName(card.name))}?v=${SVG_ASSET_VERSION}`;
 }
 
 function sourceImageUrl(card) {

@@ -1650,6 +1650,26 @@ button.zone-pile:hover {
   }
 }
 
+/* Plaque de nom commune aux cartes PC et smartphone. */
+.card-title-lockup::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -2px;
+  border: 3px solid #f1c75f;
+  border-radius: 5px;
+  pointer-events: none;
+  box-shadow:
+    0 0 4px rgba(255, 240, 166, 0.94),
+    0 0 10px rgba(230, 173, 62, 0.78),
+    inset 0 0 5px rgba(255, 232, 143, 0.42);
+}
+
+.card-title-lockup .card-name {
+  position: relative;
+  z-index: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .effect-pop,
   .draw-card-flight,

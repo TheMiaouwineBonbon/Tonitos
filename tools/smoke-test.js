@@ -88,6 +88,13 @@ async function main() {
       collectionSource.includes("resetFilters") &&
       collectionHtml.includes('id="collection-empty"')
   );
+  const cardGeneratorSource = fs.readFileSync(path.join(__dirname, "generate-cards.js"), "utf8");
+  check(
+    "Contour doré brillant de 3 px autour des noms sur PC et smartphone",
+    cardGeneratorSource.includes('id="titleGlow"') &&
+      cardGeneratorSource.includes('stroke="#f1c75f" stroke-width="3"') &&
+      collectionSource.includes("SVG_ASSET_VERSION")
+  );
   check(
     "index.html référence les cinq zones des tapis",
     ["mat-side", "mat-zone--library", "mat-zone--graveyard", "mat-zone--field", "mat-zone--exile", "mat-zone--commander"]
@@ -125,6 +132,14 @@ async function main() {
   res = await fetch(`${base}/engine-core.mjs`);
   const engineSource = await res.text();
   check("GET /engine-core.mjs -> 200", res.status === 200);
+  res = await fetch(`${base}/styles.css`);
+  const cardTitleStyles = await res.text();
+  check(
+    "Plaques de noms HTML entourées d'un liseré doré de 3 px",
+    cardTitleStyles.includes(".card-title-lockup::after") &&
+      cardTitleStyles.includes("border: 3px solid #f1c75f") &&
+      cardTitleStyles.includes("0 0 10px rgba(230, 173, 62, 0.78)")
+  );
   check(
     "Le lancement reste verrouillé jusqu'à la fin du chargement",
     html.includes('id="start-game"') &&
