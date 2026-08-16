@@ -72,8 +72,12 @@ async function main() {
       collectionHtml.includes('id="modal-card-image"') &&
       collectionHtml.includes('id="modal-download"') &&
       collectionSource.includes('document.createElement("object")') &&
-      collectionSource.includes("image.data = url") &&
+      collectionSource.includes("image.data = resolvedUrl") &&
       collectionSource.includes("loadCardSvg") &&
+      collectionSource.includes("resolveSvgUrl") &&
+      collectionSource.includes("cacheBustedUrl") &&
+      collectionSource.includes("showCardImageFallback") &&
+      collectionSource.includes("showModalImageFallback") &&
       collectionSource.includes('setAttribute("inert", "")') &&
       collectionSource.includes('event.key === "Escape"') &&
       collectionSource.includes("trapModalFocus")

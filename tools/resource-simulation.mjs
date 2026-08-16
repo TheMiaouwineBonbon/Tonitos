@@ -52,13 +52,19 @@ function fillToCount(current, pool, count, limit) {
   return [...current, ...pickCopies(pool, count - current.length, limit, countsOf(current))];
 }
 
+function fitsDeckColors(card, colors) {
+  if (card.family === "Incolore") return true;
+  const identity = Array.isArray(card.colors) && card.colors.length > 0 ? card.colors : [card.family];
+  return identity.every((family) => colors.includes(family));
+}
+
 function buildDeck(colors) {
   const landCards = [
     ...pickCopies(lands.filter((land) => land.family === colors[0]), 12, Infinity),
     ...pickCopies(lands.filter((land) => land.family === colors[1]), 12, Infinity)
   ];
   const creaturePool = cards.filter((card) => colors.includes(card.family));
-  const spellPool = spells.filter((card) => colors.includes(card.family) || card.family === "Incolore");
+  const spellPool = spells.filter((card) => fitsDeckColors(card, colors));
   const signatures = creaturePool.filter((card) => Number(card.deckCopies) === 1);
   const creatureCounts = countsOf(signatures);
   const creaturePicks = [
@@ -68,10 +74,27 @@ function buildDeck(colors) {
     ...pickSoft(creaturePool.filter((card) => card.cost >= 4 && card.cost <= 5), 6, 4, creatureCounts),
     ...pickSoft(creaturePool.filter((card) => card.cost >= 6), 2, 4, creatureCounts)
   ];
-  const spellCounts = new Map();
+  const spellSignatures = spellPool.filter((card) => Number(card.deckCopies) === 1);
+  const signatureIds = new Set(spellSignatures.map((card) => card.id));
+  const signatureInteractive = spellSignatures.filter(
+    (card) => card.slot === "offense" || card.slot === "defense"
+  ).length;
+  const signatureUtility = spellSignatures.length - signatureInteractive;
+  const spellCounts = countsOf(spellSignatures);
   const spellPicks = [
-    ...pickSoft(spellPool.filter((card) => card.slot === "offense" || card.slot === "defense"), 10, 4, spellCounts),
-    ...pickSoft(spellPool.filter((card) => card.slot === "draw" || card.slot === "upgrade"), 4, 4, spellCounts)
+    ...spellSignatures,
+    ...pickSoft(
+      spellPool.filter((card) => !signatureIds.has(card.id) && (card.slot === "offense" || card.slot === "defense")),
+      Math.max(0, 10 - signatureInteractive),
+      4,
+      spellCounts
+    ),
+    ...pickSoft(
+      spellPool.filter((card) => !signatureIds.has(card.id) && (card.slot === "draw" || card.slot === "upgrade")),
+      Math.max(0, 4 - signatureUtility),
+      4,
+      spellCounts
+    )
   ];
   return [
     ...landCards,
@@ -108,12 +131,33 @@ function availableMana(playedLands) {
 function canAfford(card, mana) {
   if (card.divine) return false;
   const cost = Math.max(0, Number(card.cost) || 0);
+  if (card.manaCost && typeof card.manaCost === "object") {
+    const colored = Object.entries(card.manaCost).filter(([family]) => family !== "generic");
+    const hasColors = colored.every(([family, amount]) => (mana.get(family) || 0) >= Number(amount));
+    const total = [...mana.values()].reduce((sum, amount) => sum + amount, 0);
+    return hasColors && total >= cost;
+  }
   if (card.family === "Incolore") return [...mana.values()].reduce((sum, amount) => sum + amount, 0) >= cost;
   return (mana.get(card.family) || 0) >= cost;
 }
 
 function spend(card, mana) {
   let remaining = Math.max(0, Number(card.cost) || 0);
+  if (card.manaCost && typeof card.manaCost === "object") {
+    for (const [family, amountValue] of Object.entries(card.manaCost)) {
+      if (family === "generic") continue;
+      const amount = Math.max(0, Number(amountValue) || 0);
+      mana.set(family, (mana.get(family) || 0) - amount);
+      remaining -= amount;
+    }
+    for (const [family, amount] of mana) {
+      const used = Math.min(amount, remaining);
+      mana.set(family, amount - used);
+      remaining -= used;
+      if (remaining === 0) return;
+    }
+    return;
+  }
   if (card.family !== "Incolore") {
     mana.set(card.family, (mana.get(card.family) || 0) - remaining);
     return;

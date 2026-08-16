@@ -51,12 +51,14 @@ const elements = {
   modalDownload: document.querySelector("#modal-download")
 };
 
+const svgCards = new WeakMap();
+
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (!entry.isIntersecting) continue;
       const object = entry.target;
-      loadCardSvg(object);
+      loadCardSvg(object, svgCards.get(object));
       svgObserver.unobserve(object);
     }
   }, { rootMargin: "600px 0px" })
@@ -75,6 +77,28 @@ function svgFileName(name) {
 
 function svgUrl(card) {
   return `./Images/Cartes/${encodeURIComponent(svgFileName(card.name))}`;
+}
+
+function sourceImageUrl(card) {
+  return new URL(card.image, document.baseURI).href;
+}
+
+function cacheBustedUrl(url) {
+  const freshUrl = new URL(url, document.baseURI);
+  freshUrl.searchParams.set("retry", Date.now());
+  return freshUrl.href;
+}
+
+async function resolveSvgUrl(url) {
+  const response = await fetch(url, { cache: "no-cache" });
+  if (response.ok) return url;
+
+  const retryUrl = cacheBustedUrl(url);
+  const retryResponse = await fetch(retryUrl, { cache: "reload" });
+  if (!retryResponse.ok) {
+    throw new Error(`SVG indisponible (${retryResponse.status})`);
+  }
+  return retryUrl;
 }
 
 function safeAccent(value) {
@@ -137,7 +161,12 @@ function filteredCards() {
   const normalizedQuery = normalizeText(state.query.trim());
   return state.cards
     .filter((card) => state.category === "all" || card.category === state.category)
-    .filter((card) => state.family === "all" || card.family === state.family)
+    .filter(
+      (card) =>
+        state.family === "all" ||
+        card.family === state.family ||
+        (Array.isArray(card.colors) && card.colors.includes(state.family))
+    )
     .filter((card) => !normalizedQuery || card.searchText.includes(normalizedQuery))
     .sort(compareCards);
 }
@@ -154,18 +183,35 @@ function finishCardLoading(object, broken = false) {
   article.removeAttribute("aria-busy");
 }
 
-async function loadCardSvg(object) {
+function showCardImageFallback(object, card) {
+  const article = object.closest(".collection-card");
+  if (!article || !object.isConnected || article.classList.contains("is-fallback") || !card?.image) return;
+
+  const fallback = document.createElement("img");
+  fallback.className = "collection-card-fallback";
+  fallback.alt = `Illustration de ${card.name}`;
+  fallback.decoding = "async";
+  fallback.addEventListener("load", () => {
+    article.classList.remove("is-loading", "is-broken");
+    article.classList.add("is-fallback");
+    article.removeAttribute("aria-busy");
+  });
+  fallback.addEventListener("error", () => finishCardLoading(fallback, true));
+  object.replaceWith(fallback);
+  fallback.src = sourceImageUrl(card);
+}
+
+async function loadCardSvg(object, card) {
   const url = object.dataset.src;
   if (!url) return;
   delete object.dataset.src;
   try {
-    const response = await fetch(url, { cache: "force-cache" });
-    if (!response.ok) throw new Error(`SVG indisponible (${response.status})`);
+    const resolvedUrl = await resolveSvgUrl(url);
     if (!object.isConnected) return;
-    object.data = url;
+    object.data = resolvedUrl;
   } catch (error) {
     console.warn("Impossible de charger une carte SVG", url, error);
-    finishCardLoading(object, true);
+    showCardImageFallback(object, card);
   }
 }
 
@@ -184,14 +230,15 @@ function createCardTile(card, index) {
   svg.tabIndex = -1;
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", `Carte ${card.name}`);
+  svgCards.set(svg, card);
   svg.addEventListener("load", () => finishCardLoading(svg));
-  svg.addEventListener("error", () => finishCardLoading(svg, true));
+  svg.addEventListener("error", () => showCardImageFallback(svg, card));
   if (svgObserver) {
     svg.dataset.src = svgUrl(card);
     svgObserver.observe(svg);
   } else {
     svg.dataset.src = svgUrl(card);
-    loadCardSvg(svg);
+    loadCardSvg(svg, card);
   }
   art.append(svg);
 
@@ -293,20 +340,17 @@ function populateModal(card) {
   });
   image.addEventListener("error", () => {
     if (elements.modalImage !== image) return;
-    elements.modalVisual.classList.remove("is-loading");
-    elements.modalVisual.classList.add("is-broken");
-    image.classList.add("is-broken");
+    showModalImageFallback(image, card);
   });
   elements.modalImage.replaceWith(image);
   elements.modalImage = image;
-  fetch(url, { cache: "force-cache" })
-    .then((response) => {
-      if (!response.ok) throw new Error(`SVG indisponible (${response.status})`);
-      if (elements.modalImage === image) image.data = url;
+  resolveSvgUrl(url)
+    .then((resolvedUrl) => {
+      if (elements.modalImage === image) image.data = resolvedUrl;
     })
     .catch((error) => {
       console.warn("Impossible de charger l'aperçu SVG", url, error);
-      image.dispatchEvent(new Event("error"));
+      showModalImageFallback(image, card);
     });
   elements.modalEyebrow.textContent = `${categorySingular(card.category)} · ${card.family}`;
   elements.modalTitle.textContent = card.name;
@@ -331,6 +375,30 @@ function populateModal(card) {
   elements.modalFlavor.hidden = !card.flavor;
   elements.modalDownload.href = url;
   elements.modalDownload.download = svgFileName(card.name);
+}
+
+function showModalImageFallback(image, card) {
+  if (elements.modalImage !== image || !image.isConnected || !card?.image) return;
+
+  const fallback = document.createElement("img");
+  fallback.id = "modal-card-image";
+  fallback.className = "collection-modal-fallback";
+  fallback.alt = `Illustration de ${card.name}`;
+  fallback.decoding = "async";
+  fallback.addEventListener("load", () => {
+    if (elements.modalImage !== fallback) return;
+    elements.modalVisual.classList.remove("is-loading", "is-broken");
+    fallback.classList.add("is-loaded");
+  });
+  fallback.addEventListener("error", () => {
+    if (elements.modalImage !== fallback) return;
+    elements.modalVisual.classList.remove("is-loading");
+    elements.modalVisual.classList.add("is-broken");
+    fallback.classList.add("is-broken");
+  });
+  image.replaceWith(fallback);
+  elements.modalImage = fallback;
+  fallback.src = sourceImageUrl(card);
 }
 
 function openModal(card, trigger) {

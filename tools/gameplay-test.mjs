@@ -107,6 +107,31 @@ test("le spam de paiement ne peut engager les mêmes terrains deux fois", () => 
   assert.equal(side.lands.filter((land) => land.tapped).length, 2);
 });
 
+test("un sort multicolore réserve ses couleurs puis paie le coût générique", () => {
+  const card = {
+    family: "Multicolore",
+    cost: 5,
+    manaCost: { Blanc: 1, Noir: 1, generic: 3 }
+  };
+  const valid = makeSide();
+  valid.lands = [
+    { family: "Blanc", tapped: false },
+    { family: "Noir", tapped: false },
+    { family: "Vert", tapped: false },
+    { family: "Bleu", tapped: false },
+    { family: "Blanc", tapped: false }
+  ];
+  assert.equal(canPayCard(valid, card), true);
+  assert.equal(payCardCost(valid, card), true);
+  assert.equal(valid.lands.every((land) => land.tapped), true);
+
+  const invalid = makeSide();
+  invalid.lands = Array.from({ length: 5 }, () => ({ family: "Blanc", tapped: false }));
+  assert.equal(canPayCard(invalid, card), false);
+  assert.equal(payCardCost(invalid, card), false);
+  assert.equal(invalid.lands.every((land) => !land.tapped), true);
+});
+
 test("le mal d'invocation, Célérité, Défenseur et l'attaque déjà consommée sont cohérents", () => {
   assert.equal(canUnitAttack(makeUnit({ createdTurn: 3 }), 3), false);
   assert.equal(canUnitAttack(makeUnit({ createdTurn: 3, keywords: ["Célérité"] }), 3), true);

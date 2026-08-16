@@ -68,7 +68,8 @@ function cardSvg(card) {
   const h = 1038;
   const artHref = imageReference(card.image);
   const abilityLines = wrapText(card.abilityText, 48).slice(0, 4);
-  const flavorLines = wrapText(card.flavor, 50).slice(0, 2);
+  const flavorLines = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 50).slice(0, 2);
+  const artAspectRatio = card.art?.svgFit === "cover" ? "xMidYMid slice" : "xMidYMid meet";
   const keywords = card.keywords.join(" • ");
   const isLand = card.kind === "land";
   const isSpell = card.kind === "spell";
@@ -104,7 +105,7 @@ function cardSvg(card) {
   <circle cx="660" cy="75" r="34" fill="${card.palette.deep}" stroke="${card.palette.secondary}" stroke-width="5"/>
   <text x="660" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#fff7df">${topValue}</text>
 
-  <image href="${artHref}" x="48" y="118" width="648" height="486" preserveAspectRatio="xMidYMid meet" clip-path="url(#artClip)"/>
+  <image href="${artHref}" x="48" y="118" width="648" height="486" preserveAspectRatio="${artAspectRatio}" clip-path="url(#artClip)"/>
   <rect x="48" y="118" width="648" height="486" rx="8" fill="none" stroke="${card.palette.secondary}" stroke-width="4"/>
 
   <rect x="48" y="622" width="648" height="48" rx="8" fill="#f3e1bf"/>

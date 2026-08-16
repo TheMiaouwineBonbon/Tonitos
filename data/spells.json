@@ -715,5 +715,45 @@
       "fit": "cover",
       "position": "50% 47%"
     }
+  },
+  {
+    "id": "rivalite-au-dela-du-temps",
+    "kind": "spell",
+    "name": "Rivalité au-delà du temps",
+    "subtitle": "Deux destins refusent de céder",
+    "family": "Multicolore",
+    "colors": [
+      "Blanc",
+      "Noir"
+    ],
+    "type": "Rituel multicolore - Duel",
+    "cost": 5,
+    "manaCost": {
+      "Blanc": 1,
+      "Noir": 1,
+      "generic": 3
+    },
+    "slot": "offense",
+    "deckCopies": 1,
+    "keywords": [
+      "Duel",
+      "Blanc / Noir"
+    ],
+    "abilityName": "Rivalité éternelle",
+    "abilityText": "La créature la plus puissante de chaque camp s'affronte. Chaque survivante gagne +2/+2.",
+    "flavor": "Deux volontés qu'aucun âge n'a su briser.",
+    "image": "Images/Sort multicolore - Rivalité au dela du temps.png",
+    "palette": {
+      "primary": "#9f334d",
+      "secondary": "#63b9ee",
+      "deep": "#160b1b"
+    },
+    "effect": "timelessRivalry",
+    "art": {
+      "fit": "cover",
+      "position": "50% 50%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
   }
 ]

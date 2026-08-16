@@ -7,6 +7,20 @@ export function normalizedCost(card) {
   return Math.max(0, Math.trunc(finiteNumber(card?.cost)));
 }
 
+export function manaRequirements(card) {
+  if (!card?.manaCost || typeof card.manaCost !== "object") return null;
+
+  const colored = Object.entries(card.manaCost)
+    .filter(([family]) => family !== "generic")
+    .map(([family, amount]) => [family, Math.max(0, Math.trunc(finiteNumber(amount)))])
+    .filter(([, amount]) => amount > 0);
+  const coloredTotal = colored.reduce((total, [, amount]) => total + amount, 0);
+  const declaredGeneric = Math.max(0, Math.trunc(finiteNumber(card.manaCost.generic)));
+  const generic = Math.max(declaredGeneric, normalizedCost(card) - coloredTotal);
+
+  return { colored, generic, total: coloredTotal + generic };
+}
+
 export function canTakeMainAction(game, sideName) {
   return Boolean(
     game &&
@@ -44,19 +58,48 @@ export function drawFromDeck(side, amount, { fatigueDamage = 1 } = {}) {
 export function untappedLandsForCard(side, card) {
   const lands = Array.isArray(side?.lands) ? side.lands : [];
   const untapped = lands.filter((land) => !land?.tapped);
+  if (manaRequirements(card)) return untapped;
   if (card?.family === "Incolore") return untapped;
   return untapped.filter((land) => land?.family === card?.family);
 }
 
+export function paymentPlan(side, card) {
+  const lands = Array.isArray(side?.lands) ? side.lands : [];
+  const untapped = lands.filter((land) => !land?.tapped);
+  const requirements = manaRequirements(card);
+
+  if (!requirements) {
+    const eligible = card?.family === "Incolore"
+      ? untapped
+      : untapped.filter((land) => land?.family === card?.family);
+    const cost = normalizedCost(card);
+    return eligible.length >= cost ? eligible.slice(0, cost) : null;
+  }
+
+  const selected = [];
+  const reserved = new Set();
+  for (const [family, amount] of requirements.colored) {
+    const matching = untapped.filter((land) => !reserved.has(land) && land?.family === family).slice(0, amount);
+    if (matching.length < amount) return null;
+    for (const land of matching) {
+      selected.push(land);
+      reserved.add(land);
+    }
+  }
+
+  const generic = untapped.filter((land) => !reserved.has(land)).slice(0, requirements.generic);
+  if (generic.length < requirements.generic) return null;
+  return [...selected, ...generic];
+}
+
 export function canPayCard(side, card) {
-  return untappedLandsForCard(side, card).length >= normalizedCost(card);
+  return paymentPlan(side, card) !== null;
 }
 
 export function payCardCost(side, card) {
-  const cost = normalizedCost(card);
-  const lands = untappedLandsForCard(side, card);
-  if (lands.length < cost) return false;
-  for (const land of lands.slice(0, cost)) land.tapped = true;
+  const lands = paymentPlan(side, card);
+  if (!lands) return false;
+  for (const land of lands) land.tapped = true;
   return true;
 }
 
