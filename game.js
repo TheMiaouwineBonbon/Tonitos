@@ -143,6 +143,7 @@ const els = {
   effectLayer: document.querySelector("#effect-layer"),
   playerLands: document.querySelector("#player-lands"),
   enemyLands: document.querySelector("#enemy-lands"),
+  enemyHand: document.querySelector("#enemy-hand"),
   gallery: document.querySelector("#card-gallery"),
   log: document.querySelector("#combat-log"),
   actionHint: document.querySelector("#action-hint"),
@@ -1590,6 +1591,7 @@ function playLand(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const land = side.hand[cardIndex];
   if (!land || !isLand(land)) return false;
+  if (side.side === "enemy") animateEnemyPlay(els.enemyLands);
   if (side.landPlayed) {
     logEvent(`${sideDisplayName(side.side)} a déjà joué un terrain ce tour-ci.`);
     render();
@@ -1615,6 +1617,7 @@ function playCreature(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
   if (!card || !isCreature(card)) return false;
+  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard);
 
   if (!isDivineUnlocked(side, card)) {
     logEvent(`${card.name} reste verrouillé : sa condition d'invocation divine n'est pas remplie.`);
@@ -1691,6 +1694,7 @@ function playSpell(side, cardIndex) {
   if (isAnimating || !canActInMain(side)) return false;
   const card = side.hand[cardIndex];
   if (!card || !isSpell(card)) return false;
+  if (side.side === "enemy") animateEnemyPlay(els.enemyBoard);
 
   if (!canPay(side, card)) {
     rejectCardAction(card.uid, `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s) pour lancer ${card.name}.`);
@@ -3414,6 +3418,7 @@ function render() {
   renderHand();
   renderLands(els.playerLands, state.player.lands, "player");
   renderLands(els.enemyLands, state.enemy.lands, "enemy");
+  renderEnemyHand();
   renderBoard(els.playerBoard, state.player.board, "player");
   renderBoard(els.enemyBoard, state.enemy.board, "enemy");
   renderLog();
@@ -3594,6 +3599,56 @@ function isPlayableFromHand(side, card) {
   if (isSpell(card)) return canPay(side, card);
   if (!isDivineUnlocked(side, card)) return false;
   return canFitCreatureOnBoard(side, card) && canPay(side, card);
+}
+
+// Main adverse : uniquement des dos de cartes. Le joueur voit qu'une main
+// existe et combien elle compte, jamais son contenu. Le compte est plafonné
+// pour que l'éventail reste lisible sur un écran de téléphone.
+function renderEnemyHand() {
+  if (!els.enemyHand) return;
+  const foe = state.enemy;
+  const total = foe?.hand?.length || 0;
+  const affichees = Math.min(total, 7);
+  const existantes = els.enemyHand.children.length;
+  if (existantes === affichees) return; // évite de reconstruire à chaque rendu
+
+  els.enemyHand.innerHTML = "";
+  const centre = (affichees - 1) / 2;
+  for (let i = 0; i < affichees; i += 1) {
+    const dos = document.createElement("span");
+    dos.className = "enemy-hand-card";
+    const offset = centre === 0 ? 0 : (i - centre) / centre;
+    dos.style.setProperty("--foe-card-rotation", `${offset * 7}deg`);
+    dos.style.setProperty("--foe-card-drop", `${Math.pow(Math.abs(offset), 1.7) * 5}px`);
+    dos.style.setProperty("--foe-card-index", String(i));
+    els.enemyHand.append(dos);
+  }
+  els.enemyHand.dataset.count = String(total);
+}
+
+// L'adversaire joue : le dos de carte quitte sa main, traverse le plateau
+// et se pose. Sans cela la carte apparaît d'un coup, ce qui empêche de
+// comprendre ce qui vient de se passer.
+function animateEnemyPlay(destination, delay = 0) {
+  if (!els.enemyHand || prefersReducedEffects()) return;
+  const source = els.enemyHand.lastElementChild;
+  const cible = validEffectRect(destination) || validEffectRect(els.enemyBoard);
+  const depart = validEffectRect(source) || validEffectRect(els.enemyHand);
+  if (!cible || !depart) return;
+
+  if (!els.effectLayer) return;
+  const vol = document.createElement("span");
+  vol.className = "enemy-hand-card is-flying";
+  vol.style.left = `${depart.left}px`;
+  vol.style.top = `${depart.top}px`;
+  vol.style.width = `${depart.width}px`;
+  vol.style.height = `${depart.height}px`;
+  vol.style.setProperty("--foe-fly-x", `${cible.left + cible.width / 2 - depart.left - depart.width / 2}px`);
+  vol.style.setProperty("--foe-fly-y", `${cible.top + cible.height / 2 - depart.top - depart.height / 2}px`);
+  vol.style.animationDelay = `${delay}ms`;
+  els.effectLayer.append(vol);
+  source?.classList.add("is-leaving");
+  window.setTimeout(() => vol.remove(), 520 + delay);
 }
 
 function renderLands(container, lands, sideName) {

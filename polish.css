@@ -82,6 +82,59 @@
   }
 }
 
+/* =====================================================================
+   MAIN ADVERSE : dos de cartes en éventail
+   Le joueur doit sentir que l'adversaire tient des cartes, sans jamais
+   en voir le contenu. Éventail statique, aucune animation permanente.
+   ===================================================================== */
+.enemy-hand {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.enemy-hand-card {
+  flex: 0 0 auto;
+  border: 1px solid rgba(226, 184, 94, 0.5);
+  border-radius: 3px;
+  background:
+    linear-gradient(150deg, rgba(96, 58, 158, 0.95), rgba(28, 14, 48, 0.98)),
+    #180b28;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 190, 0.16),
+    0 2px 5px rgba(0, 0, 0, 0.62);
+  transform: translateY(var(--foe-card-drop, 0px)) rotate(var(--foe-card-rotation, 0deg));
+  transform-origin: 50% 120%;
+}
+
+/* Le dos qui part rejoindre le plateau : translation + fondu, 460ms. */
+.enemy-hand-card.is-flying {
+  position: fixed;
+  z-index: 90;
+  animation: foe-card-fly 0.46s cubic-bezier(0.32, 0.72, 0.3, 1) both;
+  pointer-events: none;
+}
+
+.enemy-hand-card.is-leaving {
+  opacity: 0.35;
+  transition: opacity 0.2s ease-out;
+}
+
+@keyframes foe-card-fly {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  70% {
+    transform: translate(calc(var(--foe-fly-x) * 0.92), calc(var(--foe-fly-y) * 0.92)) scale(1.28) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--foe-fly-x), var(--foe-fly-y)) scale(0.72) rotate(0deg);
+    opacity: 0;
+  }
+}
+
 /* Refus d'action : secousse brève et teinte d'erreur, 380ms au total.
    Assez visible pour être compris, assez court pour ne pas gêner. */
 @keyframes polish-card-reject {
@@ -551,10 +604,12 @@
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-row {
     left: var(--lane-land-left);
     width: var(--lane-land-width);
-    /* Grille souple : les terrains s'empilent sur plusieurs rangs plutôt
-       que de rétrécir indéfiniment. Zéro débordement jusqu'à 6 cartes. */
-    flex-wrap: wrap;
-    align-content: center;
+    /* Une seule rangée : les cartes gardent leur pleine hauteur et se
+       chevauchent progressivement plutôt que de rétrécir. Le recouvrement
+       ne masque jamais la tranche colorée qui identifie la famille. */
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: center;
     gap: 3px;
     padding: 4px;
     border-radius: 8px;
@@ -563,17 +618,18 @@
       inset 0 -1px 0 rgba(255, 226, 160, 0.08);
   }
 
-  /* Terrains lisibles : vraie vignette au format carte, pas une pastille.
-     La couleur de famille reste identifiable d'un coup d'œil. */
+  /* Terrains lisibles : la carte occupe TOUTE la hauteur de sa zone et
+     déduit sa largeur du format carte. Elle passe ainsi de 20x28 à près
+     de 38x54, soit près de quatre fois la surface. */
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent {
     flex: 0 0 auto;
-    width: clamp(20px, 4.6dvh, 30px);
+    width: auto;
     min-width: 0;
     max-width: none;
-    height: auto;
+    height: 100%;
     min-height: 0;
     aspect-ratio: 5 / 7;
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow:
       inset 0 0 0 1px rgba(8, 5, 14, 0.9),
       0 2px 4px rgba(0, 0, 0, 0.6);
@@ -590,14 +646,80 @@
       0 3px 6px rgba(0, 0, 0, 0.7);
   }
 
+  /* Chevauchement progressif : nul jusqu'à deux terrains, puis resserré
+     par paliers pour que cinq cartes tiennent sans jamais rétrécir. */
+  body.game-running[data-mobile-view="board"] .land-row .land-permanent + .land-permanent {
+    margin-inline-start: var(--land-overlap, 0px);
+  }
+
+  /* Valeurs calculées sur la largeur utile : n x largeurCarte + (n-1) x
+     (gap + recouvrement) doit rester sous la largeur de la zone. */
+  body.game-running[data-mobile-view="board"] .land-row:has(.land-permanent:nth-child(3)) {
+    --land-overlap: -13px;
+  }
+
+  body.game-running[data-mobile-view="board"] .land-row:has(.land-permanent:nth-child(4)) {
+    --land-overlap: -24px;
+  }
+
+  /* Au-delà de quatre, les cartes s'affinent légèrement en plus du
+     recouvrement : sans cela il ne resterait que la tranche. */
+  body.game-running[data-mobile-view="board"] .land-row:has(.land-permanent:nth-child(5)) {
+    --land-overlap: -24px;
+  }
+
+  body.game-running[data-mobile-view="board"] .land-row:has(.land-permanent:nth-child(5)) .land-permanent {
+    height: 86%;
+    align-self: center;
+  }
+
+  /* La carte survolée repasse au premier plan malgré le recouvrement. */
+  body.game-running[data-mobile-view="board"] .land-row .land-permanent:hover,
+  body.game-running[data-mobile-view="board"] .land-row .land-permanent:focus-visible {
+    margin-inline-end: calc(var(--land-overlap, 0px) * -0.5);
+  }
+
   /* Terrain déjà engagé : lisible mais visiblement dépensé. */
   body.game-running[data-mobile-view="board"] .mat-zone--field .land-permanent.is-tapped {
     filter: grayscale(0.5) brightness(0.68);
   }
 
+  /* Zone vide : marquage sobre qui disparaît dès qu'un terrain arrive. */
+  body.game-running[data-mobile-view="board"] .land-row .empty-slot {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    border: 1px dashed rgba(226, 184, 94, 0.28);
+    border-radius: 6px;
+    background:
+      repeating-linear-gradient(135deg, rgba(226, 184, 94, 0.05) 0 6px, transparent 6px 12px);
+    color: rgba(233, 208, 150, 0.5);
+    font-size: clamp(7px, 1.6dvh, 9px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    visibility: visible;
+  }
+
   body.game-running[data-mobile-view="board"] .enemy-mat .mat-zone--field .land-row {
     top: auto;
     bottom: var(--row-land-gap);
+  }
+
+  /* Main adverse : petit éventail au-dessus de son terrain central, dans
+     la bande libre du haut. Assez visible pour informer, assez discret
+     pour ne pas concurrencer les créatures. */
+  body.game-running[data-mobile-view="board"] .enemy-hand {
+    top: 3%;
+    left: var(--lane-field-left);
+    width: var(--lane-field-width);
+    height: clamp(20px, 7dvh, 30px);
+    gap: 2px;
+  }
+
+  body.game-running[data-mobile-view="board"] .enemy-hand-card {
+    width: clamp(13px, 3.2dvh, 19px);
+    height: 100%;
   }
 
   body.game-running[data-mobile-view="board"] .player-mat .mat-zone--field .land-row {
