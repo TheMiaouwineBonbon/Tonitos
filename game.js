@@ -2785,6 +2785,9 @@ function attackUnit(targetUid) {
   markOnlineDirty();
   const attackerNode = boardCardNode(attacker.uid, attackingSide.side);
   const targetRect = boardCardNode(target.uid, defendingSide.side)?.getBoundingClientRect();
+  // La visee tactile doit disparaitre des que l'attaque est acceptee, sans
+  // attendre la fin de l'animation de charge.
+  clearAttackPreview();
   playLunge(attackerNode, targetRect, () => {
     flashImpact(defendingSide.side);
     resolveSingleAttack(attacker, target, attackingSide, defendingSide);
@@ -2820,6 +2823,7 @@ function attackHero() {
   markOnlineDirty();
   const attackerNode = boardCardNode(attacker.uid, attackingSide.side);
   const targetRect = commanderNode(defendingSide.side)?.getBoundingClientRect();
+  clearAttackPreview();
   playLunge(attackerNode, targetRect, () => {
     flashImpact(defendingSide.side);
     resolveSingleAttack(attacker, null, attackingSide, defendingSide);
@@ -4007,7 +4011,7 @@ function activateDrag(event) {
     playDropField()?.classList.add("is-drop-ready");
     navigator.vibrate?.(12);
   } else {
-    dragArrowEl.hidden = false;
+    setDragArrowVisible(true);
     dragState.node.classList.add("is-attacking");
   }
 }
@@ -4085,7 +4089,7 @@ function resetDrag() {
   els.enemyBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-target");
   els.enemyBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-ready");
   clearAttackTargetHighlight();
-  if (dragArrowEl) dragArrowEl.hidden = true;
+  setDragArrowVisible(false);
   dragState.pending = false;
   dragState.active = false;
   dragState.mode = null;
@@ -4123,7 +4127,7 @@ function rejectCardAction(cible, message) {
 }
 
 function clearAttackPreview() {
-  if (dragArrowEl) dragArrowEl.hidden = true;
+  setDragArrowVisible(false);
   clearAttackTargetHighlight();
   resetDrag();
 }
@@ -4207,6 +4211,14 @@ function cssAttr(value) {
 /* --- Calque de glisser : fantôme de carte + flèche de visée --- */
 let dragLayerEl = null;
 let dragArrowEl = null;
+
+function setDragArrowVisible(visible) {
+  if (!dragArrowEl) return;
+  dragArrowEl.hidden = !visible;
+  dragArrowEl.classList.toggle("is-visible", visible);
+  if (!visible) dragArrowEl.querySelector(".drag-arrow-line")?.removeAttribute("d");
+}
+
 function ensureDragLayer() {
   if (dragLayerEl) return;
   dragLayerEl = document.createElement("div");
