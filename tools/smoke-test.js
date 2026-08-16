@@ -733,7 +733,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("28 sorts avec illustrations autonomes", spells.length === 28);
+  check("29 sorts avec illustrations autonomes", spells.length === 29);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -775,6 +775,12 @@ async function main() {
       spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.manaCost?.Noir === 1 &&
       spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.deckCopies === 1
   );
+  check(
+    "La vérité = rituel noir de défausse réellement pris en charge",
+    spells.find((spell) => spell.id === "la-verite")?.family === "Noir" &&
+      spells.find((spell) => spell.id === "la-verite")?.cost === 5 &&
+      spells.find((spell) => spell.id === "la-verite")?.effect === "unbearableTruth"
+  );
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
@@ -803,7 +809,7 @@ async function main() {
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 123 cartes possèdent exactement un SVG généré",
+    "Les 124 cartes possèdent exactement un SVG généré",
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );

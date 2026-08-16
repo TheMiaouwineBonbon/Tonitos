@@ -186,7 +186,7 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 Sorts incolores polyvalents (jouables dans tous les decks) : **2** (Pierre de Norne et Générateur antique).
 
 Les cinq bases mono-couleur atteignent désormais les quotas : **aucune carte ne
-manque** pour cette base de construction. Les 28 sorts disposent tous de leur propre
+manque** pour cette base de construction. Les 29 sorts disposent tous de leur propre
 illustration.
 
 Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :

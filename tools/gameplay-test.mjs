@@ -12,6 +12,7 @@ import {
   partitionDeadUnits,
   payCardCost,
   resolveCreatureCombat,
+  selectHighestCostCards,
   tickDelayedReturns,
   unitHasKeyword,
   validateGameState
@@ -73,6 +74,20 @@ test("la main actuelle accepte une pioche volumineuse sans perdre ni dupliquer d
   drawFromDeck(side, 25);
   assert.equal(side.hand.length, 25);
   assert.equal(new Set(side.hand.map((card) => card.uid)).size, 25);
+});
+
+test("La vérité sélectionne les deux cartes les plus coûteuses de façon déterministe", () => {
+  const hand = [
+    { id: "faible", uid: "u-1", cost: 1 },
+    { id: "zeta", uid: "u-2", cost: 7 },
+    { id: "alpha", uid: "u-3", cost: 7 },
+    { id: "moyenne", uid: "u-4", cost: 4 }
+  ];
+  assert.deepEqual(
+    selectHighestCostCards(hand, 2).map((card) => card.id),
+    ["alpha", "zeta"]
+  );
+  assert.equal(hand.length, 4);
 });
 
 test("le moteur refuse les actions principales hors tour, pendant la relève ou après la partie", () => {

@@ -755,5 +755,35 @@
       "svgFit": "cover",
       "svgFlavor": false
     }
+  },
+  {
+    "id": "la-verite",
+    "kind": "spell",
+    "name": "La vérité",
+    "subtitle": "Une révélation que l'esprit ne peut contenir",
+    "family": "Noir",
+    "type": "Rituel - Révélation",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Révélation",
+      "Défausse"
+    ],
+    "abilityName": "Vision insoutenable",
+    "abilityText": "L'adversaire défausse les deux cartes les plus coûteuses de sa main et perd 2 points de vie.",
+    "flavor": "Il cherchait une réponse. La vérité lui montra tout ce qu'il aurait préféré ignorer.",
+    "image": "Images/Sort Noir - La vérité.png",
+    "palette": {
+      "primary": "#84213d",
+      "secondary": "#f05b70",
+      "deep": "#15070d"
+    },
+    "effect": "unbearableTruth",
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
   }
 ]

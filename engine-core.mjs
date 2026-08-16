@@ -55,6 +55,18 @@ export function drawFromDeck(side, amount, { fatigueDamage = 1 } = {}) {
   return events;
 }
 
+export function selectHighestCostCards(cards, amount = 2) {
+  const count = Math.max(0, Math.trunc(finiteNumber(amount)));
+  return [...(Array.isArray(cards) ? cards : [])]
+    .sort(
+      (a, b) =>
+        normalizedCost(b) - normalizedCost(a) ||
+        String(a?.id || "").localeCompare(String(b?.id || "")) ||
+        String(a?.uid || "").localeCompare(String(b?.uid || ""))
+    )
+    .slice(0, count);
+}
+
 export function untappedLandsForCard(side, card) {
   const lands = Array.isArray(side?.lands) ? side.lands : [];
   const untapped = lands.filter((land) => !land?.tapped);

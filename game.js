@@ -24,11 +24,12 @@ import {
   partitionDeadUnits,
   payCardCost,
   resolveCreatureCombat,
+  selectHighestCostCards,
   tickDelayedReturns,
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260816-multicolor-1";
+} from "./engine-core.mjs?v=20260816-truth-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -2055,6 +2056,29 @@ function applySpellEffect(card, side) {
     }
   }
 
+  if (card.effect === "unbearableTruth") {
+    const discarded = selectHighestCostCards(opponent.hand, 2);
+
+    for (const [index, discardedCard] of discarded.entries()) {
+      const handIndex = opponent.hand.findIndex((entry) => entry.uid === discardedCard.uid);
+      if (handIndex < 0) continue;
+      const [removed] = opponent.hand.splice(handIndex, 1);
+      opponent.graveyard.push({
+        ...removed,
+        uid: `${opponent.side}-grave-${removed.id}-${crypto.randomUUID()}`
+      });
+      animateGraveyardArrival(opponent.side, removed, 220 + index * 120);
+    }
+
+    opponent.life -= 2;
+    pushVisualEffect("hit", opponent.side, "-2");
+    logEvent(
+      discarded.length > 0
+        ? `${card.name} révèle l'insoutenable : ${discarded.map((entry) => entry.name).join(" et ")} sont défaussées, puis le héros adverse perd 2 points de vie.`
+        : `${card.name} ne trouve aucune pensée à briser, mais inflige 2 blessures au héros adverse.`
+    );
+  }
+
   if (card.effect === "freezeTwo") {
     const targets = [...opponent.board].filter((unit) => !unit.tapped).sort((a, b) => b.attack - a.attack).slice(0, 2);
     for (const target of targets) freezeCreature(target);
@@ -3071,6 +3095,8 @@ function isSpellWorthCasting(card, side, opponent) {
       return opponent.board.length > 0;
     case "timelessRivalry":
       return side.board.length > 0 && opponent.board.length > 0;
+    case "unbearableTruth":
+      return opponent.hand.length > 0 || opponent.life > 0;
     case "restoreTeam":
       return side.board.some((unit) => unit.currentLife < unit.maxLife);
     case "buffTeam1":
