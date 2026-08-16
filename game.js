@@ -275,6 +275,13 @@ const DECKS = [
     shortName: "Tempête de Braise",
     colors: ["Rouge", "Bleu"],
     theme: "tempo, dégâts directs et pioche"
+  },
+  {
+    id: "blanc-bleu",
+    name: "Blanc / Bleu - Concile des Marées",
+    shortName: "Concile des Marées",
+    colors: ["Blanc", "Bleu"],
+    theme: "protection, pioche et contrôle des abysses"
   }
 ];
 

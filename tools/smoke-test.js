@@ -876,9 +876,16 @@ async function main() {
     ["Rouge", "Noir"],
     ["Bleu", "Vert"],
     ["Noir", "Blanc"],
-    ["Rouge", "Bleu"]
+    ["Rouge", "Bleu"],
+    ["Blanc", "Bleu"]
   ];
-  check("Les 5 decks restent à 60 cartes avec 4 copies non-terrain maximum", deckColors.every((colors) => {
+  check(
+    "Les paires de couleurs des decks correspondent au menu",
+    // Le test doit suivre DECKS : une paire ajoutée au jeu sans être
+    // vérifiée ici passerait inaperçue jusqu'à un deck injouable.
+    deckColors.length === (gameSource.match(/^\s{4}colors: \[/gm) || []).length
+  );
+  check("Les 6 decks restent à 60 cartes avec 4 copies non-terrain maximum", deckColors.every((colors) => {
     const creaturePool = cards.filter((card) => colors.includes(card.family));
     const spellPool = spells.filter((card) => {
       if (card.family === "Incolore") return true;
