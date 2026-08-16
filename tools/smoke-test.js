@@ -373,6 +373,59 @@ async function main() {
       polishStyles.includes("grid-template-columns: 8px 1fr;")
   );
   check(
+    "Main adverse en dos de cartes, jamais sa face",
+    html.includes('id="enemy-hand"') &&
+      gameSource.includes("function renderEnemyHand") &&
+      // Le rendu ne lit que la longueur de la main, jamais son contenu.
+      gameSource.includes("foe?.hand?.length") &&
+      !/enemyHand[\s\S]{0,400}card\.image/.test(gameSource) &&
+      polishStyles.includes(".enemy-hand-card") &&
+      polishStyles.includes(".enemy-hand-overflow")
+  );
+  check(
+    "La carte adverse quitte la main avant de voler",
+    // Sans ce retrait, la carte reste visible dans l'éventail pendant tout
+    // son déplacement et se retrouve affichée à deux endroits.
+    gameSource.includes("source?.remove();") &&
+      gameSource.includes("function animateEnemyPlay") &&
+      // Elle rejoint la zone qui correspond à son type.
+      gameSource.includes("animateEnemyPlay(els.enemyLands, land)") &&
+      gameSource.includes("animateEnemyPlay(els.enemyBoard, card)")
+  );
+  check(
+    "Révélation à l'arrivée et non au départ",
+    polishStyles.includes("foe-side--back") &&
+      polishStyles.includes("foe-side--front") &&
+      polishStyles.includes("backface-visibility: hidden;") &&
+      // Le retournement est placé tard dans la trajectoire.
+      /80%[\s\S]{0,120}rotateY\(90deg\)/.test(polishStyles)
+  );
+  check(
+    "Aucune carte volante ne survit à une nouvelle partie",
+    gameSource.includes("const enemyFlights = new Set()") &&
+      gameSource.includes("function clearEnemyFlights") &&
+      /function newGame[\s\S]{0,200}clearEnemyFlights\(\)/.test(gameSource)
+  );
+  check(
+    "Le contrôle ne revient pas pendant une animation adverse",
+    gameSource.includes("const foePlaying = enemyFlights.size > 0;") &&
+      gameSource.includes("isCurrentSideHuman() && !foePlaying") &&
+      gameSource.includes("if (enemyFlights.size === 0 && state.started) updateButtons();")
+  );
+  check(
+    "Compteur de pile synchronisé sur la pioche",
+    gameSource.includes('compteur.classList.add("is-counting")') &&
+      polishStyles.includes("pile-count-tick")
+  );
+  check(
+    "Zone de terrains : cartes au format carte et recouvrement borné",
+    polishStyles.includes("aspect-ratio: 5 / 7;") &&
+      polishStyles.includes("--land-overlap") &&
+      // Les paliers évitent le débordement jusqu'à cinq terrains.
+      polishStyles.includes(":has(.land-permanent:nth-child(5))") &&
+      !polishStyles.includes("max-width: 18px;")
+  );
+  check(
     "Symétrie stricte des deux camps par ancrage miroir",
     // Le camp adverse s'ancre par bottom, le joueur par top, avec les
     // mêmes variables : la symétrie ne peut plus diverger.
@@ -676,7 +729,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("27 sorts avec illustrations autonomes", spells.length === 27);
+  check("28 sorts avec illustrations autonomes", spells.length === 28);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -710,6 +763,14 @@ async function main() {
     spells.find((spell) => spell.id === "conseil-des-sages")?.family === "Bleu" &&
       spells.find((spell) => spell.id === "conseil-des-sages")?.effect === "drawThree"
   );
+  check(
+    "Rivalité au-delà du temps = sort unique Blanc/Noir avec paiement multicolore",
+    spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.family === "Multicolore" &&
+      spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.colors?.join(",") === "Blanc,Noir" &&
+      spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.manaCost?.Blanc === 1 &&
+      spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.manaCost?.Noir === 1 &&
+      spells.find((spell) => spell.id === "rivalite-au-dela-du-temps")?.deckCopies === 1
+  );
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
@@ -738,7 +799,7 @@ async function main() {
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 122 cartes possèdent exactement un SVG généré",
+    "Les 123 cartes possèdent exactement un SVG généré",
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );
@@ -760,7 +821,11 @@ async function main() {
   ];
   check("Les 5 decks restent à 60 cartes avec 4 copies non-terrain maximum", deckColors.every((colors) => {
     const creaturePool = cards.filter((card) => colors.includes(card.family));
-    const spellPool = spells.filter((card) => colors.includes(card.family) || card.family === "Incolore");
+    const spellPool = spells.filter((card) => {
+      if (card.family === "Incolore") return true;
+      const identity = Array.isArray(card.colors) && card.colors.length > 0 ? card.colors : [card.family];
+      return identity.every((family) => colors.includes(family));
+    });
     const spellCount = Math.min(14, spellPool.length * 4);
     const creatureCount = 60 - 24 - spellCount;
     return spellCount >= 8 && spellPool.length * 4 >= spellCount && creaturePool.length * 4 >= creatureCount;

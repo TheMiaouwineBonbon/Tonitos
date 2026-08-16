@@ -3562,7 +3562,11 @@ function rematch() {
 }
 
 function updateButtons() {
-  const playing = state.phase !== PHASES.OVER && isCurrentSideHuman();
+  // Une carte adverse encore en vol signifie que l'action précédente n'est
+  // pas terminée à l'écran : rendre la main au joueur maintenant lui ferait
+  // jouer par-dessus une animation qu'il n'a pas fini de lire.
+  const foePlaying = enemyFlights.size > 0;
+  const playing = state.phase !== PHASES.OVER && isCurrentSideHuman() && !foePlaying;
   const waitingForOpponent = state.phase !== PHASES.OVER && !playing;
   els.endTurn.disabled = !playing;
   els.endTurn.classList.toggle("is-opponent-turn", waitingForOpponent);
@@ -3728,6 +3732,8 @@ function animateEnemyPlay(destination, card = null, delay = 0) {
   window.setTimeout(() => {
     vol.remove();
     enemyFlights.delete(vol);
+    // Le contrôle ne revient qu'une fois la dernière carte posée.
+    if (enemyFlights.size === 0 && state.started) updateButtons();
   }, 560 + delay);
 }
 
@@ -4861,6 +4867,19 @@ function animateDrawCard(sideName, card, delay = 0) {
   }, delay);
   window.setTimeout(() => library.classList.remove("is-drawing-card"), delay + 780);
   window.setTimeout(() => flight.remove(), delay + 1050);
+
+  // Le compteur du deck réagit au moment où la carte le quitte réellement,
+  // et non au prochain rendu : sans cela le chiffre baisse avant que la
+  // carte n'ait bougé, ou longtemps après qu'elle soit arrivée.
+  const compteur = library.querySelector(".mat-zone-count");
+  if (compteur) {
+    window.setTimeout(() => {
+      compteur.classList.remove("is-counting");
+      void compteur.offsetWidth;
+      compteur.classList.add("is-counting");
+    }, delay + 120);
+    window.setTimeout(() => compteur.classList.remove("is-counting"), delay + 560);
+  }
 }
 
 function animateCardDeparture(unit, sideName, mode) {

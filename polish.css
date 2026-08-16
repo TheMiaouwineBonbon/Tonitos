@@ -152,6 +152,22 @@
   transition: opacity 0.2s ease-out;
 }
 
+/* Compteur de pile qui vient de changer : pulsation brève, calée sur le
+   moment où la carte quitte le deck. */
+.mat-zone-count.is-counting {
+  animation: pile-count-tick 0.42s cubic-bezier(0.3, 0.7, 0.3, 1) both;
+}
+
+@keyframes pile-count-tick {
+  0% { transform: scale(1); }
+  35% {
+    transform: scale(1.22);
+    border-color: rgba(246, 214, 130, 0.95);
+    box-shadow: 0 0 9px rgba(226, 184, 94, 0.6);
+  }
+  100% { transform: scale(1); }
+}
+
 /* Cartes adverses non représentées dans l'éventail. */
 .enemy-hand-overflow {
   align-self: center;
