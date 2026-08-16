@@ -411,6 +411,12 @@ function bindEvents() {
   screen.orientation?.addEventListener?.("change", handleOrientationChange);
   window.addEventListener("scroll", hideCardPreview, true);
   window.addEventListener("pointermove", onDragPointerMove, { passive: false });
+  // iOS peut produire un clic synthétique juste après pointerup. La flèche est
+  // donc masquée en phase de capture, avant toute résolution ou tout clic.
+  window.addEventListener("pointerup", hideAttackArrowVisual, { capture: true });
+  window.addEventListener("pointercancel", hideAttackArrowVisual, { capture: true });
+  window.addEventListener("touchend", hideAttackArrowVisual, { capture: true, passive: true });
+  window.addEventListener("touchcancel", hideAttackArrowVisual, { capture: true, passive: true });
   window.addEventListener("pointerup", onDragPointerUp);
   window.addEventListener("pointercancel", onDragPointerCancel);
   // Perte de focus / passage en arrière-plan : le pointerup n'arrive pas
@@ -3871,6 +3877,17 @@ function survivalGoalForUnit(unit) {
 function handleBoardCardClick(unit, sideName) {
   const myTurn = isCurrentSideHuman() && state.phase !== PHASES.OVER;
 
+  // Sur PC, un clic simple sert toujours à inspecter la carte. L'attaque se
+  // fait par glisser-déposer ou depuis le bouton d'action de la fiche.
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    if (myTurn && sideName !== state.currentTurn && state.selectedAttackerId) {
+      attackUnit(unit.uid);
+      return;
+    }
+    openCardDetail(unit, { zone: "board", side: sideName });
+    return;
+  }
+
   if (myTurn && sideName === state.currentTurn) {
     if (canAttack(unit) || unit.uid === state.selectedAttackerId) {
       selectAttacker(unit.uid);
@@ -4032,6 +4049,7 @@ function updateDrag(event) {
 }
 
 function onDragPointerUp(event) {
+  hideAttackArrowVisual();
   if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
   const wasActive = dragState.active;
   const suppressClick = dragState.suppressClick;
@@ -4050,6 +4068,7 @@ function onDragPointerUp(event) {
 }
 
 function onDragPointerCancel(event) {
+  hideAttackArrowVisual();
   if (!dragState.pending || event.pointerId !== dragState.pointerId) return;
   resetDrag();
   flushPendingHandRender();
@@ -4082,7 +4101,7 @@ function resetDrag() {
     } catch {}
   }
   if (dragState.ghost) dragState.ghost.remove();
-  dragState.node?.classList.remove("is-drag-source");
+  dragState.node?.classList.remove("is-drag-source", "is-attacking");
   document.body.classList.remove("is-dragging");
   els.playerBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-target");
   els.playerBoard?.closest(".mat-zone--field")?.classList.remove("is-drop-ready");
@@ -4101,6 +4120,7 @@ function resetDrag() {
   dragState.pointerType = "";
   dragState.ghost = null;
   dragState.suppressClick = false;
+  discardDragLayer();
 }
 
 // Nettoyage purement visuel du ciblage : flèche, surbrillances, capture de
@@ -4217,6 +4237,16 @@ function setDragArrowVisible(visible) {
   dragArrowEl.hidden = !visible;
   dragArrowEl.classList.toggle("is-visible", visible);
   if (!visible) dragArrowEl.querySelector(".drag-arrow-line")?.removeAttribute("d");
+}
+
+function hideAttackArrowVisual() {
+  setDragArrowVisible(false);
+}
+
+function discardDragLayer() {
+  dragLayerEl?.remove();
+  dragLayerEl = null;
+  dragArrowEl = null;
 }
 
 function ensureDragLayer() {

@@ -7226,9 +7226,9 @@ body.phone-portrait-blocked .orientation-gate {
   }
 }
 
-/* Contour des lettres commun aux cartes PC et smartphone. Cette règle reste
-   en dernier pour conserver son éclat face aux ajustements responsive. */
-.card-title-lockup .card-name {
+/* Le liseré signale une action disponible : il ne doit jamais apparaître sur
+   une carte de collection, une carte déjà posée ou une carte sans mana. */
+.hand-row .game-card.is-playable .card-title-lockup .card-name {
   position: relative;
   z-index: 1;
   color: #fff9e8;

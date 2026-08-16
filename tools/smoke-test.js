@@ -90,10 +90,9 @@ async function main() {
   );
   const cardGeneratorSource = fs.readFileSync(path.join(__dirname, "generate-cards.js"), "utf8");
   check(
-    "Contour doré brillant de 3 px autour des lettres sur PC et smartphone",
-    cardGeneratorSource.includes('id="titleGlow"') &&
-      cardGeneratorSource.includes('stroke="#e7b94f" stroke-width="3"') &&
-      cardGeneratorSource.includes('paint-order="stroke fill"') &&
+    "Les cartes de collection gardent un titre neutre",
+    !cardGeneratorSource.includes('id="titleGlow"') &&
+      !cardGeneratorSource.includes('stroke="#e7b94f" stroke-width="3"') &&
       collectionSource.includes("SVG_ASSET_VERSION")
   );
   check(
@@ -136,8 +135,8 @@ async function main() {
   res = await fetch(`${base}/styles.css`);
   const cardTitleStyles = await res.text();
   check(
-    "Lettres des noms HTML entourées d'un liseré doré de 3 px",
-    cardTitleStyles.includes(".card-title-lockup .card-name") &&
+    "Liseré doré de 3 px réservé aux cartes jouables",
+    cardTitleStyles.includes(".hand-row .game-card.is-playable .card-title-lockup .card-name") &&
       cardTitleStyles.includes("-webkit-text-stroke: 3px #e7b94f") &&
       cardTitleStyles.includes("paint-order: stroke fill") &&
       !cardTitleStyles.includes(".card-title-lockup::after")
@@ -517,11 +516,19 @@ async function main() {
       (attackSource.match(/resetAttackState\(\)/g) || []).length >= 5
   );
   check(
-    "La flèche disparaît avant l'animation et son tracé est effacé",
+    "La flèche mobile est détruite après l'attaque",
     gameSource.includes("function setDragArrowVisible(visible)") &&
+      gameSource.includes("function discardDragLayer()") &&
+      gameSource.includes('window.addEventListener("touchend", hideAttackArrowVisual') &&
+      gameSource.includes('classList.remove("is-drag-source", "is-attacking")') &&
       gameSource.includes('removeAttribute("d")') &&
       (attackSource.match(/clearAttackPreview\(\);\s*playLunge/g) || []).length === 2 &&
       cardTitleStyles.includes(".drag-arrow.is-visible:not([hidden])")
+  );
+  check(
+    "Le clic PC ouvre la fiche d'une créature prête",
+    gameSource.includes('window.matchMedia("(hover: hover) and (pointer: fine)").matches') &&
+      gameSource.includes('openCardDetail(unit, { zone: "board", side: sideName });')
   );
   check(
     "Les actions de carte sont refusées par le moteur hors tour",
