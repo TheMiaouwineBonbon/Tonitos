@@ -3624,6 +3624,14 @@ function renderEnemyHand() {
     els.enemyHand.append(dos);
   }
   els.enemyHand.dataset.count = String(total);
+
+  // Le dernier dos arrivé s'installe brièvement : la main adverse réagit
+  // visiblement à la pioche au lieu de changer silencieusement de taille.
+  if (affichees > existantes && !prefersReducedEffects()) {
+    const arrivee = els.enemyHand.lastElementChild;
+    arrivee?.classList.add("is-arriving");
+    window.setTimeout(() => arrivee?.classList.remove("is-arriving"), 420);
+  }
 }
 
 // L'adversaire joue : le dos de carte quitte sa main, traverse le plateau
@@ -4734,7 +4742,12 @@ function animateDrawCard(sideName, card, delay = 0) {
   if (!source) return;
 
   const visibleHand = getVisibleHandSide()?.side === sideName;
-  const fallbackTarget = matZone(sideName, "commander") || document.querySelector(`.${sideName}-mat`);
+  // La main adverse existe désormais à l'écran : la carte piochée la
+  // rejoint réellement, au lieu de se perdre vers le portrait.
+  const foeHand = sideName === "enemy" && els.enemyHand?.children.length ? els.enemyHand : null;
+  const fallbackTarget = foeHand
+    || matZone(sideName, "commander")
+    || document.querySelector(`.${sideName}-mat`);
   const target = validEffectRect(visibleHand ? els.playerHand : fallbackTarget);
   if (!target) return;
 
@@ -4745,7 +4758,9 @@ function animateDrawCard(sideName, card, delay = 0) {
   const toX = target.left + target.width / 2 - width / 2;
   const toY = visibleHand
     ? target.top + Math.min(28, target.height * 0.22)
-    : target.top + target.height * 0.3 - height / 2;
+    : foeHand
+      ? target.top + target.height / 2 - height / 2
+      : target.top + target.height * 0.3 - height / 2;
 
   const flight = document.createElement("div");
   flight.className = `draw-card-flight ${sideName}`;

@@ -122,6 +122,20 @@
   transition: opacity 0.2s ease-out;
 }
 
+/* Dos qui vient d'être pioché : il se glisse dans l'éventail. */
+.enemy-hand-card.is-arriving {
+  animation: foe-card-arrive 0.4s cubic-bezier(0.22, 0.68, 0.3, 1) both;
+}
+
+@keyframes foe-card-arrive {
+  0% { opacity: 0; transform: translateY(-9px) scale(0.82) rotate(0deg); }
+  60% { opacity: 1; }
+  100% {
+    opacity: 1;
+    transform: translateY(var(--foe-card-drop, 0px)) rotate(var(--foe-card-rotation, 0deg));
+  }
+}
+
 @keyframes foe-card-fly {
   0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0; }
   12% { opacity: 1; }
@@ -919,21 +933,42 @@
 
   /* Ornement supérieur : petite gemme sertie dans le jonc, alignée sur
      l'axe du médaillon plutôt que posée par-dessus. */
+  /* Gemme sertie DANS le jonc doré : son centre tombe sur l'anneau (à
+     -4,75px du bord du portrait) au lieu de flotter au-dessus. La monture
+     sombre puis dorée l'assied dans le cadre plutôt que de la poser
+     dessus, et un reflet décentré lui donne du galbe. */
   body.game-running[data-mobile-view="board"] .mat-zone--commander .commander-portrait::after {
     content: "";
     position: absolute;
     z-index: 2;
-    top: -7px;
+    top: -10px;
     left: 50%;
     width: 11px;
     height: 11px;
     border-radius: 50%;
     background:
-      radial-gradient(circle at 50% 35%, #fff3cf 0 18%, #e2b85e 42%, #7a5220 78%, #2a1808 100%);
+      radial-gradient(circle at 38% 30%, #fff6dd 0 14%, #f0cd82 34%, #b07f2e 62%, #5a3a12 84%, #241505 100%);
     box-shadow:
-      0 0 0 1.5px rgba(18, 11, 26, 0.95),
-      0 0 7px rgba(226, 184, 94, 0.55);
+      /* monture : cerne sombre puis griffe dorée */
+      0 0 0 1.4px rgba(20, 12, 28, 0.96),
+      0 0 0 2.6px rgba(198, 154, 72, 0.95),
+      0 0 0 3.4px rgba(18, 11, 26, 0.8),
+      /* la gemme éclaire le jonc autour d'elle */
+      0 1px 6px rgba(226, 184, 94, 0.6),
+      0 0 12px rgba(178, 126, 255, 0.32);
     translate: -50% 0;
+  }
+
+  /* Tour actif : la gemme s'allume avec le reste du cadre. */
+  body.game-running[data-mobile-view="board"] .mat-zone--commander.is-active-turn .commander-portrait::after {
+    background:
+      radial-gradient(circle at 38% 30%, #fffaf0 0 16%, #ffe6a8 36%, #d0a145 64%, #6b4718 86%, #2b1907 100%);
+    box-shadow:
+      0 0 0 1.4px rgba(20, 12, 28, 0.96),
+      0 0 0 2.6px rgba(232, 190, 104, 0.98),
+      0 0 0 3.4px rgba(18, 11, 26, 0.8),
+      0 1px 8px rgba(246, 214, 130, 0.8),
+      0 0 16px rgba(190, 140, 255, 0.5);
   }
 
   /* Tour actif : le halo se renforce, sans clignotement. */
