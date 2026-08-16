@@ -785,5 +785,65 @@
       "svgFit": "cover",
       "svgFlavor": false
     }
+  },
+  {
+    "id": "assassinat",
+    "kind": "spell",
+    "name": "Assassinat",
+    "subtitle": "Une ombre, un nom, puis le silence",
+    "family": "Noir",
+    "type": "Rituel - Destruction",
+    "cost": 3,
+    "slot": "offense",
+    "keywords": [
+      "Assassin",
+      "Destruction"
+    ],
+    "abilityName": "Contrat nocturne",
+    "abilityText": "Détruis la créature adverse la plus puissante.",
+    "flavor": "Dans les hauteurs d'Aethran, la nuit remet toujours ses comptes à zéro.",
+    "image": "Images/Assassinat.png",
+    "palette": {
+      "primary": "#4f235d",
+      "secondary": "#a66de0",
+      "deep": "#090610"
+    },
+    "effect": "destroyStrongest",
+    "art": {
+      "fit": "cover",
+      "position": "42% 47%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
+  },
+  {
+    "id": "pacte-maudit",
+    "kind": "spell",
+    "name": "Pacte maudit",
+    "subtitle": "Deux signatures liées par le sang",
+    "family": "Noir",
+    "type": "Enchantement - Pacte",
+    "cost": 2,
+    "slot": "draw",
+    "keywords": [
+      "Pacte",
+      "Pioche"
+    ],
+    "abilityName": "Prix de l'ambition",
+    "abilityText": "Perds 1 point de vie, puis pioche deux cartes.",
+    "flavor": "Thaelion offrit un royaume. Aethran demanda seulement ce qui resterait après sa chute.",
+    "image": "Images/Pacte Maudit.PNG",
+    "palette": {
+      "primary": "#692f4d",
+      "secondary": "#d39a79",
+      "deep": "#12080f"
+    },
+    "effect": "cursedPact",
+    "art": {
+      "fit": "cover",
+      "position": "50% 46%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
   }
 ]

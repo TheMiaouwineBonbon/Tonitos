@@ -613,7 +613,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 66 créatures", Array.isArray(cards) && cards.length === 66);
+  check("cards.json = 68 créatures", Array.isArray(cards) && cards.length === 68);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -645,6 +645,15 @@ async function main() {
   check("Fée = Vert", cards.find((c) => c.id === "fee")?.family === "Vert");
   check("Ours-hibou = Vert", cards.find((c) => c.id === "ours-hibou")?.family === "Vert");
   check("Valerius = Noir", cards.find((c) => c.id === "valerius")?.family === "Noir");
+  check(
+    "Thaelion et Aethran = légendaires de coût 3 avec synergie prise en charge",
+    cards.find((card) => card.id === "comte-thaelion")?.family === "Rouge" &&
+      cards.find((card) => card.id === "comte-thaelion")?.cost === 3 &&
+      cards.find((card) => card.id === "diplomate-aethran")?.family === "Noir" &&
+      cards.find((card) => card.id === "diplomate-aethran")?.cost === 3 &&
+      gameSource.includes('unit.id === "comte-thaelion"') &&
+      gameSource.includes('unit.id === "diplomate-aethran"')
+  );
   const daemon = cards.find((card) => card.id === "aventurier-mythique-daemon");
   check(
     "Aventurier Mythique Daemon = Blanc 3/4 immortel à 3 terrains",
@@ -764,7 +773,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("29 sorts avec illustrations autonomes", spells.length === 29);
+  check("31 sorts avec illustrations autonomes", spells.length === 31);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -812,6 +821,15 @@ async function main() {
       spells.find((spell) => spell.id === "la-verite")?.cost === 5 &&
       spells.find((spell) => spell.id === "la-verite")?.effect === "unbearableTruth"
   );
+  check(
+    "Assassinat et Pacte maudit = sorts noirs de coût maximal 3",
+    spells.find((spell) => spell.id === "assassinat")?.family === "Noir" &&
+      spells.find((spell) => spell.id === "assassinat")?.cost === 3 &&
+      spells.find((spell) => spell.id === "assassinat")?.effect === "destroyStrongest" &&
+      spells.find((spell) => spell.id === "pacte-maudit")?.family === "Noir" &&
+      spells.find((spell) => spell.id === "pacte-maudit")?.cost === 2 &&
+      spells.find((spell) => spell.id === "pacte-maudit")?.effect === "cursedPact"
+  );
 
   const implementedEffects = new Set([
     ...gameSource.matchAll(/card\.effect === "([^"]+)"/g),
@@ -840,7 +858,7 @@ async function main() {
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 124 cartes possèdent exactement un SVG généré",
+    "Les 128 cartes possèdent exactement un SVG généré",
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );

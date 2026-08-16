@@ -1800,5 +1800,65 @@
       "fit": "cover",
       "position": "50% 48%"
     }
+  },
+  {
+    "id": "comte-thaelion",
+    "name": "Comte Thaelion",
+    "subtitle": "Prince des cités aériennes",
+    "family": "Rouge",
+    "type": "Créature légendaire - Elfe Noble",
+    "cost": 3,
+    "attack": 3,
+    "life": 3,
+    "keywords": [
+      "Noble",
+      "Célérité"
+    ],
+    "abilityName": "Ambition écarlate",
+    "abilityText": "Cette créature peut attaquer dès son arrivée. Si tu contrôles Diplomate Aethran, le héros adverse perd 2 points de vie.",
+    "flavor": "Il ne conquiert pas les villes. Il convainc leurs maîtres qu'elles lui appartenaient déjà.",
+    "image": "Images/Comte Thaelion.PNG",
+    "palette": {
+      "primary": "#9f273f",
+      "secondary": "#ef8d68",
+      "deep": "#210810"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "42% 48%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
+  },
+  {
+    "id": "diplomate-aethran",
+    "name": "Diplomate Aethran",
+    "subtitle": "Sourire du marché obscur",
+    "family": "Noir",
+    "type": "Créature légendaire - Elfe Diplomate",
+    "cost": 3,
+    "attack": 2,
+    "life": 3,
+    "keywords": [
+      "Diplomate",
+      "Pacte"
+    ],
+    "abilityName": "Clause empoisonnée",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, le héros adverse perd 1 point de vie. Si tu contrôles Comte Thaelion, il défausse aussi sa carte la plus coûteuse.",
+    "flavor": "Aethran ne ment jamais. Il laisse seulement ses interlocuteurs choisir la mauvaise vérité.",
+    "image": "Images/Diplomate Aethran.PNG",
+    "palette": {
+      "primary": "#573259",
+      "secondary": "#a8d3d0",
+      "deep": "#100a16"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "58% 45%",
+      "svgFit": "cover",
+      "svgFlavor": false
+    }
   }
 ]

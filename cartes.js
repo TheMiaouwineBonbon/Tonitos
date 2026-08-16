@@ -52,7 +52,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
-const SVG_ASSET_VERSION = "20260816-playable-letters-3";
+const SVG_ASSET_VERSION = "20260816-thaelion-aethran-1";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {

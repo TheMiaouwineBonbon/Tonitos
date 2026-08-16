@@ -2085,6 +2085,13 @@ function applySpellEffect(card, side) {
     );
   }
 
+  if (card.effect === "cursedPact") {
+    side.life -= 1;
+    pushVisualEffect("hit", side.side, "-1");
+    draw(side, 2);
+    logEvent(`${card.name} réclame 1 point de vie et fait piocher deux cartes.`);
+  }
+
   if (card.effect === "freezeTwo") {
     const targets = [...opponent.board].filter((unit) => !unit.tapped).sort((a, b) => b.attack - a.attack).slice(0, 2);
     for (const target of targets) freezeCreature(target);
@@ -2691,6 +2698,44 @@ function triggerOnPlay(unit, side) {
     logEvent(`${unit.name} draine 2 points de vie au héros adverse.`);
   }
 
+  if (unit.id === "comte-thaelion") {
+    const alliedAethran = side.board.some(
+      (ally) => ally.uid !== unit.uid && ally.id === "diplomate-aethran" && ally.currentLife > 0
+    );
+    if (alliedAethran) {
+      opponent.life -= 2;
+      pushVisualEffect("hit", opponent.side, "-2");
+      logEvent(`${unit.name} honore le pacte d'Aethran et inflige 2 blessures au héros adverse.`);
+    }
+  }
+
+  if (unit.id === "diplomate-aethran") {
+    opponent.life -= 1;
+    pushVisualEffect("hit", opponent.side, "-1");
+    const alliedThaelion = side.board.some(
+      (ally) => ally.uid !== unit.uid && ally.id === "comte-thaelion" && ally.currentLife > 0
+    );
+    if (alliedThaelion) {
+      const [discarded] = selectHighestCostCards(opponent.hand, 1);
+      const handIndex = discarded
+        ? opponent.hand.findIndex((entry) => entry.uid === discarded.uid)
+        : -1;
+      if (handIndex >= 0) {
+        const [removed] = opponent.hand.splice(handIndex, 1);
+        opponent.graveyard.push({
+          ...removed,
+          uid: `${opponent.side}-grave-${removed.id}-${crypto.randomUUID()}`
+        });
+        animateGraveyardArrival(opponent.side, removed, 220);
+        logEvent(`${unit.name} coûte 1 point de vie au héros adverse et lui fait défausser ${removed.name}.`);
+      } else {
+        logEvent(`${unit.name} coûte 1 point de vie au héros adverse, mais sa main est vide.`);
+      }
+    } else {
+      logEvent(`${unit.name} soutire 1 point de vie au héros adverse.`);
+    }
+  }
+
   checkVictory();
 }
 
@@ -3107,6 +3152,8 @@ function isSpellWorthCasting(card, side, opponent) {
       return side.board.length > 0 && opponent.board.length > 0;
     case "unbearableTruth":
       return opponent.hand.length > 0 || opponent.life > 0;
+    case "cursedPact":
+      return side.deck.length > 0 && side.life > 1;
     case "restoreTeam":
       return side.board.some((unit) => unit.currentLife < unit.maxLife);
     case "buffTeam1":
