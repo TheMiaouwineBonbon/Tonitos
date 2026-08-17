@@ -45,6 +45,11 @@ const PLAYER_ID_KEY = "spellaho-player-id";
 const LEGACY_PLAYER_ID_KEY = "tonitos-player-id";
 const PHONE_LANDSCAPE_MAX_WIDTH = 960;
 const PHONE_LANDSCAPE_MAX_HEIGHT = 540;
+// Le code n'est plus imposé : chaque partie ouvre le salon de son choix,
+// sans quoi deux tables simultanées s'écrasaient mutuellement.
+// Déclarés ici parce que `state` s'en sert dès sa construction, plus bas.
+const DEFAULT_ROOM_CODE = "1234";
+const ROOM_CODE_PATTERN = /^\d{4}$/;
 const storedPlayerId = sessionStorage.getItem(PLAYER_ID_KEY) || sessionStorage.getItem(LEGACY_PLAYER_ID_KEY) || "";
 if (storedPlayerId && !sessionStorage.getItem(PLAYER_ID_KEY)) {
   sessionStorage.setItem(PLAYER_ID_KEY, storedPlayerId);
@@ -77,7 +82,7 @@ const state = {
   started: false,
   network: {
     enabled: false,
-    code: "1234",
+    code: DEFAULT_ROOM_CODE,
     playerId: storedPlayerId,
     slot: null,
     version: 0,
@@ -89,7 +94,10 @@ const state = {
     peerRoom: null,
     suppressPublish: false,
     pending: false,
-    dirty: false
+    dirty: false,
+    // Sondages ratés d'affilée, et verrou pendant une reconnexion.
+    failures: 0,
+    rejoining: false
   }
 };
 
@@ -225,8 +233,12 @@ const DECK_SIZE = 60;
 const DECK_LANDS = 24;
 const DECK_SPELLS = 14;
 const MAX_NONLAND_COPIES = 4;
-const ONLINE_ROOM_CODE = "1234";
 const ONLINE_POLL_MS = 1000;
+// Trois sondages ratés d'affilée valent mieux qu'un seul pour distinguer une
+// coupure réelle d'un simple hoquet réseau.
+const ONLINE_REJOIN_AFTER_FAILURES = 3;
+// Laisse au pair le temps de se réinstaller avant de retenter la liaison.
+const PEER_RECONNECT_MS = 2000;
 const PEERJS_MODULE_URL = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/+esm";
 const PLAYMATS = {
   player: "Images/Tapis de Jeu/Tapis de jeu Joueur.png",
@@ -749,9 +761,9 @@ function updateMenuSummary() {
     <span>60 cartes exactes, 24 terrains et 4 exemplaires maximum par carte non-terrain.</span>
     <span>${escapeHtml(profileFromMenu("player").name)} : ${escapeHtml(playerDeck.shortName)} · ${playerComposition.creatures} créatures · ${playerComposition.spells} sorts.</span>
     <span>${enemyLabel} : ${escapeHtml(enemyDeck.shortName)} · ${enemyComposition.creatures} créatures · ${enemyComposition.spells} sorts.</span>
-    <span>${isOnline ? `Salon en ligne : entre le code ${ONLINE_ROOM_CODE}, puis attends le second joueur.` : "Partie jouée sur cet écran."}</span>
+    <span>${isOnline ? "Salon en ligne : choisis un code à quatre chiffres et donne-le à ton adversaire." : "Partie jouée sur cet écran."}</span>
   `;
-  setOnlineStatus(isOnline ? "Code provisoire : 1234." : "");
+  setOnlineStatus(isOnline ? "Vous devez entrer le même code tous les deux." : "");
 }
 
 function profileFromMenu(sideName) {
@@ -850,14 +862,14 @@ function createSide(side, deckSpec, profile = {}) {
 
 async function joinOnlineRoom() {
   const code = els.roomCodeInput.value.trim();
-  if (code !== ONLINE_ROOM_CODE) {
-    setOnlineStatus("Code invalide : utilise 1234 pour l'instant.", true);
+  if (!ROOM_CODE_PATTERN.test(code)) {
+    setOnlineStatus("Code invalide : choisis quatre chiffres, et donne-les à ton adversaire.", true);
     return;
   }
 
   stopOnlineSync({ keepIdentity: true });
   els.startGame.disabled = true;
-  setOnlineStatus("Connexion au salon 1234...");
+  setOnlineStatus(`Connexion au salon ${code}...`);
 
   try {
     await joinServerRoom(code);
@@ -866,7 +878,7 @@ async function joinOnlineRoom() {
       setOnlineStatus("Serveur local indisponible. Connexion directe entre joueurs...");
       await joinPeerRoom(code);
     } catch (peerError) {
-      setOnlineStatus(peerError.message || serverError.message || "Connexion impossible", true);
+      setOnlineStatus(messageReseau(peerError, messageReseau(serverError, "Connexion impossible")), true);
     }
   } finally {
     els.startGame.disabled = false;
@@ -898,17 +910,24 @@ async function joinServerRoom(code) {
   state.network.slot = payload.slot;
   state.network.version = payload.room.version || 0;
   state.network.pending = false;
+  state.network.failures = 0;
   sessionStorage.setItem(PLAYER_ID_KEY, payload.playerId);
 
   startOnlinePolling();
   handleOnlineRoom(payload.room);
 }
 
+// Identité publique de l'hôte sur le service de rendez-vous : c'est elle qui
+// fait office de salon quand aucun serveur n'est joignable.
+function peerHostId(code) {
+  return `spellaho-${code}-host`;
+}
+
 async function joinPeerRoom(code) {
   const { default: Peer } = await import(PEERJS_MODULE_URL);
   const profile = profileFromMenu("player");
   const playerId = state.network.playerId || crypto.randomUUID();
-  const hostId = `spellaho-${code}-host`;
+  const hostId = peerHostId(code);
   const peerOptions = { debug: 0 };
 
   state.network.enabled = true;
@@ -932,7 +951,7 @@ async function joinPeerRoom(code) {
     state.network.peerRoom.players.player = peerProfile("player", profile, els.playerDeckSelect.value, playerId);
     hostPeer.on("connection", acceptPeerGuest);
     hostPeer.on("error", handlePeerError);
-    setOnlineStatus("Salon direct 1234 créé. En attente du second joueur...");
+    setOnlineStatus(`Salon direct ${code} créé. En attente du second joueur...`);
   } catch (error) {
     if (error.type !== "unavailable-id") throw error;
     const guestPeer = new Peer(peerOptions);
@@ -949,7 +968,7 @@ async function joinPeerRoom(code) {
       }
     });
     attachPeerConnection(connection, "guest");
-    setOnlineStatus("Connexion directe au salon 1234...");
+    setOnlineStatus(`Connexion directe au salon ${code}...`);
   }
 }
 
@@ -984,7 +1003,7 @@ function peerProfile(slot, profile, deckId, playerId) {
 function acceptPeerGuest(connection) {
   if (state.network.connection?.open) {
     connection.on("open", () => {
-      connection.send({ type: "error", message: "Le salon 1234 a déjà deux joueurs." });
+      connection.send({ type: "error", message: `Le salon ${state.network.code} a déjà deux joueurs.` });
       connection.close();
     });
     return;
@@ -1009,9 +1028,36 @@ function attachPeerConnection(connection, role) {
   connection.on("data", handlePeerMessage);
   connection.on("close", () => {
     state.network.connection = null;
-    setOnlineStatus("Le second joueur s'est déconnecté. Tu peux recréer ou rejoindre le salon.", true);
+    setOnlineStatus("Le second joueur s'est déconnecté.", true);
+    // Seul l'invité peut reprendre l'initiative : l'hôte, lui, se contente
+    // d'accepter la prochaine connexion entrante.
+    if (role === "guest") planifierReconnexionPeer();
   });
   connection.on("error", handlePeerError);
+}
+
+let reconnexionPeerTimer = null;
+
+function planifierReconnexionPeer() {
+  window.clearTimeout(reconnexionPeerTimer);
+  if (!state.network.enabled || state.network.transport !== "peer") return;
+  reconnexionPeerTimer = window.setTimeout(() => {
+    const peer = state.network.peer;
+    if (!peer || peer.destroyed || state.network.connection?.open) return;
+    setOnlineStatus(`Reconnexion au salon direct ${state.network.code}...`, true);
+    const connection = peer.connect(peerHostId(state.network.code), {
+      reliable: true,
+      metadata: {
+        playerId: state.network.playerId,
+        profile: profileFromMenu("player"),
+        deckId: els.playerDeckSelect.value
+      }
+    });
+    attachPeerConnection(connection, "guest");
+    // Une tentative ratée ne ferme pas toujours la connexion : on replanifie
+    // pour ne pas rester bloqué sur un lien mort.
+    planifierReconnexionPeer();
+  }, PEER_RECONNECT_MS);
 }
 
 function registerPeerGuest(message) {
@@ -1043,7 +1089,7 @@ function handlePeerMessage(message) {
   if (message.type === "snapshot" && message.state && message.version > state.network.version) {
     state.network.peerRoom = message.room || state.network.peerRoom;
     applyOnlineState(message.state, message.version, state.network.peerRoom);
-    setOnlineStatus(`Salon direct 1234 synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
+    setOnlineStatus(`Salon direct ${state.network.code} synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
   }
 }
 
@@ -1059,6 +1105,7 @@ function startOnlinePolling() {
 
 function stopOnlineSync(options = {}) {
   window.clearInterval(veilleOnlineTimer);
+  window.clearTimeout(reconnexionPeerTimer);
   if (els.onlineBanner) els.onlineBanner.hidden = true;
   if (state.network.pollTimer) clearInterval(state.network.pollTimer);
   if (state.network.publishTimer) clearTimeout(state.network.publishTimer);
@@ -1069,7 +1116,7 @@ function stopOnlineSync(options = {}) {
   const playerId = options.keepIdentity ? state.network.playerId : sessionStorage.getItem(PLAYER_ID_KEY) || "";
   state.network = {
     enabled: false,
-    code: ONLINE_ROOM_CODE,
+    code: DEFAULT_ROOM_CODE,
     playerId,
     slot: null,
     version: 0,
@@ -1081,21 +1128,66 @@ function stopOnlineSync(options = {}) {
     peerRoom: null,
     suppressPublish: false,
     pending: false,
-    dirty: false
+    dirty: false,
+    failures: 0,
+    rejoining: false
   };
 }
 
 async function pollOnlineRoom() {
-  if (!state.network.enabled || state.network.transport !== "server") return;
+  if (!state.network.enabled || state.network.transport !== "server" || state.network.rejoining) return;
 
   try {
     const response = await fetch(`./api/room/state?code=${encodeURIComponent(state.network.code)}&playerId=${encodeURIComponent(state.network.playerId)}`);
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || "Synchronisation impossible");
+    // Le serveur répond mais ne nous connaît plus : il a redémarré, ou notre
+    // place a été rendue après un long silence. Sonder plus longtemps un
+    // salon où l'on n'est plus inscrit ne mène nulle part.
+    if (!payload.slot && state.network.slot) {
+      await rejoindreSalonOnline("Place perdue dans le salon");
+      return;
+    }
     if (payload.slot) state.network.slot = payload.slot;
+    state.network.failures = 0;
     handleOnlineRoom(payload.room);
   } catch (error) {
-    setOnlineStatus(error.message || "Synchronisation perdue", true);
+    state.network.failures = (state.network.failures || 0) + 1;
+    const raison = messageReseau(error, "Synchronisation perdue");
+    if (state.network.failures >= ONLINE_REJOIN_AFTER_FAILURES) {
+      await rejoindreSalonOnline(raison);
+      return;
+    }
+    setOnlineStatus(`${raison} — nouvelle tentative...`, true);
+  }
+}
+
+// « Failed to fetch » et ses variantes viennent du navigateur, en anglais :
+// le joueur n'a pas à les lire au milieu d'une partie.
+function messageReseau(error, secours = "Liaison interrompue") {
+  const brut = String(error?.message || "").trim();
+  if (!brut) return secours;
+  if (/failed to fetch|networkerror|load failed|network request failed/i.test(brut)) {
+    return "Serveur injoignable";
+  }
+  return brut;
+}
+
+// Reprise de liaison : on refait un join complet en gardant la même
+// identité. Le serveur rend sa place au joueur s'il l'a encore, et lui en
+// attribue une neuve s'il a redémarré entre-temps.
+async function rejoindreSalonOnline(raison = "") {
+  if (state.network.rejoining) return;
+  state.network.rejoining = true;
+  setOnlineStatus(`${raison ? `${raison} : ` : ""}reconnexion au salon ${state.network.code}...`, true);
+  try {
+    await joinServerRoom(state.network.code);
+    state.network.failures = 0;
+    setOnlineStatus(`Reconnecté au salon ${state.network.code}.`);
+  } catch (error) {
+    setOnlineStatus(`Reconnexion impossible : ${messageReseau(error).toLowerCase()}`, true);
+  } finally {
+    state.network.rejoining = false;
   }
 }
 
@@ -1109,11 +1201,11 @@ function handleOnlineRoom(room) {
   ];
 
   if (!hasBothPlayers) {
-    setOnlineStatus(`${playerNames[0]} est dans le salon 1234. En attente du second joueur...`);
+    setOnlineStatus(`${playerNames[0]} est dans le salon ${state.network.code}. En attente du second joueur...`);
     return;
   }
 
-  setOnlineStatus(`Salon 1234 connecté : ${playerNames[0]} contre ${playerNames[1]}.`);
+  setOnlineStatus(`Salon ${state.network.code} connecté : ${playerNames[0]} contre ${playerNames[1]}.`);
 
   if (room.state && (!state.started || room.version > state.network.version)) {
     applyOnlineState(room.state, room.version, room);
@@ -1143,7 +1235,7 @@ function startOnlineGameFromRoom(room) {
     enemyProfile,
     preserveNetwork: true
   });
-  logEvent(`Salon 1234 synchronisé : ${playerProfile.name} affronte ${enemyProfile.name}.`);
+  logEvent(`Salon ${state.network.code} synchronisé : ${playerProfile.name} affronte ${enemyProfile.name}.`);
   publishOnlineState();
 }
 
@@ -1314,7 +1406,7 @@ async function publishOnlineState() {
       state: snapshot,
       room: state.network.peerRoom
     });
-    setOnlineStatus(`Salon direct 1234 synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
+    setOnlineStatus(`Salon direct ${state.network.code} synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
     return;
   }
   if (state.network.pending) {
@@ -1340,11 +1432,17 @@ async function publishOnlineState() {
       setOnlineStatus("Une action plus récente a été conservée.", true);
       return;
     }
+    // Le serveur a oublié notre inscription : republier n'aboutira jamais
+    // tant qu'on n'a pas repris une place dans le salon.
+    if (response.status === 403) {
+      await rejoindreSalonOnline("Place perdue dans le salon");
+      return;
+    }
     if (!response.ok) throw new Error(payload.error || "Publication impossible");
     state.network.version = payload.version || state.network.version;
-    setOnlineStatus(`Salon 1234 synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
+    setOnlineStatus(`Salon ${state.network.code} synchronisé. Tu contrôles ${sideDisplayName(state.network.slot)}.`);
   } catch (error) {
-    setOnlineStatus(error.message || "Publication impossible", true);
+    setOnlineStatus(messageReseau(error, "Publication impossible"), true);
   } finally {
     state.network.pending = false;
     if (state.network.dirty) {

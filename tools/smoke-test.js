@@ -965,11 +965,38 @@ async function main() {
     res.status === 409 && stale.room?.state?.marker === "sync-ok" && stale.room?.version === 1
   );
 
-  res = await fetch(`${base}/api/room/join`, json({ code: "0000" }));
-  check("Code invalide -> 403", res.status === 403);
+  // Tout code à quatre chiffres est désormais un salon distinct : seul un
+  // format incorrect est rejeté.
+  for (const mauvais of ["", "12", "12345", "abcd", "12a4"]) {
+    res = await fetch(`${base}/api/room/join`, json({ code: mauvais }));
+    check(`Code mal formé "${mauvais}" -> 403`, res.status === 403);
+  }
 
   res = await fetch(`${base}/api/room/join`, json({ code: "1234", name: "Intrus" }));
-  check("Troisième joueur refusé -> 409", res.status === 409);
+  check("Troisième joueur refusé dans un salon plein -> 409", res.status === 409);
+
+  // Deux salons distincts ne doivent pas se voir : c'est tout l'intérêt du
+  // code libre, deux parties simultanées s'écrasaient auparavant.
+  res = await fetch(`${base}/api/room/join`, json({ code: "0000", name: "Chloé", deckId: "bleu-vert" }));
+  const autre = await res.json();
+  check("Un autre code ouvre un salon vide -> slot player", res.status === 200 && autre.slot === "player");
+
+  res = await fetch(`${base}/api/room/state?code=0000&playerId=${encodeURIComponent(autre.playerId)}`);
+  const autreEtat = await res.json();
+  check(
+    "Le salon 0000 est cloisonné du salon 1234",
+    autreEtat.room.state === null && !autreEtat.room.players.enemy && autreEtat.room.version === 0
+  );
+
+  // Reconnexion : revenir avec le même playerId rend la place d'origine.
+  res = await fetch(`${base}/api/room/join`, json({ code: "1234", playerId: p1.playerId, name: "Alice", deckId: "blanc-vert" }));
+  const retour = await res.json();
+  check(
+    "Un joueur qui revient avec son identité retrouve son slot",
+    res.status === 200 && retour.slot === "player" && retour.playerId === p1.playerId
+  );
+
+  await fetch(`${base}/api/room/reset`, json({ code: "0000" }));
 
   console.log(failed === 0 ? "\n=> TOUS LES TESTS PASSENT" : `\n=> ${failed} TEST(S) EN ECHEC`);
 }

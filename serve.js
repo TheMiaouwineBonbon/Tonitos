@@ -5,7 +5,15 @@ const crypto = require("crypto");
 
 const root = __dirname;
 const port = Number(process.env.PORT || process.argv[2] || 4173);
-const ROOM_CODE = "1234";
+// N'importe quel code a quatre chiffres ouvre son propre salon : un code
+// unique partage par tout le monde faisait entrer en collision deux parties
+// simultanees, chacune ecrasant l'etat de l'autre.
+const ROOM_CODE_PATTERN = /^\d{4}$/;
+// Un salon oublie n'a aucune raison de rester en memoire.
+const ROOM_TTL_MS = 2 * 60 * 60 * 1000;
+// Au-dela de ce silence, la place d'un joueur est rendue : sans cela, un
+// onglet ferme condamnait le salon a rester plein jusqu'au redemarrage.
+const SLOT_TIMEOUT_MS = 60 * 1000;
 const rooms = new Map();
 
 const types = {
@@ -69,6 +77,20 @@ function normalizeProfile(body) {
   };
 }
 
+// Renvoie le code s'il est valide, sinon null : la validation du format
+// remplace la comparaison a un code unique.
+function normalizeCode(value) {
+  const code = String(value || "").trim();
+  return ROOM_CODE_PATTERN.test(code) ? code : null;
+}
+
+function purgeRooms() {
+  const now = Date.now();
+  for (const [code, room] of rooms) {
+    if (now - room.updatedAt > ROOM_TTL_MS) rooms.delete(code);
+  }
+}
+
 function getRoom(code) {
   if (!rooms.has(code)) {
     rooms.set(code, {
@@ -80,6 +102,15 @@ function getRoom(code) {
     });
   }
   return rooms.get(code);
+}
+
+// Libere les places dont le joueur ne donne plus signe de vie, pour qu'il
+// puisse revenir depuis un onglet neuf sans etre refuse par son propre salon.
+function releaseStaleSlots(room) {
+  const now = Date.now();
+  for (const [slot, player] of Object.entries(room.players)) {
+    if (player && now - (player.lastSeen || 0) > SLOT_TIMEOUT_MS) delete room.players[slot];
+  }
 }
 
 function publicRoom(room) {
@@ -99,20 +130,23 @@ function findPlayerSlot(room, playerId) {
 async function handleApi(req, res, url) {
   if (url.pathname === "/api/room/join" && req.method === "POST") {
     const body = await readJsonBody(req);
-    if (String(body.code || "") !== ROOM_CODE) {
-      sendJson(res, 403, { error: "Code de salon invalide. Pour l'instant, le code est 1234." });
+    const code = normalizeCode(body.code);
+    if (!code) {
+      sendJson(res, 403, { error: "Code de salon invalide : il faut quatre chiffres." });
       return true;
     }
 
-    const room = getRoom(ROOM_CODE);
+    purgeRooms();
+    const room = getRoom(code);
     const profile = normalizeProfile(body);
     let slot = findPlayerSlot(room, profile.id);
 
     if (!slot) {
+      releaseStaleSlots(room);
       if (!room.players.player) slot = "player";
       else if (!room.players.enemy) slot = "enemy";
       else {
-        sendJson(res, 409, { error: "Le salon 1234 a deja deux joueurs. Relance le serveur pour repartir d'une table vide." });
+        sendJson(res, 409, { error: `Le salon ${code} a deja deux joueurs. Choisis un autre code a quatre chiffres.` });
         return true;
       }
     }
@@ -129,13 +163,13 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/room/state" && req.method === "GET") {
-    const code = String(url.searchParams.get("code") || "");
-    if (code !== ROOM_CODE) {
+    const code = normalizeCode(url.searchParams.get("code"));
+    if (!code) {
       sendJson(res, 403, { error: "Code de salon invalide." });
       return true;
     }
 
-    const room = getRoom(ROOM_CODE);
+    const room = getRoom(code);
     const playerId = String(url.searchParams.get("playerId") || "");
     const slot = findPlayerSlot(room, playerId);
     if (slot) room.players[slot].lastSeen = Date.now();
@@ -145,12 +179,13 @@ async function handleApi(req, res, url) {
 
   if (url.pathname === "/api/room/state" && req.method === "POST") {
     const body = await readJsonBody(req);
-    if (String(body.code || "") !== ROOM_CODE) {
+    const code = normalizeCode(body.code);
+    if (!code) {
       sendJson(res, 403, { error: "Code de salon invalide." });
       return true;
     }
 
-    const room = getRoom(ROOM_CODE);
+    const room = getRoom(code);
     const slot = findPlayerSlot(room, String(body.playerId || ""));
     if (!slot) {
       sendJson(res, 403, { error: "Joueur non reconnu dans le salon." });
@@ -177,11 +212,12 @@ async function handleApi(req, res, url) {
 
   if (url.pathname === "/api/room/reset" && req.method === "POST") {
     const body = await readJsonBody(req);
-    if (String(body.code || "") !== ROOM_CODE) {
+    const code = normalizeCode(body.code);
+    if (!code) {
       sendJson(res, 403, { error: "Code de salon invalide." });
       return true;
     }
-    rooms.delete(ROOM_CODE);
+    rooms.delete(code);
     sendJson(res, 200, { ok: true });
     return true;
   }
@@ -229,5 +265,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`Jeu disponible sur http://localhost:${port}`);
-  console.log("Salon multijoueur local: code 1234");
+  console.log("Salon multijoueur local: choisis n'importe quel code a quatre chiffres");
 });
