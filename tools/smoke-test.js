@@ -627,6 +627,21 @@ async function main() {
   const weightTotal = Object.values(drop.DROP_CONFIG.weights).reduce((sum, w) => sum + w, 0);
   check("Somme des probabilités de drop = exactement 100 %", weightTotal === drop.RARITY_SCALE);
   check("Configuration de drop unique et valide", drop.assertWeightsValid() === true);
+  // Les poids seuls ne garantissent rien : un seau trop petit pour son poids
+  // rend ses cartes plus faciles a obtenir que celles du rang inferieur.
+  // C'est arrive avec 3 legendaires face a 19 epiques.
+  check(
+    "Une carte est d'autant plus rare que son rang est eleve",
+    (() => {
+      const pool = [...cardsForDrop, ...landsForDrop, ...readData("spells.json")];
+      try {
+        return drop.assertRarityHierarchy(pool) === true;
+      } catch (error) {
+        console.log(`       ${error.message}`);
+        return false;
+      }
+    })()
+  );
   check(
     "Tirage reproductible et rareté avant carte",
     (() => {
@@ -652,7 +667,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 68 créatures", Array.isArray(cards) && cards.length === 68);
+  check("cards.json = 73 créatures", Array.isArray(cards) && cards.length === 73);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -812,7 +827,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("31 sorts avec illustrations autonomes", spells.length === 31);
+  check("35 sorts avec illustrations autonomes", spells.length === 35);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -878,7 +893,7 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
-  check("lands.json = 29 terrains", lands.length === 29);
+  check("lands.json = 38 terrains", lands.length === 38);
   check(
     "Entrée et Nid de la ruche = terrains verts",
     ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
@@ -897,7 +912,7 @@ async function main() {
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 128 cartes possèdent exactement un SVG généré",
+    "Les 146 cartes possèdent exactement un SVG généré",
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );

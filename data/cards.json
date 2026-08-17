@@ -1860,5 +1860,139 @@
       "svgFit": "cover",
       "svgFlavor": false
     }
+  },
+  {
+    "id": "centaure",
+    "name": "Centaure des vergers",
+    "subtitle": "Cueilleuse des bois anciens",
+    "family": "Vert",
+    "type": "Créature - Centaure Cueilleuse",
+    "cost": 3,
+    "attack": 2,
+    "life": 4,
+    "keywords": [
+      "Lien de vie"
+    ],
+    "abilityName": "Récolte d'automne",
+    "abilityText": "Lien de vie : les blessures qu'elle inflige te rendent autant de points de vie.",
+    "flavor": "Elle cueille pour ceux qui n'ont plus la force de tendre le bras.",
+    "image": "Images/Centaure.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "45% 40%"
+    }
+  },
+  {
+    "id": "sirenes",
+    "name": "Chœur des Sirènes",
+    "subtitle": "Voix des récifs engloutis",
+    "family": "Bleu",
+    "type": "Créature - Sirènes",
+    "cost": 4,
+    "attack": 1,
+    "life": 6,
+    "keywords": [
+      "Défenseur"
+    ],
+    "abilityName": "Chant d'amarrage",
+    "abilityText": "Défenseur : leur chant retient les assaillants, mais le Chœur ne part jamais à l'attaque.",
+    "flavor": "Nul n'a jamais su si elles appelaient à l'aide ou au naufrage.",
+    "image": "Images/Sirènes.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 42%"
+    }
+  },
+  {
+    "id": "tueur-requin",
+    "name": "Tueur Requin",
+    "subtitle": "Bourreau des bas-fonds",
+    "family": "Bleu",
+    "type": "Créature - Requin Bourreau",
+    "cost": 5,
+    "attack": 5,
+    "life": 4,
+    "keywords": [
+      "Contact mortel"
+    ],
+    "abilityName": "Fendoir des marées",
+    "abilityText": "Contact mortel : toute créature qu'il blesse est détruite.",
+    "flavor": "Sa hache ne tranche pas la chair. Elle tranche la question.",
+    "image": "Images/Tueur Requin.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "deckCopies": 3,
+    "art": {
+      "fit": "cover",
+      "position": "42% 38%"
+    }
+  },
+  {
+    "id": "robot-saccageur",
+    "name": "Robot antique Saccageur",
+    "subtitle": "Lames jumelles des ruines",
+    "family": "Incolore",
+    "type": "Artefact - Robot antique",
+    "cost": 5,
+    "attack": 5,
+    "life": 3,
+    "keywords": [
+      "Célérité",
+      "Robot antique"
+    ],
+    "abilityName": "Assaut immédiat",
+    "abilityText": "Célérité : il attaque dès le tour où il est invoqué.",
+    "flavor": "Les ruines qu'il garde sont celles qu'il a faites.",
+    "image": "Images/Robot antique Saccageur.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "creation-obscure",
+    "name": "Création Obscure",
+    "subtitle": "Somme des cinq magies",
+    "family": "Incolore",
+    "type": "Créature légendaire - Aberration",
+    "cost": 8,
+    "attack": 8,
+    "life": 8,
+    "keywords": [
+      "Vol",
+      "Contact mortel"
+    ],
+    "abilityName": "Aucune allégeance",
+    "abilityText": "Vol : les gardiens ne peuvent pas l'intercepter. Contact mortel : toute créature qu'elle blesse est détruite.",
+    "flavor": "Cinq magies l'ont façonnée. Aucune ne la reconnaît.",
+    "image": "Images/Création Obscure.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "45% 38%"
+    }
   }
 ]

@@ -699,5 +699,282 @@
       "fit": "cover",
       "position": "55% 48%"
     }
+  },
+  {
+    "id": "capitale-mythalor",
+    "kind": "land",
+    "name": "Capitale de Mythalor",
+    "subtitle": "Trône des serments",
+    "family": "Blanc",
+    "type": "Terrain légendaire - Capitale",
+    "cost": 0,
+    "energy": 2,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Capitale",
+      "Mana blanc"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagée : elle ne produit qu'au tour suivant. Elle rend alors 2 mana blanc.",
+    "flavor": "Ses cloches n'ont sonné la retraite qu'une seule fois.",
+    "image": "Images/Terrain Blanc - Capitale de Mythalor.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "capitale-gronnak",
+    "kind": "land",
+    "name": "Capitale Gronnak",
+    "subtitle": "Cité sous les vagues",
+    "family": "Bleu",
+    "type": "Terrain légendaire - Capitale",
+    "cost": 0,
+    "energy": 2,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Capitale",
+      "Mana bleu"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagée : elle ne produit qu'au tour suivant. Elle rend alors 2 mana bleu.",
+    "flavor": "On y respire par habitude, plus par nécessité.",
+    "image": "Images/Terrain Bleu - Capitale Gronnak.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "capitale-madorr",
+    "kind": "land",
+    "name": "Capitale de Madorr",
+    "subtitle": "Siège des pactes",
+    "family": "Noir",
+    "type": "Terrain légendaire - Capitale",
+    "cost": 0,
+    "energy": 2,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Capitale",
+      "Mana noir"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagée : elle ne produit qu'au tour suivant. Elle rend alors 2 mana noir.",
+    "flavor": "Toute dette y est honorée. Rarement par le débiteur.",
+    "image": "Images/Terrain Noir - Capitale de Madorr.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "ville-enneigee",
+    "kind": "land",
+    "name": "Ville enneigée",
+    "subtitle": "Halte du grand froid",
+    "family": "Blanc",
+    "families": [
+      "Blanc",
+      "Bleu"
+    ],
+    "type": "Terrain - Cité gelée",
+    "cost": 0,
+    "energy": 1,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana blanc ou bleu, au choix.",
+    "flavor": "Le gel y tient lieu de rempart, et de calendrier.",
+    "image": "Images/Terrain Blanc-Bleu - Ville enneigée.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "royaume-paisible",
+    "kind": "land",
+    "name": "Royaume Paisible",
+    "subtitle": "Plaines sans guerre",
+    "family": "Blanc",
+    "families": [
+      "Blanc",
+      "Vert"
+    ],
+    "type": "Terrain - Royaume",
+    "cost": 0,
+    "energy": 1,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana blanc ou vert, au choix.",
+    "flavor": "Deux générations sans bataille : un record, ou un présage.",
+    "image": "Images/Terrain Blanc-Vert - Royaume Paisible.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "empire-bhaal",
+    "kind": "land",
+    "name": "Empire de Bhaal",
+    "subtitle": "Marche des cendres",
+    "family": "Rouge",
+    "families": [
+      "Rouge",
+      "Noir"
+    ],
+    "type": "Terrain - Empire",
+    "cost": 0,
+    "energy": 1,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana rouge ou noir, au choix.",
+    "flavor": "Ce que le feu épargne, le pacte le réclame.",
+    "image": "Images/Terrain Rouge-Noir - Empire de Bhaal.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "gouffre-namor",
+    "kind": "land",
+    "name": "Gouffre de Namor",
+    "subtitle": "Faille aux braises",
+    "family": "Rouge",
+    "families": [
+      "Rouge",
+      "Noir"
+    ],
+    "type": "Terrain - Gouffre",
+    "cost": 0,
+    "energy": 1,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana rouge ou noir, au choix.",
+    "flavor": "On y descend pour une raison. On y reste pour une autre.",
+    "image": "Images/Terrain Rouge-Noir - Gouffre de Namor.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "village-cache",
+    "kind": "land",
+    "name": "Village Caché",
+    "subtitle": "Refuge sous la canopée",
+    "family": "Vert",
+    "type": "Terrain - Forêt",
+    "cost": 0,
+    "energy": 1,
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Les ponts de corde ne mènent qu'à ceux qui savent déjà.",
+    "image": "Images/Terrain Vert - Village Caché.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 48%"
+    }
+  },
+  {
+    "id": "royaume-celeste",
+    "kind": "land",
+    "name": "Royaume Céleste",
+    "subtitle": "Au-dessus des cinq magies",
+    "family": "Multicolore",
+    "families": [
+      "Blanc",
+      "Bleu",
+      "Noir",
+      "Rouge",
+      "Vert"
+    ],
+    "type": "Terrain légendaire - Royaume",
+    "cost": 0,
+    "energy": 1,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Source universelle"
+    ],
+    "abilityName": "Confluence céleste",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana de la couleur de ton choix.",
+    "flavor": "Les cinq magies s'y croisent sans jamais se saluer.",
+    "image": "Images/Terrain Multicolore - Royaume Céleste.png",
+    "palette": {
+      "primary": "#7a4bb5",
+      "secondary": "#d8b0ff",
+      "deep": "#160d24"
+    },
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
   }
 ]

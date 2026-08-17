@@ -19,6 +19,9 @@ import {
   drawFromDeck,
   finiteNumber,
   keywordKey as normalizeKeyword,
+  landEnergy,
+  landFamilies,
+  landProduces,
   makeTurnStartKey,
   manaRequirements,
   parasiteVengeanceDamage,
@@ -1536,11 +1539,17 @@ function getDeckComposition(deckSpec) {
 }
 
 function makeDeck(side, deckSpec) {
+  // Un terrain entre dans le deck dès qu'il sait produire l'une de ses deux
+  // couleurs : les bicolores et le Royaume Céleste seraient sinon exclus,
+  // puisque leur `family` ne décrit qu'une partie de ce qu'ils rendent.
+  const landsProducing = (color) => state.lands.filter((land) => landProduces(land, color));
   const lands = [
-    ...pickCopies(state.lands.filter((land) => land.family === deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
-    ...pickCopies(state.lands.filter((land) => land.family === deckSpec.colors[1]), DECK_LANDS / 2, Infinity)
+    ...pickCopies(landsProducing(deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
+    ...pickCopies(landsProducing(deckSpec.colors[1]), DECK_LANDS / 2, Infinity)
   ];
-  const creaturePool = state.cards.filter((card) => deckSpec.colors.includes(card.family));
+  // cardFitsDeckColors accepte l'incolore, ce que la comparaison de famille
+  // refusait : sans cela, aucune créature incolore ne rejoindrait un deck.
+  const creaturePool = state.cards.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const spellPool = state.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const composition = getDeckComposition(deckSpec);
   const creatures = pickCreatures(creaturePool, composition.creatures);
@@ -1797,11 +1806,18 @@ function playLand(side, cardIndex) {
   side.hand.splice(cardIndex, 1);
   side.lands.push({
     ...land,
-    tapped: false,
+    // Les terrains puissants arrivent engagés : ils ne produisent qu'au tour
+    // suivant, sans quoi une capitale à 2 mana ferait sauter une étape de
+    // développement dès le tour où on la pose.
+    tapped: Boolean(land.entersTapped),
     enteredTurn: state.turn
   });
   side.landPlayed = true;
-  logEvent(`${sideDisplayName(side.side)} pose ${land.name}.`);
+  logEvent(
+    land.entersTapped
+      ? `${sideDisplayName(side.side)} pose ${land.name}, qui s'éveillera au prochain tour.`
+      : `${sideDisplayName(side.side)} pose ${land.name}.`
+  );
   debugEvent("CARD_PLAYED", { side: side.side, cardId: land.id, uid: land.uid, kind: "land" });
   debugCheckpoint(state, "playLand");
   render();
@@ -1934,15 +1950,17 @@ function payMana(side, card) {
 }
 
 // Ce qui manque pour payer. Depuis le plafond de mana coloré, une carte peut
-// buter soit sur le total de terrains, soit sur la seule part de couleur :
-// on retient le blocage le plus fort.
+// buter soit sur le total de mana, soit sur la seule part de couleur : on
+// retient le blocage le plus fort. Le compte porte sur l'énergie produite,
+// pas sur le nombre de terrains, depuis que les capitales en rendent deux.
 function manaShortfall(side, card) {
   const requirements = manaRequirements(card);
   if (!requirements) return 0;
   const untapped = untappedLandsFor(side, card);
-  let manque = requirements.total - untapped.length;
+  const energie = (filtre) => untapped.filter(filtre).reduce((total, land) => total + landEnergy(land), 0);
+  let manque = requirements.total - energie(() => true);
   for (const [family, amount] of requirements.colored) {
-    manque = Math.max(manque, amount - untapped.filter((land) => land?.family === family).length);
+    manque = Math.max(manque, amount - energie((land) => landProduces(land, family)));
   }
   return Math.max(0, manque);
 }
@@ -2166,6 +2184,32 @@ function applySpellEffect(card, side) {
   if (card.effect === "dealAllEnemies3") {
     for (const target of opponent.board) target.currentLife -= 3;
     logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses.`);
+  }
+
+  if (card.effect === "tridentUmi") {
+    for (const target of opponent.board) target.currentLife -= 3;
+    opponent.life -= 2;
+    pushVisualEffect("hit", opponent.side, "-2");
+    logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses et 2 au commandant adverse.`);
+  }
+
+  // Fléau symétrique : il emporte aussi les créatures de celui qui le lance.
+  if (card.effect === "desolation") {
+    const emportees = side.board.length + opponent.board.length;
+    for (const unit of [...side.board, ...opponent.board]) unit.currentLife = 0;
+    pushVisualEffect("hit", opponent.side, "Ruine");
+    logEvent(
+      emportees > 0
+        ? `${card.name} ne laisse rien debout : ${emportees} créature(s) détruite(s), des deux camps.`
+        : `${card.name} balaie un champ de bataille déjà vide.`
+    );
+  }
+
+  if (card.effect === "livreClaudia") {
+    draw(side, 3);
+    side.life -= 2;
+    pushVisualEffect("hit", side.side, "-2");
+    logEvent(`${card.name} livre trois pages de savoir et réclame 2 points de vie.`);
   }
 
   if (card.effect === "buffTeamAttack1") {
@@ -3328,6 +3372,14 @@ function isSpellWorthCasting(card, side, opponent) {
     case "destroyTappedOrWeakest":
     case "hubrisFall":
       return opponent.board.length > 0;
+    case "tridentUmi":
+      // Utile même sans créature en face : il touche aussi le commandant.
+      return true;
+    // Fléau symétrique : ne vaut le coup que si l'adversaire y perd plus.
+    case "desolation":
+      return opponent.board.length > side.board.length;
+    case "livreClaudia":
+      return side.deck.length > 0 && side.life > 2;
     case "timelessRivalry":
       return side.board.length > 0 && opponent.board.length > 0;
     case "unbearableTruth":
@@ -4971,7 +5023,16 @@ function getDetailAction(card, context) {
 
 function describeCardStats(card) {
   if (isLand(card)) {
-    return `Terrain ${card.family} - produit ${card.energy || 1} mana ${card.family.toLowerCase()}.`;
+    const familles = landFamilies(card);
+    const couleurs = familles.map((famille) => famille.toLowerCase());
+    // Un terrain à plusieurs couleurs n'en rend qu'une : « au choix » évite
+    // de laisser croire qu'il produit un mana de chacune.
+    const production = couleurs.length > 1
+      ? `${couleurs.slice(0, -1).join(", ")} ou ${couleurs.at(-1)}, au choix`
+      : couleurs[0] || "incolore";
+    const quantite = landEnergy(card);
+    const arrivee = card.entersTapped ? " Arrive engagé." : "";
+    return `Terrain - produit ${quantite} mana ${production}.${arrivee}`;
   }
 
   if (isSpell(card)) {
@@ -4983,22 +5044,32 @@ function describeCardStats(card) {
 }
 
 function availableMana(side) {
-  return side.lands.filter((land) => !land.tapped).length;
+  return side.lands.filter((land) => !land.tapped).reduce((total, land) => total + landEnergy(land), 0);
 }
 
 // Mana disponible détaillé par couleur, ex. « 2V 1B » : indispensable depuis
 // que chaque carte exige des terrains de sa propre couleur.
 const MANA_INITIALS = { Blanc: "B", Bleu: "U", Noir: "N", Rouge: "R", Vert: "V" };
 
+// Un terrain polyvalent est compté à part — « 1BU » — parce qu'il ne rend
+// qu'un mana au choix : l'afficher dans les deux couleurs ferait croire à
+// deux mana disponibles.
+function manaLabel(land) {
+  return landFamilies(land).map((family) => MANA_INITIALS[family] || family[0]).join("");
+}
+
 function describeManaPool(side) {
   const free = side.lands.filter((land) => !land.tapped);
   if (side.lands.length === 0) return "0";
   const counts = new Map();
-  for (const land of free) counts.set(land.family, (counts.get(land.family) || 0) + 1);
+  for (const land of free) {
+    const key = manaLabel(land);
+    counts.set(key, (counts.get(key) || 0) + landEnergy(land));
+  }
   if (counts.size === 0) return `0/${side.lands.length}`;
   return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([family, n]) => `${n}${MANA_INITIALS[family] || family[0]}`)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([label, n]) => `${n}${label}`)
     .join(" ");
 }
 

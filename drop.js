@@ -25,18 +25,31 @@ export const RARITIES = {
 };
 
 export const DROP_CONFIG = {
-  // Poids sur 10 000. Justification de la repartition :
-  //  - commune 60 %   : majoritaire, ~3 cartes sur 5 par booster ;
-  //  - peuCommune 25 %: apparait a chaque booster ou presque ;
-  //  - rare 10 %      : environ une carte sur deux boosters ;
-  //  - epique 4 %     : une carte toutes les 5 boosters ;
-  //  - legendaire 1 % : une carte tous les 20 boosters, reste un evenement.
+  // Poids sur 10 000. Ils ne se lisent pas seuls : ce qui compte pour le
+  // joueur, c'est la probabilite d'obtenir UNE carte precise, soit le poids
+  // divise par l'effectif de la rarete. Les poids sont donc calibres sur les
+  // effectifs reels (46 / 45 / 32 / 20 / 3 cartes) pour que cette proba
+  // decroisse strictement du commun au legendaire :
+  //   commune    4530 / 46 = 0,0985 % par carte
+  //   peuCommune 3102 / 45 = 0,0689 %
+  //   rare       1576 / 32 = 0,0493 %
+  //   epique      709 / 20 = 0,0355 %
+  //   legendaire   83 /  3 = 0,0277 %
+  //
+  // L'ancienne repartition (6000/2500/1000/400/100) donnait 0,0211 % pour une
+  // epique contre 0,0333 % pour une legendaire : une legendaire tombait
+  // 1,6 fois plus souvent qu'une epique, parce que trois cartes seulement se
+  // partageaient le seau legendaire. assertRarityHierarchy() interdit
+  // desormais ce retournement.
+  //
+  // L'ecart entre la carte la plus frequente et la plus rare passe de 5,3x a
+  // 3,6x : une epique demande environ 290 tirages au lieu de 475.
   weights: {
-    commune: 6000,
-    peuCommune: 2500,
-    rare: 1000,
-    epique: 400,
-    legendaire: 100
+    commune: 4530,
+    peuCommune: 3102,
+    rare: 1576,
+    epique: 709,
+    legendaire: 83
   },
 
   booster: {
@@ -86,6 +99,41 @@ export function assertWeightsValid(config = DROP_CONFIG) {
 }
 
 assertWeightsValid();
+
+// Verifie ce que les poids seuls ne disent pas : qu'une carte d'une rarete
+// donnee reste plus difficile a obtenir que n'importe quelle carte d'une
+// rarete inferieure. C'est faux des qu'un seau est trop petit pour son poids,
+// et cela s'est produit sans que rien ne le signale. A rappeler apres tout
+// ajout de cartes, l'effectif des seaux changeant a chaque fois.
+export function rarityOdds(cards, resolve = inferRarity, config = DROP_CONFIG) {
+  const table = buildLootTable(cards, resolve);
+  return Object.keys(RARITIES)
+    .map((id) => ({
+      id,
+      rank: RARITIES[id].rank,
+      count: table[id].length,
+      weight: config.weights[id],
+      perCard: table[id].length > 0 ? config.weights[id] / RARITY_SCALE / table[id].length : 0
+    }))
+    .sort((a, b) => a.rank - b.rank);
+}
+
+export function assertRarityHierarchy(cards, resolve = inferRarity, config = DROP_CONFIG) {
+  const odds = rarityOdds(cards, resolve, config).filter((entry) => entry.count > 0);
+  for (let i = 1; i < odds.length; i += 1) {
+    const precedent = odds[i - 1];
+    const courant = odds[i];
+    if (courant.perCard >= precedent.perCard) {
+      throw new Error(
+        `Hierarchie de rarete inversee : une carte ${courant.id} (${(courant.perCard * 100).toFixed(4)} %, ` +
+          `${courant.count} cartes) sort au moins aussi souvent qu'une ${precedent.id} ` +
+          `(${(precedent.perCard * 100).toFixed(4)} %, ${precedent.count} cartes). ` +
+          "Ajuste DROP_CONFIG.weights ou l'effectif de la rarete."
+      );
+    }
+  }
+  return true;
+}
 
 // Probabilites theoriques exactes, en pourcentage.
 export function theoreticalRates(config = DROP_CONFIG) {
@@ -184,6 +232,21 @@ export function inferRarity(card) {
   if (card.divine && copies === 1) return "legendaire";
   if (card.divine) return "epique";
   if (copies === 1) return "epique";
+
+  // Les terrains coutent tous zero : les juger au cout les classait tous en
+  // commune, y compris ceux typés « Terrain legendaire ». On les mesure a ce
+  // qu'ils produisent - quantite de mana et nombre de couleurs.
+  if (card.kind === "land") {
+    const couleurs = Array.isArray(card.families) && card.families.length > 0
+      ? card.families.length
+      : 1;
+    const energie = Math.max(1, Number(card.energy) || 1);
+    if (couleurs >= 3) return "epique";
+    if (energie >= 2) return "rare";
+    if (couleurs >= 2) return "peuCommune";
+    return "commune";
+  }
+
   const cost = Number(card.cost) || 0;
   if (cost >= 5) return "rare";
   if (cost >= 3) return "peuCommune";

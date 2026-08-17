@@ -94,25 +94,70 @@ export function untappedLandsForCard(side) {
   return lands.filter((land) => !land?.tapped);
 }
 
+// Couleurs qu'un terrain sait produire. `families` prime sur `family` : les
+// terrains historiques n'ont qu'une couleur, les nouveaux en listent plusieurs.
+export function landFamilies(land) {
+  if (Array.isArray(land?.families) && land.families.length > 0) return land.families;
+  return land?.family ? [land.family] : [];
+}
+
+export function landProduces(land, family) {
+  return landFamilies(land).includes(family);
+}
+
+// Quantité de mana rendue par un terrain. Le champ existait dans les données
+// sans que rien ne le lise : les capitales le mettent enfin à profit.
+export function landEnergy(land) {
+  return Math.max(1, Math.trunc(finiteNumber(land?.energy, 1)));
+}
+
+// Répartit le coût sur les terrains dégagés et renvoie ceux à engager.
+// L'affectation est gloutonne : pour chaque couleur exigée on sert d'abord
+// les terrains les moins polyvalents, afin de garder les bicolores libres
+// pour les exigences suivantes. Un terrain déjà engagé finance ensuite la
+// part générique avec son énergie excédentaire, mais tout surplus non
+// dépensé est perdu : un terrain engagé l'est en entier.
 export function paymentPlan(side, card) {
   const untapped = untappedLandsForCard(side);
   const requirements = manaRequirements(card);
   if (!requirements) return null;
 
-  const selected = [];
-  const reserved = new Set();
+  const remaining = new Map(untapped.map((land) => [land, landEnergy(land)]));
+  const engaged = new Set();
+  const spend = (land, amount) => {
+    remaining.set(land, remaining.get(land) - amount);
+    engaged.add(land);
+  };
+
   for (const [family, amount] of requirements.colored) {
-    const matching = untapped.filter((land) => !reserved.has(land) && land?.family === family).slice(0, amount);
-    if (matching.length < amount) return null;
-    for (const land of matching) {
-      selected.push(land);
-      reserved.add(land);
+    let missing = amount;
+    const sources = untapped
+      .filter((land) => landProduces(land, family) && remaining.get(land) > 0)
+      .sort((a, b) => landFamilies(a).length - landFamilies(b).length || landEnergy(b) - landEnergy(a));
+    for (const land of sources) {
+      if (missing <= 0) break;
+      const taken = Math.min(missing, remaining.get(land));
+      spend(land, taken);
+      missing -= taken;
     }
+    if (missing > 0) return null;
   }
 
-  const generic = untapped.filter((land) => !reserved.has(land)).slice(0, requirements.generic);
-  if (generic.length < requirements.generic) return null;
-  return [...selected, ...generic];
+  let generic = requirements.generic;
+  const leftovers = [...remaining.entries()]
+    .filter(([, energy]) => energy > 0)
+    // L'énergie d'un terrain déjà engagé ne coûte rien de plus : on la
+    // consomme avant d'en engager un nouveau.
+    .sort((a, b) => (engaged.has(b[0]) ? 1 : 0) - (engaged.has(a[0]) ? 1 : 0));
+  for (const [land, energy] of leftovers) {
+    if (generic <= 0) break;
+    const taken = Math.min(generic, energy);
+    spend(land, taken);
+    generic -= taken;
+  }
+  if (generic > 0) return null;
+
+  return [...engaged];
 }
 
 export function canPayCard(side, card) {

@@ -845,5 +845,127 @@
       "svgFit": "cover",
       "svgFlavor": false
     }
+  },
+  {
+    "id": "trident-umi",
+    "kind": "spell",
+    "name": "Trident d'Umi",
+    "subtitle": "Colère des profondeurs",
+    "family": "Bleu",
+    "type": "Rituel - Sort offensif",
+    "cost": 5,
+    "slot": "offense",
+    "keywords": [
+      "Vague",
+      "Zone"
+    ],
+    "abilityName": "Marée perforante",
+    "abilityText": "Inflige 3 blessures à toutes les créatures adverses et 2 au commandant adverse.",
+    "flavor": "Umi ne lève son trident que lorsque la mer a déjà choisi.",
+    "image": "Images/Sort - Trident d'Umi.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "effect": "tridentUmi",
+    "art": {
+      "fit": "cover",
+      "position": "50% 40%"
+    }
+  },
+  {
+    "id": "desolation",
+    "kind": "spell",
+    "name": "Désolation",
+    "subtitle": "Ce qu'il reste des deux armées",
+    "family": "Multicolore",
+    "colors": [
+      "Rouge",
+      "Noir"
+    ],
+    "manaCost": {
+      "Rouge": 1,
+      "Noir": 1,
+      "generic": 5
+    },
+    "type": "Rituel - Sort de ruine",
+    "cost": 7,
+    "slot": "offense",
+    "keywords": [
+      "Zone",
+      "Massacre"
+    ],
+    "abilityName": "Champ d'ossements",
+    "abilityText": "Détruit toutes les créatures, des deux camps.",
+    "flavor": "Il compta les morts, puis renonça : il n'y avait plus que des morts.",
+    "image": "Images/Sort - Désolation.png",
+    "palette": {
+      "primary": "#7a4bb5",
+      "secondary": "#d8b0ff",
+      "deep": "#160d24"
+    },
+    "effect": "desolation",
+    "deckCopies": 1,
+    "art": {
+      "fit": "cover",
+      "position": "55% 50%"
+    }
+  },
+  {
+    "id": "livre-claudia",
+    "kind": "spell",
+    "name": "Livre de Claudia",
+    "subtitle": "Grimoire payé au prix du sang",
+    "family": "Noir",
+    "type": "Rituel - Sort de savoir",
+    "cost": 3,
+    "slot": "draw",
+    "keywords": [
+      "Savoir",
+      "Pacte"
+    ],
+    "abilityName": "Lecture interdite",
+    "abilityText": "Pioche 3 cartes, puis perds 2 points de vie.",
+    "flavor": "Chaque page tournée demande son écot.",
+    "image": "Images/Sort - Livre de Claudia.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "effect": "livreClaudia",
+    "art": {
+      "fit": "cover",
+      "position": "50% 45%"
+    }
+  },
+  {
+    "id": "rencontre-agreable",
+    "kind": "spell",
+    "name": "Rencontre agréable",
+    "subtitle": "Une flûte, un feu, un répit",
+    "family": "Vert",
+    "type": "Rituel - Sort de repos",
+    "cost": 2,
+    "slot": "draw",
+    "keywords": [
+      "Soutien",
+      "Pioche"
+    ],
+    "abilityName": "Halte au village",
+    "abilityText": "Rends 3 points de vie à ton commandant et pioche 1 carte.",
+    "flavor": "On y entre étranger, on en repart attendu.",
+    "image": "Images/Sort - Rencontre agréable.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "effect": "restHero",
+    "art": {
+      "fit": "cover",
+      "position": "62% 45%"
+    }
   }
 ]
