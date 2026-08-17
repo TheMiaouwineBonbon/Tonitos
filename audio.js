@@ -400,6 +400,9 @@ class MusicPlayer {
     this.piste = null;
     this.derniereId = null;
     this.fondu = null;
+    this.relais = null;   // bascule differee entre deux pistes
+    this.pause = null;    // mise en pause differee apres le fondu de sortie
+    this.echecs = 0;      // pistes injouables enchainees, garde anti-boucle
   }
 
   get volume() {
@@ -412,9 +415,20 @@ class MusicPlayer {
     el.preload = "none";
     el.volume = 0;
     // Enchaînement : à la fin d'une piste, une autre du même lot démarre.
-    el.addEventListener("ended", () => this.play(this.scene));
-    // Un asset manquant ne doit jamais bloquer le jeu.
-    el.addEventListener("error", () => { this.piste = null; });
+    // `force` est indispensable ici, sinon la garde de scène de play() refuse
+    // le changement et la musique s'arrête à la fin du premier morceau.
+    el.addEventListener("ended", () => this.play(this.scene, { force: true }));
+    // Un asset manquant ne doit jamais bloquer le jeu : on passe à la piste
+    // suivante, en s'arrêtant après trois échecs pour ne pas boucler si le
+    // dossier entier est absent.
+    el.addEventListener("error", () => {
+      const scene = this.scene;
+      this.piste = null;
+      if (!scene || this.echecs >= 3) return;
+      this.echecs += 1;
+      this.play(scene, { force: true });
+    });
+    el.addEventListener("playing", () => { this.echecs = 0; });
     // Attaché au document : un Audio() détaché fonctionne, mais reste
     // invisible aux tests et aux outils de développement.
     el.id = "music-player";
@@ -432,22 +446,48 @@ class MusicPlayer {
     return dispo[Math.floor(Math.random() * dispo.length)];
   }
 
-  play(scene = "menu") {
+  // Demande l'ambiance d'une scène. L'appel est volontairement idempotent :
+  // closeStartMenu() rejoue `music.play("game")` à chaque état distant reçu,
+  // soit une fois par seconde en ligne. Sans cette garde, chaque poll tirait
+  // une nouvelle piste et la remettait à volume zéro : la musique coupait et
+  // sautait d'un morceau à l'autre sans jamais s'installer.
+  // `force` sert aux changements voulus : fin de piste, asset introuvable.
+  play(scene = "menu", { force = false } = {}) {
+    if (!force && this.scene === scene && this.piste) return this.piste;
     const piste = this.choisir(scene);
     if (!piste) return null;
     this.scene = scene;
     this.piste = piste;
     this.derniereId = piste.id;
     const el = this.ensureElement();
+    // Une bascule ou une pause encore programmée s'appliquerait à la piste
+    // qu'on installe maintenant.
+    window.clearTimeout(this.relais);
+    window.clearTimeout(this.pause);
+    // Réassigner `src` en pleine lecture coupe le son net : on referme le
+    // morceau en cours par un fondu court avant de charger le suivant.
+    if (!el.paused && el.volume > 0) {
+      this.fondreVers(0, 320);
+      this.relais = window.setTimeout(() => this.lancer(piste), 340);
+    } else {
+      this.lancer(piste);
+    }
+    return piste;
+  }
+
+  // Charge et démarre réellement la piste retenue.
+  lancer(piste) {
+    const el = this.ensureElement();
+    // `currentTime` n'est pas remis à zéro : la source vient d'être changée,
+    // et y écrire avant le chargement des métadonnées lève une exception sur
+    // iOS, ce qui empêcherait le play() qui suit.
     el.src = `./${DOSSIER_MUSIQUE}/${piste.id}.mp3`;
-    el.currentTime = 0;
     el.volume = 0;
     const lecture = el.play();
     // La lecture est refusée tant que l'utilisateur n'a pas interagi :
     // ce n'est pas une erreur, on retentera au premier geste.
     if (lecture?.catch) lecture.catch(() => {});
     this.fondreVers(this.volume, 900);
-    return piste;
   }
 
   // Fondu par paliers : évite un démarrage brutal en pleine partie.
@@ -469,9 +509,16 @@ class MusicPlayer {
   stop({ fondu = true } = {}) {
     const el = this.element;
     if (!el) return;
+    // La scène est libérée pour que le prochain play() reparte vraiment.
+    window.clearTimeout(this.relais);
+    window.clearTimeout(this.pause);
+    this.scene = null;
+    this.piste = null;
     if (!fondu) { el.pause(); return; }
     this.fondreVers(0, 500);
-    window.setTimeout(() => el.pause(), 540);
+    // Le timer est retenu : play() l'annule, sinon cette pause différée
+    // arrêterait la piste suivante à peine démarrée.
+    this.pause = window.setTimeout(() => el.pause(), 540);
   }
 
   // Rejoué quand les réglages de volume changent.
