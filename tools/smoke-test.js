@@ -495,6 +495,36 @@ async function main() {
   check("Progression avec XP, niveaux et grades", progressionSource.includes("XP_REWARDS") && progressionSource.includes("getLevelProgress"));
   check("Une partie ne peut attribuer l'XP qu'une fois", progressionSource.includes("rewardedMatches"));
 
+  // --- Musiques ---
+  res = await fetch(`${base}/audio.js`);
+  const audioSource2 = await res.text();
+  const pistesDeclarees = [...audioSource2.matchAll(/\{ id: "([a-z0-9-]+)", nom: "[^"]+", scenes:/g)].map((m) => m[1]);
+  check(
+    "Toutes les pistes déclarées existent sur le disque",
+    pistesDeclarees.length >= 20 &&
+      pistesDeclarees.every((id) => fs.existsSync(path.join(__dirname, "..", "Sons/Musiques", `${id}.mp3`)))
+  );
+  check(
+    "Chaque scène possède au moins une piste",
+    /scenes: \["menu"/.test(audioSource2) && /scenes: \["game"\]/.test(audioSource2)
+  );
+  check(
+    "Musique lue en streaming et branchée sur menu et partie",
+    // Un <audio> streame ; decodeAudioData chargerait tout le morceau en
+    // mémoire décompressée, soit dix fois sa taille sur disque.
+    audioSource2.includes("class MusicPlayer") &&
+      audioSource2.includes("new Audio()") &&
+      !/decodeAudioData[\s\S]{0,200}MUSIC_TRACKS/.test(audioSource2) &&
+      gameSource.includes('music.play("menu")') &&
+      gameSource.includes('music.play("game")')
+  );
+  const pisteTest = pistesDeclarees[0];
+  res = await fetch(`${base}/Sons/Musiques/${pisteTest}.mp3`, { method: "HEAD" });
+  check(
+    "Le serveur sert les MP3 avec le bon type",
+    res.status === 200 && res.headers.get("content-type") === "audio/mpeg"
+  );
+
   // --- Flèche d'attaque : purge centralisée ---
   check(
     "Réinitialisation centrale du ciblage d'attaque",
@@ -572,7 +602,7 @@ async function main() {
       audioSource.includes("music") &&
       audioSource.includes("sfx") &&
       audioSource.includes("preload(") &&
-      gameSource.includes('import { sound } from "./audio.js')
+      /import \{ sound(, music)? \} from "\.\/audio\.js/.test(gameSource)
   );
   check(
     "Sons branchés sur les actions clés",

@@ -9,7 +9,7 @@ import {
   setActiveAccountId,
   updateAccount
 } from "./progression.js?v=20260726-1";
-import { sound } from "./audio.js?v=20260730-audio-1";
+import { sound, music } from "./audio.js?v=20260817-musique-1";
 import {
   buffUnits,
   canPayCard,
@@ -692,6 +692,8 @@ function openStartMenu() {
   refreshAccountMenus();
   renderAccountSummary();
   updateMenuSummary();
+  // Ambiance du menu : un thème calme, tiré au hasard.
+  music.play("menu");
 }
 
 function closeStartMenu() {
@@ -699,7 +701,11 @@ function closeStartMenu() {
   els.startMenu.hidden = true;
   document.body.classList.remove("menu-open");
   document.body.classList.toggle("game-running", state.started);
-  if (state.started) gameplayPaused = false;
+  if (state.started) {
+    gameplayPaused = false;
+    // La partie commence : on bascule sur le lot de thèmes de duel.
+    music.play("game");
+  }
 }
 
 async function startGameFromMenu() {

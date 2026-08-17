@@ -20,7 +20,9 @@ const types = {
   ".webp": "image/webp",
   ".svg": "image/svg+xml; charset=utf-8",
   ".mp4": "video/mp4",
-  ".mov": "video/quicktime"
+  ".mov": "video/quicktime",
+  ".mp3": "audio/mpeg",
+  ".ogg": "audio/ogg"
 };
 
 function sendJson(res, status, payload) {

@@ -355,6 +355,143 @@ function storeVolumes(volumes) {
 
 export const sound = new SoundManager();
 
+// =====================================================================
+// MUSIQUE
+// ---------------------------------------------------------------------
+// Les pistes sont lues via un element <audio>, pas via decodeAudioData :
+// un morceau de 6 Mo occuperait environ 60 Mo une fois decode en memoire,
+// alors que l'element streame progressivement.
+// Chaque piste est un theme nomme du jeu ; la repartition menu/partie est
+// declarative, et le choix se fait au hasard dans le lot concerne.
+// =====================================================================
+
+const DOSSIER_MUSIQUE = "Sons/Musiques";
+
+export const MUSIC_TRACKS = [
+  { id: "accueil", nom: "Accueil", scenes: ["menu"] },
+  { id: "repos-merite", nom: "Repos mérité", scenes: ["menu"] },
+  { id: "le-sanctuaire", nom: "Le sanctuaire", scenes: ["menu"] },
+  { id: "monde-englouti", nom: "Monde englouti", scenes: ["menu", "game"] },
+  { id: "amour-d-aldia", nom: "Amour d'Aldia", scenes: ["menu", "game"] },
+  { id: "cite-aethran", nom: "Cité Aethran", scenes: ["game"] },
+  { id: "balade-de-rena", nom: "Balade de Rena", scenes: ["game"] },
+  { id: "elfe-theme", nom: "Elfe", scenes: ["game"] },
+  { id: "argonien-theme", nom: "Argonien", scenes: ["game"] },
+  { id: "tristesse-d-umi", nom: "Tristesse d'UMI", scenes: ["game"] },
+  { id: "khajiit-theme", nom: "Khajiit", scenes: ["game"] },
+  { id: "mystery", nom: "Mystery", scenes: ["game"] },
+  { id: "danse-de-la-magicienne", nom: "Danse de la magicienne", scenes: ["game"] },
+  { id: "marche-du-robot", nom: "Marche du robot", scenes: ["game"] },
+  { id: "le-gardien", nom: "Le Gardien", scenes: ["game"] },
+  { id: "parasite-theme", nom: "Parasite", scenes: ["game"] },
+  { id: "secret-de-daemond", nom: "Secret de Daemond", scenes: ["game"] },
+  { id: "ranch-des-chevaliers", nom: "Ranch des Chevaliers", scenes: ["game"] },
+  { id: "marinehote-theme", nom: "Marinéhote", scenes: ["game"] },
+  { id: "l-amour-du-guerrier", nom: "L'amour du Guerrier", scenes: ["game"] },
+  { id: "le-chevalier-errant", nom: "Le Chevalier Errant", scenes: ["game"] },
+  { id: "le-p-tit-robot", nom: "Le p'tit Robot", scenes: ["game"] },
+  { id: "retour-du-hero", nom: "Retour du héros", scenes: ["game"] }
+];
+
+class MusicPlayer {
+  constructor() {
+    this.element = null;
+    this.scene = null;
+    this.piste = null;
+    this.derniereId = null;
+    this.fondu = null;
+  }
+
+  get volume() {
+    return sound.getVolume("music") * sound.getVolume("master") * (sound.muted ? 0 : 1);
+  }
+
+  ensureElement() {
+    if (this.element) return this.element;
+    const el = new Audio();
+    el.preload = "none";
+    el.volume = 0;
+    // Enchaînement : à la fin d'une piste, une autre du même lot démarre.
+    el.addEventListener("ended", () => this.play(this.scene));
+    // Un asset manquant ne doit jamais bloquer le jeu.
+    el.addEventListener("error", () => { this.piste = null; });
+    // Attaché au document : un Audio() détaché fonctionne, mais reste
+    // invisible aux tests et aux outils de développement.
+    el.id = "music-player";
+    el.hidden = true;
+    document.body.append(el);
+    this.element = el;
+    return el;
+  }
+
+  // Choisit une piste au hasard dans la scène, sans répéter la précédente.
+  choisir(scene) {
+    const lot = MUSIC_TRACKS.filter((t) => t.scenes.includes(scene));
+    if (lot.length === 0) return null;
+    const dispo = lot.length > 1 ? lot.filter((t) => t.id !== this.derniereId) : lot;
+    return dispo[Math.floor(Math.random() * dispo.length)];
+  }
+
+  play(scene = "menu") {
+    const piste = this.choisir(scene);
+    if (!piste) return null;
+    this.scene = scene;
+    this.piste = piste;
+    this.derniereId = piste.id;
+    const el = this.ensureElement();
+    el.src = `./${DOSSIER_MUSIQUE}/${piste.id}.mp3`;
+    el.currentTime = 0;
+    el.volume = 0;
+    const lecture = el.play();
+    // La lecture est refusée tant que l'utilisateur n'a pas interagi :
+    // ce n'est pas une erreur, on retentera au premier geste.
+    if (lecture?.catch) lecture.catch(() => {});
+    this.fondreVers(this.volume, 900);
+    return piste;
+  }
+
+  // Fondu par paliers : évite un démarrage brutal en pleine partie.
+  fondreVers(cible, duree = 600) {
+    const el = this.element;
+    if (!el) return;
+    window.clearInterval(this.fondu);
+    const depart = el.volume;
+    const pas = 40;
+    let ecoule = 0;
+    this.fondu = window.setInterval(() => {
+      ecoule += pas;
+      const k = Math.min(1, ecoule / duree);
+      el.volume = Math.max(0, Math.min(1, depart + (cible - depart) * k));
+      if (k >= 1) window.clearInterval(this.fondu);
+    }, pas);
+  }
+
+  stop({ fondu = true } = {}) {
+    const el = this.element;
+    if (!el) return;
+    if (!fondu) { el.pause(); return; }
+    this.fondreVers(0, 500);
+    window.setTimeout(() => el.pause(), 540);
+  }
+
+  // Rejoué quand les réglages de volume changent.
+  refreshVolume() {
+    if (this.element && !this.element.paused) this.fondreVers(this.volume, 200);
+  }
+}
+
+export const music = new MusicPlayer();
+
+// Le navigateur refuse la lecture avant un geste : on relance au premier.
+for (const type of ["pointerdown", "keydown"]) {
+  window.addEventListener(type, () => {
+    if (music.element?.paused && music.piste) {
+      music.element.play().catch(() => {});
+      music.fondreVers(music.volume, 600);
+    }
+  }, { once: true, passive: true });
+}
+
 // Deverrouillage au premier geste, quel qu'il soit.
 for (const type of ["pointerdown", "keydown"]) {
   window.addEventListener(type, () => sound.unlock(), { once: true, passive: true });
