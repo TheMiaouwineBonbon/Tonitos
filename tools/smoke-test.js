@@ -289,12 +289,11 @@ async function main() {
       mobilePlaymatSource.includes('id="tablettes"') &&
       mobilePlaymatSource.includes('id="terrains"') &&
       mobilePlaymatSource.includes('id="piles"') &&
-      mobilePlaymatSource.includes('id="portails"') &&
       mobilePlaymatSource.includes('id="main"') &&
       mobilePlaymatSource.includes('id="ligne-centrale"') &&
       mobilePlaymatSource.includes('id="sceau"') &&
       !mobilePlaymatSource.includes('id="end-turn-well"') &&
-      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260816-terrains-1"') &&
+      gameSource.includes('mobile: "Images/Tapis de Jeu/Tapis Mobile Pro.svg?v=20260817-rond-1"') &&
       gameSource.includes('"--playmat-mobile"') &&
       polishStyles.includes("var(--playmat-mobile)") &&
       polishStyles.includes('body.game-running[data-mobile-view="board"] .mobile-nav') &&
@@ -303,9 +302,11 @@ async function main() {
   check(
     "Tapis dessiné en miroir exact des deux camps",
     // Les emplacements peints doivent tomber en face des éléments du DOM.
-    // Portails de commandant : même axe X, et 133 + 607 = 740 (miroir).
-    mobilePlaymatSource.includes("translate(149 133)") &&
-      mobilePlaymatSource.includes("translate(149 607)") &&
+    // Aucun cercle peint autour des portraits : le tapis étant étiré,
+    // il les transformait en ellipses (jusqu'à 18 % d'aplatissement en
+    // 16:9) autour d'un médaillon resté rond. Le cadre est en CSS.
+    !mobilePlaymatSource.includes('id="portails"') &&
+      polishStyles.includes("border-radius: 50%;") &&
       // Piles : même colonne à droite pour les deux camps.
       (mobilePlaymatSource.match(/x="1405"/g) || []).length >= 4 &&
       // Le cimetière adverse ne doit pas revenir dans le coin haut gauche.

@@ -991,9 +991,12 @@
       0 0 0 2px rgba(18, 11, 26, 0.96),
       0 0 0 4px rgba(226, 184, 94, 0.92),
       0 0 0 5.5px rgba(120, 84, 32, 0.85),
-      /* halo mystique et ancrage au tapis */
-      0 0 12px rgba(150, 96, 226, 0.28),
-      0 4px 10px rgba(0, 0, 0, 0.68);
+      /* halo mystique et ancrage au tapis — renforcé depuis que le portail
+         dessiné a été retiré : il s'ovalisait avec l'étirement du tapis,
+         alors que ce halo suit toujours le cercle du médaillon. */
+      0 0 0 7px rgba(16, 9, 24, 0.55),
+      0 0 18px rgba(150, 96, 226, 0.42),
+      0 4px 12px rgba(0, 0, 0, 0.72);
   }
 
   /* Ornement supérieur : petite gemme sertie dans le jonc, alignée sur
