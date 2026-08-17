@@ -4335,22 +4335,12 @@ function drawAimArrow(x1, y1, x2, y2) {
   path.setAttribute("d", `M ${x1} ${y1} Q ${midX} ${midY} ${x2} ${y2}`);
 }
 
+// La galerie complète est passée dans cartes.html : on ne rend plus ici
+// qu'un décompte. Construire 128 cartes et autant d'illustrations dans le
+// panneau latéral coûtait cher pour un contenu qui doublonnait la page
+// Collection. Le bloc est conservé, mais réduit à son résumé.
 function renderGallery() {
-  els.gallery.innerHTML = "";
-  const fragment = document.createDocumentFragment();
-  for (const card of [...state.cards, ...state.lands, ...state.spells]) {
-    const node = renderCard(card, { mode: "gallery" });
-    const control = node.querySelector(".card-content");
-    control.addEventListener("click", () => openCardDetail(card, { zone: "gallery" }));
-    control.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openCardDetail(card, { zone: "gallery" });
-      }
-    });
-    fragment.append(node);
-  }
-  els.gallery.append(fragment);
+  if (els.gallery) els.gallery.innerHTML = "";
   if (els.cardCountSummary) {
     els.cardCountSummary.textContent = `${state.cards.length} créatures · ${state.lands.length} terrains · ${state.spells.length} sorts`;
   }
