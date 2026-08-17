@@ -170,6 +170,14 @@ async function main() {
     "Vigilance reste limitée à une attaque par tour",
     gameSource.includes("canUnitAttack(unit, state.turn)") && engineSource.includes("!unit.hasAttacked")
   );
+  // Le mono-couleur strict rendait injouable tout ce qui coûte plus de 3 :
+  // la moitié des tours se passait sans poser une seule carte.
+  check(
+    "Seule une part plafonnée du coût exige la couleur de la carte",
+    engineSource.includes("export const MAX_COLORED_PIPS = 2;") &&
+      engineSource.includes("Math.min(MAX_COLORED_PIPS, total)") &&
+      gameSource.includes("manaRequirements")
+  );
   check("Les invocations divines verrouillées sont refusées par le moteur", gameSource.includes("!isDivineUnlocked(side, card)"));
   check(
     "La Fusion sacrifie réellement Noxis et Bhaal",

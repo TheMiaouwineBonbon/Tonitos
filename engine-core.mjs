@@ -7,18 +7,38 @@ export function normalizedCost(card) {
   return Math.max(0, Math.trunc(finiteNumber(card?.cost)));
 }
 
+// Part du coût qui doit être payée dans la couleur de la carte. Au-delà,
+// n'importe quel terrain convient. Sans ce plafond, une carte de coût 5
+// exigeait 5 terrains de sa propre couleur, soit 20 % d'un deck bicolore
+// à 12+12 terrains : mesuré sur 20 000 parties par deck, la moitié des
+// tours se passait sans jouer une seule carte et les cartes à 6 ou plus
+// ne sortaient jamais.
+export const MAX_COLORED_PIPS = 2;
+
 export function manaRequirements(card) {
-  if (!card?.manaCost || typeof card.manaCost !== "object") return null;
+  if (!card) return null;
 
-  const colored = Object.entries(card.manaCost)
-    .filter(([family]) => family !== "generic")
-    .map(([family, amount]) => [family, Math.max(0, Math.trunc(finiteNumber(amount)))])
-    .filter(([, amount]) => amount > 0);
-  const coloredTotal = colored.reduce((total, [, amount]) => total + amount, 0);
-  const declaredGeneric = Math.max(0, Math.trunc(finiteNumber(card.manaCost.generic)));
-  const generic = Math.max(declaredGeneric, normalizedCost(card) - coloredTotal);
+  if (card.manaCost && typeof card.manaCost === "object") {
+    const colored = Object.entries(card.manaCost)
+      .filter(([family]) => family !== "generic")
+      .map(([family, amount]) => [family, Math.max(0, Math.trunc(finiteNumber(amount)))])
+      .filter(([, amount]) => amount > 0);
+    const coloredTotal = colored.reduce((total, [, amount]) => total + amount, 0);
+    const declaredGeneric = Math.max(0, Math.trunc(finiteNumber(card.manaCost.generic)));
+    const generic = Math.max(declaredGeneric, normalizedCost(card) - coloredTotal);
 
-  return { colored, generic, total: coloredTotal + generic };
+    return { colored, generic, total: coloredTotal + generic };
+  }
+
+  // Cartes sans exigence déclarée : le plafond leur tient lieu de règle.
+  const total = normalizedCost(card);
+  if (!card.family || card.family === "Incolore") return { colored: [], generic: total, total };
+  const coloredAmount = Math.min(MAX_COLORED_PIPS, total);
+  return {
+    colored: coloredAmount > 0 ? [[card.family, coloredAmount]] : [],
+    generic: total - coloredAmount,
+    total
+  };
 }
 
 export function canTakeMainAction(game, sideName) {
@@ -67,26 +87,17 @@ export function selectHighestCostCards(cards, amount = 2) {
     .slice(0, count);
 }
 
-export function untappedLandsForCard(side, card) {
+// Tous les terrains non engagés comptent : seule une part plafonnée du coût
+// exige la couleur de la carte, le reste se paie avec n'importe lequel.
+export function untappedLandsForCard(side) {
   const lands = Array.isArray(side?.lands) ? side.lands : [];
-  const untapped = lands.filter((land) => !land?.tapped);
-  if (manaRequirements(card)) return untapped;
-  if (card?.family === "Incolore") return untapped;
-  return untapped.filter((land) => land?.family === card?.family);
+  return lands.filter((land) => !land?.tapped);
 }
 
 export function paymentPlan(side, card) {
-  const lands = Array.isArray(side?.lands) ? side.lands : [];
-  const untapped = lands.filter((land) => !land?.tapped);
+  const untapped = untappedLandsForCard(side);
   const requirements = manaRequirements(card);
-
-  if (!requirements) {
-    const eligible = card?.family === "Incolore"
-      ? untapped
-      : untapped.filter((land) => land?.family === card?.family);
-    const cost = normalizedCost(card);
-    return eligible.length >= cost ? eligible.slice(0, cost) : null;
-  }
+  if (!requirements) return null;
 
   const selected = [];
   const reserved = new Set();

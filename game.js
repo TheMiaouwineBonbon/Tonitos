@@ -9,7 +9,7 @@ import {
   setActiveAccountId,
   updateAccount
 } from "./progression.js?v=20260726-1";
-import { sound, music } from "./audio.js?v=20260817-musique-1";
+import { sound, music } from "./audio.js?v=20260817-musique-2";
 import {
   buffUnits,
   canPayCard,
@@ -20,6 +20,7 @@ import {
   finiteNumber,
   keywordKey as normalizeKeyword,
   makeTurnStartKey,
+  manaRequirements,
   parasiteVengeanceDamage,
   partitionDeadUnits,
   payCardCost,
@@ -29,7 +30,7 @@ import {
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260816-truth-1";
+} from "./engine-core.mjs?v=20260817-mana-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -1819,10 +1820,10 @@ function canActInMain(side) {
   return !gameplayPaused && Boolean(side) && canTakeMainAction(state, side.side);
 }
 
-// Le moteur accepte le coût mono-couleur historique et les exigences
-// multicolores explicites des cartes qui définissent `manaCost`.
-function untappedLandsFor(side, card) {
-  return untappedLandsForCard(side, card);
+// Tous les terrains dégagés sont mobilisables : la couleur ne contraint plus
+// que la part plafonnée du coût, pas son total.
+function untappedLandsFor(side) {
+  return untappedLandsForCard(side);
 }
 
 function canPay(side, card) {
@@ -1834,21 +1835,31 @@ function payMana(side, card) {
   return payCardCost(side, card);
 }
 
-// Mana disponible dans la couleur de la carte (pour les messages d'aide).
+// Ce qui manque pour payer. Depuis le plafond de mana coloré, une carte peut
+// buter soit sur le total de terrains, soit sur la seule part de couleur :
+// on retient le blocage le plus fort.
 function manaShortfall(side, card) {
-  return Math.max(0, card.cost - untappedLandsFor(side, card).length);
+  const requirements = manaRequirements(card);
+  if (!requirements) return 0;
+  const untapped = untappedLandsFor(side, card);
+  let manque = requirements.total - untapped.length;
+  for (const [family, amount] of requirements.colored) {
+    manque = Math.max(manque, amount - untapped.filter((land) => land?.family === family).length);
+  }
+  return Math.max(0, manque);
 }
 
+// Le message énonce la règle complète — « il faut 2 vert + 3 libres » — pour
+// que le joueur voie que le reste du coût accepte n'importe quel terrain.
 function manaPaymentError(side, card, suffix = "") {
-  if (card.manaCost && typeof card.manaCost === "object") {
-    const colored = Object.entries(card.manaCost)
-      .filter(([family, amount]) => family !== "generic" && Number(amount) > 0)
-      .map(([family, amount]) => `${amount} ${family.toLowerCase()}`);
-    const generic = Number(card.manaCost.generic) || 0;
-    if (generic > 0) colored.push(`${generic} libre${generic > 1 ? "s" : ""}`);
-    return `Mana insuffisant${suffix} : il faut ${colored.join(" + ")}.`;
+  const requirements = manaRequirements(card);
+  if (!requirements) return `Mana insuffisant${suffix}.`;
+  const parts = requirements.colored.map(([family, amount]) => `${amount} ${family.toLowerCase()}`);
+  if (requirements.generic > 0) {
+    parts.push(`${requirements.generic} libre${requirements.generic > 1 ? "s" : ""}`);
   }
-  return `Il manque ${manaShortfall(side, card)} terrain(s) ${card.family.toLowerCase()} dégagé(s)${suffix}.`;
+  if (parts.length === 0) return `Mana insuffisant${suffix}.`;
+  return `Mana insuffisant${suffix} : il faut ${parts.join(" + ")}.`;
 }
 
 function createUnit(card, owner) {

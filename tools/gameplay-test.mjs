@@ -113,6 +113,41 @@ test("le mana coloré, incolore et le coût zéro sont résolus sans paiement pa
   assert.equal(canPayCard(side, { family: "Incolore", cost: 1 }), true);
 });
 
+test("au-delà du plafond coloré, le reste du coût accepte n'importe quel terrain", () => {
+  const side = makeSide();
+  const verte = { id: "grosse-verte", family: "Vert", cost: 5 };
+
+  // 2 verts suffisent pour la part colorée, les 3 autres terrains sont libres.
+  side.lands = [
+    { family: "Vert", tapped: false },
+    { family: "Vert", tapped: false },
+    { family: "Blanc", tapped: false },
+    { family: "Blanc", tapped: false },
+    { family: "Blanc", tapped: false }
+  ];
+  assert.equal(canPayCard(side, verte), true);
+
+  // Un seul vert ne suffit pas : la part colorée reste exigée.
+  side.lands = [
+    { family: "Vert", tapped: false },
+    ...Array.from({ length: 4 }, () => ({ family: "Blanc", tapped: false }))
+  ];
+  assert.equal(canPayCard(side, verte), false);
+
+  // Le total continue de compter : 2 verts + 2 blancs ne font que 4.
+  side.lands = [
+    { family: "Vert", tapped: false },
+    { family: "Vert", tapped: false },
+    { family: "Blanc", tapped: false },
+    { family: "Blanc", tapped: false }
+  ];
+  assert.equal(canPayCard(side, verte), false);
+
+  // Le plafond ne dépasse jamais le coût : une carte à 1 n'exige qu'un terrain.
+  side.lands = [{ family: "Vert", tapped: false }];
+  assert.equal(canPayCard(side, { id: "petite", family: "Vert", cost: 1 }), true);
+});
+
 test("le spam de paiement ne peut engager les mêmes terrains deux fois", () => {
   const side = makeSide();
   side.lands = [{ family: "Bleu", tapped: false }, { family: "Bleu", tapped: false }];
