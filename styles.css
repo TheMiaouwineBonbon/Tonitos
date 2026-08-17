@@ -271,9 +271,12 @@ a:hover {
   filter: brightness(1.08);
 }
 
+/* Une seule colonne : la seconde piste de 390px servait au panneau
+   latéral, retiré. Sans cela le plateau garde sa largeur d'origine et
+   laisse une bande vide à droite. */
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   margin-top: 18px;
 }
@@ -3674,8 +3677,10 @@ button.mat-zone--exile:focus-visible {
 /* Main en eventail, cartes lisibles et zones recalees sur les tapis v2. */
 /* ===================================================================== */
 
+/* Colonne unique : la piste réservée au panneau latéral laissait sinon
+   280 à 340px de vide à droite du plateau. */
 .game-layout {
-  grid-template-columns: minmax(0, 1fr) clamp(280px, 22vw, 340px);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .hand-wrap {
