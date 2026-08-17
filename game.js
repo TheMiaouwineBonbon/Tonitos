@@ -176,6 +176,8 @@ const els = {
   roomCodeInput: document.querySelector("#room-code-input"),
   menuDeckSummary: document.querySelector("#menu-deck-summary"),
   onlineStatus: document.querySelector("#online-status"),
+  onlineBanner: document.querySelector("#online-banner"),
+  onlineBannerText: document.querySelector("#online-banner-text"),
   accountSelect: document.querySelector("#account-select"),
   accountCreateToggle: document.querySelector("#account-create-toggle"),
   accountSave: document.querySelector("#account-save"),
@@ -1027,6 +1029,7 @@ function registerPeerGuest(message) {
 }
 
 function handlePeerMessage(message) {
+  noterContactOnline();
   if (!message || typeof message !== "object") return;
   if (message.type === "error") {
     setOnlineStatus(message.message || "Connexion directe refusée", true);
@@ -1048,11 +1051,14 @@ function handlePeerError(error) {
 }
 
 function startOnlinePolling() {
+  surveillerLiaisonOnline();
   if (state.network.pollTimer) clearInterval(state.network.pollTimer);
   state.network.pollTimer = setInterval(pollOnlineRoom, ONLINE_POLL_MS);
 }
 
 function stopOnlineSync(options = {}) {
+  window.clearInterval(veilleOnlineTimer);
+  if (els.onlineBanner) els.onlineBanner.hidden = true;
   if (state.network.pollTimer) clearInterval(state.network.pollTimer);
   if (state.network.publishTimer) clearTimeout(state.network.publishTimer);
   try {
@@ -1093,6 +1099,7 @@ async function pollOnlineRoom() {
 }
 
 function handleOnlineRoom(room) {
+  noterContactOnline();
   if (!room) return;
   const hasBothPlayers = Boolean(room.players?.player && room.players?.enemy);
   const playerNames = [
@@ -1183,6 +1190,7 @@ function serializeGameState() {
 }
 
 function applyOnlineState(snapshot, version, room) {
+  noterContactOnline();
   const snapshotErrors = validateGameState(snapshot);
   if (snapshotErrors.length > 0) {
     debugEvent("ONLINE_STATE_REJECTED", { version, errors: snapshotErrors });
@@ -1346,10 +1354,60 @@ async function publishOnlineState() {
 }
 
 function setOnlineStatus(message, isError = false) {
-  if (!els.onlineStatus) return;
-  els.onlineStatus.textContent = message || "";
-  els.onlineStatus.hidden = !message;
-  els.onlineStatus.classList.toggle("is-error", Boolean(isError));
+  if (els.onlineStatus) {
+    els.onlineStatus.textContent = message || "";
+    els.onlineStatus.hidden = !message;
+    els.onlineStatus.classList.toggle("is-error", Boolean(isError));
+  }
+  // Le message du menu disparaît avec lui : on le redonne en partie, sans
+  // quoi une déconnexion de l'adversaire passe totalement inaperçue.
+  updateOnlineBanner(message, isError);
+}
+
+// Bandeau réseau de la partie. Il ne s'affiche qu'en ligne, et se replie
+// tout seul quand la liaison est saine pour ne pas encombrer le plateau.
+let onlineBannerTimer = null;
+
+function updateOnlineBanner(message, isError = false) {
+  const banner = els.onlineBanner;
+  if (!banner) return;
+  const enLigne = state.mode === "online" && state.started;
+  if (!enLigne || !message) {
+    banner.hidden = true;
+    return;
+  }
+  els.onlineBannerText.textContent = message;
+  banner.hidden = false;
+  banner.classList.toggle("is-error", Boolean(isError));
+  window.clearTimeout(onlineBannerTimer);
+  // Une erreur reste affichée ; une information s'efface après lecture.
+  if (!isError) onlineBannerTimer = window.setTimeout(() => { banner.hidden = true; }, 4000);
+}
+
+// Silence prolongé du camp adverse : en direct comme en salon, aucun
+// signal ne distinguait « il réfléchit » de « il a fermé son onglet ».
+const ONLINE_SILENCE_MS = 8000;
+let dernierContactOnline = 0;
+let veilleOnlineTimer = null;
+
+function noterContactOnline() {
+  dernierContactOnline = Date.now();
+}
+
+function surveillerLiaisonOnline() {
+  window.clearInterval(veilleOnlineTimer);
+  if (state.mode !== "online") return;
+  noterContactOnline();
+  veilleOnlineTimer = window.setInterval(() => {
+    if (state.mode !== "online" || !state.started) return;
+    const silence = Date.now() - dernierContactOnline;
+    if (silence > ONLINE_SILENCE_MS) {
+      updateOnlineBanner(
+        `Aucune nouvelle de ${sideDisplayName(state.network.slot === "player" ? "enemy" : "player")} depuis ${Math.round(silence / 1000)} s.`,
+        true
+      );
+    }
+  }, 2000);
 }
 
 function isLocalOnlineController() {

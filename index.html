@@ -137,6 +137,14 @@
       </section>
     </div>
 
+    <!-- Statut réseau visible EN PARTIE. Le message du menu est masqué dès
+         que la partie commence : sans ce bandeau, une déconnexion de
+         l'adversaire n'était jamais signalée au joueur. -->
+    <div id="online-banner" class="online-banner" role="status" aria-live="polite" hidden>
+      <span id="online-banner-dot" class="online-banner-dot" aria-hidden="true"></span>
+      <span id="online-banner-text"></span>
+    </div>
+
     <div class="app-shell">
       <header class="topbar">
         <div class="topbar-brand">
