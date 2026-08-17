@@ -4875,6 +4875,9 @@ function getActionHint() {
 }
 
 function renderLog() {
+  // Le journal a ete retire du panneau lateral : sans garde, chaque rendu
+  // leverait une erreur et interromprait la partie.
+  if (!els.log) return;
   els.log.innerHTML = "";
   const entries = state.log.slice(-14).reverse();
   for (const entry of entries) {
