@@ -3011,8 +3011,9 @@ button.mat-zone--exile:focus-visible {
   height: 100%;
 }
 
+/* Conteneur réduit dans la même proportion que les cartes (340 -> 316). */
 .hand-row {
-  min-height: 340px;
+  min-height: 316px;
   align-items: flex-end;
   gap: 10px;
   padding: 18px 10px 24px;
@@ -3726,10 +3727,13 @@ button.mat-zone--exile:focus-visible {
   perspective: 1200px;
 }
 
+/* Cartes de main réduites de 7 % sur PC pour dégager les terrains de jeu.
+   Le mobile paysage n'est pas concerné : polish.css y impose sa propre
+   largeur via --hand-card-width. */
 .hand-row .game-card {
   z-index: var(--hand-layer, 20);
-  width: clamp(114px, 8.8vw, 134px);
-  min-width: clamp(114px, 8.8vw, 134px);
+  width: clamp(106px, 8.2vw, 125px);
+  min-width: clamp(106px, 8.2vw, 125px);
   height: auto;
   margin-inline: calc(var(--hand-overlap, -7px) / 2);
   aspect-ratio: 2 / 3;
