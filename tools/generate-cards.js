@@ -93,7 +93,7 @@ const G = {
   // Les medaillons mordent volontairement sur le bas du panneau : c est ce
   // chevauchement qui les fait paraitre sertis dans le cadre plutot que
   // poses dessus. Leur bord bas reste a 12 px du bord de carte.
-  medaillon: { r: 48, cy: 974, cxG: 112, cxD: 632 }
+  medaillon: { r: 48, cy: 967, cxG: 112, cxD: 632 }
 };
 
 // Teintes de matiere. La couleur elementaire ne sert qu'aux details -
@@ -183,21 +183,40 @@ function badges(mots, x, y, teinte) {
 
 // Medaillon du socle : meme construction que les gemmes du haut, avec un
 // symbole qui dit sa fonction sans qu'on ait a lire le chiffre.
-function medaillonIllustre(cx, cy, r, fichier, valeur, decalage = { x: 0, y: 0 }) {
+function medaillonIllustre(cx, cy, r, piece, valeur) {
   const chiffre = String(valeur ?? "");
-  const taille = Math.round(r * 0.92);
-  const contour = Math.max(4, Math.round(taille * 0.16));
+  const rayon = Math.round(r * (piece.echelle || 1));
+  // Le chiffre vise le centre MESURE de la zone d accueil, pas le centre
+  // geometrique de l image : le disque de l attaque est decale a droite,
+  // et la masse du coeur se tient 11 % plus haut que le milieu.
+  const cxTexte = cx + ((piece.centre.x - 50) / 100) * rayon * 2;
+  const cyTexte = cy + ((piece.centre.y - 50) / 100) * rayon * 2;
+  const taille = Math.round(r * 0.94);
+  const contour = Math.max(5, Math.round(taille * 0.18));
+  const voile = chiffre
+    ? `<circle cx="${cxTexte}" cy="${cyTexte}" r="${Math.round(taille * 0.92)}" fill="url(#voileChiffre)" opacity="${piece.voile}"/>`
+    : "";
+  const texte = chiffre
+    ? `<text x="${cxTexte}" y="${cyTexte + taille * 0.35}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${taille}" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="${contour}" stroke-linejoin="round" paint-order="stroke">${escapeXml(chiffre)}</text>`
+    : "";
   return `<g>
-    <image href="${imageReference(fichier)}" x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}"/>
-    ${chiffre ? `<text x="${cx + decalage.x}" y="${cy + decalage.y + taille * 0.36}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${taille}" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="${contour}" stroke-linejoin="round" paint-order="stroke">${escapeXml(chiffre)}</text>` : ""}
+    <image href="${imageReference(piece.fichier)}" x="${cx - rayon}" y="${cy - rayon}" width="${rayon * 2}" height="${rayon * 2}"/>
+    ${voile}
+    ${texte}
   </g>`;
 }
 
 // Centres mesures sur les pieces elles-memes, en pourcentage de leur cote.
+// `echelle` egalise les silhouettes : a taille egale, le coeur couvrait
+// 1,10 fois la surface visible de l attaque, d ou son air plus massif.
+// `voile` fonce le fond juste sous le chiffre. Il est indispensable sur
+// l or clair de l attaque, ou du blanc seul tombait a 1,7:1 de contraste,
+// et reste discret sur le rouge sombre du coeur.
 const MEDAILLONS = {
-  attaque: { fichier: "Images/Medaillons/Attaque.png", decalage: { x: 3, y: 0 } },
-  vie: { fichier: "Images/Medaillons/Coeur.png", decalage: { x: 0, y: -7 } },
-  source: { fichier: "Images/Medaillons/Terrain.png", decalage: { x: 0, y: 0 } }
+  attaque: { fichier: "Images/Medaillons/Attaque.png", centre: { x: 55.7, y: 46.3 }, echelle: 1, voile: 0.55 },
+  vie: { fichier: "Images/Medaillons/Coeur.png", centre: { x: 49.9, y: 38.5 }, echelle: 0.95, voile: 0.52 },
+  source: { fichier: "Images/Medaillons/Terrain.png", centre: { x: 49.9, y: 47.9 }, echelle: 1, voile: 0.4 },
+  sort: { fichier: "Images/Medaillons/Sort.png", centre: { x: 49.8, y: 50.3 }, echelle: 1.12, voile: 0 }
 };
 
 const SYMBOLE_ATTAQUE = `<path d="M-11 6 L0 -14 L11 6 L6 6 L0 -4 L-6 6 Z" fill="#ffe0ae"/>`;
@@ -231,16 +250,15 @@ function cardSvg(card) {
   const matiereCadre = isLand ? "url(#cadrePierre)" : "url(#cadreBois)";
 
   const socle = isLand
-    ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.source.fichier, topValue, MEDAILLONS.source.decalage)}
+    ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.source, topValue)}
   <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">SOURCE</text>
   <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
     : isSpell
-      ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.source.fichier, "", MEDAILLONS.source.decalage)}
-  <text x="${centre(G.panneau)}" y="${G.medaillon.cy + 24}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="700" letter-spacing="1" fill="#fff8e4">SORT</text>
+      ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.sort, "")}
   <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">RITUEL</text>
   <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
-      : `${medaillonIllustre(G.medaillon.cxG, G.medaillon.cy, G.medaillon.r, MEDAILLONS.attaque.fichier, card.attack, MEDAILLONS.attaque.decalage)}
-  ${medaillonIllustre(G.medaillon.cxD, G.medaillon.cy, G.medaillon.r, MEDAILLONS.vie.fichier, card.life, MEDAILLONS.vie.decalage)}
+      : `${medaillonIllustre(G.medaillon.cxG, G.medaillon.cy, G.medaillon.r, MEDAILLONS.attaque, card.attack)}
+  ${medaillonIllustre(G.medaillon.cxD, G.medaillon.cy, G.medaillon.r, MEDAILLONS.vie, card.life)}
   <text x="${centre(G.panneau)}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="${MATIERE.or}" opacity="0.85">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 10))}</text>`;
 
   const contenuGemmeCout = `<text x="${G.gemme.cxG}" y="${G.gemme.cy + 15}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#fff8e4">${escapeXml(String(topValue))}</text>`;
@@ -276,6 +294,11 @@ function cardSvg(card) {
       <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
       <stop offset="45%" stop-color="#ffffff" stop-opacity="0.05"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+    <radialGradient id="voileChiffre">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.95"/>
+      <stop offset="62%" stop-color="#000000" stop-opacity="0.82"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="creuxHaut" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#000000" stop-opacity="0.4"/>
@@ -330,6 +353,9 @@ function cardSvg(card) {
 
   <rect x="${G.art.x}" y="${G.socle.y}" width="${G.art.w}" height="${G.socle.h}" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
   ${socle}
+  <rect x="${G.marge + 8}" y="${G.H - G.marge - 18}" width="${G.W - (G.marge + 8) * 2}" height="18" rx="9" fill="${matiereCadre}"/>
+  <rect x="${G.marge + 8}" y="${G.H - G.marge - 18}" width="${G.W - (G.marge + 8) * 2}" height="18" rx="9" fill="none" stroke="${MATIERE.orSombre}" stroke-width="1.5" opacity="0.9"/>
+  <rect x="${G.marge + 14}" y="${G.H - G.marge - 17}" width="${G.W - (G.marge + 14) * 2}" height="2.5" rx="1" fill="${MATIERE.or}" opacity="0.5"/>
 </svg>`;
 }
 
