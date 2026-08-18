@@ -125,15 +125,10 @@
 
   <rect x="56" y="946" width="632" height="62" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
   <g>
-    <circle cx="372" cy="977" r="51" fill="#140d0b" opacity="0.92"/>
-    <circle cx="372" cy="977" r="49" fill="url(#orBrosse)"/>
-    <circle cx="372" cy="977" r="44" fill="#12080f"/>
-    <circle cx="372" cy="977" r="44" fill="url(#pierre)"/>
-    <circle cx="372" cy="977" r="44" fill="none" stroke="#d39a79" stroke-width="2" opacity="0.7"/>
-    <g transform="translate(372 947)" opacity="0.95"><path d="M0 -14 L3.6 -4.4 L14 -4.4 L5.6 2 L9 12 L0 6 L-9 12 L-5.6 2 L-14 -4.4 L-3.6 -4.4 Z" fill="#ffeec4"/></g>
+    <image href="../Medaillons/Terrain.png" x="320" y="922" width="104" height="104"/>
     
   </g>
-  <text x="372" y="1001" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="700" letter-spacing="1" fill="#fff8e4">SORT</text>
-  <text x="112" y="985" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">RITUEL</text>
-  <text x="632" y="985" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">TÉNÈBRES</text>
+  <text x="372" y="998" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="700" letter-spacing="1" fill="#fff8e4">SORT</text>
+  <text x="112" y="982" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">RITUEL</text>
+  <text x="632" y="982" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">TÉNÈBRES</text>
 </svg>

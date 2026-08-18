@@ -46,7 +46,7 @@ for (let i = 1; i < bandes.length; i += 1) {
 check("le socle tient dans la carte", G.socle.y + G.socle.h + G.marge <= G.H, `${G.socle.y + G.socle.h} + marge ${G.marge} <= ${G.H}`);
 // Un medaillon peut chevaucher le cadre - c est l effet serti recherche -
 // mais jamais depasser du bord de la carte.
-check("les medaillons restent dans la carte", G.medaillon.cy + G.medaillon.r + 7 <= G.H - 12, `bas ${G.medaillon.cy + G.medaillon.r + 7} / limite ${G.H - 12}`);
+check("les medaillons restent dans la carte", G.medaillon.cy + G.medaillon.r + 4 <= G.H - 12, `bas ${G.medaillon.cy + G.medaillon.r + 4} / limite ${G.H - 12}`);
 
 // --- Les textes tiennent-ils ? ----------------------------------------
 const wrap = (txt, max) => {
