@@ -93,11 +93,11 @@ const G = {
   // Les medaillons mordent volontairement sur le bas du panneau : c est ce
   // chevauchement qui les fait paraitre sertis dans le cadre plutot que
   // poses dessus. Leur bord bas reste a 12 px du bord de carte.
-  medaillon: { r: 48, cy: 967, cxG: 112, cxD: 632 },
+  medaillon: { r: 48, cy: 966, cxG: 112, cxD: 632 },
   // Terrains et sorts posent leur piece au centre, sous la citation : son
   // sommet doit rester sous la derniere ligne de texte, son bas dans la
   // carte. Les 84 px libres sous le panneau n autorisent pas plus.
-  medaillonCentral: { r: 40, cy: 980 }
+  medaillonCentral: { r: 37, cy: 977 }
 };
 
 // Teintes de matiere. La couleur elementaire ne sert qu'aux details -
@@ -357,9 +357,9 @@ function cardSvg(card) {
 
   <rect x="${G.art.x}" y="${G.socle.y}" width="${G.art.w}" height="${G.socle.h}" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
   ${socle}
-  <rect x="${G.marge + 8}" y="${G.H - G.marge - 18}" width="${G.W - (G.marge + 8) * 2}" height="18" rx="9" fill="${matiereCadre}"/>
-  <rect x="${G.marge + 8}" y="${G.H - G.marge - 18}" width="${G.W - (G.marge + 8) * 2}" height="18" rx="9" fill="none" stroke="${MATIERE.orSombre}" stroke-width="1.5" opacity="0.9"/>
-  <rect x="${G.marge + 14}" y="${G.H - G.marge - 17}" width="${G.W - (G.marge + 14) * 2}" height="2.5" rx="1" fill="${MATIERE.or}" opacity="0.5"/>
+  <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="${matiereCadre}"/>
+  <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="none" stroke="${MATIERE.orSombre}" stroke-width="1.5" opacity="0.9"/>
+  <rect x="${G.marge + 14}" y="${G.H - G.marge - 9}" width="${G.W - (G.marge + 14) * 2}" height="2" rx="1" fill="${MATIERE.or}" opacity="0.55"/>
 </svg>`;
 }
 

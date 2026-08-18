@@ -132,13 +132,13 @@
 
   <rect x="56" y="946" width="632" height="62" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
   <g>
-    <image href="../Medaillons/Sort.png" x="332" y="940" width="80" height="80"/>
+    <image href="../Medaillons/Sort.png" x="335" y="940" width="74" height="74"/>
     
     
   </g>
-  <text x="112" y="986" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">RITUEL</text>
-  <text x="632" y="986" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">TÉNÈBRES</text>
-  <rect x="32" y="996" width="680" height="18" rx="9" fill="url(#cadreBois)"/>
-  <rect x="32" y="996" width="680" height="18" rx="9" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
-  <rect x="38" y="997" width="668" height="2.5" rx="1" fill="#e8c477" opacity="0.5"/>
+  <text x="112" y="983" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">RITUEL</text>
+  <text x="632" y="983" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="#e8c477" opacity="0.9">TÉNÈBRES</text>
+  <rect x="32" y="1004" width="680" height="10" rx="5" fill="url(#cadreBois)"/>
+  <rect x="32" y="1004" width="680" height="10" rx="5" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
+  <rect x="38" y="1005" width="668" height="2" rx="1" fill="#e8c477" opacity="0.55"/>
 </svg>

@@ -137,17 +137,17 @@
 
   <rect x="56" y="946" width="632" height="62" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
   <g>
-    <image href="../Medaillons/Attaque.png" x="64" y="919" width="96" height="96"/>
-    <circle cx="117.47200000000001" cy="963.448" r="41" fill="url(#voileChiffre)" opacity="0.55"/>
-    <text x="117.47200000000001" y="979.198" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="8" stroke-linejoin="round" paint-order="stroke">4</text>
+    <image href="../Medaillons/Attaque.png" x="64" y="918" width="96" height="96"/>
+    <circle cx="117.47200000000001" cy="962.448" r="41" fill="url(#voileChiffre)" opacity="0.55"/>
+    <text x="117.47200000000001" y="978.198" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="8" stroke-linejoin="round" paint-order="stroke">4</text>
   </g>
   <g>
-    <image href="../Medaillons/Coeur.png" x="586" y="921" width="92" height="92"/>
-    <circle cx="631.908" cy="956.42" r="41" fill="url(#voileChiffre)" opacity="0.52"/>
-    <text x="631.908" y="972.17" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="8" stroke-linejoin="round" paint-order="stroke">3</text>
+    <image href="../Medaillons/Coeur.png" x="586" y="920" width="92" height="92"/>
+    <circle cx="631.908" cy="955.42" r="41" fill="url(#voileChiffre)" opacity="0.52"/>
+    <text x="631.908" y="971.17" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="8" stroke-linejoin="round" paint-order="stroke">3</text>
   </g>
-  <text x="372" y="986" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="#e8c477" opacity="0.85">FEU</text>
-  <rect x="32" y="996" width="680" height="18" rx="9" fill="url(#cadreBois)"/>
-  <rect x="32" y="996" width="680" height="18" rx="9" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
-  <rect x="38" y="997" width="668" height="2.5" rx="1" fill="#e8c477" opacity="0.5"/>
+  <text x="372" y="983" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="#e8c477" opacity="0.85">FEU</text>
+  <rect x="32" y="1004" width="680" height="10" rx="5" fill="url(#cadreBois)"/>
+  <rect x="32" y="1004" width="680" height="10" rx="5" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
+  <rect x="38" y="1005" width="668" height="2" rx="1" fill="#e8c477" opacity="0.55"/>
 </svg>

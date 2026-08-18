@@ -46,6 +46,19 @@ for (let i = 1; i < bandes.length; i += 1) {
 check("le socle tient dans la carte", G.socle.y + G.socle.h + G.marge <= G.H, `${G.socle.y + G.socle.h} + marge ${G.marge} <= ${G.H}`);
 // Un medaillon peut chevaucher le cadre - c est l effet serti recherche -
 // mais jamais depasser du bord de la carte.
+// La languette du socle doit mordre sur le bas des pieces sans les
+// amputer : elle en masquait 20 a 30 % de la hauteur.
+const languetteHaut = G.H - G.marge - 10;
+for (const [nom, cy, r] of [["lateral", G.medaillon.cy, G.medaillon.r], ["central", G.medaillonCentral.cy, G.medaillonCentral.r]]) {
+  const masque = cy + r - languetteHaut;
+  const part = (masque / (r * 2)) * 100;
+  check(
+    `le medaillon ${nom} est serti sans etre ampute`,
+    masque > 0 && part <= 15,
+    `${masque} px masques, soit ${part.toFixed(0)} % de sa hauteur`
+  );
+}
+
 // Le medaillon central des terrains et des sorts se pose sous le panneau,
 // pile sous la citation. Rien ne l empechait de remonter par-dessus le
 // texte : l etoile des sorts ecrasait la derniere ligne sur 29 px.
