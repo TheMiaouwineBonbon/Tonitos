@@ -1005,7 +1005,7 @@
       ]
     },
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -1056,7 +1056,7 @@
       ]
     },
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -1103,7 +1103,7 @@
       ]
     },
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },

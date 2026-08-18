@@ -431,7 +431,7 @@
     },
     "effect": "abyssThreat",
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -459,7 +459,7 @@
     },
     "effect": "naturalMemory",
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -487,7 +487,7 @@
     },
     "effect": "crownUlgod",
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -515,7 +515,7 @@
     },
     "effect": "bhaalVessel",
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },
@@ -543,7 +543,7 @@
     },
     "effect": "vengefulSpirits",
     "art": {
-      "fit": "contain",
+      "fit": "cover",
       "position": "50% 50%"
     }
   },

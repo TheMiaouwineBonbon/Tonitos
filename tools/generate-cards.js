@@ -5,6 +5,10 @@ const root = path.resolve(__dirname, "..");
 const cardsPath = path.join(root, "data", "cards.json");
 const landsPath = path.join(root, "data", "lands.json");
 const spellsPath = path.join(root, "data", "spells.json");
+const elementsPath = path.join(root, "data", "elements.json");
+// Correspondance couleur -> element illustre. Source unique partagee avec
+// le jeu et la page Collection.
+const ELEMENTS = JSON.parse(fs.readFileSync(elementsPath, "utf8"));
 const outputDir = path.join(root, "Images", "Cartes");
 
 const cards = [
@@ -68,8 +72,17 @@ function cardSvg(card) {
   const h = 1038;
   const artHref = imageReference(card.image);
   const abilityLines = wrapText(card.abilityText, 48).slice(0, 4);
-  const flavorLines = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 50).slice(0, 2);
-  const artAspectRatio = card.art?.svgFit === "cover" ? "xMidYMid slice" : "xMidYMid meet";
+  const flavorLines = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 36).slice(0, 2);
+  // Multicolore n'a pas d'icone dediee : il garde son bandeau ecrit.
+  const element = ELEMENTS[card.family];
+  const elementBlock = element && element.icone
+    ? `<g><title>${escapeXml(element.nom)}</title><image href="${imageReference(element.icone)}" x="48" y="898" width="92" height="92"/></g>`
+    : `<rect x="48" y="920" width="228" height="58" rx="8" fill="${card.palette.deep}" stroke="${card.palette.secondary}" stroke-width="4"/>
+  <text x="70" y="957" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#fff4d2">${escapeXml(card.family)}</text>`;
+  // Remplir le cadre est la regle ; "contain" reste possible au cas par cas
+  // pour une illustration qu'un recadrage mutilerait.
+  const artFit = card.art?.svgFit || card.art?.fit || "cover";
+  const artAspectRatio = artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice";
   const keywords = card.keywords.join(" • ");
   const isLand = card.kind === "land";
   const isSpell = card.kind === "spell";
@@ -111,19 +124,18 @@ function cardSvg(card) {
   <rect x="48" y="622" width="648" height="48" rx="8" fill="#f3e1bf"/>
   <text x="70" y="654" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#24130d">${escapeXml(card.type)}</text>
 
-  <rect x="48" y="688" width="648" height="212" rx="8" fill="url(#panel)" stroke="#4a2b1a" stroke-width="3"/>
-  <text x="70" y="728" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#21130e">${escapeXml(card.abilityName)}</text>
-  <text x="70" y="760" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="${card.palette.primary}">${escapeXml(keywords)}</text>
-  ${textBlock(abilityLines, 70, 802, 21, "#241812", 500, 27)}
-  <line x1="70" y1="872" x2="674" y2="872" stroke="#8f7250" stroke-width="2" opacity="0.65"/>
-  <text x="70" y="902" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-style="italic" fill="#4c3628">${escapeXml(flavorLines[0] || "")}</text>
-  <text x="70" y="928" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-style="italic" fill="#4c3628">${escapeXml(flavorLines[1] || "")}</text>
+  <rect x="48" y="688" width="648" height="304" rx="8" fill="url(#panel)" stroke="#4a2b1a" stroke-width="3"/>
+  <text x="70" y="726" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#21130e">${escapeXml(card.abilityName)}</text>
+  <text x="70" y="756" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="${card.palette.primary}">${escapeXml(keywords)}</text>
+  ${textBlock(abilityLines, 70, 792, 21, "#241812", 500, 25)}
+  <line x1="70" y1="884" x2="674" y2="884" stroke="#8f7250" stroke-width="2" opacity="0.65"/>
+  <text x="156" y="916" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" fill="#3b2a1e">${escapeXml(flavorLines[0] || "")}</text>
+  <text x="156" y="942" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" fill="#3b2a1e">${escapeXml(flavorLines[1] || "")}</text>
 
-  <rect x="48" y="920" width="228" height="58" rx="8" fill="${card.palette.deep}" stroke="${card.palette.secondary}" stroke-width="4"/>
-  <text x="70" y="957" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#fff4d2">${escapeXml(card.family)}</text>
+  ${elementBlock}
 
-  <rect x="538" y="912" width="158" height="76" rx="8" fill="#f9ead0" stroke="${card.palette.deep}" stroke-width="5"/>
-  <text x="616" y="962" text-anchor="middle" font-family="Arial, sans-serif" font-size="${isLand || isSpell ? 30 : 38}" font-weight="900" fill="#20120e">${statText}</text>
+  <rect x="538" y="906" width="158" height="76" rx="8" fill="#f9ead0" stroke="${card.palette.deep}" stroke-width="5"/>
+  <text x="616" y="956" text-anchor="middle" font-family="Arial, sans-serif" font-size="${isLand || isSpell ? 30 : 38}" font-weight="900" fill="#20120e">${statText}</text>
 </svg>`;
 }
 

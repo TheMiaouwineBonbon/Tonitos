@@ -62,6 +62,7 @@ const state = {
   cards: [],
   lands: [],
   spells: [],
+  elements: {},
   player: null,
   enemy: null,
   selectedBlockerId: null,
@@ -308,14 +309,16 @@ init().catch(handleInitializationError);
 async function init() {
   if (!els.startMenu) return;
   const dataVersion = Date.now();
-  const [cardsResponse, landsResponse, spellsResponse] = await Promise.all([
+  const [cardsResponse, landsResponse, spellsResponse, elementsResponse] = await Promise.all([
     fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }),
     fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }),
-    fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" })
+    fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" }),
+    fetch(`./data/elements.json?v=${dataVersion}`, { cache: "no-store" })
   ]);
   state.cards = (await cardsResponse.json()).map((card) => ({ ...card, kind: "creature" }));
   state.lands = await landsResponse.json();
   state.spells = (await spellsResponse.json()).map((card) => ({ ...card, kind: "spell" }));
+  state.elements = await elementsResponse.json();
   preloadImages();
   applyPlaymats();
   populateDeckMenu();
@@ -4630,6 +4633,20 @@ function artImgStyle(card) {
   return ` style="object-position:${art.position}"`;
 }
 
+// Medaillon d'element : l'icone remplace le nom de couleur ecrit en toutes
+// lettres, illisible sur telephone. Le libelle reste accessible aux
+// lecteurs d'ecran, et une famille sans icone - Multicolore - garde son
+// texte.
+function elementRibbon(card) {
+  const element = state.elements?.[card.family];
+  if (!element?.icone) {
+    return `<span class="family-ribbon">${escapeHtml(element?.nom || card.family)}</span>`;
+  }
+  return `<span class="family-ribbon family-ribbon--element" title="${escapeHtml(element.nom)}">` +
+    `<img src="${encodeURI(element.icone)}" alt="${escapeHtml(element.nom)}" loading="lazy" decoding="async" />` +
+    `</span>`;
+}
+
 function renderCard(card, options = {}) {
   const article = document.createElement("article");
   article.className = options.mode === "gallery" ? "gallery-card" : "game-card";
@@ -4638,6 +4655,9 @@ function renderCard(card, options = {}) {
   article.dataset.cardId = card.id;
   article.dataset.cardKind = card.kind;
   article.dataset.cardFamily = card.family;
+  // Le CSS s'en sert pour remplir le cadre par defaut, et ne contenir
+  // l'illustration que sur les cartes qui le demandent.
+  article.dataset.artFit = card.art?.fit || card.art?.svgFit || "cover";
   if (options.mode === "board") article.classList.add("compact");
   if (options.mode === "detail") article.classList.add("detail-card");
   if (isLand(card)) article.classList.add("land-card");
@@ -4677,7 +4697,7 @@ function renderCard(card, options = {}) {
     <div class="card-art">
       <img src="${encodeURI(card.image)}" alt="${escapeHtml(card.name)}" loading="${loading}" decoding="async"${artImgStyle(card)} />
     </div>
-    <span class="family-ribbon">${escapeHtml(card.family)}</span>
+    ${elementRibbon(card)}
     <div class="card-scroll">
       <p class="card-ability"><strong>${escapeHtml(card.abilityName)}</strong> - ${escapeHtml(card.abilityText)}</p>
       <p class="card-keywords">${card.keywords.map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}</p>

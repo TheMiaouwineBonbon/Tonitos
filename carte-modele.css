@@ -1,0 +1,188 @@
+/* =====================================================================
+   MODELE DE CARTE - aligne sur le gabarit de la page Collection
+   ---------------------------------------------------------------------
+   La page Collection affiche des SVG generes par tools/generate-cards.js :
+   cadre sombre, bandeau titre creme, pastille de cout ronde, illustration
+   liseree, bandeau de type, panneau parchemin et bloc de statistiques.
+   Le jeu portait deja la meme structure HTML mais un habillage different ;
+   ce bloc rapproche les deux sans toucher a la mise en page.
+
+   Fichier a part, charge APRES styles.css et polish.css : .card-name est
+   redefini plusieurs fois dans styles.css, et polish.css le recolore avec
+   des selecteurs plus specifiques. Place dans styles.css, ce theme donnait
+   un titre creme sur un bandeau creme - illisible en main sur telephone.
+
+   Regle de tenue : ce fichier ne touche QU AUX couleurs et aux formes,
+   jamais aux tailles ni aux positions, qui restent le domaine de
+   polish.css pour le mobile.
+   ===================================================================== */
+
+:root {
+  --carte-parchemin: #f7ead0;
+  --carte-parchemin-sombre: #f3e1bf;
+  --carte-encre: #20120e;
+  --carte-bois: #4a2b1a;
+}
+
+body[data-mobile-view] .game-card .card-content,
+body[data-mobile-view] .gallery-card .card-content {
+  background: linear-gradient(180deg, #1a1110, #140d0c 60%, #100c0a);
+  border: 2px solid color-mix(in srgb, var(--tone) 60%, #2a1a12);
+}
+
+/* Bandeau titre : parchemin clair et lettres sombres, comme le SVG. */
+body[data-mobile-view] .game-card .card-frame-top,
+body[data-mobile-view] .gallery-card .card-frame-top {
+  background: linear-gradient(180deg, var(--carte-parchemin), #efdfc2);
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--tone-deep) 55%, #6b4a2c);
+}
+
+body[data-mobile-view] .game-card .card-name,
+body[data-mobile-view] .gallery-card .card-name {
+  color: var(--carte-encre);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+body[data-mobile-view] .game-card .card-type,
+body[data-mobile-view] .gallery-card .card-type {
+  color: #4c3628;
+  background: var(--carte-parchemin-sombre);
+  border-radius: 4px;
+}
+
+/* Pastille de cout : disque sombre cercle de la teinte claire. */
+body[data-mobile-view] .game-card .cost-badge,
+body[data-mobile-view] .gallery-card .cost-badge {
+  background: var(--tone-deep);
+  border: 3px solid var(--tone-2);
+  border-radius: 50%;
+  color: #fff7df;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* Illustration liseree de la teinte claire. */
+body[data-mobile-view] .game-card .card-art,
+body[data-mobile-view] .gallery-card .card-art {
+  border: 2px solid var(--tone-2);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Panneau de capacite : parchemin encadre de bois. */
+body[data-mobile-view] .game-card .card-scroll,
+body[data-mobile-view] .gallery-card .card-scroll {
+  background: linear-gradient(180deg, #f6e7c8, #e9d3ac);
+  border: 2px solid var(--carte-bois);
+  border-radius: 6px;
+  color: #241812;
+}
+
+body[data-mobile-view] .game-card .card-ability,
+body[data-mobile-view] .gallery-card .card-ability {
+  color: #241812;
+}
+
+body[data-mobile-view] .game-card .card-ability strong,
+body[data-mobile-view] .gallery-card .card-ability strong {
+  color: #21130e;
+}
+
+body[data-mobile-view] .game-card .card-keywords .tag,
+body[data-mobile-view] .gallery-card .card-keywords .tag {
+  color: var(--tone);
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(74, 43, 26, 0.35);
+}
+
+/* Bloc de statistiques : meme parchemin clair, cercle sombre. */
+body[data-mobile-view] .game-card .stat-badge,
+body[data-mobile-view] .gallery-card .stat-badge {
+  background: #f9ead0;
+  border: 2px solid var(--tone-deep);
+  color: var(--carte-encre);
+  font-weight: 900;
+}
+
+/* Medaillon d'element : l'icone est ronde et se suffit a elle-meme, donc
+   le fond et le cadre du bandeau textuel disparaissent. */
+body[data-mobile-view] .family-ribbon--element {
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  width: clamp(20px, 13%, 38px);
+  aspect-ratio: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.75));
+}
+
+body[data-mobile-view] .family-ribbon--element img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+
+/* ---------------------------------------------------------------------
+   Priorite sur les couches precedentes
+   ---------------------------------------------------------------------
+   polish.css recolore le titre en creme avec des selecteurs a quatre
+   classes (body[data-mobile-view="board"] .hand-row .very-long-card-title
+   .card-name). Etre charge en dernier ne suffit pas : la specificite prime
+   sur l'ordre. Ces selecteurs egalent la sienne pour que le titre reste
+   sombre sur le bandeau parchemin - mesure sans eux : 1,13:1 de contraste,
+   soit un nom invisible en main sur telephone.
+   --------------------------------------------------------------------- */
+
+body[data-mobile-view] .hand-row .long-card-title .card-name,
+body[data-mobile-view] .hand-row .very-long-card-title .card-name,
+body[data-mobile-view] .hand-row .game-card .card-name,
+body[data-mobile-view] .board-row .game-card .card-name,
+body[data-mobile-view] .mat-zone--field .game-card .card-name,
+body[data-mobile-view] .gallery-card .card-name {
+  color: var(--carte-encre);
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+
+/* Le liser doré des cartes jouables se lisait sur un titre clair ; sur le
+   parchemin il devient une ombre portee douce, sinon le nom bave. */
+body[data-mobile-view] .hand-row .game-card.is-playable .card-title-lockup .card-name,
+body[data-mobile-view] .game-card.is-playable .card-title-lockup .card-name,
+body[data-mobile-view] .gallery-card.is-playable .card-title-lockup .card-name {
+  /* Le nom des cartes jouables restait creme, herite du temps ou le bandeau
+     etait sombre : 1,13:1 de contraste sur le parchemin, donc illisible.
+     Le signal "jouable" ne disparait pas pour autant, il reste porte par le
+     lisere de la carte elle-meme. */
+  color: var(--carte-encre);
+  -webkit-text-stroke: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* ---------------------------------------------------------------------
+   Remplissage des illustrations
+   ---------------------------------------------------------------------
+   styles.css impose object-fit: contain a toutes les illustrations
+   (ligne ~2551) et ecrase le cover declare plus haut : les images ne
+   remplissaient pas leur cadre et laissaient des bandes vides. Le cadre se
+   remplit desormais par defaut ; seules les huit cartes qui portent
+   art.fit = "contain" gardent leur image entiere, un recadrage les
+   mutilerait.
+   --------------------------------------------------------------------- */
+
+body[data-mobile-view] .game-card:not([data-art-fit="contain"]) .card-art img,
+body[data-mobile-view] .gallery-card:not([data-art-fit="contain"]) .card-art img,
+body[data-mobile-view] .card-modal-card .game-card:not([data-art-fit="contain"]) .card-art img {
+  object-fit: cover;
+}
+
+body[data-mobile-view] .game-card[data-art-fit="contain"] .card-art img,
+body[data-mobile-view] .gallery-card[data-art-fit="contain"] .card-art img {
+  object-fit: contain;
+}

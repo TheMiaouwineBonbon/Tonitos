@@ -166,6 +166,41 @@ async function main() {
       gameSource.includes("onDragPointerCancel")
   );
   check("Terrains permanents avec leur illustration", gameSource.includes("--land-art") && gameSource.includes("land-permanent-art"));
+  // Types illustres : chaque famille de carte doit avoir son element, et
+  // chaque element son icone reellement presente sur le disque.
+  const elements = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "elements.json"), "utf8"));
+  check(
+    "Chaque famille de carte possede un element illustre",
+    (() => {
+      const familles = new Set(["cards.json", "spells.json", "lands.json"]
+        .flatMap((f) => JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", f), "utf8")))
+        .map((c) => c.family));
+      const sansElement = [...familles].filter((f) => !elements[f]);
+      const iconesManquantes = Object.values(elements)
+        .filter((e) => e.icone && !fs.existsSync(path.join(__dirname, "..", e.icone)));
+      return sansElement.length === 0 && iconesManquantes.length === 0;
+    })()
+  );
+  check(
+    "Le medaillon d'element remplace le nom de couleur ecrit",
+    gameSource.includes("function elementRibbon(") &&
+      gameSource.includes("family-ribbon--element") &&
+      gameSource.includes("state.elements")
+  );
+  // Charge en dernier a dessein : place avant polish.css, le theme donnait
+  // un titre creme sur un bandeau creme, soit 1,13:1 de contraste.
+  check(
+    "Le modele de carte est charge apres styles.css et polish.css",
+    (() => {
+      const ordre = ["styles.css", "polish.css", "carte-modele.css"].map((f) => html.indexOf(f));
+      return ordre.every((i) => i > 0) && ordre[0] < ordre[1] && ordre[1] < ordre[2];
+    })()
+  );
+  check(
+    "Les illustrations remplissent leur cadre par defaut",
+    cardGeneratorSource.includes('artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
+      gameSource.includes("article.dataset.artFit")
+  );
   check(
     "Vigilance reste limitée à une attaque par tour",
     gameSource.includes("canUnitAttack(unit, state.turn)") && engineSource.includes("!unit.hasAttacked")

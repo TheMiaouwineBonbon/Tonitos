@@ -1,0 +1,9 @@
+{
+  "Blanc": { "nom": "Lumières", "icone": "Images/Types/Lumieres.png" },
+  "Bleu": { "nom": "Eau", "icone": "Images/Types/Eau.png" },
+  "Noir": { "nom": "Ténèbres", "icone": "Images/Types/Tenebres.png" },
+  "Rouge": { "nom": "Feu", "icone": "Images/Types/Feu.png" },
+  "Vert": { "nom": "Plantes", "icone": "Images/Types/Plantes.png" },
+  "Incolore": { "nom": "Incolore", "icone": "Images/Types/Incolore.png" },
+  "Multicolore": { "nom": "Prisme", "icone": null }
+}
