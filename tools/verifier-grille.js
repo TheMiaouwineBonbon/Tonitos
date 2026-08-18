@@ -46,6 +46,21 @@ for (let i = 1; i < bandes.length; i += 1) {
 check("le socle tient dans la carte", G.socle.y + G.socle.h + G.marge <= G.H, `${G.socle.y + G.socle.h} + marge ${G.marge} <= ${G.H}`);
 // Un medaillon peut chevaucher le cadre - c est l effet serti recherche -
 // mais jamais depasser du bord de la carte.
+// Le medaillon central des terrains et des sorts se pose sous le panneau,
+// pile sous la citation. Rien ne l empechait de remonter par-dessus le
+// texte : l etoile des sorts ecrasait la derniere ligne sur 29 px.
+const citationBas = G.panneau.y + 254 + 4;
+check(
+  "le medaillon central n empiete pas sur la citation",
+  G.medaillonCentral.cy - G.medaillonCentral.r >= citationBas,
+  `sommet ${G.medaillonCentral.cy - G.medaillonCentral.r} / citation jusqu a ${citationBas}`
+);
+check(
+  "le medaillon central reste dans la carte",
+  G.medaillonCentral.cy + G.medaillonCentral.r <= G.H - 12,
+  `bas ${G.medaillonCentral.cy + G.medaillonCentral.r} / limite ${G.H - 12}`
+);
+
 check("les medaillons restent dans la carte", G.medaillon.cy + G.medaillon.r + 4 <= G.H - 12, `bas ${G.medaillon.cy + G.medaillon.r + 4} / limite ${G.H - 12}`);
 
 // --- Les textes tiennent-ils ? ----------------------------------------

@@ -141,7 +141,7 @@
     <circle cx="631.908" cy="956.42" r="41" fill="url(#voileChiffre)" opacity="0.52"/>
     <text x="631.908" y="972.17" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="8" stroke-linejoin="round" paint-order="stroke">8</text>
   </g>
-  <text x="372" y="975" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="#e8c477" opacity="0.85">TÉNÈBRES</text>
+  <text x="372" y="986" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="#e8c477" opacity="0.85">TÉNÈBRES</text>
   <rect x="32" y="996" width="680" height="18" rx="9" fill="url(#cadreBois)"/>
   <rect x="32" y="996" width="680" height="18" rx="9" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
   <rect x="38" y="997" width="668" height="2.5" rx="1" fill="#e8c477" opacity="0.5"/>

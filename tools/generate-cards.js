@@ -93,7 +93,11 @@ const G = {
   // Les medaillons mordent volontairement sur le bas du panneau : c est ce
   // chevauchement qui les fait paraitre sertis dans le cadre plutot que
   // poses dessus. Leur bord bas reste a 12 px du bord de carte.
-  medaillon: { r: 48, cy: 967, cxG: 112, cxD: 632 }
+  medaillon: { r: 48, cy: 967, cxG: 112, cxD: 632 },
+  // Terrains et sorts posent leur piece au centre, sous la citation : son
+  // sommet doit rester sous la derniere ligne de texte, son bas dans la
+  // carte. Les 84 px libres sous le panneau n autorisent pas plus.
+  medaillonCentral: { r: 40, cy: 980 }
 };
 
 // Teintes de matiere. La couleur elementaire ne sert qu'aux details -
@@ -216,7 +220,7 @@ const MEDAILLONS = {
   attaque: { fichier: "Images/Medaillons/Attaque.png", centre: { x: 55.7, y: 46.3 }, echelle: 1, voile: 0.55 },
   vie: { fichier: "Images/Medaillons/Coeur.png", centre: { x: 49.9, y: 38.5 }, echelle: 0.95, voile: 0.52 },
   source: { fichier: "Images/Medaillons/Terrain.png", centre: { x: 49.9, y: 47.9 }, echelle: 1, voile: 0.4 },
-  sort: { fichier: "Images/Medaillons/Sort.png", centre: { x: 49.8, y: 50.3 }, echelle: 1.12, voile: 0 }
+  sort: { fichier: "Images/Medaillons/Sort.png", centre: { x: 49.8, y: 50.3 }, echelle: 1, voile: 0 }
 };
 
 const SYMBOLE_ATTAQUE = `<path d="M-11 6 L0 -14 L11 6 L6 6 L0 -4 L-6 6 Z" fill="#ffe0ae"/>`;
@@ -250,16 +254,16 @@ function cardSvg(card) {
   const matiereCadre = isLand ? "url(#cadrePierre)" : "url(#cadreBois)";
 
   const socle = isLand
-    ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.source, topValue)}
-  <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">SOURCE</text>
-  <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
+    ? `${medaillonIllustre(centre(G.panneau), G.medaillonCentral.cy, G.medaillonCentral.r, MEDAILLONS.source, topValue)}
+  <text x="${G.medaillon.cxG}" y="${G.medaillonCentral.cy + 6}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">SOURCE</text>
+  <text x="${G.medaillon.cxD}" y="${G.medaillonCentral.cy + 6}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
     : isSpell
-      ? `${medaillonIllustre(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 4, MEDAILLONS.sort, "")}
-  <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">RITUEL</text>
-  <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
+      ? `${medaillonIllustre(centre(G.panneau), G.medaillonCentral.cy, G.medaillonCentral.r, MEDAILLONS.sort, "")}
+  <text x="${G.medaillon.cxG}" y="${G.medaillonCentral.cy + 6}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">RITUEL</text>
+  <text x="${G.medaillon.cxD}" y="${G.medaillonCentral.cy + 6}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
       : `${medaillonIllustre(G.medaillon.cxG, G.medaillon.cy, G.medaillon.r, MEDAILLONS.attaque, card.attack)}
   ${medaillonIllustre(G.medaillon.cxD, G.medaillon.cy, G.medaillon.r, MEDAILLONS.vie, card.life)}
-  <text x="${centre(G.panneau)}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="${MATIERE.or}" opacity="0.85">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 10))}</text>`;
+  <text x="${centre(G.panneau)}" y="${G.medaillonCentral.cy + 6}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="${MATIERE.or}" opacity="0.85">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 10))}</text>`;
 
   const contenuGemmeCout = `<text x="${G.gemme.cxG}" y="${G.gemme.cy + 15}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#fff8e4">${escapeXml(String(topValue))}</text>`;
   const contenuGemmeElement = element?.icone
