@@ -214,3 +214,30 @@ body[data-mobile-view] .gallery-card .card-frame-top {
   border: 1px solid color-mix(in srgb, var(--tone-2) 45%, #4a3a22);
   border-radius: 6px;
 }
+
+/* ---------------------------------------------------------------------
+   Cartes dessinees par le gabarit partage
+   ---------------------------------------------------------------------
+   Le contenu de la carte est desormais un SVG unique, produit par
+   carte-gabarit.mjs, identique a celui de la page Collection. Il occupe
+   toute la surface et porte lui-meme son cadre : les habillages HTML
+   herites - bandeaux, pastilles, panneaux - n ont plus rien a decorer et
+   ne doivent plus peindre par-dessus.
+   --------------------------------------------------------------------- */
+
+body[data-mobile-view] .game-card .card-content > svg,
+body[data-mobile-view] .gallery-card .card-content > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+body[data-mobile-view] .game-card .card-content,
+body[data-mobile-view] .gallery-card .card-content {
+  background: none;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  display: block;
+}

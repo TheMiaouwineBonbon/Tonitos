@@ -89,6 +89,7 @@ async function main() {
       collectionHtml.includes('id="collection-empty"')
   );
   const cardGeneratorSource = fs.readFileSync(path.join(__dirname, "generate-cards.js"), "utf8");
+  const gabaritSource = fs.readFileSync(path.join(__dirname, "..", "carte-gabarit.mjs"), "utf8");
   check(
     "Les cartes de collection gardent un titre neutre",
     !cardGeneratorSource.includes('id="titleGlow"') &&
@@ -216,7 +217,7 @@ async function main() {
   );
   check(
     "Les illustrations remplissent leur cadre par defaut",
-    cardGeneratorSource.includes('artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
+    gabaritSource.includes('artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
       gameSource.includes("article.dataset.artFit")
   );
   check(

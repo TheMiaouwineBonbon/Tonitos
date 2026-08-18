@@ -35,6 +35,7 @@ import {
   validateGameState
 } from "./engine-core.mjs?v=20260817-mana-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
+import { cardSvg, ZONE_ART } from "./carte-gabarit.mjs?v=20260818-gabarit-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {
@@ -4647,6 +4648,24 @@ function elementRibbon(card) {
     `</span>`;
 }
 
+// Resolution des illustrations depuis la racine du site : le generateur,
+// lui, ecrit des chemins relatifs au dossier Images/Cartes.
+const imageDepuisRacine = (chemin) => `./${encodeURI(chemin)}`;
+
+// Le SVG d une carte ne change que si son apparence change : on le garde
+// en cache sous une cle qui reprend tout ce que le gabarit dessine.
+const cacheCarteSvg = new Map();
+
+function carteSvgPourLeJeu(card) {
+  const vie = card.currentLife === undefined ? card.life : card.currentLife;
+  const cle = [card.id, card.cost, card.attack, vie, card.maxLife, card.energy, (card.keywords || []).join(",")].join("|");
+  const enCache = cacheCarteSvg.get(cle);
+  if (enCache) return enCache;
+  const svg = cardSvg({ ...card, life: vie }, { elements: state.elements, image: imageDepuisRacine });
+  cacheCarteSvg.set(cle, svg);
+  return svg;
+}
+
 function renderCard(card, options = {}) {
   const article = document.createElement("article");
   article.className = options.mode === "gallery" ? "gallery-card" : "game-card";
@@ -4686,24 +4705,11 @@ function renderCard(card, options = {}) {
       ? `<span class="stat-badge spell-stat">S</span>`
       : `<span class="stat-badge attack-stat">${card.attack}</span><span class="stat-badge life-stat">${lifeText}</span>`;
 
-  wrapper.innerHTML = `
-    <div class="card-frame-top">
-      <span class="cost-badge">${topBadge}</span>
-      <div class="card-title-lockup">
-        <h3 class="card-name">${escapeHtml(card.name)}</h3>
-        <p class="card-type">${escapeHtml(card.type)}</p>
-      </div>
-    </div>
-    <div class="card-art">
-      <img src="${encodeURI(card.image)}" alt="${escapeHtml(card.name)}" loading="${loading}" decoding="async"${artImgStyle(card)} />
-    </div>
-    ${elementRibbon(card)}
-    <div class="card-scroll">
-      <p class="card-ability"><strong>${escapeHtml(card.abilityName)}</strong> - ${escapeHtml(card.abilityText)}</p>
-      <p class="card-keywords">${card.keywords.map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}</p>
-    </div>
-    <div class="card-stats">${statBlock}</div>
-  `;
+  // Le corps de la carte est dessine par le gabarit partage avec la page
+  // Collection : meme rendu des deux cotes. Les valeurs passees sont
+  // celles du moment, pour qu une creature buffee ou blessee affiche ses
+  // vraies statistiques la ou le fichier SVG fige celles de sa fiche.
+  wrapper.innerHTML = carteSvgPourLeJeu(card);
   article.append(wrapper);
   if (interactive && options.mode !== "hand") bindCardPreview(article, card);
   return article;
@@ -4902,11 +4908,19 @@ function fitCardDetailText() {
 
 function playCardDetailVideo(card, detailCard) {
   if (!card.video || !detailCard) return;
-  const art = detailCard.querySelector(".card-art");
+  // L illustration est desormais dessinee dans le SVG : la video se pose
+  // par-dessus, a l emprise exacte que le gabarit lui reserve.
+  const art = detailCard.querySelector(".card-content");
   if (!art) return;
 
   const video = document.createElement("video");
   video.className = "card-art-video";
+  video.style.position = "absolute";
+  video.style.left = ZONE_ART.gauche + "%";
+  video.style.top = ZONE_ART.haut + "%";
+  video.style.width = ZONE_ART.largeur + "%";
+  video.style.height = ZONE_ART.hauteur + "%";
+  video.style.objectFit = "cover";
   video.src = encodeURI(card.video);
   video.poster = encodeURI(card.image);
   video.preload = "metadata";
