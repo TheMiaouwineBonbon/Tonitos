@@ -197,6 +197,23 @@ async function main() {
       return ordre.every((i) => i > 0) && ordre[0] < ordre[1] && ordre[1] < ordre[2];
     })()
   );
+  // Le rendu des cartes a sa propre batterie : identifiants uniques,
+  // statistiques dynamiques, cache. Un seul point d entree pour tout lancer.
+  check(
+    "Les tests de rendu des cartes passent",
+    (() => {
+      try {
+        require("child_process").execFileSync(process.execPath, ["--test", path.join(__dirname, "test-rendu-cartes.mjs")], { stdio: "pipe" });
+        return true;
+      } catch (error) {
+        const sortie = String(error.stdout || "");
+        for (const ligne of sortie.split(String.fromCharCode(10))) {
+          if (ligne.includes("not ok")) console.log("       " + ligne.trim());
+        }
+        return false;
+      }
+    })()
+  );
   // La grille des cartes est verifiee par son propre outil : symetrie,
   // absence de chevauchement, et surtout aucun texte tronque - un defaut
   // invisible en revue mais fatal sur une carte destinee a l impression.
@@ -399,7 +416,7 @@ async function main() {
   );
   check(
     "Main iPhone séparée du terrain et alignée sur le tapis",
-    gameSource.includes("Math.max(62, Math.min(73, window.innerHeight * 0.166))") &&
+    gameSource.includes("Math.max(68, Math.min(80, window.innerHeight * 0.183))") &&
       gameSource.includes("Math.max(220, measuredHandWidth)") &&
       gameSource.includes("handWidth * 0.92") &&
       polishStyles.includes("left: var(--lane-field-left);") &&
@@ -407,7 +424,7 @@ async function main() {
       polishStyles.includes("width: min(68%, 480px);") &&
       polishStyles.includes("--phone-board-card-height") &&
       polishStyles.includes("--phone-hand-row-height") &&
-      polishStyles.includes("height: calc(var(--hand-card-width, 64px) * 1.27);") &&
+      polishStyles.includes("height: calc(var(--hand-card-width, 64px) * 1.3952);") &&
       polishStyles.includes("transform: translateY(-4px) rotate(0deg) scale(1.025);")
   );
   check(

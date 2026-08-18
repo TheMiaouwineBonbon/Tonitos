@@ -35,7 +35,7 @@ import {
   validateGameState
 } from "./engine-core.mjs?v=20260817-mana-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
-import { cardSvg, ZONE_ART } from "./carte-gabarit.mjs?v=20260818-gabarit-1";
+import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260818-gabarit-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {
@@ -107,6 +107,13 @@ const state = {
 };
 
 installDebugApi(() => state);
+// Diagnostic du rendu des cartes, consultable depuis la console :
+// SpellahoDebug.rendu(). Sert a verifier qu un simple degat ne reconstruit
+// pas toutes les cartes de la table.
+globalThis.SpellahoRendu = {
+  stats: () => ({ ...statsRendu, enCache: cacheCarteSvg.size }),
+  reinitialiser: () => { statsRendu.generes = 0; statsRendu.cacheTouche = 0; statsRendu.cacheManque = 0; statsRendu.dureeMs = 0; }
+};
 
 const pendingGameTimers = new Set();
 let lastTurnStartKey = "";
@@ -3924,12 +3931,12 @@ function renderHand() {
   const handWidth = mobileLandscape
     ? Math.max(220, measuredHandWidth)
     : Math.max(320, measuredHandWidth);
-  // Cartes de main agrandies de 7 % : les trois bornes suivent le même
-  // facteur pour que le gain soit constant à toutes les hauteurs d'écran
-  // (58 -> 62, 68 -> 73, 0.155 -> 0.166).
+  // Cartes de main agrandies de 7 %, puis de 10 % : les trois bornes
+  // suivent le même facteur pour que le gain soit constant à toutes les
+  // hauteurs d'écran (62 -> 68, 73 -> 80, 0.166 -> 0.183).
   const cardWidth = mobileLandscape
-    ? Math.max(62, Math.min(73, window.innerHeight * 0.166))
-    : 160;
+    ? Math.max(68, Math.min(80, window.innerHeight * 0.183))
+    : 176;
   const maximumSpan = mobileLandscape ? handWidth * 0.92 : handWidth - 48;
   const naturalSpan = cardWidth * side.hand.length;
   const overlap = side.hand.length > 1
@@ -4652,16 +4659,46 @@ function elementRibbon(card) {
 // lui, ecrit des chemins relatifs au dossier Images/Cartes.
 const imageDepuisRacine = (chemin) => `./${encodeURI(chemin)}`;
 
-// Le SVG d une carte ne change que si son apparence change : on le garde
-// en cache sous une cle qui reprend tout ce que le gabarit dessine.
+// Le SVG d une carte n est reconstruit que si son apparence change. La
+// cle porte l identite de l instance et tout ce que le gabarit dessine :
+// deux exemplaires d une meme carte ne peuvent pas partager un SVG, leurs
+// identifiants internes entreraient en collision.
 const cacheCarteSvg = new Map();
+
+// Compteurs de diagnostic, lisibles via SpellahoDebug.rendu().
+const statsRendu = { generes: 0, cacheTouche: 0, cacheManque: 0, dureeMs: 0 };
+
+// Un identifiant de document valide, stable pour une meme carte.
+function prefixeSvg(card) {
+  const brut = String(card.uid || card.id || "carte");
+  return "sp" + brut.replace(/[^a-zA-Z0-9]/g, "").slice(-16);
+}
 
 function carteSvgPourLeJeu(card) {
   const vie = card.currentLife === undefined ? card.life : card.currentLife;
-  const cle = [card.id, card.cost, card.attack, vie, card.maxLife, card.energy, (card.keywords || []).join(",")].join("|");
+  const cle = [
+    card.uid || card.id,
+    card.kind,
+    card.cost,
+    card.attack,
+    vie,
+    card.maxLife,
+    card.energy,
+    (card.keywords || []).join(",")
+  ].join("|");
   const enCache = cacheCarteSvg.get(cle);
-  if (enCache) return enCache;
-  const svg = cardSvg({ ...card, life: vie }, { elements: state.elements, image: imageDepuisRacine });
+  if (enCache) {
+    statsRendu.cacheTouche += 1;
+    return enCache;
+  }
+  statsRendu.cacheManque += 1;
+  const depart = performance.now();
+  const svg = cardSvg(
+    { ...card, life: vie },
+    { elements: state.elements, image: imageDepuisRacine, prefixe: prefixeSvg(card) }
+  );
+  statsRendu.dureeMs += performance.now() - depart;
+  statsRendu.generes += 1;
   cacheCarteSvg.set(cle, svg);
   return svg;
 }
@@ -4684,6 +4721,11 @@ function renderCard(card, options = {}) {
   article.style.setProperty("--tone", card.palette.primary);
   article.style.setProperty("--tone-2", card.palette.secondary);
   article.style.setProperty("--tone-deep", card.palette.deep);
+  // Le clip CSS doit epouser le cadre dessine par le gabarit.
+  article.style.setProperty("--rayon-carte", RAYON_CARTE.x + "% / " + RAYON_CARTE.y + "%");
+  // Le conteneur adopte le format exact du gabarit : sinon le SVG se centre
+  // dans une boite au mauvais ratio et laisse des bandes vides.
+  article.style.setProperty("--ratio-carte", GRILLE_CARTE.W + " / " + GRILLE_CARTE.H);
 
   const interactive = options.mode !== "detail";
   const wrapper = document.createElement(interactive ? "button" : "div");
@@ -4920,7 +4962,10 @@ function playCardDetailVideo(card, detailCard) {
   video.style.top = ZONE_ART.haut + "%";
   video.style.width = ZONE_ART.largeur + "%";
   video.style.height = ZONE_ART.hauteur + "%";
+  video.style.right = "auto";
+  video.style.bottom = "auto";
   video.style.objectFit = "cover";
+  video.style.borderRadius = "1.5%";
   video.src = encodeURI(card.video);
   video.poster = encodeURI(card.image);
   video.preload = "metadata";

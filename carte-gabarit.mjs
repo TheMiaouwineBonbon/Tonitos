@@ -60,7 +60,7 @@ export const G = {
   // Les medaillons mordent volontairement sur le bas du panneau : c est ce
   // chevauchement qui les fait paraitre sertis dans le cadre plutot que
   // poses dessus. Leur bord bas reste a 12 px du bord de carte.
-  medaillon: { r: 48, cy: 966, cxG: 112, cxD: 632 },
+  medaillon: { r: 53, cy: 966, cxG: 112, cxD: 632 },
   // Terrains et sorts posent leur piece au centre, sous la citation : son
   // sommet doit rester sous la derniere ligne de texte, son bas dans la
   // carte. Les 84 px libres sous le panneau n autorisent pas plus.
@@ -85,6 +85,8 @@ const centre = (zone) => zone.x + zone.w / 2;
 // descend par paliers selon la longueur reelle du nom.
 // Emprise de l illustration dans la carte, en pourcentages : le jeu y
 // superpose la video des cartes animees sans avoir a redire ou elle est.
+export const RAYON_CARTE = { x: (22 / 744) * 100, y: (22 / 1038) * 100 };
+
 export const ZONE_ART = {
   gauche: (G.art.x / G.W) * 100,
   haut: (G.art.y / G.H) * 100,
@@ -204,7 +206,7 @@ const SYMBOLE_VIE = `<path d="M0 8 C-12 -2 -10 -13 -4 -13 C-1 -13 0 -11 0 -9 C0 
 const SYMBOLE_MANA = `<path d="M0 -13 C7 -5 11 0 11 4 A11 11 0 0 1 -11 4 C-11 0 -7 -5 0 -13 Z" fill="#e8f2ff"/>`;
 const SYMBOLE_SORT = `<path d="M0 -14 L3.6 -4.4 L14 -4.4 L5.6 2 L9 12 L0 6 L-9 12 L-5.6 2 L-14 -4.4 L-3.6 -4.4 Z" fill="#ffeec4"/>`;
 
-export function cardSvg(card, contexte) {
+function dessinerCarte(card, contexte) {
   const { elements: ELEMENTS, image } = contexte;
   const isLand = card.kind === "land";
   const isSpell = card.kind === "spell";
@@ -338,3 +340,34 @@ export function cardSvg(card, contexte) {
   <rect x="${G.marge + 14}" y="${G.H - G.marge - 9}" width="${G.W - (G.marge + 14) * 2}" height="2" rx="1" fill="${MATIERE.or}" opacity="0.55"/>
 </svg>`;
 }
+
+// Tous les identifiants declares dans <defs>. Ils doivent etre uniques
+// dans le document des lors que plusieurs cartes y coexistent.
+const IDENTIFIANTS_INTERNES = [
+  "cadreBois",
+  "cadrePierre",
+  "orBrosse",
+  "parchemin",
+  "pierre",
+  "voileChiffre",
+  "creuxHaut",
+  "clipArt",
+  "clipElement"
+];
+
+// `prefixe` rend les identifiants propres a une instance. La Collection
+// s en passe - chaque SVG y est un document separe - mais le jeu les
+// injecte cote a cote dans une meme page.
+export function cardSvg(card, contexte) {
+  const svg = dessinerCarte(card, contexte);
+  const prefixe = contexte && contexte.prefixe;
+  if (!prefixe) return svg;
+  let sortie = svg;
+  for (const nom of IDENTIFIANTS_INTERNES) {
+    sortie = sortie.split(`id="${nom}"`).join(`id="${prefixe}-${nom}"`);
+    sortie = sortie.split(`url(#${nom})`).join(`url(#${prefixe}-${nom})`);
+  }
+  return sortie;
+}
+
+export { IDENTIFIANTS_INTERNES };

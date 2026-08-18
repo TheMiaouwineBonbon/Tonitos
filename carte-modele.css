@@ -241,3 +241,42 @@ body[data-mobile-view] .gallery-card .card-content {
   overflow: hidden;
   display: block;
 }
+
+/* ---------------------------------------------------------------------
+   Le SVG est un decor, pas une cible
+   ---------------------------------------------------------------------
+   Sans cette regle, le pointeur tombe sur une <image> du SVG : le
+   conteneur reste atteignable par propagation, mais la capture du geste
+   tactile et les tests de cible sur event.target deviennent hasardeux.
+   La racine .game-card redevient seule interactive.
+   --------------------------------------------------------------------- */
+
+body[data-mobile-view] .game-card .card-content > svg,
+body[data-mobile-view] .gallery-card .card-content > svg {
+  pointer-events: none;
+}
+
+/* Le clip epouse le cadre dessine par le gabarit - rx=22 sur 744x1038 -
+   sinon le halo des cartes jouables flotte a cote du cadre. */
+body[data-mobile-view] .game-card,
+body[data-mobile-view] .game-card .card-content,
+body[data-mobile-view] .gallery-card,
+body[data-mobile-view] .gallery-card .card-content {
+  border-radius: var(--rayon-carte, 2.96% / 2.12%);
+}
+
+/* La video d illustration occupe la zone que le gabarit lui reserve : le
+   inset herite l etirerait jusqu au coin de la carte. */
+body[data-mobile-view] .game-card .card-art-video,
+body[data-mobile-view] .card-modal-card .card-art-video {
+  inset: auto;
+}
+
+/* Le conteneur prend le format du gabarit (744 x 1038). L ancien 2/3 laissait
+   le SVG se centrer dans une boite trop haute, d ou 5,5 % d ecart de ratio. */
+body[data-mobile-view] .game-card,
+body[data-mobile-view] .game-card .card-content,
+body[data-mobile-view] .gallery-card,
+body[data-mobile-view] .gallery-card .card-content {
+  aspect-ratio: var(--ratio-carte, 744 / 1038);
+}

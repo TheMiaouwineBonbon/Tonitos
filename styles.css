@@ -3732,8 +3732,8 @@ button.mat-zone--exile:focus-visible {
    largeur via --hand-card-width. */
 .hand-row .game-card {
   z-index: var(--hand-layer, 20);
-  width: clamp(106px, 8.2vw, 125px);
-  min-width: clamp(106px, 8.2vw, 125px);
+  width: clamp(117px, 9.02vw, 138px);
+  min-width: clamp(117px, 9.02vw, 138px);
   height: auto;
   margin-inline: calc(var(--hand-overlap, -7px) / 2);
   aspect-ratio: 2 / 3;
@@ -7107,7 +7107,8 @@ body.phone-portrait-blocked .orientation-gate {
     flex: 0 0 var(--hand-card-width, 84px);
     width: var(--hand-card-width, 84px);
     min-width: var(--hand-card-width, 84px);
-    height: calc(var(--hand-card-width, 84px) * 1.5);
+    /* 1038/744 : le format exact du gabarit SVG. */
+    height: calc(var(--hand-card-width, 84px) * 1.3952);
     margin-inline: calc(var(--hand-overlap, 0px) / 2);
     z-index: var(--hand-layer, 50);
     transform:

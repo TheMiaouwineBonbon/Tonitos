@@ -1357,7 +1357,9 @@
     flex-basis: var(--hand-card-width, 64px);
     width: var(--hand-card-width, 64px);
     min-width: var(--hand-card-width, 64px);
-    height: calc(var(--hand-card-width, 64px) * 1.27);
+    /* 1038/744 : le format exact du gabarit SVG. Un autre facteur laisse
+       des bandes vides autour du dessin. */
+    height: calc(var(--hand-card-width, 64px) * 1.3952);
     pointer-events: auto;
     transform: rotate(var(--hand-rotation, 0deg));
     transform-origin: 50% 100%;
