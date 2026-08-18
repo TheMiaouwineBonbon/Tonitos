@@ -186,3 +186,31 @@ body[data-mobile-view] .game-card[data-art-fit="contain"] .card-art img,
 body[data-mobile-view] .gallery-card[data-art-fit="contain"] .card-art img {
   object-fit: contain;
 }
+
+/* ---------------------------------------------------------------------
+   Cartouche du titre en jeu
+   ---------------------------------------------------------------------
+   Mesure : .card-title-lockup est positionne en absolu tout en haut de la
+   carte, tandis que .card-frame-top est relegue en bas ou il sert de socle
+   aux statistiques. Habiller .card-frame-top en parchemin ne mettait donc
+   aucun fond derriere le titre, qui restait sombre sur sombre.
+   Le cartouche se pose ici sur l element qui porte reellement le titre.
+   --------------------------------------------------------------------- */
+
+body[data-mobile-view] .game-card .card-title-lockup,
+body[data-mobile-view] .gallery-card .card-title-lockup {
+  background: linear-gradient(180deg, var(--carte-parchemin), #efdfc2);
+  border: 1px solid color-mix(in srgb, var(--tone-deep) 60%, #6b4a2c);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 2px 5px rgba(0, 0, 0, 0.45);
+  padding: 2px 6px;
+}
+
+/* Le socle des statistiques reprend la matiere sombre du cadre : c est une
+   piece de metal, pas un parchemin. */
+body[data-mobile-view] .game-card .card-frame-top,
+body[data-mobile-view] .gallery-card .card-frame-top {
+  background: linear-gradient(180deg, rgba(24, 16, 14, 0.92), rgba(12, 8, 7, 0.95));
+  border: 1px solid color-mix(in srgb, var(--tone-2) 45%, #4a3a22);
+  border-radius: 6px;
+}

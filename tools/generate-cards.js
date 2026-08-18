@@ -32,7 +32,7 @@ function escapeXml(value) {
 }
 
 function wrapText(text, maxChars) {
-  const words = text.split(/\s+/);
+  const words = String(text || "").split(/\s+/);
   const lines = [];
   let line = "";
 
@@ -55,7 +55,7 @@ function textBlock(lines, x, y, size, fill, weight = 500, lineHeight = 26) {
     .map((line, index) => {
       return `<text x="${x}" y="${y + index * lineHeight}" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeXml(line)}</text>`;
     })
-    .join("\n");
+    .join("\n  ");
 }
 
 function imageReference(relativePath) {
@@ -67,75 +67,265 @@ function imageReference(relativePath) {
     .join("/");
 }
 
+// =====================================================================
+// GRILLE COMMUNE A TOUTES LES CARTES
+// ---------------------------------------------------------------------
+// Une seule grille sert les creatures, les terrains et les sorts : memes
+// dimensions, memes marges, memes zones, memes axes. Seules la matiere du
+// cadre et la garniture du socle changent d'une categorie a l'autre, pour
+// qu'elles appartiennent visiblement au meme jeu.
+//
+// Toutes les mesures sont posees ici et nulle part ailleurs : aucun
+// element n'est place au juge. La symetrie se verifie par le calcul, et
+// tools/verifier-grille.js le fait a chaque generation.
+// =====================================================================
+const G = {
+  W: 744,
+  H: 1038,
+  marge: 24,
+  couronne: { y: 40, h: 116 },
+  gemme: { r: 44, cy: 98, cxG: 100, cxD: 644 },
+  cartouche: { x: 160, w: 424, y: 58, h: 80 },
+  type: { x: 96, w: 552, y: 168, h: 52 },
+  art: { x: 56, y: 232, w: 632, h: 432 },
+  panneau: { x: 56, y: 680, w: 632, h: 262 },
+  socle: { y: 946, h: 62 },
+  // Les medaillons mordent volontairement sur le bas du panneau : c est ce
+  // chevauchement qui les fait paraitre sertis dans le cadre plutot que
+  // poses dessus. Leur bord bas reste a 12 px du bord de carte.
+  medaillon: { r: 42, cy: 977, cxG: 112, cxD: 632 }
+};
+
+// Teintes de matiere. La couleur elementaire ne sert qu'aux details -
+// contours, gemmes, filets - jamais en aplat sur toute la carte.
+const MATIERE = {
+  encre: "#1d120c",
+  encreDouce: "#4a3524",
+  parcheminHaut: "#fbf1dc",
+  parcheminBas: "#e4cfa8",
+  or: "#e8c477",
+  orSombre: "#8a6526",
+  fond: "#140d0b"
+};
+
+const centre = (zone) => zone.x + zone.w / 2;
+
+// Le titre doit tenir dans son cartouche sans jamais deborder : la taille
+// descend par paliers selon la longueur reelle du nom.
+function tailleTitre(nom) {
+  const n = String(nom).length;
+  if (n <= 14) return 40;
+  if (n <= 18) return 35;
+  if (n <= 24) return 30;
+  if (n <= 30) return 26;
+  return 22;
+}
+
+// Paliers cales sur la largeur reelle des capitales, verifiee au moteur de
+// rendu : n x (taille x 0,75 + interlettre) doit rester sous la largeur
+// utile du bandeau.
+function tailleType(texte) {
+  const n = String(texte).length;
+  if (n <= 28) return 24;
+  if (n <= 32) return 20;
+  if (n <= 36) return 18;
+  if (n <= 40) return 16;
+  if (n <= 44) return 14;
+  return 13;
+}
+
+// Gemme sertie : logement sombre, jonc d'or, biseau, pierre, reflet. Les
+// couches successives lui donnent l'air enchassee dans le cadre plutot que
+// posee dessus. Structure identique a gauche et a droite.
+function gemme(cx, cy, r, teinte, teinteClaire, contenu) {
+  return `<g>
+    <circle cx="${cx}" cy="${cy}" r="${r + 8}" fill="${MATIERE.fond}" opacity="0.9"/>
+    <circle cx="${cx}" cy="${cy}" r="${r + 6}" fill="url(#orBrosse)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="none" stroke="${MATIERE.orSombre}" stroke-width="2"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${teinte}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#pierre)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${teinteClaire}" stroke-width="2" opacity="0.75"/>
+    <ellipse cx="${cx}" cy="${cy - r * 0.42}" rx="${r * 0.52}" ry="${r * 0.3}" fill="#ffffff" opacity="0.2"/>
+    ${contenu}
+  </g>`;
+}
+
+// Ornement d'angle repris aux quatre coins de l'illustration : deux traits
+// et un point. Discret, mais il enleve l'aspect rectangle a bordure.
+function equerre(x, y, sx, sy, teinte) {
+  return `<g transform="translate(${x} ${y}) scale(${sx} ${sy})" fill="none" stroke="${teinte}" stroke-width="3" opacity="0.9">
+    <path d="M0 24 L0 6 Q0 0 6 0 L24 0"/>
+    <path d="M7 32 L7 13 Q7 7 13 7 L32 7" opacity="0.5"/>
+    <circle cx="14" cy="14" r="2.5" fill="${teinte}" stroke="none"/>
+  </g>`;
+}
+
+// Badge de mot-cle : petite plaque gravee, volontairement plus sobre que
+// le texte de capacite qu'elle accompagne.
+function badges(mots, x, y, teinte) {
+  const hauteur = 30;
+  const limite = x + G.panneau.w - 56;
+  let curseur = x;
+  const sortie = [];
+  for (const mot of (Array.isArray(mots) ? mots : []).slice(0, 4)) {
+    const largeur = Math.min(200, 20 + String(mot).length * 10.5);
+    if (curseur + largeur > limite) break;
+    sortie.push(`<g>
+    <rect x="${curseur}" y="${y}" width="${largeur}" height="${hauteur}" rx="7" fill="#f4e5c8"/>
+    <rect x="${curseur}" y="${y}" width="${largeur}" height="${hauteur}" rx="7" fill="none" stroke="${teinte}" stroke-width="1.6" opacity="0.8"/>
+    <rect x="${curseur + 2}" y="${y + 2}" width="${largeur - 4}" height="${hauteur - 4}" rx="5" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="${curseur + largeur / 2}" y="${y + 20}" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="${MATIERE.encreDouce}">${escapeXml(mot)}</text>
+  </g>`);
+    curseur += largeur + 10;
+  }
+  return sortie.join("\n  ");
+}
+
+// Medaillon du socle : meme construction que les gemmes du haut, avec un
+// symbole qui dit sa fonction sans qu'on ait a lire le chiffre.
+function medaillon(cx, cy, r, teinte, teinteClaire, symbole, valeur) {
+  const chiffre = String(valeur ?? "");
+  return `<g>
+    <circle cx="${cx}" cy="${cy}" r="${r + 7}" fill="${MATIERE.fond}" opacity="0.92"/>
+    <circle cx="${cx}" cy="${cy}" r="${r + 5}" fill="url(#orBrosse)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${teinte}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#pierre)"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${teinteClaire}" stroke-width="2" opacity="0.7"/>
+    <g transform="translate(${cx} ${cy - r + 14})" opacity="0.95">${symbole}</g>
+    ${chiffre ? `<text x="${cx}" y="${cy + 22}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" font-weight="700" fill="#fff8e4">${escapeXml(chiffre)}</text>` : ""}
+  </g>`;
+}
+
+const SYMBOLE_ATTAQUE = `<path d="M-11 6 L0 -14 L11 6 L6 6 L0 -4 L-6 6 Z" fill="#ffe0ae"/>`;
+const SYMBOLE_VIE = `<path d="M0 8 C-12 -2 -10 -13 -4 -13 C-1 -13 0 -11 0 -9 C0 -11 1 -13 4 -13 C10 -13 12 -2 0 8 Z" fill="#ffd5cb"/>`;
+const SYMBOLE_MANA = `<path d="M0 -13 C7 -5 11 0 11 4 A11 11 0 0 1 -11 4 C-11 0 -7 -5 0 -13 Z" fill="#e8f2ff"/>`;
+const SYMBOLE_SORT = `<path d="M0 -14 L3.6 -4.4 L14 -4.4 L5.6 2 L9 12 L0 6 L-9 12 L-5.6 2 L-14 -4.4 L-3.6 -4.4 Z" fill="#ffeec4"/>`;
+
 function cardSvg(card) {
-  const w = 744;
-  const h = 1038;
-  const artHref = imageReference(card.image);
-  const abilityLines = wrapText(card.abilityText, 48).slice(0, 4);
-  const flavorLines = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 36).slice(0, 2);
-  // Multicolore n'a pas d'icone dediee : il garde son bandeau ecrit.
+  const isLand = card.kind === "land";
+  const isSpell = card.kind === "spell";
   const element = ELEMENTS[card.family];
-  const elementBlock = element && element.icone
-    ? `<g><title>${escapeXml(element.nom)}</title><image href="${imageReference(element.icone)}" x="48" y="898" width="92" height="92"/></g>`
-    : `<rect x="48" y="920" width="228" height="58" rx="8" fill="${card.palette.deep}" stroke="${card.palette.secondary}" stroke-width="4"/>
-  <text x="70" y="957" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#fff4d2">${escapeXml(card.family)}</text>`;
-  // Remplir le cadre est la regle ; "contain" reste possible au cas par cas
+  const teinte = card.palette.primary;
+  const teinteClaire = card.palette.secondary;
+  const teinteSombre = card.palette.deep;
+
+  const artHref = imageReference(card.image);
+  // Remplir le cadre est la regle ; contain reste possible au cas par cas
   // pour une illustration qu'un recadrage mutilerait.
   const artFit = card.art?.svgFit || card.art?.fit || "cover";
   const artAspectRatio = artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice";
-  const keywords = card.keywords.join(" • ");
-  const isLand = card.kind === "land";
-  const isSpell = card.kind === "spell";
-  const topValue = isLand ? card.energy : card.cost;
-  const statText = isLand ? "Mana" : isSpell ? "Sort" : `${card.attack} / ${card.life}`;
+
+  const corpsLarge = wrapText(card.abilityText, 52);
+  const capaciteTaille = corpsLarge.length <= 4 ? 20 : 18;
+  const abilityLines = (capaciteTaille === 20 ? corpsLarge : wrapText(card.abilityText, 58)).slice(0, 4);
+  const capaciteInterligne = capaciteTaille === 20 ? 27 : 24;
+  const flavorLines = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 54).slice(0, 2);
+  const topValue = isLand ? card.energy || 1 : card.cost;
+
+  // Identite de categorie : le terrain recoit un cadre de pierre batie, la
+  // creature un cadre plus organique. Meme grille, matiere differente.
+  const matiereCadre = isLand ? "url(#cadrePierre)" : "url(#cadreBois)";
+
+  const socle = isLand
+    ? `${medaillon(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 2, teinteSombre, teinteClaire, SYMBOLE_MANA, topValue)}
+  <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">SOURCE</text>
+  <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
+    : isSpell
+      ? `${medaillon(centre(G.panneau), G.medaillon.cy, G.medaillon.r + 2, teinteSombre, teinteClaire, SYMBOLE_SORT, "")}
+  <text x="${centre(G.panneau)}" y="${G.medaillon.cy + 24}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="700" letter-spacing="1" fill="#fff8e4">SORT</text>
+  <text x="${G.medaillon.cxG}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">RITUEL</text>
+  <text x="${G.medaillon.cxD}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.9">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 9))}</text>`
+      : `${medaillon(G.medaillon.cxG, G.medaillon.cy, G.medaillon.r, "#57200f", "#ffb07a", SYMBOLE_ATTAQUE, card.attack)}
+  ${medaillon(G.medaillon.cxD, G.medaillon.cy, G.medaillon.r, "#1d4527", "#9ae59f", SYMBOLE_VIE, card.life)}
+  <text x="${centre(G.panneau)}" y="${G.medaillon.cy + 8}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="3" fill="${MATIERE.or}" opacity="0.85">${escapeXml((element?.nom || card.family).toUpperCase().slice(0, 10))}</text>`;
+
+  const contenuGemmeCout = `<text x="${G.gemme.cxG}" y="${G.gemme.cy + 15}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#fff8e4">${escapeXml(String(topValue))}</text>`;
+  const contenuGemmeElement = element?.icone
+    ? `<image href="${imageReference(element.icone)}" x="${G.gemme.cxD - G.gemme.r + 3}" y="${G.gemme.cy - G.gemme.r + 3}" width="${G.gemme.r * 2 - 6}" height="${G.gemme.r * 2 - 6}" clip-path="url(#clipElement)"/>`
+    : `<text x="${G.gemme.cxD}" y="${G.gemme.cy + 8}" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="800" fill="#fff8e4">${escapeXml((element?.nom || card.family).slice(0, 7))}</text>`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+<svg xmlns="http://www.w3.org/2000/svg" width="${G.W}" height="${G.H}" viewBox="0 0 ${G.W} ${G.H}" role="img" aria-label="${escapeXml(card.name)}">
   <defs>
-    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="${card.palette.secondary}"/>
-      <stop offset="42%" stop-color="${card.palette.primary}"/>
-      <stop offset="100%" stop-color="${card.palette.deep}"/>
+    <linearGradient id="cadreBois" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="${teinteClaire}" stop-opacity="0.55"/>
+      <stop offset="18%" stop-color="${teinte}"/>
+      <stop offset="55%" stop-color="${teinteSombre}"/>
+      <stop offset="100%" stop-color="${teinte}" stop-opacity="0.9"/>
     </linearGradient>
-    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fff8e6"/>
-      <stop offset="100%" stop-color="#d7c3a0"/>
+    <linearGradient id="cadrePierre" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0%" stop-color="#8d8377"/>
+      <stop offset="24%" stop-color="${teinte}"/>
+      <stop offset="62%" stop-color="${teinteSombre}"/>
+      <stop offset="100%" stop-color="#6d6459"/>
     </linearGradient>
-    <clipPath id="artClip">
-      <rect x="48" y="118" width="648" height="486" rx="8"/>
-    </clipPath>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.55"/>
-    </filter>
+    <linearGradient id="orBrosse" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#f6dfa6"/>
+      <stop offset="45%" stop-color="${MATIERE.or}"/>
+      <stop offset="100%" stop-color="${MATIERE.orSombre}"/>
+    </linearGradient>
+    <linearGradient id="parchemin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${MATIERE.parcheminHaut}"/>
+      <stop offset="100%" stop-color="${MATIERE.parcheminBas}"/>
+    </linearGradient>
+    <radialGradient id="pierre" cx="0.35" cy="0.28" r="0.85">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+    <linearGradient id="creuxHaut" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.4"/>
+      <stop offset="55%" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="clipArt"><rect x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" rx="6"/></clipPath>
+    <clipPath id="clipElement"><circle cx="${G.gemme.cxD}" cy="${G.gemme.cy}" r="${G.gemme.r - 3}"/></clipPath>
   </defs>
 
-  <rect width="${w}" height="${h}" rx="18" fill="#100c0a"/>
-  <rect x="20" y="20" width="704" height="998" rx="14" fill="url(#frame)" filter="url(#softShadow)"/>
-  <rect x="34" y="34" width="676" height="970" rx="10" fill="#1a1110" opacity="0.92"/>
+  <rect width="${G.W}" height="${G.H}" rx="22" fill="${MATIERE.fond}"/>
+  <rect x="${G.marge - 12}" y="${G.marge - 12}" width="${G.W - (G.marge - 12) * 2}" height="${G.H - (G.marge - 12) * 2}" rx="18" fill="${matiereCadre}"/>
+  <rect x="${G.marge - 12}" y="${G.marge - 12}" width="${G.W - (G.marge - 12) * 2}" height="${G.H - (G.marge - 12) * 2}" rx="18" fill="none" stroke="${MATIERE.or}" stroke-width="1.5" opacity="0.5"/>
+  <rect x="${G.marge}" y="${G.marge}" width="${G.W - G.marge * 2}" height="${G.H - G.marge * 2}" rx="14" fill="none" stroke="${MATIERE.orSombre}" stroke-width="2" opacity="0.8"/>
+  <rect x="${G.marge + 8}" y="${G.marge + 8}" width="${G.W - (G.marge + 8) * 2}" height="${G.H - (G.marge + 8) * 2}" rx="10" fill="#191110" opacity="0.5"/>
 
-  <rect x="48" y="48" width="648" height="54" rx="8" fill="#f7ead0"/>
-  <text x="70" y="84" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" fill="#20120e">${escapeXml(card.name)}</text>
-  <circle cx="660" cy="75" r="34" fill="${card.palette.deep}" stroke="${card.palette.secondary}" stroke-width="5"/>
-  <text x="660" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#fff7df">${topValue}</text>
+  <rect x="${G.gemme.cxG}" y="${G.couronne.y + 20}" width="${G.gemme.cxD - G.gemme.cxG}" height="${G.couronne.h - 48}" fill="url(#orBrosse)" opacity="0.28"/>
+  <rect x="${G.cartouche.x - 14}" y="${G.cartouche.y - 8}" width="${G.cartouche.w + 28}" height="${G.cartouche.h + 16}" rx="12" fill="${MATIERE.fond}" opacity="0.85"/>
+  <rect x="${G.cartouche.x - 10}" y="${G.cartouche.y - 4}" width="${G.cartouche.w + 20}" height="${G.cartouche.h + 8}" rx="10" fill="url(#orBrosse)"/>
+  <rect x="${G.cartouche.x}" y="${G.cartouche.y}" width="${G.cartouche.w}" height="${G.cartouche.h}" rx="7" fill="url(#parchemin)"/>
+  <rect x="${G.cartouche.x}" y="${G.cartouche.y}" width="${G.cartouche.w}" height="${G.cartouche.h}" rx="7" fill="url(#creuxHaut)" opacity="0.3"/>
+  <rect x="${G.cartouche.x + 4}" y="${G.cartouche.y + 4}" width="${G.cartouche.w - 8}" height="${G.cartouche.h - 8}" rx="5" fill="none" stroke="${teinteSombre}" stroke-width="1.5" opacity="0.45"/>
+  <text x="${centre(G.cartouche)}" y="${G.cartouche.y + G.cartouche.h / 2 + tailleTitre(card.name) * 0.35}" text-anchor="middle" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="${tailleTitre(card.name)}" font-weight="700" fill="${MATIERE.encre}">${escapeXml(card.name)}</text>
 
-  <image href="${artHref}" x="48" y="118" width="648" height="486" preserveAspectRatio="${artAspectRatio}" clip-path="url(#artClip)"/>
-  <rect x="48" y="118" width="648" height="486" rx="8" fill="none" stroke="${card.palette.secondary}" stroke-width="4"/>
+  ${gemme(G.gemme.cxG, G.gemme.cy, G.gemme.r, teinteSombre, teinteClaire, contenuGemmeCout)}
+  ${gemme(G.gemme.cxD, G.gemme.cy, G.gemme.r, teinteSombre, teinteClaire, contenuGemmeElement)}
 
-  <rect x="48" y="622" width="648" height="48" rx="8" fill="#f3e1bf"/>
-  <text x="70" y="654" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#24130d">${escapeXml(card.type)}</text>
+  <rect x="${G.type.x - 6}" y="${G.type.y - 4}" width="${G.type.w + 12}" height="${G.type.h + 8}" rx="9" fill="url(#orBrosse)" opacity="0.92"/>
+  <rect x="${G.type.x}" y="${G.type.y}" width="${G.type.w}" height="${G.type.h}" rx="6" fill="url(#parchemin)"/>
+  <rect x="${G.type.x}" y="${G.type.y}" width="${G.type.w}" height="${G.type.h}" rx="6" fill="url(#creuxHaut)" opacity="0.26"/>
+  <text x="${centre(G.type)}" y="${G.type.y + G.type.h / 2 + tailleType(card.type) * 0.36}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${tailleType(card.type)}" font-weight="700" letter-spacing="0.8" fill="${MATIERE.encreDouce}">${escapeXml(String(card.type).toUpperCase())}</text>
 
-  <rect x="48" y="688" width="648" height="304" rx="8" fill="url(#panel)" stroke="#4a2b1a" stroke-width="3"/>
-  <text x="70" y="726" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#21130e">${escapeXml(card.abilityName)}</text>
-  <text x="70" y="756" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="${card.palette.primary}">${escapeXml(keywords)}</text>
-  ${textBlock(abilityLines, 70, 792, 21, "#241812", 500, 25)}
-  <line x1="70" y1="884" x2="674" y2="884" stroke="#8f7250" stroke-width="2" opacity="0.65"/>
-  <text x="156" y="916" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" fill="#3b2a1e">${escapeXml(flavorLines[0] || "")}</text>
-  <text x="156" y="942" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" fill="#3b2a1e">${escapeXml(flavorLines[1] || "")}</text>
+  <rect x="${G.art.x - 10}" y="${G.art.y - 10}" width="${G.art.w + 20}" height="${G.art.h + 20}" rx="10" fill="${MATIERE.fond}" opacity="0.9"/>
+  <rect x="${G.art.x - 6}" y="${G.art.y - 6}" width="${G.art.w + 12}" height="${G.art.h + 12}" rx="8" fill="url(#orBrosse)"/>
+  <image href="${artHref}" x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" preserveAspectRatio="${artAspectRatio}" clip-path="url(#clipArt)"/>
+  <rect x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" rx="6" fill="none" stroke="#000000" stroke-width="6" opacity="0.26"/>
+  <rect x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" rx="6" fill="none" stroke="${teinteClaire}" stroke-width="2" opacity="0.85"/>
+  ${equerre(G.art.x + 7, G.art.y + 7, 1, 1, MATIERE.or)}
+  ${equerre(G.art.x + G.art.w - 7, G.art.y + 7, -1, 1, MATIERE.or)}
+  ${equerre(G.art.x + 7, G.art.y + G.art.h - 7, 1, -1, MATIERE.or)}
+  ${equerre(G.art.x + G.art.w - 7, G.art.y + G.art.h - 7, -1, -1, MATIERE.or)}
 
-  ${elementBlock}
+  <rect x="${G.panneau.x - 6}" y="${G.panneau.y - 6}" width="${G.panneau.w + 12}" height="${G.panneau.h + 12}" rx="10" fill="url(#orBrosse)" opacity="0.92"/>
+  <rect x="${G.panneau.x}" y="${G.panneau.y}" width="${G.panneau.w}" height="${G.panneau.h}" rx="7" fill="url(#parchemin)"/>
+  <rect x="${G.panneau.x}" y="${G.panneau.y}" width="${G.panneau.w}" height="${G.panneau.h}" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
+  <rect x="${G.panneau.x + 5}" y="${G.panneau.y + 5}" width="${G.panneau.w - 10}" height="${G.panneau.h - 10}" rx="5" fill="none" stroke="${teinteSombre}" stroke-width="1.4" opacity="0.4"/>
+  <text x="${G.panneau.x + 28}" y="${G.panneau.y + 42}" font-family="Georgia, 'Times New Roman', serif" font-size="25" font-weight="700" fill="${teinteSombre}">${escapeXml(card.abilityName)}</text>
+  ${textBlock(abilityLines, G.panneau.x + 28, G.panneau.y + 80, capaciteTaille, MATIERE.encre, 400, capaciteInterligne)}
+  ${badges(card.keywords, G.panneau.x + 28, G.panneau.y + 174, teinteSombre)}
+  <line x1="${G.panneau.x + 28}" y1="${G.panneau.y + 216}" x2="${G.panneau.x + G.panneau.w - 28}" y2="${G.panneau.y + 216}" stroke="${MATIERE.encreDouce}" stroke-width="1.2" opacity="0.3"/>
+  <text x="${centre(G.panneau)}" y="${G.panneau.y + 234}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-style="italic" fill="${MATIERE.encreDouce}">${escapeXml(flavorLines[0] || "")}</text>
+  <text x="${centre(G.panneau)}" y="${G.panneau.y + 254}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-style="italic" fill="${MATIERE.encreDouce}">${escapeXml(flavorLines[1] || "")}</text>
 
-  <rect x="538" y="906" width="158" height="76" rx="8" fill="#f9ead0" stroke="${card.palette.deep}" stroke-width="5"/>
-  <text x="616" y="956" text-anchor="middle" font-family="Arial, sans-serif" font-size="${isLand || isSpell ? 30 : 38}" font-weight="900" fill="#20120e">${statText}</text>
+  <rect x="${G.art.x}" y="${G.socle.y}" width="${G.art.w}" height="${G.socle.h}" rx="8" fill="url(#orBrosse)" opacity="0.2"/>
+  ${socle}
 </svg>`;
 }
 
@@ -145,3 +335,5 @@ for (const card of cards) {
 }
 
 console.log(`Cartes générées : ${cards.length}`);
+
+module.exports = { G, cardSvg, tailleTitre, tailleType };

@@ -196,6 +196,24 @@ async function main() {
       return ordre.every((i) => i > 0) && ordre[0] < ordre[1] && ordre[1] < ordre[2];
     })()
   );
+  // La grille des cartes est verifiee par son propre outil : symetrie,
+  // absence de chevauchement, et surtout aucun texte tronque - un defaut
+  // invisible en revue mais fatal sur une carte destinee a l impression.
+  check(
+    "La grille des cartes reste conforme",
+    (() => {
+      try {
+        require("child_process").execFileSync(process.execPath, [path.join(__dirname, "verifier-grille.js")], { stdio: "pipe" });
+        return true;
+      } catch (error) {
+        const sortie = String(error.stdout || "");
+        for (const ligne of sortie.split(String.fromCharCode(10))) {
+          if (ligne.startsWith("ECHEC")) console.log("       " + ligne);
+        }
+        return false;
+      }
+    })()
+  );
   check(
     "Les illustrations remplissent leur cadre par defaut",
     cardGeneratorSource.includes('artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
