@@ -4739,17 +4739,22 @@ body.targeting .enemy-mat .mat-zone--commander {
   filter: saturate(0.35) brightness(0.6);
 }
 
+/* Halo des cartes jouables. Le rayon fixe de 6 % ne correspondait pas au
+   cadre dessiné par le gabarit (2,96 % / 2,12 %) : le halo laissait
+   apparaître des angles nets décalés des coins arrondis de la carte. Il
+   épouse maintenant le même rayon et se diffuse au lieu d'être détouré. */
 .hand-row .game-card.is-playable::after {
   content: "";
   position: absolute;
-  inset: -1%;
+  inset: -2%;
   z-index: -1;
-  border-radius: 6%;
+  border-radius: var(--rayon-carte, 2.96% / 2.12%);
   background: radial-gradient(
     ellipse at 50% 60%,
-    color-mix(in srgb, var(--family-accent) 28%, transparent),
-    transparent 70%
+    color-mix(in srgb, var(--family-accent) 30%, transparent),
+    transparent 72%
   );
+  filter: blur(5px);
   pointer-events: none;
 }
 
@@ -5141,6 +5146,70 @@ body.is-dragging {
   display: none;
 }
 
+/* ===================================================================== */
+/* Panneau des vues telephone (Cartes / Regles / Journal).               */
+/* Invisible sur PC : la collection y a sa propre page et le plateau     */
+/* occupe tout l ecran.                                                   */
+/* ===================================================================== */
+.mobile-panel {
+  display: none;
+  padding: 14px 14px 20px;
+  color: #e7d6b6;
+  background: linear-gradient(180deg, rgba(10, 12, 18, 0.96), rgba(16, 12, 10, 0.96));
+  overflow-y: auto;
+}
+
+.mobile-panel section {
+  display: none;
+}
+
+body[data-mobile-view="cards"] .mobile-panel section[data-panel="cards"],
+body[data-mobile-view="rules"] .mobile-panel section[data-panel="rules"],
+body[data-mobile-view="log"] .mobile-panel section[data-panel="log"] {
+  display: block;
+}
+
+.mobile-panel h2 {
+  margin: 0 0 10px;
+  color: #f4dfa8;
+  font: 700 19px/1.2 Georgia, "Times New Roman", serif;
+  letter-spacing: 0.04em;
+}
+
+.mobile-panel p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mobile-panel .ghost-button {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.mobile-panel-note {
+  color: rgba(231, 214, 182, 0.72);
+  font-size: 12px;
+}
+
+.mobile-panel-rules {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.mobile-panel-rules strong {
+  color: #f4dfa8;
+}
+
+.mobile-panel .combat-log {
+  max-height: none;
+  font-size: 13px;
+}
+
 .gallery-card {
   content-visibility: auto;
   contain-intrinsic-size: 188px 282px;
@@ -5184,21 +5253,14 @@ body.is-dragging {
     box-shadow: inset 0 -2px #e4bf63;
   }
 
-  body[data-mobile-view="board"] .side-panel,
   body[data-mobile-view="cards"] .arena,
   body[data-mobile-view="rules"] .arena,
   body[data-mobile-view="log"] .arena {
     display: none;
   }
 
-  body[data-mobile-view="cards"] .side-panel section:nth-child(n + 3),
-  body[data-mobile-view="rules"] .side-panel section:not(:nth-child(3)),
-  body[data-mobile-view="log"] .side-panel section:not(:nth-child(4)) {
-    display: none;
-  }
-
-  body:not([data-mobile-view="board"]) .side-panel {
-    display: grid;
+  body:not([data-mobile-view="board"]) .mobile-panel {
+    display: block;
     min-height: calc(100dvh - 92px);
   }
 
@@ -5248,18 +5310,12 @@ body.is-dragging {
     display: none;
   }
 
-  body[data-mobile-view="cards"] .side-panel section:nth-child(n + 3),
-  body[data-mobile-view="rules"] .side-panel section:not(:nth-child(3)),
-  body[data-mobile-view="log"] .side-panel section:not(:nth-child(4)) {
-    display: none;
-  }
-
   body:not([data-mobile-view="board"]) .game-layout {
     display: block;
   }
 
-  body:not([data-mobile-view="board"]) .side-panel {
-    display: grid;
+  body:not([data-mobile-view="board"]) .mobile-panel {
+    display: block;
     height: auto;
     min-height: calc(100dvh - 70px);
     overflow: visible;

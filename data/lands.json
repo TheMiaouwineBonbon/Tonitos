@@ -3,11 +3,17 @@
     "id": "chateau-bordeciel",
     "kind": "land",
     "name": "Château de Bordeciel",
-    "subtitle": "Plaine fortifiée",
+    "subtitle": "Bastion des serments",
     "family": "Blanc",
-    "type": "Terrain - Plaine",
+    "type": "Terrain - Château",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana blanc"
@@ -20,17 +26,24 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "120/168"
   },
   {
     "id": "chateau-luxurieux",
     "kind": "land",
     "name": "Château Luxurieux",
-    "subtitle": "Plaine des jardins dorés",
+    "subtitle": "Palais des jardins dorés",
     "family": "Blanc",
-    "type": "Terrain - Plaine",
+    "type": "Terrain - Château",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana blanc"
@@ -43,17 +56,24 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "121/168"
   },
   {
     "id": "monde-au-dessus",
     "kind": "land",
     "name": "Le monde d'au dessus",
-    "subtitle": "Plaine céleste",
+    "subtitle": "Ville suspendue aux nuages",
     "family": "Blanc",
-    "type": "Terrain - Plaine",
+    "type": "Terrain - Cité céleste",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana blanc"
@@ -66,17 +86,24 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "122/168"
   },
   {
     "id": "monde-celeste-azure",
     "kind": "land",
     "name": "Monde céleste azure",
-    "subtitle": "Plaine suspendue",
+    "subtitle": "Archipel d'azur",
     "family": "Blanc",
-    "type": "Terrain - Plaine",
+    "type": "Terrain - Cité céleste",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana blanc"
@@ -93,17 +120,24 @@
     "art": {
       "fit": "cover",
       "position": "58% 46%"
-    }
+    },
+    "numero": "123/168"
   },
   {
     "id": "oceania-cite-sous-marine",
     "kind": "land",
     "name": "Océania, Cité sous Marine",
-    "subtitle": "Île engloutie",
+    "subtitle": "Capitale des abysses",
     "family": "Bleu",
-    "type": "Terrain - Île",
+    "type": "Terrain - Cité engloutie",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana bleu"
@@ -116,17 +150,24 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "124/168"
   },
   {
     "id": "ruines-sous-marine",
     "kind": "land",
     "name": "Ruines sous marine",
-    "subtitle": "Île noyée",
+    "subtitle": "Vestiges noyés",
     "family": "Bleu",
-    "type": "Terrain - Île",
+    "type": "Terrain - Ruines",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana bleu"
@@ -139,17 +180,24 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "125/168"
   },
   {
     "id": "lac-bleu",
     "kind": "land",
     "name": "Lac des songes",
-    "subtitle": "Île silencieuse",
+    "subtitle": "Miroir silencieux",
     "family": "Bleu",
-    "type": "Terrain - Île",
+    "type": "Terrain - Lac",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana bleu"
@@ -162,17 +210,24 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "126/168"
   },
   {
     "id": "tempete-bleue",
     "kind": "land",
     "name": "Tempête d'Azur",
-    "subtitle": "Île des vents chargés",
+    "subtitle": "Tempête des vents chargés",
     "family": "Bleu",
-    "type": "Terrain - Île",
+    "type": "Terrain - Haute mer",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana bleu"
@@ -185,17 +240,24 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "127/168"
   },
   {
     "id": "cimetiere",
     "kind": "land",
     "name": "Cimetière des pactes",
-    "subtitle": "Marais des voix basses",
+    "subtitle": "Champ des voix basses",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Cimetière",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -208,17 +270,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "128/168"
   },
   {
     "id": "lac-putride",
     "kind": "land",
     "name": "Lac Putride",
-    "subtitle": "Marais stagnant",
+    "subtitle": "Eaux stagnantes",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Lac",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -231,17 +300,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "129/168"
   },
   {
     "id": "manoir-dracul",
     "kind": "land",
     "name": "Manoir Dracul",
-    "subtitle": "Marais de sang froid",
+    "subtitle": "Demeure de sang froid",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Manoir",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -254,17 +330,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "130/168"
   },
   {
     "id": "laboratoire-noir",
     "kind": "land",
     "name": "Laboratoire noir",
-    "subtitle": "Marais d'alchimie maudite",
+    "subtitle": "Alchimie maudite",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Laboratoire",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -277,17 +360,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "131/168"
   },
   {
     "id": "royaume-noxis",
     "kind": "land",
     "name": "Royaume de Noxis",
-    "subtitle": "Marais du trône sanglant",
+    "subtitle": "Trône sanglant",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Royaume",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -300,17 +390,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "132/168"
   },
   {
     "id": "village-demoniaque",
     "kind": "land",
     "name": "Village Démoniaque",
-    "subtitle": "Marais des pactes mineurs",
+    "subtitle": "Hameau des pactes mineurs",
     "family": "Noir",
-    "type": "Terrain - Marais",
+    "type": "Terrain - Village",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana noir"
@@ -323,17 +420,24 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "133/168"
   },
   {
     "id": "forge-elfique-volcanique",
     "kind": "land",
     "name": "Forge Elfique Volcanique",
-    "subtitle": "Montagne des braises",
+    "subtitle": "Enclume des braises",
     "family": "Rouge",
-    "type": "Terrain - Montagne",
+    "type": "Terrain - Forge",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana rouge"
@@ -346,17 +450,24 @@
       "primary": "#a95d29",
       "secondary": "#e3a55c",
       "deep": "#28140a"
-    }
+    },
+    "numero": "134/168"
   },
   {
     "id": "volcan-infinie",
     "kind": "land",
     "name": "Volcan Infinie",
-    "subtitle": "Montagne sans sommeil",
+    "subtitle": "Cratère sans sommeil",
     "family": "Rouge",
-    "type": "Terrain - Montagne",
+    "type": "Terrain - Volcan",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana rouge"
@@ -369,17 +480,24 @@
       "primary": "#a95d29",
       "secondary": "#e3a55c",
       "deep": "#28140a"
-    }
+    },
+    "numero": "135/168"
   },
   {
     "id": "riviere-toukamon",
     "kind": "land",
     "name": "Rivière de Toukamon",
-    "subtitle": "Montagne aux eaux brûlantes",
+    "subtitle": "Eaux brûlantes",
     "family": "Rouge",
-    "type": "Terrain - Montagne",
+    "type": "Terrain - Rivière",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana rouge"
@@ -392,17 +510,24 @@
       "primary": "#a95d29",
       "secondary": "#e3a55c",
       "deep": "#28140a"
-    }
+    },
+    "numero": "136/168"
   },
   {
     "id": "volcan-rouge",
     "kind": "land",
     "name": "Volcan rouge",
-    "subtitle": "Montagne ouverte",
+    "subtitle": "Bouche ouverte",
     "family": "Rouge",
-    "type": "Terrain - Montagne",
+    "type": "Terrain - Volcan",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana rouge"
@@ -415,17 +540,24 @@
       "primary": "#a95d29",
       "secondary": "#e3a55c",
       "deep": "#28140a"
-    }
+    },
+    "numero": "137/168"
   },
   {
     "id": "paradis-uldrid",
     "kind": "land",
     "name": "Paradis d'Uldrid",
-    "subtitle": "Forêt primordiale",
+    "subtitle": "Sylve primordiale",
     "family": "Vert",
     "type": "Terrain - Forêt",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -438,17 +570,24 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "138/168"
   },
   {
     "id": "riviere-manhil",
     "kind": "land",
     "name": "Rivière de Manhil",
-    "subtitle": "Forêt vive",
+    "subtitle": "Courant vif",
     "family": "Vert",
-    "type": "Terrain - Forêt",
+    "type": "Terrain - Rivière",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -461,17 +600,24 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "139/168"
   },
   {
     "id": "sentier-uldrid",
     "kind": "land",
     "name": "Sentier d'Uldrid",
-    "subtitle": "Forêt des pas oubliés",
+    "subtitle": "Chemin des pas oubliés",
     "family": "Vert",
-    "type": "Terrain - Forêt",
+    "type": "Terrain - Sentier",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -484,17 +630,24 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "140/168"
   },
   {
     "id": "champ-coquelicots",
     "kind": "land",
     "name": "Champ de coquelicots",
-    "subtitle": "Forêt fleurie",
+    "subtitle": "Étendue fleurie",
     "family": "Vert",
-    "type": "Terrain - Forêt",
+    "type": "Terrain - Champ",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -507,17 +660,24 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "141/168"
   },
   {
     "id": "prairie-verte",
     "kind": "land",
     "name": "Prairie verte",
-    "subtitle": "Forêt claire",
+    "subtitle": "Herbes claires",
     "family": "Vert",
-    "type": "Terrain - Forêt",
+    "type": "Terrain - Prairie",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -530,17 +690,24 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "142/168"
   },
   {
     "id": "entree-ruche",
     "kind": "land",
     "name": "Entrée de la ruche",
-    "subtitle": "Forêt contaminée",
+    "subtitle": "Seuil contaminé",
     "family": "Vert",
-    "type": "Terrain - Forêt Ruche",
+    "type": "Terrain - Ruche",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert",
@@ -558,17 +725,24 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "143/168"
   },
   {
     "id": "nid-ruche",
     "kind": "land",
     "name": "Nid de la ruche",
-    "subtitle": "Forêt organique",
+    "subtitle": "Cœur de la colonie",
     "family": "Vert",
-    "type": "Terrain - Forêt Ruche",
+    "type": "Terrain - Ruche",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert",
@@ -586,17 +760,24 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "144/168"
   },
   {
     "id": "temple-antique-desert",
     "kind": "land",
     "name": "Temple antique du désert",
-    "subtitle": "Montagne des mécanismes enfouis",
+    "subtitle": "Mécanismes enfouis",
     "family": "Rouge",
-    "type": "Terrain - Montagne antique",
+    "type": "Terrain - Temple antique",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana rouge",
@@ -614,17 +795,24 @@
     "art": {
       "fit": "cover",
       "position": "56% 48%"
-    }
+    },
+    "numero": "145/168"
   },
   {
     "id": "temple-antique-naturel",
     "kind": "land",
     "name": "Temple antique naturel",
-    "subtitle": "Forêt des jardins mécaniques",
+    "subtitle": "Jardins mécaniques",
     "family": "Vert",
-    "type": "Terrain - Forêt antique",
+    "type": "Terrain - Temple antique",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert",
@@ -642,17 +830,24 @@
     "art": {
       "fit": "cover",
       "position": "54% 48%"
-    }
+    },
+    "numero": "146/168"
   },
   {
     "id": "temple-antique-mers",
     "kind": "land",
     "name": "Temple antique caché d'UMI",
-    "subtitle": "Île du sanctuaire englouti",
+    "subtitle": "Sanctuaire englouti",
     "family": "Bleu",
-    "type": "Terrain - Île antique",
+    "type": "Terrain - Temple antique",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana bleu",
@@ -670,17 +865,24 @@
     "art": {
       "fit": "cover",
       "position": "55% 48%"
-    }
+    },
+    "numero": "147/168"
   },
   {
     "id": "temple-antique-aube-polaire",
     "kind": "land",
     "name": "Temple antique de l'Aube polaire",
-    "subtitle": "Plaine du sanctuaire boréal",
+    "subtitle": "Sanctuaire boréal",
     "family": "Blanc",
-    "type": "Terrain - Plaine antique",
+    "type": "Terrain - Temple antique",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana blanc",
@@ -698,7 +900,8 @@
     "art": {
       "fit": "cover",
       "position": "55% 48%"
-    }
+    },
+    "numero": "148/168"
   },
   {
     "id": "capitale-mythalor",
@@ -707,8 +910,14 @@
     "subtitle": "Trône des serments",
     "family": "Blanc",
     "type": "Terrain légendaire - Capitale",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 2
+    },
     "cost": 0,
-    "energy": 2,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -727,7 +936,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "149/168"
   },
   {
     "id": "capitale-gronnak",
@@ -736,8 +946,14 @@
     "subtitle": "Cité sous les vagues",
     "family": "Bleu",
     "type": "Terrain légendaire - Capitale",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 2
+    },
     "cost": 0,
-    "energy": 2,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -756,7 +972,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "150/168"
   },
   {
     "id": "capitale-madorr",
@@ -765,8 +982,14 @@
     "subtitle": "Siège des pactes",
     "family": "Noir",
     "type": "Terrain légendaire - Capitale",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 2
+    },
     "cost": 0,
-    "energy": 2,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -785,7 +1008,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "151/168"
   },
   {
     "id": "ville-enneigee",
@@ -793,13 +1017,16 @@
     "name": "Ville enneigée",
     "subtitle": "Halte du grand froid",
     "family": "Blanc",
-    "families": [
-      "Blanc",
-      "Bleu"
-    ],
     "type": "Terrain - Cité gelée",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc",
+        "Bleu"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -817,21 +1044,25 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "152/168"
   },
   {
     "id": "royaume-paisible",
     "kind": "land",
     "name": "Royaume Paisible",
-    "subtitle": "Plaines sans guerre",
+    "subtitle": "Marche sans guerre",
     "family": "Blanc",
-    "families": [
-      "Blanc",
-      "Vert"
-    ],
     "type": "Terrain - Royaume",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc",
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -849,7 +1080,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "texteEchelle": 0.98,
+    "numero": "153/168"
   },
   {
     "id": "empire-bhaal",
@@ -857,13 +1090,16 @@
     "name": "Empire de Bhaal",
     "subtitle": "Marche des cendres",
     "family": "Rouge",
-    "families": [
-      "Rouge",
-      "Noir"
-    ],
     "type": "Terrain - Empire",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge",
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -881,7 +1117,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "154/168"
   },
   {
     "id": "gouffre-namor",
@@ -889,13 +1126,16 @@
     "name": "Gouffre de Namor",
     "subtitle": "Faille aux braises",
     "family": "Rouge",
-    "families": [
-      "Rouge",
-      "Noir"
-    ],
     "type": "Terrain - Gouffre",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge",
+        "Noir"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -913,7 +1153,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "155/168"
   },
   {
     "id": "village-cache",
@@ -921,9 +1163,15 @@
     "name": "Village Caché",
     "subtitle": "Refuge sous la canopée",
     "family": "Vert",
-    "type": "Terrain - Forêt",
+    "type": "Terrain - Village",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "keywords": [
       "Terrain",
       "Mana vert"
@@ -940,7 +1188,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "156/168"
   },
   {
     "id": "royaume-celeste",
@@ -948,16 +1197,19 @@
     "name": "Royaume Céleste",
     "subtitle": "Au-dessus des cinq magies",
     "family": "Multicolore",
-    "families": [
-      "Blanc",
-      "Bleu",
-      "Noir",
-      "Rouge",
-      "Vert"
-    ],
     "type": "Terrain légendaire - Royaume",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc",
+        "Bleu",
+        "Noir",
+        "Rouge",
+        "Vert"
+      ],
+      "amount": 1
+    },
     "cost": 0,
-    "energy": 1,
     "entersTapped": true,
     "keywords": [
       "Terrain",
@@ -975,6 +1227,347 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "157/168"
+  },
+  {
+    "id": "sanctuaire-merveilleux",
+    "name": "Sanctuaire Merveilleux",
+    "subtitle": "Refuge des lumières douces",
+    "family": "Blanc",
+    "type": "Terrain - Sanctuaire",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana blanc"
+    ],
+    "abilityName": "Source blanche",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana blanc.",
+    "flavor": "On y entre armé, on en ressort apaisé.",
+    "image": "Images/Terrain blanc - Sanctuaire Merveilleux.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "kind": "land",
+    "numero": "158/168"
+  },
+  {
+    "id": "temple-anormal",
+    "name": "Temple anormal",
+    "subtitle": "Géométrie qui n'obéit plus",
+    "family": "Blanc",
+    "type": "Terrain - Temple",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc"
+      ],
+      "amount": 2
+    },
+    "cost": 0,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Grande source",
+      "Mana blanc"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 2 mana blanc.",
+    "flavor": "Ses murs prient plus fort que ses fidèles.",
+    "image": "Images/Terrain blanc - Temple anormal.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "kind": "land",
+    "numero": "159/168"
+  },
+  {
+    "id": "ile-marees",
+    "name": "Île des marées",
+    "subtitle": "Terre qui respire avec la mer",
+    "family": "Bleu",
+    "type": "Terrain - Île",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "Deux fois par jour, la mer vient la compter.",
+    "image": "Images/Terrain bleu - Île des marées.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "kind": "land",
+    "numero": "160/168"
+  },
+  {
+    "id": "port-gronnak",
+    "name": "Port de Gronnak",
+    "subtitle": "Quais de la capitale immergée",
+    "family": "Bleu",
+    "type": "Terrain - Port",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Bleu"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana bleu"
+    ],
+    "abilityName": "Source bleue",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana bleu.",
+    "flavor": "Les navires y accostent par-dessous.",
+    "image": "Images/Terrain bleu - Port de Gronnak.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "kind": "land",
+    "numero": "161/168"
+  },
+  {
+    "id": "muraille-nazeroth",
+    "name": "Muraille Noire de Nazeroth",
+    "subtitle": "Rempart qui regarde ses assiégeants",
+    "family": "Noir",
+    "type": "Terrain - Muraille",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana noir"
+    ],
+    "abilityName": "Source noire",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana noir.",
+    "flavor": "Nul ne sait si elle protège la ville ou l'enferme.",
+    "image": "Images/Terrain Noir - Muraille Noire de Nazeroth.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "kind": "land",
+    "numero": "162/168"
+  },
+  {
+    "id": "portail-autre-monde",
+    "name": "Portail vers l'autre monde",
+    "subtitle": "Seuil qui ne se referme plus",
+    "family": "Noir",
+    "type": "Terrain - Portail",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Noir"
+      ],
+      "amount": 2
+    },
+    "cost": 0,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Grande source",
+      "Mana noir"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 2 mana noir.",
+    "flavor": "Ce qui en sort n'est jamais ce qui y est entré.",
+    "image": "Images/Terrain Noir - Portail vers l'autre monde.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "kind": "land",
+    "numero": "163/168"
+  },
+  {
+    "id": "avant-poste-desertique",
+    "name": "Avant-poste désertique",
+    "subtitle": "Garnison des sables brûlants",
+    "family": "Rouge",
+    "type": "Terrain - Avant-poste",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana rouge"
+    ],
+    "abilityName": "Source rouge",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana rouge.",
+    "flavor": "Le désert attaque plus souvent que l'ennemi.",
+    "image": "Images/Terrain rouge - Avant-poste désertique.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "kind": "land",
+    "numero": "164/168"
+  },
+  {
+    "id": "premier-arbre",
+    "name": "Premier arbre",
+    "subtitle": "Racine de toutes les forêts",
+    "family": "Vert",
+    "type": "Terrain - Arbre",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "keywords": [
+      "Terrain",
+      "Mana vert"
+    ],
+    "abilityName": "Source verte",
+    "abilityText": "Joue un seul terrain par tour. Ce terrain produit 1 mana vert.",
+    "flavor": "Les druides jurent qu'il se souvient de la première aube.",
+    "image": "Images/Terrain vert - Premier arbre.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "kind": "land",
+    "numero": "165/168"
+  },
+  {
+    "id": "jardin-sureleve",
+    "name": "Jardin surélevé",
+    "subtitle": "Terrasses au-dessus des nuages",
+    "family": "Vert",
+    "type": "Terrain - Jardin",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Vert"
+      ],
+      "amount": 2
+    },
+    "cost": 0,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Grande source",
+      "Mana vert"
+    ],
+    "abilityName": "Grande source",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 2 mana vert.",
+    "flavor": "Chaque étage nourrit celui du dessous.",
+    "image": "Images/Terrain vert - Jardin surélevé.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "kind": "land",
+    "numero": "166/168"
+  },
+  {
+    "id": "champ-deux-couronnes",
+    "name": "Champ des deux couronnes",
+    "subtitle": "Frontière labourée en commun",
+    "family": "Blanc",
+    "type": "Terrain - Champ",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Blanc",
+        "Vert"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana blanc ou vert, au choix.",
+    "flavor": "Deux royaumes, une seule moisson.",
+    "image": "Images/Terrain Blanc-Vert - Champ des deux couronnes.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "kind": "land",
+    "numero": "167/168"
+  },
+  {
+    "id": "forge-du-mal",
+    "name": "Forge du mal",
+    "subtitle": "Enclume des armes interdites",
+    "family": "Rouge",
+    "type": "Terrain - Forge",
+    "manaProduction": {
+      "mode": "choice",
+      "colors": [
+        "Rouge",
+        "Noir"
+      ],
+      "amount": 1
+    },
+    "cost": 0,
+    "entersTapped": true,
+    "keywords": [
+      "Terrain",
+      "Double source"
+    ],
+    "abilityName": "Frontière commune",
+    "abilityText": "Arrive engagé : il ne produit qu'au tour suivant. Il rend alors 1 mana rouge ou noir, au choix.",
+    "flavor": "On n'y forge rien qui serve à labourer.",
+    "image": "Images/Terrain Rouge-Noir - Forge du mal.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "kind": "land",
+    "numero": "168/168"
   }
 ]

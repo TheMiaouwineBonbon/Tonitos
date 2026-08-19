@@ -13,11 +13,13 @@ petit serveur statique et l'API du salon multijoueur.
 - `game.js` : moteur de partie (IA solo, 2 joueurs local, 2 joueurs en ligne).
 - `progression.js` : profils locaux, XP, niveaux, statistiques et grades.
 - `serve.js` : serveur HTTP statique + API du salon en mémoire (code `1234`).
-- `data/cards.json` : créatures et champions.
+- `data/cards.json` : créatures et champions (numérotées `NNN/168` comme sur les cartes physiques).
 - `data/lands.json` : terrains par couleur.
 - `data/spells.json` : sorts, artefacts et améliorations.
 - `tools/generate-cards.js` : génération des cartes SVG imprimables.
 - `tools/smoke-test.js` : vérification automatisée (serveur + API salon + données).
+- `tools/numeroter-cartes.mjs` : (re)numérote la collection après tout ajout de cartes.
+- `impression.html` : planches A4 prêtes à imprimer, cartes 63 × 88 mm.
 - `Images/Cartes` : cartes SVG générées à partir des illustrations d'origine.
 
 ## Modes de jeu
@@ -116,14 +118,45 @@ depuis la barre inférieure.
 
 ## Mana coloré
 
-Chaque carte exige autant de terrains **de sa propre couleur** que son coût :
-une carte noire à 3 ne se lance qu'avec **3 terrains noirs dégagés**. Les terrains
-d'une autre couleur ne comptent pas. Seules les cartes **Incolores** (Pierre de
-Norne) acceptent n'importe quel terrain.
+Un coût se compte en **mana**, pas en terrains : un terrain peut en rendre un ou
+deux, et un terrain polyvalent n'en rend qu'un, d'une seule couleur au choix.
 
-La zone Commandant affiche donc le mana **par couleur** (ex. `2B 2V` = 2 blancs et
-2 verts disponibles), et le journal précise ce qu'il manque : « Il manque 2
-terrain(s) vert(s) dégagé(s) pour lancer Golem de pierre. »
+Chaque carte exige **au plus 2 mana de sa propre couleur** ; le reste du coût est
+**générique** et se paie avec n'importe quel terrain. Une créature verte à 5 se
+lance donc avec 2 verts et 3 mana quelconques. Les cartes **Incolores** (Pierre de
+Norne) n'exigent aucune couleur.
+
+Le coût est écrit une seule fois, dans `data/cards.json` et `data/spells.json`
+(champ `manaCost`), puis relu tel quel par le moteur de paiement, par le dessin de
+la carte et par sa fiche : l'affichage ne peut pas diverger de la règle appliquée.
+
+### Lire une carte
+
+- **Coût** : les jetons en haut à gauche. Un jeton coloré = 1 mana de cette
+  couleur, obligatoire. Le jeton gris chiffré = ce nombre de mana de n'importe
+  quelle couleur. Exemple : ⚪ ⚪ ① = 2 blancs + 1 libre.
+- **Production d'un terrain** : les mêmes jetons, avec un séparateur qui change
+  tout.
+  - `⚪` : produit 1 mana blanc.
+  - `⚪ / 🔵` : produit **1 seul** mana, blanc **ou** bleu, au choix.
+  - `⚪ + ⚪` : produit **réellement 2** mana blancs (les capitales).
+  - Un prisme : produit 1 mana de la couleur de ton choix parmi celles listées
+    dans le texte de la carte (Royaume Céleste).
+
+La fiche détaillée écrit la même chose en toutes lettres, et annonce depuis la
+main quels terrains seront engagés.
+
+### Paiement automatique
+
+Le moteur choisit lui-même les terrains à engager, selon un ordre fixe : il sert
+d'abord les couleurs obligatoires, en préférant les terrains mono-couleur, garde
+les terrains polyvalents disponibles aussi longtemps que possible, paie ensuite la
+part générique, et n'engage jamais plus de terrains que nécessaire.
+
+La zone Commandant affiche le mana **par couleur** (ex. `2B 2V` = 2 blancs et
+2 verts disponibles), et le journal précise ce qui manque : « Mana insuffisant
+pour lancer Golem de pierre : il faut 2 manas verts + 3 manas de n'importe quelle
+couleur. »
 
 ## Invocations divines
 
@@ -177,16 +210,16 @@ comptés séparément. Cette analyse est aussi affichée en direct dans le panne
 
 | Couleur | Créatures uniques | Sorts uniques | Terrains uniques | Manque pour la base mono-couleur |
 | ------- | :---------------: | :-----------: | :--------------: | -------------------------------- |
-| Blanc   | 17                | 4             | 5                | Base atteinte                    |
-| Bleu    | 11                | 7             | 5                | Base atteinte                    |
-| Noir    | 12                | 5             | 6                | Base atteinte                    |
-| Rouge   | 9                 | 5             | 5                | Base atteinte                    |
-| Vert    | 17                | 4             | 8                | Base atteinte                    |
+| Blanc   | 17                | 5             | 8                | Base atteinte                    |
+| Bleu    | 14                | 9             | 8                | Base atteinte                    |
+| Noir    | 15                | 10            | 9                | Base atteinte                    |
+| Rouge   | 11                | 6             | 6                | Base atteinte                    |
+| Vert    | 20                | 5             | 11               | Base atteinte                    |
 
 Sorts incolores polyvalents (jouables dans tous les decks) : **2** (Pierre de Norne et Générateur antique).
 
 Les cinq bases mono-couleur atteignent désormais les quotas : **aucune carte ne
-manque** pour cette base de construction. Les 31 sorts disposent tous de leur propre
+manque** pour cette base de construction. Les 39 sorts disposent tous de leur propre
 illustration.
 
 Les decks bicolores restent tous à 60 cartes et respectent la limite de quatre copies :

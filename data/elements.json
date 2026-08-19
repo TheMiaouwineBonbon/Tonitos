@@ -1,30 +1,42 @@
 {
   "Blanc": {
     "nom": "Lumières",
-    "icone": "Images/Types/Lumieres.png"
+    "icone": "Images/Types/Lumieres.png",
+    "mana": { "fond": "#f6ecd2", "bord": "#c9b073", "encre": "#3b3016" }
   },
   "Bleu": {
     "nom": "Eau",
-    "icone": "Images/Types/Eau.png"
+    "icone": "Images/Types/Eau.png",
+    "mana": { "fond": "#2f7fc0", "bord": "#8fd2ff", "encre": "#f2fbff" }
   },
   "Noir": {
     "nom": "Ténèbres",
-    "icone": "Images/Types/Tenebres.png"
+    "icone": "Images/Types/Tenebres.png",
+    "mana": { "fond": "#3b3247", "bord": "#9b8bb4", "encre": "#f3eefa" }
   },
   "Rouge": {
     "nom": "Feu",
-    "icone": "Images/Types/Feu.png"
+    "icone": "Images/Types/Feu.png",
+    "mana": { "fond": "#b9351f", "bord": "#ffa878", "encre": "#fff0e6" }
   },
   "Vert": {
     "nom": "Plantes",
-    "icone": "Images/Types/Plantes.png"
+    "icone": "Images/Types/Plantes.png",
+    "mana": { "fond": "#3d8b46", "bord": "#a7d97e", "encre": "#f1fbe9" }
   },
   "Incolore": {
     "nom": "Incolore",
-    "icone": "Images/Types/Incolore.png"
+    "icone": "Images/Types/Incolore.png",
+    "mana": { "fond": "#9a958a", "bord": "#ded8c9", "encre": "#23211c" }
   },
   "Multicolore": {
     "nom": "Prisme",
-    "icone": "Images/Types/Multicolore.png"
+    "icone": "Images/Types/Multicolore.png",
+    "mana": { "fond": "#7a4bb5", "bord": "#d8b0ff", "encre": "#f7efff" }
+  },
+  "Générique": {
+    "nom": "Générique",
+    "icone": "Images/Types/Incolore.png",
+    "mana": { "fond": "#b3ac9c", "bord": "#e9e2ce", "encre": "#2a251c" }
   }
 }

@@ -1,0 +1,267 @@
+/* =====================================================================
+   Spellaho - Planches d'impression physique
+   ---------------------------------------------------------------------
+   Tout est exprimé en millimètres : c'est la seule unité qui garantisse
+   qu'une carte mesure 63 × 88 mm sur le papier. Aucune dimension de carte
+   n'est en pixels, en pourcentage ou en viewport.
+   ===================================================================== */
+
+:root {
+  --carte-l: 63mm;
+  --carte-h: 88mm;
+  --page-l: 210mm;
+  --page-h: 297mm;
+  --colonnes: 3;
+  --lignes: 3;
+  /* 210 − 3×63 = 21 → 10,5 mm de chaque côté.
+     297 − 3×88 = 33 → 16,5 mm en haut et en bas. */
+  --marge-x: 10.5mm;
+  --marge-y: 16.5mm;
+  --trait: #2b2b2b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #14120f;
+  color: #f0e2c4;
+  font: 15px/1.5 Georgia, "Times New Roman", serif;
+}
+
+/* --- Barre de réglages, écran seulement ----------------------------- */
+.reglages {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  gap: 14px;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(226, 192, 116, 0.4);
+  background: linear-gradient(180deg, #1c1713, #141110);
+}
+
+.reglages h1 {
+  margin: 0;
+  color: #f4dfa8;
+  font-size: 22px;
+}
+
+.reglages .rangee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.reglages label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: #d3c09a;
+}
+
+.reglages select,
+.reglages input[type="number"] {
+  min-width: 190px;
+  padding: 7px 9px;
+  border: 1px solid rgba(226, 192, 116, 0.5);
+  border-radius: 6px;
+  background: #241d18;
+  color: #f6ead0;
+  font: inherit;
+  font-size: 14px;
+}
+
+.reglages .cases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.reglages .cases label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.bouton {
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f0cd7d, #c9982f);
+  color: #23180c;
+  font: 700 15px Georgia, serif;
+  cursor: pointer;
+}
+
+.bouton.secondaire {
+  background: transparent;
+  border: 1px solid rgba(226, 192, 116, 0.6);
+  color: #f0dfb4;
+}
+
+.resume {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  font-size: 14px;
+  color: #e6d5ae;
+}
+
+.resume strong { color: #f8e6ba; }
+
+.avertissement {
+  padding: 12px 16px;
+  border: 1px solid #d8a13c;
+  border-radius: 8px;
+  background: rgba(216, 161, 60, 0.12);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.avertissement strong { color: #ffd98a; }
+
+/* --- Planches -------------------------------------------------------- */
+.planches {
+  display: grid;
+  gap: 26px;
+  justify-items: center;
+  padding: 26px 12px 60px;
+}
+
+.feuille {
+  position: relative;
+  width: var(--page-l);
+  height: var(--page-h);
+  background: #fff;
+  /* À l'écran seulement : montre le bord du papier. */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 12px 34px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.feuille-etiquette {
+  position: absolute;
+  top: 4mm;
+  left: 10.5mm;
+  color: #7a7268;
+  font-size: 3mm;
+  letter-spacing: 0.4mm;
+}
+
+.grille {
+  position: absolute;
+  top: var(--marge-y);
+  left: var(--marge-x);
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes), var(--carte-l));
+  grid-template-rows: repeat(var(--lignes), var(--carte-h));
+}
+
+.case {
+  position: relative;
+  width: var(--carte-l);
+  height: var(--carte-h);
+  overflow: hidden;
+  /* Le fond sombre de la carte remplit le millimètre de différence entre
+     le ratio du gabarit (744/1038) et le format 63 × 88 : aucune bande
+     blanche n'apparaît, et l'illustration n'est jamais déformée. */
+  background: #140d0b;
+}
+
+.case svg,
+.case img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* `meet` conserve les proportions : rien n'est étiré ni rogné. */
+}
+
+.case svg { object-fit: contain; }
+
+.case--vide { background: transparent; }
+
+/* --- Traits de coupe -------------------------------------------------- */
+/* Ils vivent dans les marges, jamais sur la carte. */
+.coupe {
+  position: absolute;
+  background: var(--trait);
+}
+
+.coupe--v { width: 0.2mm; height: 5mm; }
+.coupe--h { height: 0.2mm; width: 5mm; }
+
+/* --- Mire de contrôle recto-verso ------------------------------------- */
+.mire {
+  position: absolute;
+  width: 6mm;
+  height: 6mm;
+  border: 0.3mm solid var(--trait);
+  border-radius: 50%;
+}
+
+.mire::before,
+.mire::after {
+  content: "";
+  position: absolute;
+  background: var(--trait);
+}
+
+.mire::before { top: 50%; left: -2mm; width: 10mm; height: 0.2mm; }
+.mire::after { left: 50%; top: -2mm; height: 10mm; width: 0.2mm; }
+
+/* --- Feuille de test -------------------------------------------------- */
+.etalon {
+  position: absolute;
+  top: 16.5mm;
+  left: 10.5mm;
+  width: 100mm;
+  height: 100mm;
+  border: 0.3mm solid #b4271f;
+  color: #b4271f;
+  font: 700 4mm/1.2 Georgia, serif;
+}
+
+.etalon span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90mm;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.regle {
+  position: absolute;
+  left: 10.5mm;
+  height: 4mm;
+  border-left: 0.2mm solid #b4271f;
+}
+
+/* --- Impression ------------------------------------------------------- */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .reglages, .planches > .aide { display: none !important; }
+  .planches { display: block; gap: 0; padding: 0; }
+
+  .feuille {
+    box-shadow: none;
+    /* Une feuille = une page, sans jamais de coupure au milieu. */
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .feuille:last-child { page-break-after: auto; break-after: auto; }
+  .feuille-etiquette { color: #9a9186; }
+
+  /* Les couleurs de fond doivent être imprimées telles quelles. */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

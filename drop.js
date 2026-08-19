@@ -14,6 +14,8 @@
 // verifiee exactement, sans erreur d'arrondi flottant.
 // =====================================================================
 
+import { landProduction } from "./engine-core.mjs";
+
 export const RARITY_SCALE = 10000;
 
 export const RARITIES = {
@@ -28,13 +30,13 @@ export const DROP_CONFIG = {
   // Poids sur 10 000. Ils ne se lisent pas seuls : ce qui compte pour le
   // joueur, c'est la probabilite d'obtenir UNE carte precise, soit le poids
   // divise par l'effectif de la rarete. Les poids sont donc calibres sur les
-  // effectifs reels (46 / 45 / 32 / 20 / 3 cartes) pour que cette proba
+  // effectifs reels (63 / 47 / 35 / 20 / 3 cartes) pour que cette proba
   // decroisse strictement du commun au legendaire :
-  //   commune    4530 / 46 = 0,0985 % par carte
-  //   peuCommune 3102 / 45 = 0,0689 %
-  //   rare       1576 / 32 = 0,0493 %
-  //   epique      709 / 20 = 0,0355 %
-  //   legendaire   83 /  3 = 0,0277 %
+  //   commune    4530 / 63 = 0,7190 % par carte
+  //   peuCommune 3102 / 47 = 0,6600 %
+  //   rare       1576 / 35 = 0,4503 %
+  //   epique      709 / 20 = 0,3545 %
+  //   legendaire   83 /  3 = 0,2767 %
   //
   // L'ancienne repartition (6000/2500/1000/400/100) donnait 0,0211 % pour une
   // epique contre 0,0333 % pour une legendaire : une legendaire tombait
@@ -237,10 +239,12 @@ export function inferRarity(card) {
   // commune, y compris ceux typés « Terrain legendaire ». On les mesure a ce
   // qu'ils produisent - quantite de mana et nombre de couleurs.
   if (card.kind === "land") {
-    const couleurs = Array.isArray(card.families) && card.families.length > 0
-      ? card.families.length
-      : 1;
-    const energie = Math.max(1, Number(card.energy) || 1);
+    // La production vient du moteur : `families` et `energy` ont ete
+    // remplaces par `manaProduction`, et les lire encore classait TOUS les
+    // terrains en commune, capitales et bicolores compris.
+    const { colors, amount } = landProduction(card);
+    const couleurs = Math.max(1, colors.length);
+    const energie = Math.max(1, amount);
     if (couleurs >= 3) return "epique";
     if (energie >= 2) return "rare";
     if (couleurs >= 2) return "peuCommune";

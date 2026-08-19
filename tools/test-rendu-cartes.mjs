@@ -10,7 +10,10 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { cardSvg, G, ZONE_ART, RAYON_CARTE, IDENTIFIANTS_INTERNES } from "../carte-gabarit.mjs";
+import {
+  cardSvg, G, ZONE_ART, RAYON_CARTE, IDENTIFIANTS_INTERNES,
+  ajusterTitre, largeurTitre, LARGEUR_TITRE_MAX
+} from "../carte-gabarit.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const lire = (f) => JSON.parse(fs.readFileSync(path.join(root, "data", f), "utf8"));
@@ -58,22 +61,93 @@ test("chaque categorie est rendue par le gabarit SVG", () => {
   }
 });
 
+// Le cout n est plus un chiffre unique : il se lit en jetons de mana. Seul
+// le jeton generique porte encore un nombre, les jetons colores se
+// reconnaissent a leur teinte et a leur icone d element.
+const chiffresSvg = (svg) => [...svg.matchAll(/<text[^>]*>(\d+)<\/text>/g)].map((m) => m[1]);
+const jetonsColores = (svg) =>
+  [...svg.matchAll(/<image href="[^"]*Images\/Types\/([^."]+)\.png"/g)].map((m) => m[1]);
+
 test("les statistiques affichees sont celles de l etat, pas de la fiche", () => {
-  // Independant de la taille de police : elle suit le rayon des medaillons.
-  const chiffres = (svg) => [...svg.matchAll(/<text[^>]*>(\d+)<\/text>/g)].map((m) => m[1]);
-  const fiche = chiffres(cardSvg(creature, contexte("a")));
-  assert.deepEqual(fiche, ["3", "2", "4"], "la fiche doit afficher 2/4");
+  // Vert coute 3 : 2 mana verts obligatoires + 1 generique. Restent donc
+  // le « 1 » du jeton generique, puis l attaque et la vie des medaillons.
+  const fiche = cardSvg(creature, contexte("a"));
+  assert.deepEqual(chiffresSvg(fiche), ["1", "2", "4"], "la fiche doit afficher 2/4 et un generique de 1");
 
   // Une creature blessee puis buffee : 2/4 -> 5/2.
   const modifiee = { ...creature, attack: 5, life: 2 };
-  assert.deepEqual(chiffres(cardSvg(modifiee, contexte("b"))), ["3", "5", "2"]);
+  assert.deepEqual(chiffresSvg(cardSvg(modifiee, contexte("b"))), ["1", "5", "2"]);
+});
+
+test("le cout est dessine en jetons de mana, colores puis generique", () => {
+  // Deux jetons verts pour la part coloree, plus l icone d element de la
+  // gemme de droite : trois icones « Plantes » au total.
+  const svg = cardSvg(creature, contexte("c"));
+  assert.deepEqual(jetonsColores(svg), ["Plantes", "Plantes", "Plantes"]);
+  assert.deepEqual(chiffresSvg(svg).slice(0, 1), ["1"], "le jeton generique porte son nombre");
+
+  // Une carte entierement coloree n a aucun jeton generique.
+  const bicolore = { ...creature, uid: "u9", cost: 2, manaCost: { Blanc: 1, Bleu: 1, generic: 0 } };
+  const svgBicolore = cardSvg(bicolore, contexte("d"));
+  assert.deepEqual(jetonsColores(svgBicolore), ["Lumieres", "Eau", "Plantes"]);
+  assert.deepEqual(chiffresSvg(svgBicolore), ["2", "4"], "seuls l attaque et la vie restent chiffrees");
+});
+
+test("un terrain n affiche aucun chiffre de cout et porte le logo Terrain", () => {
+  const svg = cardSvg({ ...terrain, manaProduction: { mode: "choice", colors: ["Blanc"], amount: 1 } }, contexte("t1"));
+  assert.deepEqual(chiffresSvg(svg), [], "un terrain ne coute rien : aucun chiffre ne doit apparaitre");
+  assert.ok(svg.includes("Medaillons/Terrain.png"), "le logo Terrain remplace l emplacement du cout");
+
+  // Meme regle pour une capitale, qui produit deux mana.
+  const capitale = cardSvg({ ...terrain, manaProduction: { mode: "choice", colors: ["Noir"], amount: 2 } }, contexte("t2"));
+  assert.deepEqual(chiffresSvg(capitale), [], "une capitale n affiche pas davantage de chiffre");
+
+  // Une creature, elle, garde son cout chiffre pour la part generique.
+  assert.ok(chiffresSvg(cardSvg(creature, contexte("t3"))).length > 0, "les creatures conservent leur cout");
+});
+
+test("aucun titre ne deborde de son cartouche", () => {
+  const familles = [lire("cards.json"), lire("spells.json"), lire("lands.json")];
+  const noms = familles.flat().map((c) => c.name);
+  const debordent = [];
+  for (const nom of noms) {
+    const { taille, compression } = ajusterTitre(nom);
+    const largeur = compression || largeurTitre(nom, taille);
+    if (largeur > LARGEUR_TITRE_MAX + 0.5) debordent.push(`${nom} : ${Math.round(largeur)}px`);
+  }
+  assert.deepEqual(debordent, [], `titres hors cadre : ${debordent.join(", ")}`);
+
+  // Un nom volontairement demesure doit etre compresse, jamais laisse dehors.
+  const enorme = "Wallace Wolfram Maximilien Wenceslas de Mommerwald";
+  const ajuste = ajusterTitre(enorme);
+  assert.ok(ajuste.compression, "un nom extreme declenche la compression horizontale");
+  assert.ok(ajuste.compression <= LARGEUR_TITRE_MAX, "et cette compression tient dans le cartouche");
+  const svgEnorme = cardSvg({ ...creature, uid: "u-long", name: enorme }, contexte("t4"));
+  assert.ok(svgEnorme.includes('lengthAdjust="spacingAndGlyphs"'), "le SVG applique bien la compression");
+  assert.ok(svgEnorme.includes(enorme), "et le titre n est jamais tronque");
+});
+
+test("un terrain montre ce qu il produit, choix ou cumul", () => {
+  const simple = cardSvg({ ...terrain, manaProduction: { mode: "choice", colors: ["Blanc"], amount: 1 } }, contexte("e"));
+  assert.deepEqual(jetonsColores(simple), ["Lumieres", "Lumieres"], "un jeton produit + l icone d element");
+  assert.ok(!/>\/</.test(simple) && !/>\+</.test(simple), "aucun separateur sur un terrain simple");
+
+  const auChoix = cardSvg({ ...terrain, manaProduction: { mode: "choice", colors: ["Blanc", "Bleu"], amount: 1 } }, contexte("f"));
+  assert.ok(/>\/</.test(auChoix), "un terrain au choix affiche le separateur /");
+  assert.ok(!/>\+</.test(auChoix), "et jamais le separateur +");
+
+  const capitale = cardSvg({ ...terrain, manaProduction: { mode: "choice", colors: ["Blanc"], amount: 2 } }, contexte("g"));
+  assert.ok(/>\+</.test(capitale), "deux mana produits ensemble affichent le separateur +");
+
+  const double = cardSvg({ ...terrain, manaProduction: { mode: "all", colors: ["Blanc", "Bleu"] } }, contexte("h"));
+  assert.ok(/>\+</.test(double), "une double source affiche le separateur +");
 });
 
 test("le rendu du jeu suit currentLife plutot que la vie de base", () => {
   const renderer = creerRenderer();
   const svg = renderer.rendre({ ...creature, life: 4, currentLife: 1 });
-  const chiffres = [...svg.matchAll(/<text[^>]*>(\d+)<\/text>/g)].map((m) => m[1]);
-  assert.deepEqual(chiffres, ["3", "2", "1"], "une creature blessee doit afficher 1 point de vie");
+  const chiffres = chiffresSvg(svg);
+  assert.deepEqual(chiffres, ["1", "2", "1"], "une creature blessee doit afficher 1 point de vie");
 });
 
 test("un etat inchange ne declenche aucune regeneration", () => {

@@ -61,6 +61,12 @@ export function installDebugApi(reader) {
     },
     validate() {
       return stateReader ? validateGameState(stateReader()) : ["Etat non raccordé."];
+    },
+    // Lecture seule de l'état courant. Sert aux vérifications automatisées
+    // (tools/game-tests.mjs) et à l'inspection depuis la console : sans elle,
+    // aucun test ne peut affirmer ce que le moteur a réellement fait.
+    get state() {
+      return stateReader ? stateReader() : null;
     }
   });
 }

@@ -13,9 +13,12 @@ const server = spawn(process.execPath, [path.join(__dirname, "..", "serve.js")],
 });
 
 let failed = 0;
-function check(name, condition) {
+function check(name, condition, detail = "") {
   console.log(`${condition ? "  OK  " : "ECHEC "} ${name}`);
-  if (!condition) failed += 1;
+  if (!condition) {
+    if (detail) console.log(`       ${detail}`);
+    failed += 1;
+  }
 }
 
 function waitForServer() {
@@ -133,6 +136,9 @@ async function main() {
   res = await fetch(`${base}/engine-core.mjs`);
   const engineSource = await res.text();
   check("GET /engine-core.mjs -> 200", res.status === 200);
+  res = await fetch(`${base}/decks.mjs`);
+  const decksSource = await res.text();
+  check("GET /decks.mjs -> 200", res.status === 200);
   res = await fetch(`${base}/styles.css`);
   const cardTitleStyles = await res.text();
   check(
@@ -504,7 +510,9 @@ async function main() {
     "Aucune carte volante ne survit à une nouvelle partie",
     gameSource.includes("const enemyFlights = new Set()") &&
       gameSource.includes("function clearEnemyFlights") &&
-      /function newGame[\s\S]{0,200}clearEnemyFlights\(\)/.test(gameSource)
+      // Fenetre elargie : newGame purge aussi le cache SVG et les empreintes
+      // de zone, ce qui repousse l appel plus bas dans la fonction.
+      /function newGame[\s\S]{0,600}clearEnemyFlights\(\)/.test(gameSource)
   );
   check(
     "Le contrôle ne revient pas pendant une animation adverse",
@@ -738,7 +746,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 73 créatures", Array.isArray(cards) && cards.length === 73);
+  check("cards.json = 80 créatures", Array.isArray(cards) && cards.length === 80);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -898,7 +906,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("35 sorts avec illustrations autonomes", spells.length === 35);
+  check("39 sorts avec illustrations autonomes", spells.length === 39);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -964,7 +972,7 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
-  check("lands.json = 38 terrains", lands.length === 38);
+  check("lands.json = 49 terrains", lands.length === 49);
   check(
     "Entrée et Nid de la ruche = terrains verts",
     ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
@@ -978,12 +986,59 @@ async function main() {
       ["temple-antique-aube-polaire", "Blanc"]
     ].every(([id, family]) => lands.find((land) => land.id === id)?.family === family)
   );
+
+  // Le sous-type d'un terrain decrit le LIEU, pas la couleur de mana. Avant
+  // correction, tout terrain blanc etait une « Plaine » et tout terrain noir
+  // un « Marais » : « Manoir Dracul » etait un marais et « Le monde d'au
+  // dessus », cite celeste flottante, une plaine.
+  const sousType = (land) => String(land.type || "").split(" - ").slice(1).join(" - ").trim();
+  const parCouleur = new Map();
+  for (const land of lands) {
+    const couleur = land.manaProduction?.colors?.join("/") || land.family;
+    if (!parCouleur.has(couleur)) parCouleur.set(couleur, new Set());
+    parCouleur.get(couleur).add(sousType(land));
+  }
+  const couleursUniformes = [...parCouleur.entries()]
+    .filter(([, types]) => types.size === 1)
+    .filter(([couleur]) => lands.filter((l) => (l.manaProduction?.colors?.join("/") || l.family) === couleur).length > 2)
+    .map(([couleur, types]) => `${couleur} -> ${[...types][0]}`);
+  check(
+    "Aucun sous-type de terrain n'est deduit de la couleur de mana",
+    couleursUniformes.length === 0,
+    couleursUniformes.join(", ")
+  );
+
+  // Le sous-type doit correspondre au lieu que le nom annonce.
+  // Le nom francais porte son lieu en tete : « Forge Elfique Volcanique »
+  // est une forge, pas un volcan. On s arrete donc au premier motif reconnu,
+  // et la liste suit cet ordre de priorite.
+  const MOTS_LIEU = [
+    [/temple antique/i, "Temple antique"], [/capitale/i, "Capitale"],
+    [/^ch[âa]teau/i, "Château"], [/^manoir/i, "Manoir"], [/^laboratoire/i, "Laboratoire"],
+    [/^forge/i, "Forge"], [/^lac\b/i, "Lac"], [/^rivi[èe]re/i, "Rivière"],
+    [/^cimeti[èe]re/i, "Cimetière"], [/^village/i, "Village"], [/^sentier/i, "Sentier"],
+    [/^champ\b/i, "Champ"], [/^prairie/i, "Prairie"], [/^ruines/i, "Ruines"],
+    [/ruche/i, "Ruche"], [/volcan/i, "Volcan"]
+  ];
+  const incoherences = [];
+  for (const land of lands) {
+    const regle = MOTS_LIEU.find(([motif]) => motif.test(land.name));
+    if (regle && sousType(land) !== regle[1]) {
+      incoherences.push(`${land.name} : « ${sousType(land)} » au lieu de « ${regle[1]} »`);
+    }
+  }
+  check("Le sous-type de chaque terrain correspond au lieu de son nom", incoherences.length === 0, incoherences.slice(0, 4).join(" | "));
+
+  // Un terrain ne coute rien : ni la donnee ni la carte ne doivent afficher
+  // un chiffre de cout.
+  check("Aucun terrain n'a de coût non nul", lands.every((land) => Number(land.cost || 0) === 0));
+
   const allCards = [...cards, ...lands, ...spells];
   const svgFileName = (name) => `${name}.svg`.replace(/[<>:"/\\|?*]/g, "-");
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));
   check(
-    "Les 146 cartes possèdent exactement un SVG généré",
+    `Les ${allCards.length} cartes possèdent exactement un SVG généré`,
     generatedSvgFiles.length === allCards.length &&
       allCards.every((card) => generatedSvgFiles.includes(svgFileName(card.name)))
   );
@@ -995,6 +1050,13 @@ async function main() {
     )
   );
   check("Tous les identifiants de cartes sont uniques", new Set(allCards.map((card) => card.id)).size === allCards.length);
+
+  // Une seule definition des decks : le jeu et la page d impression lisent
+  // decks.mjs. Redeclarer DECKS ailleurs ferait diverger les deux listes.
+  check(
+    "Les decks ne sont definis qu'une fois, dans decks.mjs",
+    decksSource.includes("export const DECKS = [") && !gameSource.includes("const DECKS = [")
+  );
 
   const deckColors = [
     ["Blanc", "Vert"],
@@ -1008,7 +1070,7 @@ async function main() {
     "Les paires de couleurs des decks correspondent au menu",
     // Le test doit suivre DECKS : une paire ajoutée au jeu sans être
     // vérifiée ici passerait inaperçue jusqu'à un deck injouable.
-    deckColors.length === (gameSource.match(/^\s{4}colors: \[/gm) || []).length
+    deckColors.length === (decksSource.match(/^\s{4}colors: \[/gm) || []).length
   );
   check("Les 6 decks restent à 60 cartes avec 4 copies non-terrain maximum", deckColors.every((colors) => {
     const creaturePool = cards.filter((card) => colors.includes(card.family));

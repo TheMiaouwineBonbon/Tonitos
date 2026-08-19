@@ -15,6 +15,9 @@ import {
   canPayCard,
   canTakeMainAction,
   canUnitAttack,
+  describeLandProduction,
+  describeManaCost,
+  describePaymentPlan,
   determineWinner,
   drawFromDeck,
   finiteNumber,
@@ -35,6 +38,17 @@ import {
   validateGameState
 } from "./engine-core.mjs?v=20260817-mana-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
+import {
+  DECKS,
+  DECK_LANDS,
+  DECK_SIZE,
+  DECK_SPELLS,
+  MAX_NONLAND_COPIES,
+  buildDeck,
+  cardFitsDeckColors,
+  getDeckComposition as composerDeck,
+  getDeckSpec
+} from "./decks.mjs?v=20260819-impression-1";
 import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260818-gabarit-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -241,10 +255,6 @@ const MAX_BOARD = 7;
 const STARTING_LIFE = 20;
 const MAX_LIFE = 30;
 const STARTING_HAND = 7;
-const DECK_SIZE = 60;
-const DECK_LANDS = 24;
-const DECK_SPELLS = 14;
-const MAX_NONLAND_COPIES = 4;
 const ONLINE_POLL_MS = 1000;
 // Trois sondages ratés d'affilée valent mieux qu'un seul pour distinguer une
 // coupure réelle d'un simple hoquet réseau.
@@ -267,50 +277,6 @@ const DEFAULT_PROFILES = {
     avatar: "Images/Noxis Drathis_sans_watermark.jpg"
   }
 };
-const DECKS = [
-  {
-    id: "blanc-vert",
-    name: "Blanc / Vert - Serment de la Canopée",
-    shortName: "Serment de la Canopée",
-    colors: ["Blanc", "Vert"],
-    theme: "défense, soins et renforts naturels"
-  },
-  {
-    id: "rouge-noir",
-    name: "Rouge / Noir - Pacte des Cendres",
-    shortName: "Pacte des Cendres",
-    colors: ["Rouge", "Noir"],
-    theme: "dégâts rapides, drain de vie et destruction"
-  },
-  {
-    id: "bleu-vert",
-    name: "Bleu / Vert - Marées Sauvages",
-    shortName: "Marées Sauvages",
-    colors: ["Bleu", "Vert"],
-    theme: "pioche, gel et grosses créatures"
-  },
-  {
-    id: "noir-blanc",
-    name: "Noir / Blanc - Jugement des Ombres",
-    shortName: "Jugement des Ombres",
-    colors: ["Noir", "Blanc"],
-    theme: "contrôle, lien de vie et troupes tenaces"
-  },
-  {
-    id: "rouge-bleu",
-    name: "Rouge / Bleu - Tempête de Braise",
-    shortName: "Tempête de Braise",
-    colors: ["Rouge", "Bleu"],
-    theme: "tempo, dégâts directs et pioche"
-  },
-  {
-    id: "blanc-bleu",
-    name: "Blanc / Bleu - Concile des Marées",
-    shortName: "Concile des Marées",
-    colors: ["Blanc", "Bleu"],
-    theme: "protection, pioche et contrôle des abysses"
-  }
-];
 
 init().catch(handleInitializationError);
 
@@ -712,6 +678,11 @@ function openStartMenu() {
   clearGameTimers();
   isAnimating = false;
   clearAttackPreview();
+  // Quitter la table coupe la liaison. Sans cela le sondage continuait, un
+  // état distant arrivait, et `applyOnlineState` refermait le menu tout
+  // seul : impossible de revenir au lancement pendant une partie en ligne.
+  // L'identité est conservée pour retrouver sa place en rejoignant à nouveau.
+  if (state.network.enabled) stopOnlineSync({ keepIdentity: true });
   els.startMenu.hidden = false;
   document.body.classList.add("menu-open");
   document.body.classList.remove("game-running");
@@ -761,8 +732,8 @@ function updateMenuSummary() {
   const mode = els.modeSelect.value;
   const enemyLabel = mode === "pvp" || mode === "online" ? "Joueur 2" : "Adversaire IA";
   const isOnline = mode === "online";
-  const playerComposition = getDeckComposition(playerDeck);
-  const enemyComposition = getDeckComposition(enemyDeck);
+  const playerComposition = composerDeck(playerDeck, { cards: state.cards, lands: state.lands, spells: state.spells });
+  const enemyComposition = composerDeck(enemyDeck, { cards: state.cards, lands: state.lands, spells: state.spells });
   const roomCodeControl = els.roomCodeInput?.closest("label");
   if (els.enemyAccountControl) els.enemyAccountControl.hidden = mode !== "pvp";
   if (roomCodeControl) roomCodeControl.hidden = !isOnline;
@@ -820,6 +791,10 @@ function normalizeClientProfile(sideName, profile = {}) {
 function newGame(config = {}) {
   clearGameTimers();
   isAnimating = false;
+  // Tous les identifiants d'instance changent : les SVG mis en cache pour la
+  // partie précédente ne resserviront jamais.
+  cacheCarteSvg.clear();
+  reinitialiserEmpreintes();
   lastTurnStartKey = "";
   gameplayPaused = false;
   clearCinematicEffects();
@@ -1221,12 +1196,18 @@ function handleOnlineRoom(room) {
 
   setOnlineStatus(`Salon ${state.network.code} connecté : ${playerNames[0]} contre ${playerNames[1]}.`);
 
-  if (room.state && (!state.started || room.version > state.network.version)) {
+  // Une partie déjà en cours, mais locale : elle ne compte pas. Sans cette
+  // distinction, rejoindre un salon juste après une partie contre l'IA
+  // gardait l'ancienne table, se contentait d'y coller les deux pseudos, et
+  // le joueur 2 attendait indéfiniment une partie qui n'était jamais servie.
+  const partieEnLigneEnCours = state.started && state.mode === "online";
+
+  if (room.state && (!partieEnLigneEnCours || room.version > state.network.version)) {
     applyOnlineState(room.state, room.version, room);
     return;
   }
 
-  if (state.started) {
+  if (partieEnLigneEnCours) {
     if (syncProfilesFromRoom(room)) render();
     return;
   }
@@ -1334,6 +1315,13 @@ function applyOnlineState(snapshot, version, room) {
   state.log = Array.isArray(snapshot.log) ? snapshot.log : [];
   state.handoffPending = false;
   state.network = network;
+  // L'état distant remplace entièrement les deux camps : aucune empreinte de
+  // zone ni aucun verrou d'animation local ne doit lui survivre. Sans cette
+  // remise à zéro, une charge d'attaque interrompue par l'arrivée d'une
+  // nouvelle partie laissait `isAnimating` fermé, et le joueur ne pouvait
+  // plus rien faire de toute la partie.
+  reinitialiserEmpreintes();
+  isAnimating = false;
   syncProfilesFromRoom(room);
   closeCardDetail();
   closeStartMenu();
@@ -1529,140 +1517,11 @@ function isLocalOnlineController() {
   return state.network.slot === state.currentTurn;
 }
 
-function getDeckSpec(id) {
-  return DECKS.find((deck) => deck.id === id) || DECKS[0];
-}
-
-function cardFitsDeckColors(card, colors) {
-  if (card.family === "Incolore") return true;
-  const identity = Array.isArray(card.colors) && card.colors.length > 0 ? card.colors : [card.family];
-  return identity.every((family) => colors.includes(family));
-}
-
-function getDeckComposition(deckSpec) {
-  const spellPool = state.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
-  const spells = Math.min(DECK_SPELLS, spellPool.length * MAX_NONLAND_COPIES);
-  return {
-    lands: DECK_LANDS,
-    creatures: DECK_SIZE - DECK_LANDS - spells,
-    spells
-  };
-}
-
+// La composition vient de decks.mjs, partagee avec la page d impression :
+// game.js n ajoute que l identifiant d instance propre a la partie.
 function makeDeck(side, deckSpec) {
-  // Un terrain entre dans le deck dès qu'il sait produire l'une de ses deux
-  // couleurs : les bicolores et le Royaume Céleste seraient sinon exclus,
-  // puisque leur `family` ne décrit qu'une partie de ce qu'ils rendent.
-  const landsProducing = (color) => state.lands.filter((land) => landProduces(land, color));
-  const lands = [
-    ...pickCopies(landsProducing(deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
-    ...pickCopies(landsProducing(deckSpec.colors[1]), DECK_LANDS / 2, Infinity)
-  ];
-  // cardFitsDeckColors accepte l'incolore, ce que la comparaison de famille
-  // refusait : sans cela, aucune créature incolore ne rejoindrait un deck.
-  const creaturePool = state.cards.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
-  const spellPool = state.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
-  const composition = getDeckComposition(deckSpec);
-  const creatures = pickCreatures(creaturePool, composition.creatures);
-  const spells = pickSpells(spellPool, composition.spells);
-  const deck = [...lands, ...creatures, ...spells];
-
-  if (deck.length !== DECK_SIZE) {
-    throw new Error(`${deckSpec.name} doit contenir ${DECK_SIZE} cartes, mais contient ${deck.length}.`);
-  }
-
+  const deck = buildDeck(deckSpec, { cards: state.cards, lands: state.lands, spells: state.spells });
   return deck.map((card, index) => withUid(card, side, index));
-}
-
-function pickCreatures(pool, count) {
-  const signatureCards = pool
-    .filter((card) => Number(card.deckCopies) === 1)
-    .map((card) => card);
-  const counts = countCopies(signatureCards);
-  const picks = [
-    ...signatureCards,
-    ...pickCopiesSoft(pool.filter((card) => card.cost <= 2), 8, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost === 3), 6, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost >= 4 && card.cost <= 5), 6, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost >= 6), 2, MAX_NONLAND_COPIES, counts)
-  ];
-  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
-}
-
-function pickSpells(pool, count) {
-  const signatureCards = pool.filter((card) => Number(card.deckCopies) === 1);
-  const signatureIds = new Set(signatureCards.map((card) => card.id));
-  const interactive = pool.filter(
-    (card) => !signatureIds.has(card.id) && (card.slot === "offense" || card.slot === "defense")
-  );
-  const utility = pool.filter(
-    (card) => !signatureIds.has(card.id) && (card.slot === "draw" || card.slot === "upgrade")
-  );
-  const signatureInteractive = signatureCards.filter(
-    (card) => card.slot === "offense" || card.slot === "defense"
-  ).length;
-  const signatureUtility = signatureCards.length - signatureInteractive;
-  const counts = countCopies(signatureCards);
-  const picks = [
-    ...signatureCards,
-    ...pickCopiesSoft(interactive, Math.max(0, 10 - signatureInteractive), MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(utility, Math.max(0, 4 - signatureUtility), MAX_NONLAND_COPIES, counts)
-  ];
-  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
-}
-
-function fillToCount(current, pool, count, maxCopies) {
-  if (current.length >= count) return current.slice(0, count);
-  return [...current, ...pickCopies(pool, count - current.length, maxCopies, countCopies(current))];
-}
-
-function pickCopies(pool, count, maxCopies, existing = new Map()) {
-  const picks = [];
-  const sorted = [...pool].sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name, "fr"));
-  let guard = 0;
-
-  while (picks.length < count && sorted.length > 0 && guard < count * sorted.length * 8) {
-    const card = sorted[guard % sorted.length];
-    const used = existing.get(card.id) || 0;
-    const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
-    if (used < cardLimit) {
-      picks.push(card);
-      existing.set(card.id, used + 1);
-    }
-    guard += 1;
-  }
-
-  if (picks.length < count) {
-    throw new Error(`Pas assez de cartes pour construire le deck (${count} demandées).`);
-  }
-  return picks;
-}
-
-function pickCopiesSoft(pool, count, maxCopies, existing = new Map()) {
-  const picks = [];
-  const sorted = [...pool].sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name, "fr"));
-  let guard = 0;
-
-  while (picks.length < count && sorted.length > 0 && guard < count * sorted.length * 8) {
-    const card = sorted[guard % sorted.length];
-    const used = existing.get(card.id) || 0;
-    const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
-    if (used < cardLimit) {
-      picks.push(card);
-      existing.set(card.id, used + 1);
-    }
-    guard += 1;
-  }
-
-  return picks;
-}
-
-function countCopies(cards) {
-  const counts = new Map();
-  for (const card of cards) {
-    counts.set(card.id, (counts.get(card.id) || 0) + 1);
-  }
-  return counts;
 }
 
 function withUid(card, side, copy) {
@@ -1981,9 +1840,13 @@ function manaShortfall(side, card) {
 function manaPaymentError(side, card, suffix = "") {
   const requirements = manaRequirements(card);
   if (!requirements) return `Mana insuffisant${suffix}.`;
-  const parts = requirements.colored.map(([family, amount]) => `${amount} ${family.toLowerCase()}`);
+  // Le message parle en mana, jamais en terrains : un seul terrain peut en
+  // rendre deux, et un terrain polyvalent n'en rend qu'un sur deux couleurs.
+  const parts = requirements.colored.map(
+    ([family, amount]) => `${amount} mana${amount > 1 ? "s" : ""} ${family.toLowerCase()}${amount > 1 ? "s" : ""}`
+  );
   if (requirements.generic > 0) {
-    parts.push(`${requirements.generic} libre${requirements.generic > 1 ? "s" : ""}`);
+    parts.push(`${requirements.generic} mana${requirements.generic > 1 ? "s" : ""} de n'importe quelle couleur`);
   }
   if (parts.length === 0) return `Mana insuffisant${suffix}.`;
   return `Mana insuffisant${suffix} : il faut ${parts.join(" + ")}.`;
@@ -3142,8 +3005,11 @@ function playLunge(attackerNode, targetRect, done) {
   const finish = () => {
     if (finished) return;
     finished = true;
-    if (gameplayPaused || state.matchId !== matchId) return;
+    // Le verrou d'animation se relâche dans tous les cas : le laisser fermé
+    // parce que la partie a changé entre-temps bloquerait durablement toute
+    // action du joueur, y compris dans la partie suivante.
     isAnimating = false;
+    if (gameplayPaused || state.matchId !== matchId) return;
     done();
   };
   attackerNode.addEventListener("animationend", finish, { once: true });
@@ -3316,7 +3182,12 @@ function enemyAttackStep() {
   playLunge(attackerNode, targetRect, () => {
     flashImpact("player");
     const resolved = resolveSingleAttack(attacker, target, me, foe);
-    if (resolved && state.phase !== PHASES.OVER) scheduleGameTask(enemyAttackStep, 280);
+    if (state.phase === PHASES.OVER) return;
+    // Une attaque devenue caduque pendant la charge (attaquant retiré du
+    // plateau, cible disparue) renvoyait `false` sans rien replanifier :
+    // le tour de l'IA restait alors ouvert pour toujours.
+    if (resolved) scheduleGameTask(enemyAttackStep, 280);
+    else scheduleGameTask(finishEnemyTurn, 60);
   });
 }
 
@@ -3914,6 +3785,20 @@ function updateButtons() {
 
 function renderHand() {
   const side = getVisibleHandSide();
+  const mobileLandscape = isPhoneLandscape();
+  const measuredHandWidth = els.playerHand.clientWidth || window.innerWidth;
+  // Même principe que pour le champ de bataille : une main identique n'est
+  // pas redessinée. La jouabilité et le verrou divin sont dans l'empreinte
+  // car ils décident des classes appliquées.
+  const empreinte = [
+    side.side, state.handoffPending, mobileLandscape, measuredHandWidth, window.innerHeight,
+    ...side.hand.map((card) => [
+      card.uid, isPlayableFromHand(side, card),
+      card.divine ? isDivineUnlocked(side, card) : ""
+    ].join(":"))
+  ].join("|");
+  if (zoneInchangee(els.playerHand, empreinte)) return;
+
   els.playerHand.innerHTML = "";
   if (state.handoffPending) {
     els.playerHand.append(emptySlot("Main masquée"));
@@ -3926,8 +3811,6 @@ function renderHand() {
 
   const fragment = document.createDocumentFragment();
   const handCenter = (side.hand.length - 1) / 2;
-  const mobileLandscape = isPhoneLandscape();
-  const measuredHandWidth = els.playerHand.clientWidth || window.innerWidth;
   const handWidth = mobileLandscape
     ? Math.max(220, measuredHandWidth)
     : Math.max(320, measuredHandWidth);
@@ -4072,6 +3955,9 @@ function clearEnemyFlights() {
 }
 
 function renderLands(container, lands, sideName) {
+  const empreinte = lands.map((land) => `${land.uid || land.id}:${land.tapped}`).join("|");
+  if (zoneInchangee(container, empreinte)) return;
+
   container.innerHTML = "";
   if (lands.length === 0) {
     container.append(emptySlot("Aucun terrain"));
@@ -4088,7 +3974,47 @@ function renderLands(container, lands, sideName) {
   container.append(fragment);
 }
 
+// Chaque carte represente environ 11 Ko de SVG et 119 noeuds : la
+// reconstruire alors que rien n a change coute ~0,44 ms par carte sur un PC,
+// plusieurs fois plus sur telephone. Une empreinte du contenu deja affiche
+// evite de redessiner une zone identique. L empreinte doit contenir TOUT ce
+// que la fonction de dessin lit, sinon l ecran se fige sur une valeur
+// perimee : elle est donc construite a partir des memes calculs.
+function zoneInchangee(container, empreinte) {
+  if (!container) return false;
+  if (container.dataset.empreinte === empreinte) return true;
+  container.dataset.empreinte = empreinte;
+  return false;
+}
+
+// Changement de partie ou etat recu du reseau : on oublie les empreintes,
+// sinon une zone au contenu par hasard identique resterait non redessinee.
+function reinitialiserEmpreintes() {
+  for (const container of [els.playerHand, els.playerBoard, els.enemyBoard, els.playerLands, els.enemyLands]) {
+    if (container?.dataset) delete container.dataset.empreinte;
+  }
+}
+
 function renderBoard(container, board, sideName) {
+  // Repères communs à toutes les cartes de la zone : ils décident des
+  // surbrillances, donc ils font partie de l'empreinte.
+  const monTour = isCurrentSideHuman() && state.currentTurn === sideName && state.phase !== PHASES.OVER;
+  const selected = state.selectedAttackerId
+    ? getCurrentSide().board.find((entry) => entry.uid === state.selectedAttackerId)
+    : null;
+  const empreinte = [
+    sideName, monTour, state.turn, state.phase, state.selectedAttackerId, state.selectedBlockerId,
+    ...board.map((unit) => [
+      unit.uid, unit.attack, unit.currentLife, unit.maxLife, unit.tapped, unit.stunTurns,
+      unit.attacking, Boolean(unit.blocking), unit.survivedTurns, (unit.keywords || []).join("+"),
+      canAttack(unit),
+      selected && sideName !== state.currentTurn && isCurrentSideHuman()
+        ? canTargetUnit(selected, unit, getDefendingSide())
+        : ""
+    ].join(":"))
+  ].join("|");
+  if (zoneInchangee(container, empreinte)) return;
+
   container.innerHTML = "";
   if (board.length === 0) {
     container.append(emptySlot(sideName === "player" ? "Ton champ de bataille" : "Champ adverse"));
@@ -4114,17 +4040,12 @@ function renderBoard(container, board, sideName) {
     if (unit.stunTurns > 0) node.classList.add("is-frozen");
     if (unit.uid === state.selectedBlockerId) node.classList.add("is-selected");
 
-    // Repères de combat : surbrillance des créatures prêtes à attaquer et
-    // marqueur « mal d'invocation » pour celles qui ne peuvent pas encore.
     // Repères de combat Hearthstone : créatures prêtes, attaquant sélectionné,
-    // cibles légales et provocations adverses.
-    const myTurn = isCurrentSideHuman() && state.currentTurn === sideName && state.phase !== PHASES.OVER;
-    if (myTurn && canAttack(unit)) node.classList.add("can-attack");
+    // cibles légales et provocations adverses. `monTour` et `selected` sont
+    // calculés une seule fois plus haut, avec l'empreinte de la zone.
+    if (monTour && canAttack(unit)) node.classList.add("can-attack");
     if (unit.uid === state.selectedAttackerId) node.classList.add("is-attacking");
 
-    const selected = state.selectedAttackerId
-      ? getCurrentSide().board.find((entry) => entry.uid === state.selectedAttackerId)
-      : null;
     if (selected && sideName !== state.currentTurn && isCurrentSideHuman()) {
       if (canTargetUnit(selected, unit, getDefendingSide())) node.classList.add("is-target");
       else node.classList.add("is-protected");
@@ -4142,7 +4063,10 @@ function renderBoard(container, board, sideName) {
 
     const control = node.querySelector(".card-content");
     control.addEventListener("click", () => handleBoardCardClick(unit, sideName));
-    if (myTurn && canAttack(unit)) attachAttackDrag(node, unit);
+    // Sur tactile, l'appui long reste le seul chemin vers la fiche d'une
+    // créature prête, dont l'appui simple sert à la choisir comme attaquante.
+    attachLongPressPreview(control, unit, { zone: "board", side: sideName });
+    if (monTour && canAttack(unit)) attachAttackDrag(node, unit);
     fragment.append(node);
   }
   container.append(fragment);
@@ -4164,7 +4088,53 @@ function survivalGoalForUnit(unit) {
 // - une de tes créatures prêtes => on la sélectionne comme attaquante ;
 // - une créature adverse, quand un attaquant est sélectionné => attaque immédiate ;
 // - sinon => fiche détaillée de la carte.
+// Appui long tactile : sur téléphone, toucher une de tes créatures prêtes la
+// sélectionne pour attaquer, ce qui ne laissait aucun moyen de l'ouvrir en
+// grand. Maintenir le doigt sans bouger ouvre sa fiche, sans gêner ni le tap
+// d'attaque ni le glisser, tous deux plus courts ou accompagnés d'un geste.
+const APPUI_LONG_MS = 500;
+// Un appui long est suivi d'un clic synthétique : ce drapeau le neutralise,
+// une seule fois, pour que la consultation ne se transforme pas en action.
+let apercuAppuiLong = false;
+
+function attachLongPressPreview(node, card, context) {
+  let timer = 0;
+  let depart = null;
+  const annuler = () => {
+    window.clearTimeout(timer);
+    timer = 0;
+    depart = null;
+  };
+  node.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse") return;
+    apercuAppuiLong = false;
+    depart = { x: event.clientX, y: event.clientY };
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      timer = 0;
+      // Le geste devient une consultation : plus aucune sélection ne suit.
+      apercuAppuiLong = true;
+      resetDrag();
+      navigator.vibrate?.(12);
+      openCardDetail(card, context);
+    }, APPUI_LONG_MS);
+  });
+  node.addEventListener("pointermove", (event) => {
+    if (!depart || !timer) return;
+    if (Math.hypot(event.clientX - depart.x, event.clientY - depart.y) > 8) annuler();
+  });
+  for (const type of ["pointerup", "pointercancel", "pointerleave"]) {
+    node.addEventListener(type, annuler);
+  }
+}
+
 function handleBoardCardClick(unit, sideName) {
+  // L'appui long vient d'ouvrir la fiche : le clic synthétique qui suit ne
+  // doit pas enchaîner sur une sélection.
+  if (apercuAppuiLong) {
+    apercuAppuiLong = false;
+    return;
+  }
   const myTurn = isCurrentSideHuman() && state.phase !== PHASES.OVER;
 
   // Sur PC, un clic simple sert toujours à inspecter la carte. L'attaque se
@@ -4281,11 +4251,21 @@ function beginDragCandidate(event, spec) {
   dragState.pointerId = event.pointerId;
   dragState.pointerType = event.pointerType || "";
   dragState.suppressClick = false;
-  if (spec.node.setPointerCapture) {
-    try {
-      spec.node.setPointerCapture(event.pointerId);
-    } catch {}
-  }
+  // La capture de pointeur n'est PAS posée ici. Capturer dès le pointerdown
+  // redirige le clic suivant vers la carte entière au lieu du bouton
+  // `.card-content` qui le porte : sur toute carte jouable — donc équipée du
+  // glisser — le simple clic n'ouvrait plus l'aperçu agrandi. Elle est posée
+  // à l'activation du glisser, dans `activateDrag`, quand elle sert vraiment.
+}
+
+// Capture posée au moment où le glisser démarre réellement : à partir de là
+// tous les événements de ce pointeur reviennent à la carte, même si le doigt
+// sort de son cadre.
+function capturerPointeur() {
+  if (!dragState.node?.setPointerCapture || dragState.pointerId === null) return;
+  try {
+    dragState.node.setPointerCapture(dragState.pointerId);
+  } catch {}
 }
 
 function onDragPointerMove(event) {
@@ -4303,6 +4283,7 @@ function onDragPointerMove(event) {
 function activateDrag(event) {
   dragState.active = true;
   dragState.suppressClick = true;
+  capturerPointeur();
   document.body.classList.add("is-dragging");
   ensureDragLayer();
 
@@ -4664,8 +4645,24 @@ const imageDepuisRacine = (chemin) => `./${encodeURI(chemin)}`;
 // deux exemplaires d une meme carte ne peuvent pas partager un SVG, leurs
 // identifiants internes entreraient en collision.
 const cacheCarteSvg = new Map();
+// Un SVG de carte pese environ 21 Ko en memoire. La cle contient l uid ET
+// les statistiques du moment : chaque blessure, chaque bonus et chaque
+// nouvelle creature ajoutent une entree. Sans plafond le cache grossissait
+// indefiniment pendant toute la session, jusqu a plusieurs dizaines de Mo
+// sur telephone. On garde donc une fenetre glissante des dernieres cartes
+// dessinees, largement suffisante pour un plateau complet.
+const CACHE_CARTE_MAX = 240;
 
-// Compteurs de diagnostic, lisibles via SpellahoDebug.rendu().
+function memoriserCarteSvg(cle, svg) {
+  cacheCarteSvg.set(cle, svg);
+  while (cacheCarteSvg.size > CACHE_CARTE_MAX) {
+    const plusAncienne = cacheCarteSvg.keys().next().value;
+    cacheCarteSvg.delete(plusAncienne);
+  }
+  return svg;
+}
+
+// Compteurs de diagnostic, lisibles via SpellahoRendu.stats().
 const statsRendu = { generes: 0, cacheTouche: 0, cacheManque: 0, dureeMs: 0 };
 
 // Un identifiant de document valide, stable pour une meme carte.
@@ -4683,12 +4680,20 @@ function carteSvgPourLeJeu(card) {
     card.attack,
     vie,
     card.maxLife,
-    card.energy,
+    // Le cout et la production dessines font partie de l apparence : deux
+    // cartes de meme cout total mais de couleurs differentes ne partagent
+    // pas le meme SVG.
+    JSON.stringify(card.manaCost || null),
+    JSON.stringify(card.manaProduction || null),
     (card.keywords || []).join(",")
   ].join("|");
   const enCache = cacheCarteSvg.get(cle);
   if (enCache) {
     statsRendu.cacheTouche += 1;
+    // Reinsertion : la carte redevient la plus recente, donc la derniere
+    // evincee. Sans cela le plafond jetterait les cartes encore en jeu.
+    cacheCarteSvg.delete(cle);
+    cacheCarteSvg.set(cle, enCache);
     return enCache;
   }
   statsRendu.cacheManque += 1;
@@ -4699,8 +4704,7 @@ function carteSvgPourLeJeu(card) {
   );
   statsRendu.dureeMs += performance.now() - depart;
   statsRendu.generes += 1;
-  cacheCarteSvg.set(cle, svg);
-  return svg;
+  return memoriserCarteSvg(cle, svg);
 }
 
 function renderCard(card, options = {}) {
@@ -4709,6 +4713,9 @@ function renderCard(card, options = {}) {
   if (card.name.length > 16) article.classList.add("long-card-title");
   if (card.name.length > 22) article.classList.add("very-long-card-title");
   article.dataset.cardId = card.id;
+  // L'identifiant d'instance sert au refus visuel d'une carte de main :
+  // sans lui, `rejectCardAction` ne retrouvait jamais la carte à secouer.
+  if (card.uid) article.dataset.uid = card.uid;
   article.dataset.cardKind = card.kind;
   article.dataset.cardFamily = card.family;
   // Le CSS s'en sert pour remplir le cadre par defaut, et ne contenir
@@ -4877,7 +4884,12 @@ function openCardDetail(card, context) {
   els.cardModalFamily.textContent = `${card.family} - ${isLand(card) ? "Terrain" : isSpell(card) ? "Sort" : "Créature"}`;
   els.cardModalTitle.textContent = card.name;
   els.cardModalType.textContent = card.type;
-  els.cardModalStats.textContent = describeCardStats(card);
+  // Depuis la main, la fiche annonce aussi quels terrains seront engagés :
+  // c'est la réponse à « pourquoi cette carte est-elle jouable, et avec quoi ».
+  const engagement = context?.zone === "hand" && !isLand(card)
+    ? describePaymentPlan(getSide(context.side), card)
+    : "";
+  els.cardModalStats.textContent = `${describeCardStats(card)}${engagement ? ` ${engagement}` : ""}`;
   els.cardModalAbility.textContent = `${card.abilityName} - ${card.abilityText}`;
   els.cardModalFlavor.textContent = card.flavor || "";
   els.cardModalFlavor.hidden = !card.flavor;
@@ -5101,25 +5113,20 @@ function getDetailAction(card, context) {
 }
 
 function describeCardStats(card) {
+  // Terrains et cartes payantes décrivent le mana avec les mêmes phrases que
+  // le moteur : `describeLandProduction` et `describeManaCost` sont les
+  // seules à formuler la règle, ici comme dans le rendu des cartes.
   if (isLand(card)) {
-    const familles = landFamilies(card);
-    const couleurs = familles.map((famille) => famille.toLowerCase());
-    // Un terrain à plusieurs couleurs n'en rend qu'une : « au choix » évite
-    // de laisser croire qu'il produit un mana de chacune.
-    const production = couleurs.length > 1
-      ? `${couleurs.slice(0, -1).join(", ")} ou ${couleurs.at(-1)}, au choix`
-      : couleurs[0] || "incolore";
-    const quantite = landEnergy(card);
-    const arrivee = card.entersTapped ? " Arrive engagé." : "";
-    return `Terrain - produit ${quantite} mana ${production}.${arrivee}`;
+    const arrivee = card.entersTapped ? " Arrive engagé : il ne produit qu'au tour suivant." : "";
+    return `Terrain. ${describeLandProduction(card)}${arrivee}`;
   }
 
   if (isSpell(card)) {
-    return `Coût ${card.cost} - ${card.type}`;
+    return `${describeManaCost(card)} ${card.type}.`;
   }
 
   const lifeText = card.currentLife === undefined ? card.life : `${card.currentLife}/${card.maxLife}`;
-  return `Coût ${card.cost} - Force ${card.attack} - Vie ${lifeText}`;
+  return `${describeManaCost(card)} Force ${card.attack} - Vie ${lifeText}.`;
 }
 
 function availableMana(side) {

@@ -1,3 +1,8 @@
+// Le coût et la production affichés dans la fiche viennent du moteur, pas
+// d'une lecture directe des données : la Collection dit donc exactement ce
+// que le jeu applique.
+import { describeLandProduction, describeManaCost } from "./engine-core.mjs?v=20260819-mana-1";
+
 const DATA_URLS = ["cards", "lands", "spells"];
 const CATEGORY_LABELS = {
   all: "Toutes les cartes",
@@ -52,7 +57,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
-const SVG_ASSET_VERSION = "20260818-refonte-1";
+const SVG_ASSET_VERSION = "20260819-terrains-1";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
@@ -252,7 +257,10 @@ function createCardTile(card, index) {
   const cost = document.createElement("span");
   cost.className = "collection-card-cost";
   cost.textContent = cardCostLabel(card);
-  cost.title = card.category === "land" ? "Produit un mana" : `Coût ${card.cost ?? 0}`;
+  // Un terrain ne coûte rien : sa pastille annonce ce qu'il produit, dans les
+  // mêmes termes que le moteur, jamais un coût.
+  cost.classList.toggle("is-land", card.category === "land");
+  cost.title = card.category === "land" ? describeLandProduction(card) : describeManaCost(card);
   const type = document.createElement("span");
   type.className = "collection-card-type";
   type.textContent = `${card.family} · ${card.type}`;
@@ -358,7 +366,10 @@ function populateModal(card) {
   elements.modalSubtitle.textContent = card.subtitle || "";
   elements.modalFacts.replaceChildren();
   addModalFact("Type", card.type);
-  addModalFact(card.category === "land" ? "Production" : "Coût", card.category === "land" ? `${card.energy} mana` : `${card.cost} mana`);
+  addModalFact(
+    card.category === "land" ? "Production" : "Coût en mana",
+    card.category === "land" ? describeLandProduction(card) : describeManaCost(card)
+  );
   if (card.category === "creature") {
     addModalFact("Attaque", card.attack);
     addModalFact("Vie", card.life);

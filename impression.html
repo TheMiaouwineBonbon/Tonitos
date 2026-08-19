@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Impression des cartes - Spellaho</title>
+    <meta
+      name="description"
+      content="Planches A4 prêtes à imprimer : cartes Spellaho au format 63 x 88 mm, traits de coupe et dos assortis."
+    />
+    <link rel="stylesheet" href="./impression.css?v=20260819-impression-1" />
+  </head>
+  <body>
+    <header class="reglages">
+      <h1>Impression des cartes — format 63 × 88 mm</h1>
+
+      <div class="rangee">
+        <label>
+          Que veux-tu imprimer ?
+          <select id="selection"></select>
+        </label>
+        <label>
+          Catégorie <span aria-hidden="true">(catalogue seulement)</span>
+          <select id="categorie">
+            <option value="toutes">Toutes les catégories</option>
+            <option value="creature">Créatures</option>
+            <option value="spell">Sorts</option>
+            <option value="land">Terrains</option>
+          </select>
+        </label>
+        <label>
+          Exemplaires de chaque carte
+          <input id="exemplaires" type="number" min="1" max="20" value="1" />
+        </label>
+        <label>
+          Faces à imprimer
+          <select id="faces">
+            <option value="recto">Rectos uniquement</option>
+            <option value="recto+verso">Recto + verso</option>
+            <option value="verso">Versos uniquement</option>
+          </select>
+        </label>
+        <label>
+          Retournement de la feuille
+          <select id="retournement">
+            <option value="long">Sur le bord long</option>
+            <option value="court">Sur le bord court</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="cases">
+        <label><input id="traits-coupe" type="checkbox" checked /> Traits de coupe</label>
+        <label><input id="mire" type="checkbox" checked /> Mire de contrôle recto-verso</label>
+      </div>
+
+      <div class="rangee">
+        <button id="generer" class="bouton" type="button">Générer les planches</button>
+        <button id="feuille-test" class="bouton secondaire" type="button">Feuille de contrôle 100 mm</button>
+        <button id="imprimer" class="bouton" type="button">Imprimer / Exporter en PDF</button>
+        <a class="bouton secondaire" href="./cartes.html">Retour à la collection</a>
+      </div>
+
+      <div id="resume" class="resume"></div>
+
+      <p class="avertissement">
+        <strong>Réglages d'impression obligatoires.</strong>
+        Format <strong>A4</strong> · Orientation <strong>portrait</strong> ·
+        Échelle <strong>100 % / Taille réelle</strong> — surtout pas « Ajuster à la page »,
+        sinon les cartes ne feront plus 63 × 88 mm. Marges : <strong>Aucune</strong>.
+        Coche <strong>Graphiques d'arrière-plan</strong> dans « Plus de paramètres ».
+        Pour le recto-verso, choisis le sens de retournement correspondant à celui
+        sélectionné ci-dessus. Imprime d'abord la
+        <strong>feuille de contrôle</strong> et mesure le carré à la règle.
+      </p>
+    </header>
+
+    <main id="planches" class="planches"></main>
+
+    <script type="module" src="./impression.js?v=20260819-impression-1"></script>
+  </body>
+</html>

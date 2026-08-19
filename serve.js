@@ -169,7 +169,14 @@ async function handleApi(req, res, url) {
       return true;
     }
 
-    const room = getRoom(code);
+    // Lire l'etat d'un salon ne doit pas le creer : sinon n'importe quel
+    // sondage sur un code au hasard laisse un salon vide en memoire.
+    purgeRooms();
+    const room = rooms.get(code);
+    if (!room) {
+      sendJson(res, 200, { slot: null, room: { code, version: 0, players: {}, state: null, updatedAt: Date.now() } });
+      return true;
+    }
     const playerId = String(url.searchParams.get("playerId") || "");
     const slot = findPlayerSlot(room, playerId);
     if (slot) room.players[slot].lastSeen = Date.now();
@@ -239,7 +246,9 @@ const server = http.createServer(async (req, res) => {
     const requested = rawPath === "/" ? "/index.html" : rawPath;
     const filePath = path.normalize(path.join(root, requested));
 
-    if (!filePath.startsWith(root)) {
+    // `startsWith(root)` seul laissait passer un dossier voisin dont le nom
+    // commence pareil (« Jeu-autre ») : la comparaison inclut le separateur.
+    if (filePath !== root && !filePath.startsWith(root + path.sep)) {
       res.writeHead(403);
       res.end("Forbidden");
       return;

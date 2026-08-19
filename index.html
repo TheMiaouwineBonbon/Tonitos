@@ -276,9 +276,35 @@
           </div>
         </section>
 
-        <!-- Panneau lateral retire : galerie, audit, regles et journal
-             occupaient toute la colonne droite sur PC. La collection vit
-             dans cartes.html et les regles dans le README. -->
+        <!-- Panneau lateral retire sur PC : la collection vit dans
+             cartes.html. Sur telephone, la barre du bas annonce toujours
+             quatre vues : ce panneau leur redonne un contenu reel (elles
+             affichaient un ecran vide depuis le retrait de la colonne). -->
+        <aside class="mobile-panel" aria-label="Panneau mobile">
+          <section data-panel="cards">
+            <h2>Cartes</h2>
+            <p>La collection complète, avec toutes les illustrations et les statistiques, s'ouvre dans sa propre page.</p>
+            <p><a class="ghost-button" href="./cartes.html">Ouvrir la collection</a></p>
+            <p class="mobile-panel-note">Pendant la partie, touche n'importe quelle carte du plateau ou de ta main pour ouvrir sa fiche détaillée.</p>
+          </section>
+          <section data-panel="rules">
+            <h2>Règles</h2>
+            <ul class="mobile-panel-rules">
+              <li><strong>But :</strong> faire tomber le commandant adverse à 0 point de vie. Chacun commence à 20, le maximum est 30.</li>
+              <li><strong>Ton tour :</strong> un terrain maximum, puis autant de cartes et d'attaques que ton mana le permet, avant « Fin du tour ».</li>
+              <li><strong>Mana :</strong> chaque terrain dégagé produit un mana. Au plus deux mana du coût exigent la couleur de la carte, le reste accepte n'importe quel terrain.</li>
+              <li><strong>Mal d'invocation 💤 :</strong> une créature n'attaque pas le tour où elle arrive, sauf avec <strong>Célérité</strong>.</li>
+              <li><strong>Défenseur 🛡 :</strong> ces créatures n'attaquent pas mais doivent être frappées en premier. Le <strong>Vol</strong> les ignore.</li>
+              <li><strong>Autres mots-clés :</strong> Vigilance (ne s'engage pas en attaquant), Contact mortel (détruit toute créature blessée), Lien de vie (soigne autant qu'elle blesse).</li>
+              <li><strong>Fatigue :</strong> piocher sans bibliothèque coûte 1 point de vie par carte manquante.</li>
+              <li><strong>Invocations divines 🔱 :</strong> verrouillées tant que leur condition de légende n'est pas remplie ; la fiche de la carte coche chaque étape.</li>
+            </ul>
+          </section>
+          <section data-panel="log">
+            <h2>Journal</h2>
+            <ul id="combat-log" class="combat-log" aria-live="polite"></ul>
+          </section>
+        </aside>
       </main>
     </div>
 

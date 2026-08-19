@@ -573,15 +573,20 @@ select:focus-visible {
   border-color: color-mix(in srgb, var(--card-accent) 58%, transparent);
 }
 
+/* Trois noms sur 146 depassaient la ligne et finissaient coupes par des
+   points de suspension. Le nom passe donc sur deux lignes au besoin, et sa
+   taille se resserre legerement : aucun titre n est plus tronque. */
 .collection-card-name {
+  display: -webkit-box;
   overflow: hidden;
   margin: 0;
   color: #fff7e6;
-  font-size: 16px;
+  font-size: clamp(14px, 1.05vw, 16px);
   font-weight: 700;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.18;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: break-word;
 }
 
 .collection-card-cost {

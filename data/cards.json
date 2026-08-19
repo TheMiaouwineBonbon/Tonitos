@@ -6,6 +6,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Invocatrice",
     "cost": 3,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 1
+    },
     "attack": 1,
     "life": 5,
     "keywords": [
@@ -20,7 +24,9 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "001/168"
   },
   {
     "id": "familliers",
@@ -29,6 +35,10 @@
     "family": "Blanc",
     "type": "Créature - Familier",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "attack": 1,
     "life": 3,
     "keywords": [
@@ -43,7 +53,8 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "002/168"
   },
   {
     "id": "griffon",
@@ -52,6 +63,10 @@
     "family": "Blanc",
     "type": "Créature - Griffon",
     "cost": 4,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 2
+    },
     "attack": 3,
     "life": 3,
     "keywords": [
@@ -66,7 +81,8 @@
       "primary": "#c69a4d",
       "secondary": "#f1d88a",
       "deep": "#2e2112"
-    }
+    },
+    "numero": "003/168"
   },
   {
     "id": "johanna",
@@ -75,6 +91,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Magicienne",
     "cost": 4,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 2
+    },
     "attack": 2,
     "life": 5,
     "keywords": [
@@ -89,7 +109,8 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "004/168"
   },
   {
     "id": "terreur-mers-iguis",
@@ -98,6 +119,10 @@
     "family": "Bleu",
     "type": "Créature - Léviathan",
     "cost": 6,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 4
+    },
     "attack": 5,
     "life": 7,
     "keywords": [
@@ -112,7 +137,8 @@
       "primary": "#176b8c",
       "secondary": "#67d3ff",
       "deep": "#081d2a"
-    }
+    },
+    "numero": "005/168"
   },
   {
     "id": "valerius",
@@ -121,6 +147,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Vampire Noble",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "attack": 4,
     "life": 6,
     "keywords": [
@@ -135,7 +165,8 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "006/168"
   },
   {
     "id": "noxis",
@@ -144,6 +175,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Avatar Divin",
     "cost": 7,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 5
+    },
     "attack": 7,
     "life": 6,
     "keywords": [
@@ -158,7 +193,8 @@
       "primary": "#9d201c",
       "secondary": "#ff6f4a",
       "deep": "#18090a"
-    }
+    },
+    "numero": "007/168"
   },
   {
     "id": "amrin",
@@ -167,6 +203,10 @@
     "family": "Rouge",
     "type": "Créature légendaire - Démon",
     "cost": 6,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 4
+    },
     "attack": 6,
     "life": 5,
     "keywords": [
@@ -181,7 +221,8 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
-    }
+    },
+    "numero": "008/168"
   },
   {
     "id": "dyklanne",
@@ -190,6 +231,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Nain Guerrier",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "attack": 3,
     "life": 4,
     "keywords": [
@@ -204,7 +249,8 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "009/168"
   },
   {
     "id": "bebe-dragon",
@@ -213,6 +259,10 @@
     "family": "Rouge",
     "type": "Créature - Dragon",
     "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
     "attack": 2,
     "life": 2,
     "keywords": [
@@ -227,7 +277,8 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
-    }
+    },
+    "numero": "010/168"
   },
   {
     "id": "uldrid",
@@ -236,6 +287,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Sylve Ancien",
     "cost": 5,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 3
+    },
     "attack": 2,
     "life": 7,
     "keywords": [
@@ -250,7 +305,9 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "texteEchelle": 0.98,
+    "numero": "011/168"
   },
   {
     "id": "chevalier-sans-espoir",
@@ -259,6 +316,10 @@
     "family": "Noir",
     "type": "Créature - Chevalier",
     "cost": 4,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 2
+    },
     "attack": 4,
     "life": 3,
     "keywords": [
@@ -273,7 +334,9 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "texteEchelle": 0.95,
+    "numero": "012/168"
   },
   {
     "id": "nilith",
@@ -282,6 +345,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Déesse",
     "cost": 7,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 5
+    },
     "attack": 5,
     "life": 7,
     "keywords": [
@@ -296,7 +363,8 @@
       "primary": "#6f1c46",
       "secondary": "#d5448a",
       "deep": "#120711"
-    }
+    },
+    "numero": "013/168"
   },
   {
     "id": "diablotins",
@@ -305,6 +373,10 @@
     "family": "Rouge",
     "type": "Créature - Diablotin",
     "cost": 2,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 1,
     "keywords": [
@@ -322,7 +394,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "numero": "014/168"
   },
   {
     "id": "golem-pierre",
@@ -331,6 +404,10 @@
     "family": "Vert",
     "type": "Créature - Golem",
     "cost": 4,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 2
+    },
     "attack": 3,
     "life": 6,
     "keywords": [
@@ -345,7 +422,8 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "015/168"
   },
   {
     "id": "magiciens-exiles",
@@ -354,6 +432,10 @@
     "family": "Noir",
     "type": "Créature - Magicien",
     "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
     "attack": 2,
     "life": 3,
     "keywords": [
@@ -368,7 +450,8 @@
       "primary": "#7f1524",
       "secondary": "#d54454",
       "deep": "#12080d"
-    }
+    },
+    "numero": "016/168"
   },
   {
     "id": "morts-vivants",
@@ -377,6 +460,10 @@
     "family": "Noir",
     "type": "Créature - Zombie",
     "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 2,
     "keywords": [
@@ -390,7 +477,8 @@
       "primary": "#566048",
       "secondary": "#a4b37c",
       "deep": "#151a12"
-    }
+    },
+    "numero": "017/168"
   },
   {
     "id": "orcs",
@@ -399,6 +487,10 @@
     "family": "Rouge",
     "type": "Créature - Orc Guerrier",
     "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
     "attack": 4,
     "life": 2,
     "keywords": [
@@ -412,7 +504,8 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
-    }
+    },
+    "numero": "018/168"
   },
   {
     "id": "roi-des-mers",
@@ -421,6 +514,10 @@
     "family": "Bleu",
     "type": "Créature légendaire - Noble Léviathan",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "attack": 4,
     "life": 6,
     "keywords": [
@@ -435,7 +532,8 @@
       "primary": "#176b8c",
       "secondary": "#67d3ff",
       "deep": "#081d2a"
-    }
+    },
+    "numero": "019/168"
   },
   {
     "id": "ragast",
@@ -444,6 +542,10 @@
     "family": "Rouge",
     "type": "Créature légendaire - Démon Noble",
     "cost": 6,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 4
+    },
     "attack": 6,
     "life": 4,
     "keywords": [
@@ -458,7 +560,8 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
-    }
+    },
+    "numero": "020/168"
   },
   {
     "id": "trios-heros",
@@ -467,6 +570,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Héros",
     "cost": 5,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 3
+    },
     "attack": 4,
     "life": 5,
     "keywords": [
@@ -481,7 +588,8 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "021/168"
   },
   {
     "id": "aldia",
@@ -490,6 +598,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Déesse",
     "cost": 6,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 4
+    },
     "attack": 6,
     "life": 9,
     "keywords": [
@@ -525,7 +637,8 @@
           ]
         }
       ]
-    }
+    },
+    "numero": "022/168"
   },
   {
     "id": "roi-sorcier-connor",
@@ -534,6 +647,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Roi Sorcier",
     "cost": 3,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 1
+    },
     "attack": 1,
     "life": 2,
     "keywords": [
@@ -550,7 +667,8 @@
       "secondary": "#fff0ae",
       "deep": "#2b170f"
     },
-    "deckCopies": 1
+    "deckCopies": 1,
+    "numero": "023/168"
   },
   {
     "id": "chevalier-errant",
@@ -559,6 +677,10 @@
     "family": "Blanc",
     "type": "Créature - Chevalier",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 3,
     "keywords": [
@@ -576,7 +698,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 32%"
-    }
+    },
+    "numero": "024/168"
   },
   {
     "id": "fee",
@@ -585,6 +708,10 @@
     "family": "Vert",
     "type": "Créature - Fée",
     "cost": 2,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 0
+    },
     "attack": 1,
     "life": 2,
     "keywords": [
@@ -600,7 +727,8 @@
       "primary": "#3f8a45",
       "secondary": "#a9d778",
       "deep": "#112513"
-    }
+    },
+    "numero": "025/168"
   },
   {
     "id": "protecteurs-nature",
@@ -609,6 +737,10 @@
     "family": "Vert",
     "type": "Créature - Gardien",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 4,
     "keywords": [
@@ -627,7 +759,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 26%"
-    }
+    },
+    "numero": "026/168"
   },
   {
     "id": "kraken",
@@ -636,6 +769,10 @@
     "family": "Bleu",
     "type": "Créature - Kraken",
     "cost": 7,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 5
+    },
     "attack": 7,
     "life": 8,
     "keywords": [
@@ -651,7 +788,8 @@
       "primary": "#176b8c",
       "secondary": "#67d3ff",
       "deep": "#081d2a"
-    }
+    },
+    "numero": "027/168"
   },
   {
     "id": "pirates",
@@ -660,6 +798,10 @@
     "family": "Bleu",
     "type": "Créature - Pirate",
     "cost": 3,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 2,
     "keywords": [
@@ -673,7 +815,8 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "028/168"
   },
   {
     "id": "umi",
@@ -682,6 +825,10 @@
     "family": "Bleu",
     "type": "Créature légendaire - Dieu",
     "cost": 6,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 4
+    },
     "attack": 5,
     "life": 8,
     "keywords": [
@@ -708,7 +855,8 @@
           ]
         }
       ]
-    }
+    },
+    "numero": "029/168"
   },
   {
     "id": "ulgod",
@@ -717,6 +865,10 @@
     "family": "Rouge",
     "type": "Créature légendaire - Dieu",
     "cost": 7,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 5
+    },
     "attack": 9,
     "life": 8,
     "keywords": [
@@ -743,7 +895,8 @@
           ]
         }
       ]
-    }
+    },
+    "numero": "030/168"
   },
   {
     "id": "zombie-villageois",
@@ -752,6 +905,10 @@
     "family": "Noir",
     "type": "Créature - Zombie",
     "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 2,
     "keywords": [
@@ -765,7 +922,9 @@
       "primary": "#566048",
       "secondary": "#a4b37c",
       "deep": "#151a12"
-    }
+    },
+    "texteEchelle": 0.98,
+    "numero": "031/168"
   },
   {
     "id": "rena",
@@ -774,6 +933,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Déesse",
     "cost": 6,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 4
+    },
     "attack": 8,
     "life": 10,
     "keywords": [
@@ -804,7 +967,9 @@
           ]
         }
       ]
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "032/168"
   },
   {
     "id": "bhaal",
@@ -813,6 +978,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Dieu",
     "cost": 8,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 6
+    },
     "attack": 9,
     "life": 8,
     "keywords": [
@@ -842,7 +1011,9 @@
           ]
         }
       ]
-    }
+    },
+    "texteEchelle": 0.95,
+    "numero": "033/168"
   },
   {
     "id": "chevalier-froussard",
@@ -851,6 +1022,10 @@
     "family": "Blanc",
     "type": "Créature - Chevalier",
     "cost": 1,
+    "manaCost": {
+      "Blanc": 1,
+      "generic": 0
+    },
     "attack": 1,
     "life": 4,
     "keywords": [
@@ -865,7 +1040,8 @@
       "primary": "#c78135",
       "secondary": "#f3d183",
       "deep": "#2a160d"
-    }
+    },
+    "numero": "034/168"
   },
   {
     "id": "tigre-zombie",
@@ -874,6 +1050,10 @@
     "family": "Noir",
     "type": "Créature - Zombie Bête",
     "cost": 4,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 2
+    },
     "attack": 5,
     "life": 2,
     "keywords": [
@@ -888,7 +1068,8 @@
       "primary": "#566048",
       "secondary": "#a4b37c",
       "deep": "#151a12"
-    }
+    },
+    "numero": "035/168"
   },
   {
     "id": "homme-flammes",
@@ -897,6 +1078,10 @@
     "family": "Rouge",
     "type": "Créature - Élémental",
     "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 3,
     "keywords": [
@@ -910,7 +1095,8 @@
       "primary": "#b34120",
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
-    }
+    },
+    "numero": "036/168"
   },
   {
     "id": "poisson-mangeur",
@@ -919,6 +1105,10 @@
     "family": "Bleu",
     "type": "Créature - Poisson",
     "cost": 3,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 1,
     "keywords": [
@@ -932,7 +1122,8 @@
       "primary": "#287da8",
       "secondary": "#83d8ff",
       "deep": "#0d2231"
-    }
+    },
+    "numero": "037/168"
   },
   {
     "id": "ours-hibou",
@@ -941,6 +1132,10 @@
     "family": "Vert",
     "type": "Créature - Ours Oiseau",
     "cost": 4,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 2
+    },
     "attack": 4,
     "life": 5,
     "keywords": [
@@ -959,7 +1154,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "038/168"
   },
   {
     "id": "noxis-bhaal-fusion",
@@ -968,6 +1164,9 @@
     "family": "Noir",
     "type": "Créature légendaire - Avatar Dieu Fusion",
     "cost": 0,
+    "manaCost": {
+      "generic": 0
+    },
     "attack": 15,
     "life": 15,
     "keywords": [
@@ -1007,7 +1206,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "texteEchelle": 0.95,
+    "numero": "039/168"
   },
   {
     "id": "heritage-heros",
@@ -1016,6 +1217,9 @@
     "family": "Blanc",
     "type": "Créature légendaire - Enfants Héros Fusion",
     "cost": 0,
+    "manaCost": {
+      "generic": 0
+    },
     "attack": 10,
     "life": 10,
     "keywords": [
@@ -1058,7 +1262,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "texteEchelle": 0.9,
+    "numero": "040/168"
   },
   {
     "id": "apocalypse-umi",
@@ -1067,6 +1273,9 @@
     "family": "Bleu",
     "type": "Créature légendaire - Dragon Léviathan Évolution",
     "cost": 0,
+    "manaCost": {
+      "generic": 0
+    },
     "attack": 13,
     "life": 14,
     "keywords": [
@@ -1105,7 +1314,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "texteEchelle": 0.9,
+    "numero": "041/168"
   },
   {
     "id": "aventurier",
@@ -1114,6 +1325,10 @@
     "family": "Blanc",
     "type": "Créature - Humain Aventurier",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 3,
     "keywords": [
@@ -1132,7 +1347,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "numero": "042/168"
   },
   {
     "id": "envoye-bhaal",
@@ -1141,6 +1357,10 @@
     "family": "Noir",
     "type": "Créature - Avatar Assassin",
     "cost": 4,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 2
+    },
     "attack": 4,
     "life": 3,
     "keywords": [
@@ -1159,7 +1379,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 40%"
-    }
+    },
+    "numero": "043/168"
   },
   {
     "id": "homme-requin",
@@ -1168,6 +1389,10 @@
     "family": "Bleu",
     "type": "Créature - Requin Guerrier",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "attack": 5,
     "life": 5,
     "keywords": [
@@ -1186,7 +1411,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "044/168"
   },
   {
     "id": "hero-rena",
@@ -1195,6 +1422,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Chevalier de Rena",
     "cost": 5,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 3
+    },
     "attack": 5,
     "life": 6,
     "keywords": [
@@ -1214,7 +1445,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 38%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "045/168"
   },
   {
     "id": "chevalier-parasite",
@@ -1223,6 +1456,10 @@
     "family": "Vert",
     "type": "Créature - Chevalier Parasite",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 4,
     "keywords": [
@@ -1241,7 +1478,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "numero": "046/168"
   },
   {
     "id": "gardien-parasite",
@@ -1250,6 +1488,10 @@
     "family": "Vert",
     "type": "Créature - Gardien Parasite",
     "cost": 4,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 2
+    },
     "attack": 3,
     "life": 7,
     "keywords": [
@@ -1269,7 +1511,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "numero": "047/168"
   },
   {
     "id": "orc-contamine",
@@ -1278,6 +1521,10 @@
     "family": "Vert",
     "type": "Créature - Orc Parasite",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "attack": 5,
     "life": 3,
     "keywords": [
@@ -1296,7 +1543,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 44%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "048/168"
   },
   {
     "id": "zombie-parasite",
@@ -1305,6 +1554,10 @@
     "family": "Vert",
     "type": "Créature - Zombie Parasite",
     "cost": 2,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 2,
     "keywords": [
@@ -1323,7 +1576,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 43%"
-    }
+    },
+    "numero": "049/168"
   },
   {
     "id": "reine-parasite",
@@ -1332,6 +1586,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Reine Parasite",
     "cost": 7,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 5
+    },
     "attack": 7,
     "life": 9,
     "keywords": [
@@ -1352,7 +1610,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 46%"
-    }
+    },
+    "numero": "050/168"
   },
   {
     "id": "parasite",
@@ -1361,6 +1620,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Avatar Parasite",
     "cost": 8,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 6
+    },
     "attack": 9,
     "life": 10,
     "keywords": [
@@ -1381,7 +1644,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 44%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "051/168"
   },
   {
     "id": "terreur-rena",
@@ -1390,6 +1655,10 @@
     "family": "Vert",
     "type": "Créature légendaire - Colosse de Rena",
     "cost": 7,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 5
+    },
     "attack": 8,
     "life": 9,
     "keywords": [
@@ -1410,7 +1679,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 44%"
-    }
+    },
+    "texteEchelle": 0.98,
+    "numero": "052/168"
   },
   {
     "id": "aventurier-mythique-daemon",
@@ -1419,6 +1690,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Aventurier maudit",
     "cost": 3,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 4,
     "keywords": [
@@ -1439,7 +1714,8 @@
     "art": {
       "fit": "cover",
       "position": "66% 46%"
-    }
+    },
+    "numero": "053/168"
   },
   {
     "id": "robot-antique-aigle",
@@ -1448,6 +1724,10 @@
     "family": "Rouge",
     "type": "Créature - Robot antique Aigle",
     "cost": 4,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 2
+    },
     "attack": 4,
     "life": 3,
     "keywords": [
@@ -1467,7 +1747,9 @@
     "art": {
       "fit": "cover",
       "position": "55% 44%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "054/168"
   },
   {
     "id": "robot-antique-mage",
@@ -1476,6 +1758,10 @@
     "family": "Vert",
     "type": "Créature - Robot antique Mage",
     "cost": 4,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 2
+    },
     "attack": 2,
     "life": 5,
     "keywords": [
@@ -1495,7 +1781,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "055/168"
   },
   {
     "id": "robot-antique-maitre-haches",
@@ -1504,6 +1792,10 @@
     "family": "Vert",
     "type": "Créature - Robot antique Guerrier",
     "cost": 6,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 4
+    },
     "attack": 6,
     "life": 7,
     "keywords": [
@@ -1523,7 +1815,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "056/168"
   },
   {
     "id": "robot-antique-creation-divine",
@@ -1532,6 +1826,10 @@
     "family": "Blanc",
     "type": "Créature légendaire - Robot antique Divin",
     "cost": 8,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 6
+    },
     "attack": 9,
     "life": 11,
     "keywords": [
@@ -1552,7 +1850,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 43%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "057/168"
   },
   {
     "id": "robot-antique-chien",
@@ -1561,6 +1861,10 @@
     "family": "Blanc",
     "type": "Créature - Robot antique Chien",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "attack": 2,
     "life": 3,
     "keywords": [
@@ -1579,7 +1883,9 @@
     "art": {
       "fit": "cover",
       "position": "65% 48%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "058/168"
   },
   {
     "id": "robot-antique-gardien",
@@ -1588,6 +1894,10 @@
     "family": "Blanc",
     "type": "Créature - Robot antique Gardien",
     "cost": 5,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 3
+    },
     "attack": 3,
     "life": 8,
     "keywords": [
@@ -1607,7 +1917,9 @@
     "art": {
       "fit": "cover",
       "position": "55% 44%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "059/168"
   },
   {
     "id": "robot-antique-fleau-flammes",
@@ -1616,6 +1928,10 @@
     "family": "Rouge",
     "type": "Créature - Robot antique Colosse",
     "cost": 7,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 5
+    },
     "attack": 8,
     "life": 7,
     "keywords": [
@@ -1635,7 +1951,9 @@
     "art": {
       "fit": "cover",
       "position": "53% 45%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "060/168"
   },
   {
     "id": "robot-antique-chasseur",
@@ -1644,6 +1962,10 @@
     "family": "Bleu",
     "type": "Créature - Robot antique Chasseur",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "attack": 5,
     "life": 5,
     "keywords": [
@@ -1662,7 +1984,8 @@
     "art": {
       "fit": "cover",
       "position": "62% 45%"
-    }
+    },
+    "numero": "061/168"
   },
   {
     "id": "robot-antique-petit-compagnon",
@@ -1671,6 +1994,10 @@
     "family": "Blanc",
     "type": "Créature - Robot antique Compagnon",
     "cost": 1,
+    "manaCost": {
+      "Blanc": 1,
+      "generic": 0
+    },
     "attack": 1,
     "life": 2,
     "keywords": [
@@ -1689,7 +2016,9 @@
     "art": {
       "fit": "cover",
       "position": "42% 50%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "062/168"
   },
   {
     "id": "robot-antique-argonien",
@@ -1698,6 +2027,10 @@
     "family": "Bleu",
     "type": "Créature - Robot antique Argonien",
     "cost": 3,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 1
+    },
     "attack": 2,
     "life": 4,
     "keywords": [
@@ -1716,7 +2049,8 @@
     "art": {
       "fit": "cover",
       "position": "32% 48%"
-    }
+    },
+    "numero": "063/168"
   },
   {
     "id": "robot-antique-khajiit",
@@ -1725,6 +2059,10 @@
     "family": "Vert",
     "type": "Créature - Robot antique Khajiit",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 3,
     "keywords": [
@@ -1743,7 +2081,9 @@
     "art": {
       "fit": "cover",
       "position": "35% 48%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "064/168"
   },
   {
     "id": "mage-supreme-claudia",
@@ -1752,6 +2092,10 @@
     "family": "Bleu",
     "type": "Créature légendaire - Mage suprême",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "attack": 3,
     "life": 6,
     "keywords": [
@@ -1771,7 +2115,8 @@
     "art": {
       "fit": "cover",
       "position": "38% 47%"
-    }
+    },
+    "numero": "065/168"
   },
   {
     "id": "mage-supreme-dominica",
@@ -1780,6 +2125,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Mage suprême",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "attack": 4,
     "life": 5,
     "keywords": [
@@ -1799,7 +2148,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "066/168"
   },
   {
     "id": "comte-thaelion",
@@ -1808,6 +2159,10 @@
     "family": "Rouge",
     "type": "Créature légendaire - Elfe Noble",
     "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
     "attack": 3,
     "life": 3,
     "keywords": [
@@ -1829,7 +2184,8 @@
       "position": "42% 48%",
       "svgFit": "cover",
       "svgFlavor": false
-    }
+    },
+    "numero": "067/168"
   },
   {
     "id": "diplomate-aethran",
@@ -1838,6 +2194,10 @@
     "family": "Noir",
     "type": "Créature légendaire - Elfe Diplomate",
     "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
     "attack": 2,
     "life": 3,
     "keywords": [
@@ -1859,7 +2219,9 @@
       "position": "58% 45%",
       "svgFit": "cover",
       "svgFlavor": false
-    }
+    },
+    "texteEchelle": 0.95,
+    "numero": "068/168"
   },
   {
     "id": "centaure",
@@ -1868,6 +2230,10 @@
     "family": "Vert",
     "type": "Créature - Centaure Cueilleuse",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "attack": 2,
     "life": 4,
     "keywords": [
@@ -1885,7 +2251,8 @@
     "art": {
       "fit": "cover",
       "position": "45% 40%"
-    }
+    },
+    "numero": "069/168"
   },
   {
     "id": "sirenes",
@@ -1894,6 +2261,10 @@
     "family": "Bleu",
     "type": "Créature - Sirènes",
     "cost": 4,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 2
+    },
     "attack": 1,
     "life": 6,
     "keywords": [
@@ -1911,7 +2282,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "070/168"
   },
   {
     "id": "tueur-requin",
@@ -1920,6 +2293,10 @@
     "family": "Bleu",
     "type": "Créature - Requin Bourreau",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "attack": 5,
     "life": 4,
     "keywords": [
@@ -1938,7 +2315,8 @@
     "art": {
       "fit": "cover",
       "position": "42% 38%"
-    }
+    },
+    "numero": "071/168"
   },
   {
     "id": "robot-saccageur",
@@ -1947,6 +2325,9 @@
     "family": "Incolore",
     "type": "Artefact - Robot antique",
     "cost": 5,
+    "manaCost": {
+      "generic": 5
+    },
     "attack": 5,
     "life": 3,
     "keywords": [
@@ -1965,7 +2346,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "072/168"
   },
   {
     "id": "creation-obscure",
@@ -1974,6 +2356,9 @@
     "family": "Incolore",
     "type": "Créature légendaire - Aberration",
     "cost": 8,
+    "manaCost": {
+      "generic": 8
+    },
     "attack": 8,
     "life": 8,
     "keywords": [
@@ -1993,6 +2378,189 @@
     "art": {
       "fit": "cover",
       "position": "45% 38%"
-    }
+    },
+    "numero": "073/168"
+  },
+  {
+    "id": "parasite-larve",
+    "name": "Parasite Larve",
+    "subtitle": "Première mue de la ruche",
+    "family": "Vert",
+    "type": "Créature - Parasite",
+    "cost": 1,
+    "manaCost": {
+      "Vert": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 1,
+    "keywords": [
+      "Parasite"
+    ],
+    "abilityName": "Sang de la colonie",
+    "abilityText": "Parasite : la ruche la compte parmi les siens, et le Héro de Rena renforce chacun d'eux.",
+    "flavor": "Petite, affamée, déjà fidèle.",
+    "image": "Images/Parasite Larve.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "numero": "074/168"
+  },
+  {
+    "id": "robot-antique-drone",
+    "name": "Robot antique drone",
+    "subtitle": "Éclaireur du réseau oublié",
+    "family": "Incolore",
+    "type": "Créature - Robot antique",
+    "cost": 1,
+    "manaCost": {
+      "generic": 1
+    },
+    "attack": 1,
+    "life": 1,
+    "keywords": [
+      "Robot antique"
+    ],
+    "abilityName": "Signal du réseau",
+    "abilityText": "Robot antique : les autres Robots antiques le reconnaissent et l'ajoutent à leurs calculs.",
+    "flavor": "Il ne dort jamais ; il attend.",
+    "image": "Images/Robot antique drone.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "numero": "075/168"
+  },
+  {
+    "id": "archer-squelette",
+    "name": "Archer Squelette",
+    "subtitle": "Sentinelle des ossuaires",
+    "family": "Noir",
+    "type": "Créature - Squelette",
+    "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
+    "attack": 2,
+    "life": 1,
+    "keywords": [
+      "Portée"
+    ],
+    "abilityName": "Volée d'outre-tombe",
+    "abilityText": "Ses flèches sifflent par-dessus la mêlée, comme au premier jour de sa mort.",
+    "flavor": "Son carquois ne se vide plus depuis des siècles.",
+    "image": "Images/Archer Squelette.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "076/168"
+  },
+  {
+    "id": "guerrier-squelette",
+    "name": "Guerrier Squelette",
+    "subtitle": "Piquier sans serment",
+    "family": "Noir",
+    "type": "Créature - Squelette",
+    "cost": 1,
+    "manaCost": {
+      "Noir": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 2,
+    "keywords": [],
+    "abilityName": "Os et discipline",
+    "abilityText": "Il tient la ligne sans peur, sans faim et sans solde.",
+    "flavor": "La mort n'a pas interrompu son service.",
+    "image": "Images/Guerrier Squelette.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "077/168"
+  },
+  {
+    "id": "guerrier-lapin",
+    "name": "Guerrier Lapin",
+    "subtitle": "Éclaireur des terriers",
+    "family": "Vert",
+    "type": "Créature - Bête",
+    "cost": 1,
+    "manaCost": {
+      "Vert": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 1,
+    "keywords": [
+      "Célérité"
+    ],
+    "abilityName": "Bond de bataille",
+    "abilityText": "Célérité : il peut attaquer dès le tour où il arrive.",
+    "flavor": "Le premier au combat, le premier au dîner.",
+    "image": "Images/Guerrier Lapin.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "numero": "078/168"
+  },
+  {
+    "id": "petit-elementaire-eau",
+    "name": "Petit élémentaire d'eau",
+    "subtitle": "Goutte du grand courant",
+    "family": "Bleu",
+    "type": "Créature - Élémentaire",
+    "cost": 1,
+    "manaCost": {
+      "Bleu": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 2,
+    "keywords": [],
+    "abilityName": "Ressac",
+    "abilityText": "Chaque vague qui le traverse le reforme aussitôt.",
+    "flavor": "Umi compte chacune de ses gouttes.",
+    "image": "Images/Petit élémentaire d'eau.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "079/168"
+  },
+  {
+    "id": "petit-elementaire-feu",
+    "name": "Petit élémentaire de Feu",
+    "subtitle": "Étincelle des forges",
+    "family": "Rouge",
+    "type": "Créature - Élémentaire",
+    "cost": 1,
+    "manaCost": {
+      "Rouge": 1,
+      "generic": 0
+    },
+    "attack": 2,
+    "life": 1,
+    "keywords": [],
+    "abilityName": "Crépitement",
+    "abilityText": "Il brûle vite, fort, et sans le moindre regret.",
+    "flavor": "Née d'une forge, morte cent fois, jamais éteinte.",
+    "image": "Images/Petit élémentaire de Feu.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "numero": "080/168"
   }
 ]

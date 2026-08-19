@@ -7,6 +7,10 @@
     "family": "Bleu",
     "type": "Rituel - Sort offensif",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Vague",
@@ -25,7 +29,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "numero": "081/168"
   },
   {
     "id": "malediction-ulgod",
@@ -35,6 +40,10 @@
     "family": "Rouge",
     "type": "Rituel - Sort offensif",
     "cost": 4,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 2
+    },
     "slot": "offense",
     "keywords": [
       "Feu",
@@ -49,7 +58,8 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "effect": "dealAllEnemies2"
+    "effect": "dealAllEnemies2",
+    "numero": "082/168"
   },
   {
     "id": "pitie-aldia",
@@ -59,6 +69,10 @@
     "family": "Blanc",
     "type": "Éphémère - Soin",
     "cost": 4,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 2
+    },
     "slot": "defense",
     "keywords": [
       "Soin",
@@ -73,7 +87,8 @@
       "secondary": "#fff1b5",
       "deep": "#3d3520"
     },
-    "effect": "restoreTeam"
+    "effect": "restoreTeam",
+    "numero": "083/168"
   },
   {
     "id": "benediction-du-heros",
@@ -83,6 +98,10 @@
     "family": "Blanc",
     "type": "Enchantement - Amélioration",
     "cost": 3,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 1
+    },
     "slot": "upgrade",
     "keywords": [
       "Bénédiction",
@@ -97,7 +116,8 @@
       "secondary": "#fff1b5",
       "deep": "#3d3520"
     },
-    "effect": "buffTeam1"
+    "effect": "buffTeam1",
+    "numero": "084/168"
   },
   {
     "id": "vengeance-uldrid",
@@ -107,6 +127,10 @@
     "family": "Vert",
     "type": "Rituel - Sort offensif",
     "cost": 5,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Nature",
@@ -121,7 +145,9 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "effect": "vengeanceUldrid"
+    "effect": "vengeanceUldrid",
+    "texteEchelle": 0.98,
+    "numero": "085/168"
   },
   {
     "id": "pierre-norne",
@@ -131,6 +157,9 @@
     "family": "Incolore",
     "type": "Artefact - Pioche",
     "cost": 2,
+    "manaCost": {
+      "generic": 2
+    },
     "slot": "draw",
     "keywords": [
       "Artefact",
@@ -145,7 +174,8 @@
       "secondary": "#d8c596",
       "deep": "#17140f"
     },
-    "effect": "drawOneGainOne"
+    "effect": "drawOneGainOne",
+    "numero": "086/168"
   },
   {
     "id": "sceptre-rena",
@@ -155,6 +185,10 @@
     "family": "Vert",
     "type": "Artefact - Invocation",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "slot": "upgrade",
     "keywords": [
       "Artefact",
@@ -169,7 +203,8 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "effect": "createGuardian"
+    "effect": "createGuardian",
+    "numero": "087/168"
   },
   {
     "id": "confiance-aldia",
@@ -179,6 +214,10 @@
     "family": "Blanc",
     "type": "Enchantement - Amélioration",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "slot": "defense",
     "keywords": [
       "Bénédiction",
@@ -193,7 +232,8 @@
       "secondary": "#fff1b5",
       "deep": "#3d3520"
     },
-    "effect": "toughTeam"
+    "effect": "toughTeam",
+    "numero": "088/168"
   },
   {
     "id": "protection-umi",
@@ -203,6 +243,10 @@
     "family": "Bleu",
     "type": "Éphémère - Sort défensif",
     "cost": 4,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 2
+    },
     "slot": "defense",
     "keywords": [
       "Gel",
@@ -217,7 +261,8 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "effect": "freezeAll"
+    "effect": "freezeAll",
+    "numero": "089/168"
   },
   {
     "id": "courroux-ulgod",
@@ -227,6 +272,10 @@
     "family": "Rouge",
     "type": "Rituel - Sort offensif",
     "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
     "slot": "offense",
     "keywords": [
       "Feu",
@@ -241,7 +290,8 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "effect": "dealHero3"
+    "effect": "dealHero3",
+    "numero": "090/168"
   },
   {
     "id": "retour-vie",
@@ -251,6 +301,10 @@
     "family": "Noir",
     "type": "Rituel - Réanimation",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "slot": "upgrade",
     "keywords": [
       "Pacte",
@@ -265,7 +319,8 @@
       "secondary": "#d5448a",
       "deep": "#120711"
     },
-    "effect": "reanimate"
+    "effect": "reanimate",
+    "numero": "091/168"
   },
   {
     "id": "abysses",
@@ -275,6 +330,10 @@
     "family": "Bleu",
     "type": "Rituel - Sort de contrôle",
     "cost": 4,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 2
+    },
     "slot": "offense",
     "keywords": [
       "Gel",
@@ -293,7 +352,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 38%"
-    }
+    },
+    "numero": "092/168"
   },
   {
     "id": "amour-rena",
@@ -303,6 +363,10 @@
     "family": "Vert",
     "type": "Éphémère - Soin",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "slot": "defense",
     "keywords": [
       "Nature",
@@ -321,7 +385,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "093/168"
   },
   {
     "id": "repos-heros",
@@ -331,6 +396,10 @@
     "family": "Blanc",
     "type": "Éphémère - Soin et pioche",
     "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
     "slot": "draw",
     "keywords": [
       "Repos",
@@ -349,7 +418,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "094/168"
   },
   {
     "id": "reincarnation-divine",
@@ -359,6 +429,10 @@
     "family": "Noir",
     "type": "Rituel - Réanimation",
     "cost": 7,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 5
+    },
     "slot": "upgrade",
     "keywords": [
       "Réanimation",
@@ -377,7 +451,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 42%"
-    }
+    },
+    "texteEchelle": 0.97,
+    "numero": "095/168"
   },
   {
     "id": "damnation",
@@ -387,6 +463,10 @@
     "family": "Rouge",
     "type": "Rituel - Sort offensif",
     "cost": 5,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Feu",
@@ -405,7 +485,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 44%"
-    }
+    },
+    "numero": "096/168"
   },
   {
     "id": "menace-abysses",
@@ -415,6 +496,10 @@
     "family": "Bleu",
     "type": "Rituel - Sort de contrôle",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Profondeurs",
@@ -433,7 +518,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "numero": "097/168"
   },
   {
     "id": "passe-naturel",
@@ -443,6 +529,10 @@
     "family": "Vert",
     "type": "Rituel - Pioche et soin",
     "cost": 3,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 1
+    },
     "slot": "draw",
     "keywords": [
       "Nature",
@@ -461,7 +551,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "numero": "098/168"
   },
   {
     "id": "couronne-ulgod",
@@ -471,6 +562,10 @@
     "family": "Rouge",
     "type": "Artefact - Amélioration",
     "cost": 4,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 2
+    },
     "slot": "upgrade",
     "keywords": [
       "Artefact",
@@ -489,7 +584,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "numero": "099/168"
   },
   {
     "id": "ancien-corps-bhaal",
@@ -499,6 +595,10 @@
     "family": "Noir",
     "type": "Artefact - Réanimation",
     "cost": 4,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 2
+    },
     "slot": "upgrade",
     "keywords": [
       "Artefact",
@@ -517,7 +617,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "numero": "100/168"
   },
   {
     "id": "esprits-vengeurs",
@@ -527,6 +628,10 @@
     "family": "Noir",
     "type": "Rituel - Sort offensif",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Esprit",
@@ -545,7 +650,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%"
-    }
+    },
+    "numero": "101/168"
   },
   {
     "id": "ego-des-hommes",
@@ -555,6 +661,10 @@
     "family": "Noir",
     "type": "Rituel - Sort de destruction",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Orgueil",
@@ -573,7 +683,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "102/168"
   },
   {
     "id": "aucune-limite",
@@ -583,6 +694,10 @@
     "family": "Rouge",
     "type": "Rituel - Amélioration offensive",
     "cost": 4,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 2
+    },
     "slot": "upgrade",
     "keywords": [
       "Fureur",
@@ -601,7 +716,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 44%"
-    }
+    },
+    "numero": "103/168"
   },
   {
     "id": "sommeil-menacant",
@@ -611,6 +727,10 @@
     "family": "Bleu",
     "type": "Rituel - Sort de contrôle",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "slot": "defense",
     "keywords": [
       "Sommeil",
@@ -629,7 +749,8 @@
     "art": {
       "fit": "cover",
       "position": "58% 48%"
-    }
+    },
+    "numero": "104/168"
   },
   {
     "id": "terrible-decouverte",
@@ -639,6 +760,10 @@
     "family": "Bleu",
     "type": "Rituel - Pioche",
     "cost": 3,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 1
+    },
     "slot": "draw",
     "keywords": [
       "Savoir",
@@ -657,7 +782,8 @@
     "art": {
       "fit": "cover",
       "position": "53% 48%"
-    }
+    },
+    "numero": "105/168"
   },
   {
     "id": "generateur-antique",
@@ -667,6 +793,9 @@
     "family": "Incolore",
     "type": "Artefact - Générateur de robots",
     "cost": 4,
+    "manaCost": {
+      "generic": 4
+    },
     "slot": "upgrade",
     "keywords": [
       "Artefact",
@@ -686,7 +815,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%"
-    }
+    },
+    "numero": "106/168"
   },
   {
     "id": "conseil-des-sages",
@@ -696,6 +826,10 @@
     "family": "Bleu",
     "type": "Rituel - Pioche",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "slot": "draw",
     "keywords": [
       "Savoir",
@@ -714,7 +848,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 47%"
-    }
+    },
+    "numero": "107/168"
   },
   {
     "id": "rivalite-au-dela-du-temps",
@@ -752,9 +887,9 @@
     "art": {
       "fit": "cover",
       "position": "50% 50%",
-      "svgFit": "cover",
-      "svgFlavor": false
-    }
+      "svgFit": "cover"
+    },
+    "numero": "108/168"
   },
   {
     "id": "la-verite",
@@ -764,6 +899,10 @@
     "family": "Noir",
     "type": "Rituel - Révélation",
     "cost": 5,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Révélation",
@@ -784,7 +923,8 @@
       "position": "50% 48%",
       "svgFit": "cover",
       "svgFlavor": false
-    }
+    },
+    "numero": "109/168"
   },
   {
     "id": "assassinat",
@@ -794,6 +934,10 @@
     "family": "Noir",
     "type": "Rituel - Destruction",
     "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
     "slot": "offense",
     "keywords": [
       "Assassin",
@@ -814,7 +958,8 @@
       "position": "42% 47%",
       "svgFit": "cover",
       "svgFlavor": false
-    }
+    },
+    "numero": "110/168"
   },
   {
     "id": "pacte-maudit",
@@ -824,6 +969,10 @@
     "family": "Noir",
     "type": "Enchantement - Pacte",
     "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
     "slot": "draw",
     "keywords": [
       "Pacte",
@@ -844,7 +993,8 @@
       "position": "50% 46%",
       "svgFit": "cover",
       "svgFlavor": false
-    }
+    },
+    "numero": "111/168"
   },
   {
     "id": "trident-umi",
@@ -854,6 +1004,10 @@
     "family": "Bleu",
     "type": "Rituel - Sort offensif",
     "cost": 5,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 3
+    },
     "slot": "offense",
     "keywords": [
       "Vague",
@@ -872,7 +1026,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 40%"
-    }
+    },
+    "numero": "112/168"
   },
   {
     "id": "desolation",
@@ -884,13 +1039,13 @@
       "Rouge",
       "Noir"
     ],
-    "manaCost": {
-      "Rouge": 1,
-      "Noir": 1,
-      "generic": 5
-    },
     "type": "Rituel - Sort de ruine",
     "cost": 7,
+    "manaCost": {
+      "Noir": 1,
+      "Rouge": 1,
+      "generic": 5
+    },
     "slot": "offense",
     "keywords": [
       "Zone",
@@ -910,7 +1065,8 @@
     "art": {
       "fit": "cover",
       "position": "55% 50%"
-    }
+    },
+    "numero": "113/168"
   },
   {
     "id": "livre-claudia",
@@ -920,6 +1076,10 @@
     "family": "Noir",
     "type": "Rituel - Sort de savoir",
     "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
     "slot": "draw",
     "keywords": [
       "Savoir",
@@ -938,7 +1098,8 @@
     "art": {
       "fit": "cover",
       "position": "50% 45%"
-    }
+    },
+    "numero": "114/168"
   },
   {
     "id": "rencontre-agreable",
@@ -948,6 +1109,10 @@
     "family": "Vert",
     "type": "Rituel - Sort de repos",
     "cost": 2,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 0
+    },
     "slot": "draw",
     "keywords": [
       "Soutien",
@@ -966,6 +1131,103 @@
     "art": {
       "fit": "cover",
       "position": "62% 45%"
-    }
+    },
+    "numero": "115/168"
+  },
+  {
+    "id": "eclair-divin",
+    "name": "Éclair divin",
+    "subtitle": "Jugement tombé du ciel",
+    "family": "Blanc",
+    "type": "Rituel - Sort de lumière",
+    "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
+    "effect": "freezeStrongest",
+    "slot": "defense",
+    "abilityName": "Foudre du jugement",
+    "abilityText": "Engage la créature adverse la plus puissante : elle ne se dégagera pas au prochain tour.",
+    "flavor": "Le ciel a rendu son verdict avant les hommes.",
+    "image": "Images/Éclair divin.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "116/168"
+  },
+  {
+    "id": "tornade-umi",
+    "name": "Tornade d'UMI",
+    "subtitle": "Colonne des mers levées",
+    "family": "Bleu",
+    "type": "Rituel - Sort de contrôle",
+    "cost": 2,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 0
+    },
+    "effect": "weakenAllEnemies",
+    "slot": "defense",
+    "abilityName": "Vents dispersants",
+    "abilityText": "Toutes les créatures adverses perdent 1 point de force.",
+    "flavor": "On ne combat pas au centre d'une tornade.",
+    "image": "Images/Tornade d'UMI.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "117/168"
+  },
+  {
+    "id": "piege-obscur",
+    "name": "Piège Obscur",
+    "subtitle": "Morsure préparée dans l'ombre",
+    "family": "Noir",
+    "type": "Rituel - Sort de drain",
+    "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
+    "effect": "drainHero2",
+    "slot": "offense",
+    "abilityName": "Mâchoires du néant",
+    "abilityText": "Inflige 2 blessures au héros adverse et te rend 2 points de vie.",
+    "flavor": "Le piège était tendu depuis ta naissance.",
+    "image": "Images/Piège Obscur.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "118/168"
+  },
+  {
+    "id": "explosion-celeste",
+    "name": "Explosion céleste",
+    "subtitle": "Chute d'un fragment d'étoile",
+    "family": "Rouge",
+    "type": "Rituel - Sort de dégâts",
+    "cost": 2,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 0
+    },
+    "effect": "damageHero2",
+    "slot": "offense",
+    "abilityName": "Impact stellaire",
+    "abilityText": "Inflige 2 blessures au héros adverse.",
+    "flavor": "Le ciel aussi sait perdre patience.",
+    "image": "Images/Explosion céleste.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "numero": "119/168"
   }
 ]

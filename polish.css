@@ -379,9 +379,13 @@
     --row-library-gap: 38%;
     --row-library-height: 51%;
 
-    /* Bande centrale : commandes alignées sur les bords des terrains. */
+    /* Bande centrale : commandes alignées sur les bords des terrains.
+       La hauteur mesurée valait 20 px sur un téléphone de 390 px de haut,
+       soit moins de la moitié de la cible tactile recommandée. La bande
+       est dessinée par-dessus les tapis, elle peut donc grandir sans
+       déplacer quoi que ce soit. */
     --centerband-button-width: clamp(84px, 11.5dvw, 108px);
-    --centerband-button-height: clamp(20px, 5.2dvh, 24px);
+    --centerband-button-height: clamp(30px, 8dvh, 38px);
   }
 
   body[data-mobile-view="board"] .library-card-back {

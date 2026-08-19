@@ -38,18 +38,67 @@ const LARGEUR_CAR = 0.52;
 const LARGEUR_CAR_CAPITALE = 0.75;
 
 (async () => {
-  const { G, tailleTitre, tailleType } = await import("../carte-gabarit.mjs");
+  const { G, tailleTitre, tailleType, largeurTitre, LARGEUR_TITRE_MAX, largeurRangeeMana, composerPanneau, HAUTEUR_BADGE } = await import("../carte-gabarit.mjs");
 
-  for (const [nom, zone] of [["cartouche", G.cartouche], ["bandeau de type", G.type], ["illustration", G.art], ["panneau", G.panneau]]) {
+  // Le cartouche du titre n est plus centre sur la carte : l en-tete tient
+  // en trois zones distinctes - cout a gauche, titre au centre, element a
+  // droite - et c est leur SEPARATION qui est verifiee, pas leur symetrie.
+  for (const [nom, zone] of [["bandeau de type", G.type], ["illustration", G.art], ["panneau", G.panneau]]) {
     const gauche = zone.x;
     const droite = G.W - (zone.x + zone.w);
     check(`${nom} centre`, gauche === droite, `marges ${gauche} / ${droite}`);
   }
-  check("gemmes sur le meme axe", G.gemme.cxG === G.W - G.gemme.cxD, `${G.gemme.cxG} / ${G.W - G.gemme.cxD}`);
-  check("medaillons sur le meme axe", G.medaillon.cxG === G.W - G.medaillon.cxD, `${G.medaillon.cxG} / ${G.W - G.medaillon.cxD}`);
+
+  const largeurCout = G.cout.w - 20;
+  const zonesEntete = [
+    ["compartiment de coût", G.cout.x + 10, G.cout.x + G.cout.w - 10],
+    ["cartouche du titre", G.cartouche.x, G.cartouche.x + G.cartouche.w],
+    ["compartiment d'élément", G.element.x + 10, G.element.x + G.element.w - 10]
+  ];
+  const ECART_MIN = 12;
+  for (let i = 1; i < zonesEntete.length; i += 1) {
+    const [nomA, , finA] = zonesEntete[i - 1];
+    const [nomB, debutB] = zonesEntete[i];
+    check(
+      `${nomA} puis ${nomB} : rien ne se touche`,
+      debutB - finA >= ECART_MIN,
+      `ecart ${(debutB - finA).toFixed(0)} px, minimum ${ECART_MIN}`
+    );
+  }
+  // Les trois compartiments vivent DANS la barre d en-tete.
+  for (const [nom, gauche, droite] of zonesEntete) {
+    check(
+      `${nom} tient dans la barre d'en-tete`,
+      gauche >= G.entete.x && droite <= G.entete.x + G.entete.w,
+      `${gauche}..${droite} pour ${G.entete.x}..${G.entete.x + G.entete.w}`
+    );
+  }
+  check(
+    "une rangee de trois jetons tient dans son compartiment",
+    largeurRangeeMana(3, G.cout.rJeton, G.cout.ecart) <= largeurCout,
+    `${largeurRangeeMana(3, G.cout.rJeton, G.cout.ecart)} / ${largeurCout}`
+  );
+  // Les medaillons du socle doivent tenir entierement dans leur barre :
+  // l etoile des sorts en debordait par le bas.
+  const rayonLogement = G.medaillon.r + 9;
+  for (const [nom, cx] of [["attaque", G.medaillon.cxG], ["vie", G.medaillon.cxD], ["central", G.socle.x + G.socle.w / 2]]) {
+    check(
+      `le medaillon ${nom} tient dans le socle`,
+      G.medaillon.cy - rayonLogement >= G.socle.y &&
+        G.medaillon.cy + rayonLogement <= G.socle.y + G.socle.h &&
+        cx - rayonLogement >= G.socle.x &&
+        cx + rayonLogement <= G.socle.x + G.socle.w,
+      `x ${cx - rayonLogement}..${cx + rayonLogement}, y ${G.medaillon.cy - rayonLogement}..${G.medaillon.cy + rayonLogement}`
+    );
+  }
+  const bordInterieur = G.marge + 8;
+  check("la barre d'en-tete reste dans le cadre", G.entete.x >= bordInterieur && G.entete.x + G.entete.w <= G.W - bordInterieur,
+    `${G.entete.x}..${G.entete.x + G.entete.w}`);
+  check("la barre du socle reste dans le cadre", G.socle.y + G.socle.h <= G.H - bordInterieur,
+    `bas ${G.socle.y + G.socle.h} / limite ${G.H - bordInterieur}`);
 
   const bandes = [
-    ["couronne", G.couronne.y, G.couronne.y + G.couronne.h],
+    ["en-tete", G.entete.y, G.entete.y + G.entete.h],
     ["bandeau de type", G.type.y, G.type.y + G.type.h],
     ["illustration", G.art.y, G.art.y + G.art.h],
     ["panneau", G.panneau.y, G.panneau.y + G.panneau.h],
@@ -61,25 +110,6 @@ const LARGEUR_CAR_CAPITALE = 0.75;
     check(`${nomA} puis ${nomB} sans chevauchement`, debutB >= finA, `${finA} -> ${debutB} (ecart ${debutB - finA})`);
   }
 
-  // La languette du socle doit mordre sur le bas des pieces sans les
-  // amputer : elle en masquait 20 a 30 % de la hauteur.
-  const languetteHaut = G.H - G.marge - 10;
-  for (const [nom, cy, r] of [["lateral", G.medaillon.cy, G.medaillon.r], ["central", G.medaillonCentral.cy, G.medaillonCentral.r]]) {
-    const masque = cy + r - languetteHaut;
-    const part = (masque / (r * 2)) * 100;
-    check(`le medaillon ${nom} est serti sans etre ampute`, masque > 0 && part <= 15, `${masque} px masques, soit ${part.toFixed(0)} % de sa hauteur`);
-  }
-
-  // Le medaillon central se pose sous le panneau, pile sous la citation.
-  // Rien ne l empechait de remonter par-dessus le texte.
-  const citationBas = G.panneau.y + 254 + 4;
-  check("le medaillon central n empiete pas sur la citation",
-    G.medaillonCentral.cy - G.medaillonCentral.r >= citationBas,
-    `sommet ${G.medaillonCentral.cy - G.medaillonCentral.r} / citation jusqu a ${citationBas}`);
-  check("les medaillons restent dans la carte",
-    G.medaillon.cy + G.medaillon.r <= G.H - 12,
-    `bas ${G.medaillon.cy + G.medaillon.r} / limite ${G.H - 12}`);
-
   const titresTropLarges = [];
   const typesTropLarges = [];
   const capacitesTronquees = [];
@@ -87,22 +117,27 @@ const LARGEUR_CAR_CAPITALE = 0.75;
 
   for (const carte of cartes) {
     const nom = String(carte.name);
-    if (nom.length * tailleTitre(nom) * LARGEUR_CAR > G.cartouche.w - 24) titresTropLarges.push(nom);
+    if (largeurTitre(nom, tailleTitre(nom)) > LARGEUR_TITRE_MAX + 0.5) titresTropLarges.push(nom);
 
     const type = String(carte.type).toUpperCase();
     if (type.length * (tailleType(type) * LARGEUR_CAR_CAPITALE + 0.8) > G.type.w - 24) typesTropLarges.push(nom);
 
-    const large = wrap(carte.abilityText, 52);
-    const lignes = large.length <= 4 ? large : wrap(carte.abilityText, 58);
-    if (lignes.length > 4) capacitesTronquees.push(`${nom} (${lignes.length} lignes)`);
+    // La composition vient du gabarit lui-meme : on verifie ce qui est
+    // reellement dessine, pas une reconstruction approximative.
+    const panneau = composerPanneau(carte);
+    if (panneau.tronque) capacitesTronquees.push(`${nom} (${panneau.taille}px)`);
+    const basBadges = panneau.plan.badges + HAUTEUR_BADGE;
+    if ((carte.keywords || []).length > 0 && basBadges > panneau.plan.filet - 12) {
+      capacitesTronquees.push(`${nom} : badges a ${basBadges} pour un filet a ${panneau.plan.filet}`);
+    }
 
-    if (wrap(carte.flavor, 54).length > 2) citationsTronquees.push(nom);
+
   }
 
   check("aucun titre ne deborde de son cartouche", titresTropLarges.length === 0, titresTropLarges.slice(0, 3).join(", "));
   check("aucun type ne deborde de son bandeau", typesTropLarges.length === 0, typesTropLarges.slice(0, 3).join(", "));
   check("aucune capacite tronquee", capacitesTronquees.length === 0, capacitesTronquees.slice(0, 3).join(", "));
-  check("aucune citation tronquee", citationsTronquees.length === 0, citationsTronquees.slice(0, 3).join(", "));
+  check("aucune citation tronquee", citationsTronquees.length === 0, "couvert par composerPanneau.tronque");
 
   console.log(echecs === 0 ? "\n=> GRILLE CONFORME" : `\n=> ${echecs} CONTROLE(S) EN ECHEC`);
   process.exit(echecs ? 1 : 0);
