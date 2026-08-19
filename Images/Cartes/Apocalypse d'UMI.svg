@@ -106,10 +106,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#071e35" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#071e35">Déluge terminal</text>
-  <text x="84" y="704" font-size="18.9" font-weight="400" fill="#1d120c">Le Roi des mers doit survivre pendant 5 tours. Sacrifie-le</text>
-  <text x="84" y="727" font-size="18.9" font-weight="400" fill="#1d120c">pour le faire évoluer en cette carte. À son arrivée,</text>
-  <text x="84" y="750" font-size="18.9" font-weight="400" fill="#1d120c">engage toutes les créatures adverses jusqu'à leur prochain</text>
-  <text x="84" y="773" font-size="18.9" font-weight="400" fill="#1d120c">tour et inflige 5 blessures au héros adverse.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="17.1" font-weight="400" fill="#1d120c">Le Roi des mers doit survivre pendant 5 tours. Sacrifie-le pour le faire</text>
+  <text x="84" y="726" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="17.1" font-weight="400" fill="#1d120c">évoluer en cette carte. À son arrivée, engage toutes les créatures adverses</text>
+  <text x="84" y="748" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="17.1" font-weight="400" fill="#1d120c">jusqu'à leur prochain tour et inflige 5 blessures au héros adverse.</text>
   <g>
     <rect x="84" y="773" width="62.400000000000006" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="62.400000000000006" height="36" rx="8" fill="none" stroke="#071e35" stroke-width="1.6" opacity="0.8"/>

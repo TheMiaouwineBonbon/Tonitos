@@ -126,9 +126,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#111827" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#111827">Malédiction d'éternité</text>
-  <text x="84" y="704" font-size="21" font-weight="400" fill="#1d120c">Quand Daemon est vaincu, il revient automatiquement</text>
-  <text x="84" y="730" font-size="21" font-weight="400" fill="#1d120c">du cimetière après 3 de tes tours. S'il n'y a pas de</text>
-  <text x="84" y="756" font-size="21" font-weight="400" fill="#1d120c">place, il attend ton prochain tour.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="19" font-weight="400" fill="#1d120c">Quand Daemon est vaincu, il revient automatiquement du cimetière</text>
+  <text x="84" y="728" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="19" font-weight="400" fill="#1d120c">après 3 de tes tours. S'il n'y a pas de place, il attend ton prochain</text>
+  <text x="84" y="752" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="19" font-weight="400" fill="#1d120c">tour.</text>
   <g>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="none" stroke="#111827" stroke-width="1.6" opacity="0.8"/>
@@ -136,8 +136,8 @@
     <text x="147.2" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Immortel</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">À cause de sa soif de connaissance, il fut maudit à</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">ne jamais mourir et à errer éternellement.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">À cause de sa soif de connaissance, il fut maudit à ne</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">jamais mourir et à errer éternellement.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

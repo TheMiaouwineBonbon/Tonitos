@@ -125,9 +125,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#081d2a" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="673" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#081d2a">Marée perforante</text>
-  <text x="84" y="707" font-size="24" font-weight="400" fill="#1d120c">Inflige 3 blessures à toutes les créatures</text>
-  <text x="84" y="739" font-size="24" font-weight="400" fill="#1d120c">adverses et 2 au commandant adverse.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#081d2a">Marée perforante</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Inflige 3 blessures à toutes les créatures adverses et 2</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">au commandant adverse.</text>
   <g>
     <rect x="84" y="773" width="88" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="88" height="36" rx="8" fill="none" stroke="#081d2a" stroke-width="1.6" opacity="0.8"/>

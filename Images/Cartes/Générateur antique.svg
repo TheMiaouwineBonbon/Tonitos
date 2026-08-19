@@ -105,8 +105,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#07131b" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="689" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#07131b">Chaîne d'assemblage</text>
-  <text x="84" y="723" font-size="24" font-weight="400" fill="#1d120c">Crée jusqu'à deux Drones antiques 1/1.</text>
+  <text x="84" y="674" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#07131b">Chaîne d'assemblage</text>
+  <text x="84" y="708" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Crée jusqu'à deux Drones antiques 1/1.</text>
   <g>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="none" stroke="#07131b" stroke-width="1.6" opacity="0.8"/>

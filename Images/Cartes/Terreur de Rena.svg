@@ -126,9 +126,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#0d180d" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#0d180d">Jugement des profanateurs</text>
-  <text x="84" y="704" font-size="23.5" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de</text>
-  <text x="84" y="735" font-size="23.5" font-weight="400" fill="#1d120c">bataille, inflige 3 blessures à toutes les</text>
-  <text x="84" y="766" font-size="23.5" font-weight="400" fill="#1d120c">créatures adverses.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.5" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille,</text>
+  <text x="84" y="735" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.5" font-weight="400" fill="#1d120c">inflige 3 blessures à toutes les créatures adverses.</text>
   <g>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="none" stroke="#0d180d" stroke-width="1.6" opacity="0.8"/>
@@ -148,8 +147,8 @@
     <text x="402.80000000000007" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Vengeance</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Quand les arbres cessent de murmurer, il est déjà</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">trop tard.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Quand les arbres cessent de murmurer, il est déjà trop</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">tard.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

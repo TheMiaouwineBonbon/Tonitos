@@ -47,7 +47,7 @@ export function wrapText(text, maxChars) {
 function textBlock(lines, x, y, size, fill, weight = 500, lineHeight = 26) {
   return lines
     .map((line, index) => {
-      return `<text x="${x}" y="${y + index * lineHeight}" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeXml(line)}</text>`;
+      return `<text x="${x}" y="${y + index * lineHeight}" font-family="${POLICE_CORPS}" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeXml(line)}</text>`;
     })
     .join("\n  ");
 }
@@ -304,99 +304,160 @@ function rangeeMana(jetons, cx, cy, r, ecart, ELEMENTS, image, separateur = null
 // tags recommencent a toucher le filet.
 export const HAUTEUR_BADGE = 36;
 
-// Repartition verticale du panneau de texte. Trois reperes seulement :
-// le nom de capacite en haut, la citation ancree en bas, et entre les deux
-// le texte de regle puis les mots-cles, qui se decalent selon la hauteur
-// reellement occupee. Les blocs absents ne laissent plus de trou.
-function planPanneau(nbLignesTexte, interligne, motsCles, nbLignesCitation) {
+// Police du corps de carte. Elle n etait PAS declaree : le texte heritait
+// du sans-serif de la page hote, donc un SVG ouvert seul - ou envoye a
+// l imprimante - ne rendait pas comme dans le jeu. La declarer fige le
+// rendu, et c est elle que mesure la table de largeurs ci-dessous.
+export const POLICE_CORPS =
+  "Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif";
+
+// Largeur reelle des caracteres du corps de carte, en em, mesuree dans le
+// navigateur sur les caracteres qu emploient les textes de capacite.
+// Couper au NOMBRE de caracteres obligeait a un budget prudent : les lignes
+// ne remplissaient que 57 % de la largeur utile, ce qui ajoutait des lignes
+// inutiles et poussait le texte sur les mots-cles.
+const LARGEURS_CORPS = {
+  " ": 0.274, "'": 0.23, "+": 0.684, ",": 0.217, "-": 0.4, ".": 0.217, "/": 0.39, ":": 0.217,
+  "0": 0.539, "1": 0.539, "2": 0.539, "3": 0.539, "4": 0.539,
+  "5": 0.539, "6": 0.539, "7": 0.539, "8": 0.539, "9": 0.539,
+  A: 0.645, B: 0.573, C: 0.619, D: 0.701, E: 0.506, F: 0.488, G: 0.686, H: 0.71, I: 0.266,
+  J: 0.357, K: 0.598, L: 0.471, M: 0.898, N: 0.748, O: 0.754, P: 0.56, Q: 0.754, R: 0.598,
+  S: 0.531, T: 0.524, U: 0.71, V: 0.621, W: 0.95, X: 0.598, Y: 0.57, Z: 0.57,
+  a: 0.509, b: 0.588, c: 0.462, d: 0.589, e: 0.523, f: 0.313, g: 0.589, h: 0.566, i: 0.242,
+  j: 0.242, k: 0.497, l: 0.242, m: 0.861, n: 0.566, o: 0.586, p: 0.588, q: 0.589, r: 0.348,
+  s: 0.424, t: 0.339, u: 0.566, v: 0.479, w: 0.76, x: 0.459, y: 0.484, z: 0.459,
+  "À": 0.645, "É": 0.506, "à": 0.509, "â": 0.509, "ç": 0.462, "è": 0.523, "é": 0.523,
+  "ê": 0.523, "î": 0.242, "ô": 0.586, "ù": 0.566, "û": 0.566, "œ": 0.928
+};
+const LARGEUR_CORPS_DEFAUT = 0.55;
+
+export function largeurCorps(texte, taille) {
+  let em = 0;
+  for (const caractere of String(texte)) em += LARGEURS_CORPS[caractere] ?? LARGEUR_CORPS_DEFAUT;
+  return em * taille;
+}
+
+// Largeur utile du panneau : le texte est pose a 28 px du bord gauche et
+// doit s arreter 28 px avant le bord droit.
+export const LARGEUR_CORPS_MAX = G.panneau.w - 56;
+
+// Retour a la ligne MESURE : chaque ligne se remplit jusqu a la largeur
+// reellement disponible, au lieu d un quota de caracteres prudent.
+export function couperTexte(texte, taille, largeurMax = LARGEUR_CORPS_MAX, mesure = largeurCorps) {
+  const mots = String(texte || "").split(/\s+/).filter(Boolean);
+  const lignes = [];
+  let ligne = "";
+  for (const mot of mots) {
+    const essai = ligne ? ligne + " " + mot : mot;
+    if (ligne && mesure(essai, taille) > largeurMax) {
+      lignes.push(ligne);
+      ligne = mot;
+    } else {
+      ligne = essai;
+    }
+  }
+  if (ligne) lignes.push(ligne);
+  return lignes;
+}
+
+// Paliers de composition du texte de regle, du plus confortable au plus
+// dense. Plus de quota de caracteres : la largeur est desormais MESUREE,
+// donc chaque palier remplit reellement les 576 px utiles.
+const PALIERS_CAPACITE = [
+  { taille: 24, interligne: 32 },
+  { taille: 22, interligne: 29 },
+  { taille: 21, interligne: 26 },
+  { taille: 19, interligne: 24 }
+];
+
+// Reperes verticaux du panneau, tous derives de la hauteur REELLE du texte.
+const NOM_VERS_TEXTE = 34;   // ligne de base du nom -> premiere ligne de regle
+const TEXTE_VERS_TAGS = 12;  // bas du texte -> haut des plaques
+const TAGS_VERS_FILET = 12;  // bas des plaques -> filet de la citation
+const DESCENTE = 0.28;       // part de la taille sous la ligne de base
+
+// Hauteur occupee par le bloc de regle, du nom jusqu au filet.
+function hauteurBloc(nbLignes, taille, interligne, aDesMotsCles) {
+  const texte = NOM_VERS_TEXTE + Math.max(0, nbLignes - 1) * interligne + taille * DESCENTE;
+  return texte + (aDesMotsCles ? TEXTE_VERS_TAGS + HAUTEUR_BADGE + TAGS_VERS_FILET : TAGS_VERS_FILET);
+}
+
+// Repartition verticale du panneau. La citation est ancree au bas, le filet
+// juste au-dessus ; le bloc de regle occupe le reste. Les mots-cles sont
+// places APRES le texte, jamais avant : c est la regle qui manquait.
+function planPanneau(nbLignesTexte, taille, interligne, motsCles, nbLignesCitation) {
   const haut = G.panneau.y;
   const bas = G.panneau.y + G.panneau.h;
   const interligneCitation = 25;
 
   // La citation reste ancree au bas : sa derniere ligne s arrete toujours a
-  // 16 px du bord, ce qui aligne le filet de separation d une carte a
-  // l autre. C est ce repere fixe qui harmonise les bas de carte.
+  // 16 px du bord, ce qui aligne le filet d une carte a l autre.
   const citation = bas - 16 - Math.max(0, nbLignesCitation - 1) * interligneCitation;
   const filet = citation - 26;
 
-  // Hauteur reelle du bloc de regle : nom, lignes de texte, mots-cles.
   const aDesMotsCles = Array.isArray(motsCles) && motsCles.length > 0;
-  const hauteurTexte = Math.max(0, nbLignesTexte - 1) * interligne;
-  const hauteurBloc = 34 + hauteurTexte + (aDesMotsCles ? 12 + HAUTEUR_BADGE : 0);
+  const bloc = hauteurBloc(nbLignesTexte, taille, interligne, aDesMotsCles);
 
-  // Le bloc est centre dans l espace disponible au lieu d etre cale en haut :
-  // une capacite d une seule ligne laissait sinon tout le vide d un seul
-  // cote, juste au-dessus du filet. Le centrage est ensuite releve de 2 %
-  // de la hauteur de carte : le descriptif respire au-dessus du filet au
-  // lieu de peser vers le bas. Le max(0) garde les cartes chargees en place.
+  // Le bloc est centre dans la place libre, puis releve de 2 % de la hauteur
+  // de carte : le descriptif respire au-dessus du filet au lieu de peser
+  // vers le bas. Le max(0) garde les cartes chargees calees en haut.
   const RELEVE_DESCRIPTIF = Math.round(G.H * 0.02);
-  const disponible = filet - 12 - (haut + 20);
-  const nom = haut + 42 + Math.max(0, Math.round((disponible - hauteurBloc) / 2) - RELEVE_DESCRIPTIF);
-  const texte = nom + 34;
+  const disponible = filet - (haut + 42);
+  const nom = haut + 42 + Math.max(0, Math.round((disponible - bloc) / 2) - RELEVE_DESCRIPTIF);
+  const texte = nom + NOM_VERS_TEXTE;
+  const basTexte = texte + Math.max(0, nbLignesTexte - 1) * interligne + taille * DESCENTE;
 
-  // Les mots-cles sont detaches du bloc de texte et descendent de 5 % de la
-  // hauteur de carte vers le filet : le descriptif garde sa place relevee,
-  // les tags s ancrent pres de la separation du bas.
-  const BAISSE_TAGS = Math.round(G.H * 0.05);
-  // Garde-fou absolu — le bug « Heritage des heros » : quel que soit le
-  // contenu, les mots-cles ne descendent jamais a moins de 12 px du filet.
-  // La descente est bornee par la meme regle, donc aucune collision possible.
-  const badges = Math.min(
-    texte + hauteurTexte + (aDesMotsCles ? 12 : 0) + BAISSE_TAGS,
-    filet - HAUTEUR_BADGE - 12
+  // Les tags s ancrent juste au-dessus du filet - meme hauteur d une carte a
+  // l autre - MAIS jamais avant la fin du texte. C est un « max », la ou un
+  // « min » remontait les plaques SOUS le texte sur les cartes chargees et
+  // provoquait le chevauchement.
+  const badges = Math.round(
+    Math.max(basTexte + TEXTE_VERS_TAGS, filet - HAUTEUR_BADGE - TAGS_VERS_FILET)
   );
 
-  return { nom, texte, badges, filet, citation, interligneCitation };
+  return { nom: Math.round(nom), texte: Math.round(texte), badges, filet, citation, interligneCitation };
 }
 
-// Paliers de composition du texte de regle, du plus confortable au plus
-// dense. Deux hausses successives de 10 % : les tailles courantes sont
-// passees de 20/18 a 22/20/19, puis a 24/22/21. Le dernier palier (19)
-// reste celui d origine : c est le filet de securite des textes les plus
-// longs, qui ne tiendraient physiquement pas a +21 % dans le panneau — et
-// il garantit par construction que 4 lignes + mots-cles + citation de
-// 2 lignes tiennent toujours.
-const PALIERS_CAPACITE = [
-  { taille: 24, interligne: 32, chars: 46 },
-  { taille: 22, interligne: 29, chars: 50 },
-  { taille: 21, interligne: 26, chars: 52 },
-  { taille: 19, interligne: 24, chars: 58 }
-];
-
 // Compose tout le panneau d une carte : lignes de regle au plus grand
-// palier qui tient (en largeur ET en hauteur, citation et mots-cles
-// compris), citation, et plan vertical. Les verificateurs appellent la
-// meme fonction que le dessin : impossible de controler autre chose que ce
-// qui est reellement rendu.
+// palier qui tient (largeur mesuree ET hauteur disponible, mots-cles et
+// citation compris), citation, et plan vertical. Les verificateurs appellent
+// la meme fonction que le dessin : impossible de controler autre chose que
+// ce qui est reellement rendu.
 export function composerPanneau(card) {
-  const flavorBrut = card.art?.svgFlavor === false ? [] : wrapText(card.flavor, 52);
-  const flavorLines = flavorBrut.slice(0, 2);
   const aDesMotsCles = Array.isArray(card.keywords) && card.keywords.length > 0;
 
-  // Reduction declaree par la carte elle-meme (champ `texteEchelle` des
-  // donnees, ex. 0.95 = -5 %). Le mecanisme reste global : le gabarit lit
-  // un reglage de donnees, il ne connait aucune carte par son nom. La
-  // cesure s elargit d autant, et le controle de tenue verticale s applique
-  // aux valeurs reduites : aucune collision possible.
+  // Reduction declaree par la carte elle-meme (champ « texteEchelle » des
+  // donnees, ex. 0.95 = -5 %). Le gabarit lit un reglage de donnees, il ne
+  // connait aucune carte par son nom.
   const echelle = Math.min(1, Math.max(0.7, Number(card.texteEchelle) || 1));
-  // La taille garde une decimale : un arrondi entier avalerait les
-  // reductions de 2 et 3 % (24 x 0,98 = 23,52, arrondi a 24 = aucun effet).
   const paliers = PALIERS_CAPACITE.map((palier) => ({
     taille: Math.round(palier.taille * echelle * 10) / 10,
-    interligne: Math.round(palier.interligne * echelle),
-    chars: Math.round(palier.chars / echelle)
+    interligne: Math.round(palier.interligne * echelle)
   }));
+
+  // La citation se coupe a la meme largeur utile. En italique les glyphes
+  // sont un peu plus etroits : on mesure a 98 % pour rester prudent.
+  const tailleCitation = 21;
+  const flavorBrut =
+    card.art?.svgFlavor === false
+      ? []
+      : couperTexte(card.flavor, tailleCitation * 0.98, LARGEUR_CORPS_MAX, largeurTitre);
+  const flavorLines = flavorBrut.slice(0, 2);
 
   const bas = G.panneau.y + G.panneau.h;
   const citation = bas - 16 - Math.max(0, flavorLines.length - 1) * 25;
-  const disponible = citation - 26 - 12 - (G.panneau.y + 20);
+  const filet = citation - 26;
+  const disponible = filet - (G.panneau.y + 42);
 
+  // Premier palier dont le texte tient EN LARGEUR (4 lignes au plus) et dont
+  // le bloc complet - mots-cles inclus - tient EN HAUTEUR. La contrainte de
+  // hauteur garantit a elle seule qu aucun chevauchement n est possible.
   let choix = paliers.at(-1);
-  let lignes = wrapText(card.abilityText, choix.chars);
+  let lignes = couperTexte(card.abilityText, choix.taille);
   for (const palier of paliers) {
-    const essai = wrapText(card.abilityText, palier.chars);
-    const bloc = 34 + Math.max(0, essai.length - 1) * palier.interligne + (aDesMotsCles ? 12 + HAUTEUR_BADGE : 0);
-    if (essai.length <= 4 && bloc <= disponible) {
+    const essai = couperTexte(card.abilityText, palier.taille);
+    const tient = hauteurBloc(essai.length, palier.taille, palier.interligne, aDesMotsCles) <= disponible;
+    if (essai.length <= 4 && tient) {
       choix = palier;
       lignes = essai;
       break;
@@ -405,8 +466,19 @@ export function composerPanneau(card) {
 
   const tronque = lignes.length > 4 || flavorBrut.length > 2;
   const abilityLines = lignes.slice(0, 4);
-  const plan = planPanneau(abilityLines.length, choix.interligne, card.keywords, flavorLines.length);
-  return { abilityLines, taille: choix.taille, interligne: choix.interligne, flavorLines, plan, tronque };
+  const plan = planPanneau(
+    abilityLines.length, choix.taille, choix.interligne, card.keywords, flavorLines.length
+  );
+  return {
+    abilityLines,
+    taille: choix.taille,
+    interligne: choix.interligne,
+    flavorLines,
+    tailleCitation,
+    plan,
+    tronque,
+    police: POLICE_CORPS
+  };
 }
 
 // Ornement d'angle repris aux quatre coins de l'illustration : deux traits
@@ -522,6 +594,7 @@ function dessinerCarte(card, contexte) {
     taille: capaciteTaille,
     interligne: capaciteInterligne,
     flavorLines,
+    tailleCitation,
     plan
   } = composerPanneau(card);
   // Cout d une carte, production d un terrain : deux lectures du meme
@@ -646,7 +719,7 @@ function dessinerCarte(card, contexte) {
   ${badges(card.keywords, G.panneau.x + 28, plan.badges, teinteSombre)}
   <line x1="${G.panneau.x + 28}" y1="${plan.filet}" x2="${G.panneau.x + G.panneau.w - 28}" y2="${plan.filet}" stroke="${MATIERE.encreDouce}" stroke-width="1.2" opacity="0.3"/>
   ${flavorLines
-    .map((ligne, index) => `<text x="${centre(G.panneau)}" y="${plan.citation + index * plan.interligneCitation}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="${MATIERE.encreDouce}">${escapeXml(ligne)}</text>`)
+    .map((ligne, index) => `<text x="${centre(G.panneau)}" y="${plan.citation + index * plan.interligneCitation}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${tailleCitation}" font-style="italic" fill="${MATIERE.encreDouce}">${escapeXml(ligne)}</text>`)
     .join("\n  ")}
 
   ${barre(G.socle, matiereCadre)}

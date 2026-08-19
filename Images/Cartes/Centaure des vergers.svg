@@ -125,9 +125,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#112513" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="673" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#112513">Récolte d'automne</text>
-  <text x="84" y="707" font-size="24" font-weight="400" fill="#1d120c">Lien de vie : les blessures qu'elle inflige te</text>
-  <text x="84" y="739" font-size="24" font-weight="400" fill="#1d120c">rendent autant de points de vie.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#112513">Récolte d'automne</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Lien de vie : les blessures qu'elle inflige te rendent</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">autant de points de vie.</text>
   <g>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
@@ -135,8 +135,8 @@
     <text x="166.4" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Lien de vie</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Elle cueille pour ceux qui n'ont plus la force de</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">tendre le bras.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Elle cueille pour ceux qui n'ont plus la force de tendre</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">le bras.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

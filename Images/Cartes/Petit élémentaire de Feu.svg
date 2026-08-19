@@ -105,9 +105,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#2b0d08" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="709" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#2b0d08">Crépitement</text>
-  <text x="84" y="743" font-size="24" font-weight="400" fill="#1d120c">Il brûle vite, fort, et sans le moindre</text>
-  <text x="84" y="775" font-size="24" font-weight="400" fill="#1d120c">regret.</text>
+  <text x="84" y="711" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#2b0d08">Crépitement</text>
+  <text x="84" y="745" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Il brûle vite, fort, et sans le moindre regret.</text>
   
   <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
   <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Née d'une forge, morte cent fois, jamais éteinte.</text>

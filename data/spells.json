@@ -921,8 +921,7 @@
     "art": {
       "fit": "cover",
       "position": "50% 48%",
-      "svgFit": "cover",
-      "svgFlavor": false
+      "svgFit": "cover"
     },
     "numero": "109/168"
   },
@@ -956,8 +955,7 @@
     "art": {
       "fit": "cover",
       "position": "42% 47%",
-      "svgFit": "cover",
-      "svgFlavor": false
+      "svgFit": "cover"
     },
     "numero": "110/168"
   },
@@ -991,8 +989,7 @@
     "art": {
       "fit": "cover",
       "position": "50% 46%",
-      "svgFit": "cover",
-      "svgFlavor": false
+      "svgFit": "cover"
     },
     "numero": "111/168"
   },

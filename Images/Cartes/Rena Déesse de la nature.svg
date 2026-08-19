@@ -126,24 +126,23 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#112513" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#112513">Éveil de la canopée</text>
-  <text x="84" y="704" font-size="23.3" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de</text>
-  <text x="84" y="735" font-size="23.3" font-weight="400" fill="#1d120c">bataille, tes autres créatures gagnent +2/+2 et</text>
-  <text x="84" y="766" font-size="23.3" font-weight="400" fill="#1d120c">tu gagnes 5 points de vie.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille, tes</text>
+  <text x="84" y="735" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">autres créatures gagnent +2/+2 et tu gagnes 5 points</text>
+  <text x="84" y="766" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">de vie.</text>
   <g>
-    <rect x="84" y="773" width="100.80000000000001" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="773" width="100.80000000000001" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="775" width="96.80000000000001" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="134.4" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Portée</text>
+    <rect x="84" y="798" width="100.80000000000001" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="798" width="100.80000000000001" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="800" width="96.80000000000001" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="134.4" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Portée</text>
   </g>
   <g>
-    <rect x="195.8" y="773" width="152" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="195.8" y="773" width="152" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
-    <rect x="197.8" y="775" width="148" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="271.8" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Croissance</text>
+    <rect x="195.8" y="798" width="152" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="195.8" y="798" width="152" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
+    <rect x="197.8" y="800" width="148" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="271.8" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Croissance</text>
   </g>
-  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Les bêtes ne la suivent pas : elles rentrent chez</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">elles.</text>
+  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Les bêtes ne la suivent pas : elles rentrent chez elles.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

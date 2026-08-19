@@ -125,9 +125,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#081d2a" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="673" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#081d2a">Chant d'amarrage</text>
-  <text x="84" y="707" font-size="23.3" font-weight="400" fill="#1d120c">Défenseur : leur chant retient les assaillants,</text>
-  <text x="84" y="738" font-size="23.3" font-weight="400" fill="#1d120c">mais le Chœur ne part jamais à l'attaque.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#081d2a">Chant d'amarrage</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">Défenseur : leur chant retient les assaillants, mais le</text>
+  <text x="84" y="735" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">Chœur ne part jamais à l'attaque.</text>
   <g>
     <rect x="84" y="773" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="139.2" height="36" rx="8" fill="none" stroke="#081d2a" stroke-width="1.6" opacity="0.8"/>

@@ -2182,8 +2182,7 @@
     "art": {
       "fit": "cover",
       "position": "42% 48%",
-      "svgFit": "cover",
-      "svgFlavor": false
+      "svgFit": "cover"
     },
     "numero": "067/168"
   },
@@ -2217,8 +2216,7 @@
     "art": {
       "fit": "cover",
       "position": "58% 45%",
-      "svgFit": "cover",
-      "svgFlavor": false
+      "svgFit": "cover"
     },
     "texteEchelle": 0.95,
     "numero": "068/168"

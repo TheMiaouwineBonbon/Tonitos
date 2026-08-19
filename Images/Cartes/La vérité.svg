@@ -125,23 +125,24 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#15070d" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="685" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#15070d">Vision insoutenable</text>
-  <text x="84" y="719" font-size="24" font-weight="400" fill="#1d120c">L'adversaire défausse les deux cartes les plus</text>
-  <text x="84" y="751" font-size="24" font-weight="400" fill="#1d120c">coûteuses de sa main et perd 2 points de vie.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#15070d">Vision insoutenable</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">L'adversaire défausse les deux cartes les plus</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">coûteuses de sa main et perd 2 points de vie.</text>
   <g>
-    <rect x="84" y="798" width="152" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="798" width="152" height="36" rx="8" fill="none" stroke="#15070d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="800" width="148" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="160" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Révélation</text>
+    <rect x="84" y="773" width="152" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="773" width="152" height="36" rx="8" fill="none" stroke="#15070d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="775" width="148" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="160" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Révélation</text>
   </g>
   <g>
-    <rect x="247" y="798" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="247" y="798" width="126.4" height="36" rx="8" fill="none" stroke="#15070d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="249" y="800" width="122.4" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="310.2" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Défausse</text>
+    <rect x="247" y="773" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="247" y="773" width="126.4" height="36" rx="8" fill="none" stroke="#15070d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="249" y="775" width="122.4" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="310.2" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Défausse</text>
   </g>
-  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  
+  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Il cherchait une réponse. La vérité lui montra tout ce</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">qu'il aurait préféré ignorer.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

@@ -126,9 +126,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#120711" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#120711">Seconde destinée</text>
-  <text x="84" y="704" font-size="23.3" font-weight="400" fill="#1d120c">Ramène jusqu'à deux créatures parmi les plus</text>
-  <text x="84" y="735" font-size="23.3" font-weight="400" fill="#1d120c">puissantes de ton cimetière sur le champ de</text>
-  <text x="84" y="766" font-size="23.3" font-weight="400" fill="#1d120c">bataille.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">Ramène jusqu'à deux créatures parmi les plus</text>
+  <text x="84" y="735" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="23.3" font-weight="400" fill="#1d120c">puissantes de ton cimetière sur le champ de bataille.</text>
   <g>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="none" stroke="#120711" stroke-width="1.6" opacity="0.8"/>

@@ -100,6 +100,13 @@ for (const carte of toutes) {
   // Capacite et citation : la composition reelle du gabarit fait foi.
   const panneau = gabarit.composerPanneau(carte);
   if (panneau.tronque) bloquant(`${carte.name} : texte ou citation tronqués au rendu`);
+
+  // Une carte qui a une citation doit l'afficher. Le drapeau `svgFlavor:false`
+  // datait d'une mise en page figée qui manquait de place : il masquait
+  // silencieusement cinq citations pourtant présentes dans les données.
+  if (String(carte.flavor || "").trim() && panneau.flavorLines.length === 0) {
+    bloquant(`${carte.name} : citation présente dans les données mais absente de la carte`);
+  }
   if ((carte.keywords || []).length > 0 && panneau.plan.badges + gabarit.HAUTEUR_BADGE > panneau.plan.filet - 12) {
     bloquant(`${carte.name} : les mots-clés touchent le filet`);
   }

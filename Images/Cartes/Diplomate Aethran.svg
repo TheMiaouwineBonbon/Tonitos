@@ -126,24 +126,24 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#100a16" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#100a16">Clause empoisonnée</text>
-  <text x="84" y="704" font-size="22.8" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de</text>
-  <text x="84" y="734" font-size="22.8" font-weight="400" fill="#1d120c">bataille, le héros adverse perd 1 point de vie.</text>
-  <text x="84" y="764" font-size="22.8" font-weight="400" fill="#1d120c">Si tu contrôles Comte Thaelion, il défausse</text>
-  <text x="84" y="794" font-size="22.8" font-weight="400" fill="#1d120c">aussi sa carte la plus coûteuse.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille, le héros</text>
+  <text x="84" y="729" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="400" fill="#1d120c">adverse perd 1 point de vie. Si tu contrôles Comte Thaelion, il</text>
+  <text x="84" y="754" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="400" fill="#1d120c">défausse aussi sa carte la plus coûteuse.</text>
   <g>
-    <rect x="84" y="798" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="798" width="139.2" height="36" rx="8" fill="none" stroke="#100a16" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="800" width="135.2" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="153.6" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Diplomate</text>
+    <rect x="84" y="773" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="773" width="139.2" height="36" rx="8" fill="none" stroke="#100a16" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="775" width="135.2" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="153.6" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Diplomate</text>
   </g>
   <g>
-    <rect x="234.2" y="798" width="88" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="234.2" y="798" width="88" height="36" rx="8" fill="none" stroke="#100a16" stroke-width="1.6" opacity="0.8"/>
-    <rect x="236.2" y="800" width="84" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="278.2" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Pacte</text>
+    <rect x="234.2" y="773" width="88" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="234.2" y="773" width="88" height="36" rx="8" fill="none" stroke="#100a16" stroke-width="1.6" opacity="0.8"/>
+    <rect x="236.2" y="775" width="84" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="278.2" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Pacte</text>
   </g>
-  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  
+  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Aethran ne ment jamais. Il laisse seulement ses</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">interlocuteurs choisir la mauvaise vérité.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

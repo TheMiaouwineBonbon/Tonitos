@@ -126,9 +126,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#0f170b" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#0f170b">Vengeance de Rena</text>
-  <text x="84" y="704" font-size="23.3" font-weight="400" fill="#1d120c">Tant que cette carte est sur ton champ de</text>
-  <text x="84" y="735" font-size="23.3" font-weight="400" fill="#1d120c">bataille, chaque créature ennemie qui attaque</text>
-  <text x="84" y="766" font-size="23.3" font-weight="400" fill="#1d120c">subit 2 blessures après le combat.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20.4" font-weight="400" fill="#1d120c">Tant que cette carte est sur ton champ de bataille, chaque</text>
+  <text x="84" y="729" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20.4" font-weight="400" fill="#1d120c">créature ennemie qui attaque subit 2 blessures après le combat.</text>
   <g>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="126.4" height="36" rx="8" fill="none" stroke="#0f170b" stroke-width="1.6" opacity="0.8"/>

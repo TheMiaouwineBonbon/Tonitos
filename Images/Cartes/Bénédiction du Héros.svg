@@ -125,8 +125,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#3d3520" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="689" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#3d3520">Armes consacrées</text>
-  <text x="84" y="723" font-size="24" font-weight="400" fill="#1d120c">Tes créatures gagnent +1/+1.</text>
+  <text x="84" y="674" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#3d3520">Armes consacrées</text>
+  <text x="84" y="708" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Tes créatures gagnent +1/+1.</text>
   <g>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="164.8" height="36" rx="8" fill="none" stroke="#3d3520" stroke-width="1.6" opacity="0.8"/>
@@ -140,8 +140,8 @@
     <text x="329.4" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Vaillance</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">La lumière ne choisit pas le héros ; elle révèle</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">celui qui se lève.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">La lumière ne choisit pas le héros ; elle révèle celui</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">qui se lève.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

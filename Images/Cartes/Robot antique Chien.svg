@@ -116,9 +116,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#191711" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#191711">Fidélité programmée</text>
-  <text x="84" y="704" font-size="23.3" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de</text>
-  <text x="84" y="735" font-size="23.3" font-weight="400" fill="#1d120c">bataille, si tu contrôles un autre Robot</text>
-  <text x="84" y="766" font-size="23.3" font-weight="400" fill="#1d120c">antique, gagne 2 points de vie.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.3" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille, si tu</text>
+  <text x="84" y="732" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.3" font-weight="400" fill="#1d120c">contrôles un autre Robot antique, gagne 2 points de vie.</text>
   <g>
     <rect x="84" y="773" width="190.4" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="190.4" height="36" rx="8" fill="none" stroke="#191711" stroke-width="1.6" opacity="0.8"/>
@@ -132,8 +131,8 @@
     <text x="355" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Vigilance</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Il attend toujours le retour de maîtres disparus</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">depuis des millénaires.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Il attend toujours le retour de maîtres disparus depuis</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">des millénaires.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

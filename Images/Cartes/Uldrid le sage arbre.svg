@@ -126,9 +126,8 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#112513" stroke-width="1.4" opacity="0.4"/>
   <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#112513">Racines profondes</text>
-  <text x="84" y="704" font-size="23.5" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de</text>
-  <text x="84" y="735" font-size="23.5" font-weight="400" fill="#1d120c">bataille, mets un terrain depuis ton deck sur</text>
-  <text x="84" y="766" font-size="23.5" font-weight="400" fill="#1d120c">le champ de bataille engagé.</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.6" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille, mets un</text>
+  <text x="84" y="732" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.6" font-weight="400" fill="#1d120c">terrain depuis ton deck sur le champ de bataille engagé.</text>
   <g>
     <rect x="84" y="773" width="100.80000000000001" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="100.80000000000001" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>

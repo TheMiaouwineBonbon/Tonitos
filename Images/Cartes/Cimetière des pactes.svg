@@ -105,23 +105,24 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#12080d" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="685" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#12080d">Source noire</text>
-  <text x="84" y="719" font-size="24" font-weight="400" fill="#1d120c">Joue un seul terrain par tour. Ce terrain</text>
-  <text x="84" y="751" font-size="24" font-weight="400" fill="#1d120c">produit 1 mana noir.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#12080d">Source noire</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Joue un seul terrain par tour. Ce terrain produit 1</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">mana noir.</text>
   <g>
-    <rect x="84" y="798" width="113.60000000000001" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="798" width="113.60000000000001" height="36" rx="8" fill="none" stroke="#12080d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="800" width="109.60000000000001" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="140.8" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Terrain</text>
+    <rect x="84" y="773" width="113.60000000000001" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="773" width="113.60000000000001" height="36" rx="8" fill="none" stroke="#12080d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="775" width="109.60000000000001" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="140.8" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Terrain</text>
   </g>
   <g>
-    <rect x="208.60000000000002" y="798" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="208.60000000000002" y="798" width="139.2" height="36" rx="8" fill="none" stroke="#12080d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="210.60000000000002" y="800" width="135.2" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="278.20000000000005" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Mana noir</text>
+    <rect x="208.60000000000002" y="773" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="208.60000000000002" y="773" width="139.2" height="36" rx="8" fill="none" stroke="#12080d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="210.60000000000002" y="775" width="135.2" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="278.20000000000005" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Mana noir</text>
   </g>
-  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Chaque pierre sait un nom que personne ne prononce.</text>
+  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Chaque pierre sait un nom que personne ne</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">prononce.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadrePierre)"/>
