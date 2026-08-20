@@ -101,7 +101,11 @@ const MATIERE = {
   parcheminBas: "#e4cfa8",
   or: "#e8c477",
   orSombre: "#8a6526",
-  fond: "#140d0b"
+  fond: "#140d0b",
+  // Surlignage du numero de collection : le dore sur cadre clair devenait
+  // illisible. Pastille noire, chiffres jaunes, lisibles sur les six teintes.
+  noir: "#0b0a0c",
+  jaune: "#ffd84a"
 };
 
 const centre = (zone) => zone.x + zone.w / 2;
@@ -512,6 +516,37 @@ function badges(mots, x, y, teinte) {
   return sortie.join("\n  ");
 }
 
+// Numero de collection, en bas de carte. Il etait dore et translucide sur
+// un cadre lui-meme dore : illisible sur les teintes claires, et perdu au
+// scan une fois la carte imprimee. Il est desormais pose sur une pastille
+// noire, en jaune franc, avec la meme lisibilite sur les six couleurs.
+const NUMERO = { taille: 15, interlettre: 2, marge: 12, garde: 3 };
+
+function numeroCollection(numero) {
+  const texte = String(numero ?? "");
+  if (!texte) return "";
+
+  // La pastille vit dans la bande laissee libre sous la barre de pied, sans
+  // la mordre et sans toucher le bord : une carte se massicote, ce qui rogne
+  // toujours un peu. Elle prend toute cette bande, garde comprise.
+  const hautBande = G.H - G.marge;
+  const y = hautBande + NUMERO.garde;
+  const hauteur = G.H - NUMERO.garde - y;
+
+  // Georgia gras : la meme table de largeurs que les titres. L'interlettre
+  // s'ajoute apres chaque glyphe, il compte donc dans la largeur du fond.
+  const largeurTexte = largeurTitre(texte, NUMERO.taille) + NUMERO.interlettre * texte.length;
+  const largeur = Math.round(largeurTexte + NUMERO.marge * 2);
+  // Baseline centree dans la pastille : la hauteur d'oeil des chiffres
+  // Georgia vaut environ 0,7 em, on descend donc d'une demi-hauteur d'oeil.
+  const base = Math.round(y + hauteur / 2 + NUMERO.taille * 0.35);
+
+  return `<g>
+    <rect x="${Math.round((G.W - largeur) / 2)}" y="${y}" width="${largeur}" height="${hauteur}" rx="6" fill="${MATIERE.noir}"/>
+    <text x="${G.W / 2}" y="${base}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="${NUMERO.taille}" font-weight="700" letter-spacing="${NUMERO.interlettre}" fill="${MATIERE.jaune}">${escapeXml(texte)}</text>
+  </g>`;
+}
+
 // Medaillon du socle : meme construction que les gemmes du haut, avec un
 // symbole qui dit sa fonction sans qu'on ait a lire le chiffre.
 function medaillonIllustre(cx, cy, r, piece, valeur, image) {
@@ -724,7 +759,7 @@ function dessinerCarte(card, contexte) {
 
   ${barre(G.socle, matiereCadre)}
   ${socle}
-  ${card.numero ? `<text x="${G.W / 2}" y="${G.H - 11}" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" letter-spacing="2" fill="${MATIERE.or}" opacity="0.8">${escapeXml(card.numero)}</text>` : ""}
+  ${numeroCollection(card.numero)}
   <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="${matiereCadre}"/>
   <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="none" stroke="${MATIERE.orSombre}" stroke-width="1.5" opacity="0.9"/>
   <rect x="${G.marge + 14}" y="${G.H - G.marge - 9}" width="${G.W - (G.marge + 14) * 2}" height="2" rx="1" fill="${MATIERE.or}" opacity="0.55"/>
