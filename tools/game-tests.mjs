@@ -741,6 +741,200 @@ section("Fuzz : clics aléatoires, y compris illégaux");
 }
 
 // ======================================================================
+// Les quatre effets du lot « resilience » ne sont jamais garantis par une
+// main aleatoire : on installe donc l'etat exact que chacun doit traiter,
+// puis on lance le sort par le meme chemin que le joueur.
+section("Sorts de résilience");
+{
+  const sortParId = (id) => jeu().spells.find((carte) => carte.id === id);
+
+  // Deux terrains non engages par couleur : le lot contient des sorts blancs,
+  // bleus, noirs, rouges et verts, et le deck de test n'en couvre que deux.
+  function approvisionner(parCouleur = 2) {
+    jeu().player.lands.length = 0;
+    for (const couleur of ["Blanc", "Bleu", "Noir", "Rouge", "Vert"]) {
+      const source = jeu().lands.find(
+        (terrain) => (terrain.manaProduction?.colors || []).length === 1
+          && terrain.manaProduction.colors[0] === couleur
+      );
+      for (let i = 0; i < parCouleur; i += 1) {
+        jeu().player.lands.push({ ...source, uid: `terrain-${couleur}-${i}`, tapped: false });
+      }
+    }
+  }
+
+  function mettreEnMain(id) {
+    const source = sortParId(id);
+    if (!source) return null;
+    const uid = `sort-test-${id}`;
+    jeu().player.hand.push({ ...source, uid });
+    rendre();
+    return uid;
+  }
+
+  // --- Soin ciblé -----------------------------------------------------
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.board.push(
+    { ...jeu().cards[0], uid: "blessee", owner: "player", maxLife: 6, currentLife: 1, attack: 2, tapped: false, keywords: [] },
+    { ...jeu().cards[0], uid: "intacte", owner: "player", maxLife: 4, currentLife: 4, attack: 2, tapped: false, keywords: [] }
+  );
+  rendre();
+  const uidBulle = mettreEnMain("bulle-revigorante");
+  const bulle = jouerParFiche(uidBulle);
+  const soignee = jeu().player.board.find((u) => u.uid === "blessee");
+  verifier(bulle.active, "Bulle Revigorante est jouable avec du mana de chaque couleur");
+  verifier(soignee?.currentLife === 6, "Bulle Revigorante rend toutes ses blessures à la créature la plus amochée", `${soignee?.currentLife}/6`);
+
+  // --- Défenseur + régénération ---------------------------------------
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.board.push({
+    ...jeu().cards[0], uid: "a-purifier", owner: "player",
+    maxLife: 5, currentLife: 2, attack: 3, tapped: false, keywords: ["Célérité"]
+  });
+  rendre();
+  const uidFlamme = mettreEnMain("flamme-purificatrice");
+  const flamme = jouerParFiche(uidFlamme);
+  const purifiee = jeu().player.board.find((u) => u.uid === "a-purifier");
+  verifier(flamme.active, "Flamme Purificatrice est jouable");
+  verifier(purifiee?.currentLife === 5, "Flamme Purificatrice régénère entièrement sa cible", `${purifiee?.currentLife}/5`);
+  verifier(
+    (purifiee?.keywords || []).includes("Défenseur"),
+    "Flamme Purificatrice ajoute Défenseur",
+    (purifiee?.keywords || []).join(", ")
+  );
+  verifier(
+    (purifiee?.keywords || []).filter((k) => k === "Défenseur").length === 1,
+    "Défenseur n'est pas ajouté deux fois"
+  );
+
+  // --- Le pendant bleu à 2 manas fait exactement la même chose ---------
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.board.push({
+    ...jeu().cards[0], uid: "a-venger", owner: "player",
+    maxLife: 5, currentLife: 1, attack: 2, tapped: false, keywords: []
+  });
+  rendre();
+  const uidVengeur = mettreEnMain("ultime-vengeur");
+  const vengeur = jouerParFiche(uidVengeur);
+  const vengee = jeu().player.board.find((u) => u.uid === "a-venger");
+  verifier(vengeur.active, "Ultime Vengeur est jouable pour 2 manas bleus");
+  verifier(vengee?.currentLife === 5, "Ultime Vengeur régénère entièrement sa cible", `${vengee?.currentLife}/5`);
+  verifier((vengee?.keywords || []).includes("Défenseur"), "Ultime Vengeur ajoute Défenseur");
+
+  // --- Régénération noire : soigne tout, coûte 1 PV --------------------
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.board.push(
+    { ...jeu().cards[0], uid: "r1", owner: "player", maxLife: 4, currentLife: 1, attack: 1, tapped: false, keywords: [] },
+    { ...jeu().cards[0], uid: "r2", owner: "player", maxLife: 3, currentLife: 2, attack: 1, tapped: false, keywords: [] }
+  );
+  const vieAvant = jeu().player.life;
+  rendre();
+  const uidRegen = mettreEnMain("regeneration-du-mal");
+  jouerParFiche(uidRegen);
+  const tousSoignes = jeu().player.board.every((u) => u.currentLife === u.maxLife);
+  verifier(tousSoignes, "Régénération du mal referme toutes les blessures du camp");
+  verifier(jeu().player.life === vieAvant - 1, "Régénération du mal coûte 1 point de vie au commandant", `${vieAvant} -> ${jeu().player.life}`);
+
+  // --- Réanimation aléatoire ------------------------------------------
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.graveyard.length = 0;
+  const enterres = jeu().cards.slice(0, 3);
+  for (const [index, carte] of enterres.entries()) {
+    jeu().player.graveyard.push({ ...carte, kind: "creature", uid: `tombe-${index}` });
+  }
+  rendre();
+  const uidSeconde = mettreEnMain("seconde-chance");
+  const seconde = jouerParFiche(uidSeconde);
+  verifier(seconde.active, "Seconde Chance est jouable quand le cimetière contient une créature");
+  // La créature ramenée peut déclencher son effet d'arrivée et créer un jeton :
+  // on ne compte donc que les unités issues d'une vraie carte.
+  const ramenees = jeu().player.board.filter((u) => !u.token).length;
+  verifier(ramenees === 1, "Seconde Chance ramène exactement une créature", `${ramenees}`);
+  // Le sort lancé rejoint lui aussi le cimetière : on ne compte que les créatures.
+  const creaturesEnterrees = jeu().player.graveyard.filter((e) => e.kind === "creature").length;
+  verifier(creaturesEnterrees === 2, "La créature ramenée quitte le cimetière", `${creaturesEnterrees}`);
+  verifier(
+    jeu().player.board.some((unite) => !unite.token && enterres.some((carte) => carte.id === unite.id)),
+    "La créature ramenée vient bien du cimetière"
+  );
+
+  // Cimetière vide : le sort ne doit rien casser.
+  await lancerPartie("pve");
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.graveyard.length = 0;
+  rendre();
+  const uidJamais = mettreEnMain("jamais-abandonner");
+  jouerParFiche(uidJamais);
+  verifier(jeu().player.board.length === 0, "Jamais abandonner sur cimetière vide ne pose aucune créature");
+  verifier(debug.validate().length === 0, "L'état reste valide après un sort de réanimation sans cible", debug.validate().join(" / "));
+}
+
+// ======================================================================
+// La ruche doit faire eclore la VRAIE carte Parasite Larve, pas un jeton
+// recopie a la main : c'est ce qui lui donne son illustration et son
+// numero de collection.
+section("Éclosion de la ruche");
+{
+  const carteParId = (id) => jeu().cards.find((carte) => carte.id === id);
+
+  await lancerPartie("pve");
+  jeu().player.board.length = 0;
+  jeu().player.board.push({
+    ...carteParId("zombie-parasite"), uid: "zombie-mourant", owner: "player",
+    maxLife: 2, currentLife: 0, attack: 2, tapped: false
+  });
+  // Le ramassage des morts suit une action, pas la fin du tour : on lance
+  // un sort sans effet sur notre camp pour la déclencher.
+  jeu().player.lands.length = 0;
+  for (const couleur of ["Blanc", "Blanc", "Blanc"]) {
+    const source = jeu().lands.find(
+      (t) => (t.manaProduction?.colors || []).length === 1 && t.manaProduction.colors[0] === couleur
+    );
+    jeu().player.lands.push({ ...source, uid: `terrain-ruche-${jeu().player.lands.length}`, tapped: false });
+  }
+  jeu().player.hand.push({ ...jeu().spells.find((s) => s.id === "intervention-aldia"), uid: "sort-declencheur" });
+  rendre();
+  jouerParFiche("sort-declencheur");
+  await attendre(120);
+  const eclose = jeu().player.board.find((u) => u.id === "parasite-larve");
+  verifier(Boolean(eclose), "Le Zombie parasité fait éclore une Parasite Larve à sa mort");
+  verifier(eclose?.name === "Parasite Larve", "La créature éclose porte le nom de la carte", eclose?.name);
+  verifier(
+    eclose?.image === carteParId("parasite-larve")?.image,
+    "Elle porte l'illustration de la carte Parasite Larve",
+    eclose?.image
+  );
+  verifier(eclose?.attack === 1 && eclose?.maxLife === 1, "Elle sort en 1/1", `${eclose?.attack}/${eclose?.maxLife}`);
+
+  // La Reine en pond deux, de la meme carte.
+  await lancerPartie("pve");
+  jeu().player.board.length = 0;
+  jeu().player.hand.push({ ...carteParId("reine-parasite"), uid: "reine-test" });
+  jeu().player.lands.length = 0;
+  for (let i = 0; i < 8; i += 1) {
+    const source = jeu().lands.find((t) => (t.manaProduction?.colors || [])[0] === "Vert");
+    jeu().player.lands.push({ ...source, uid: `terrain-reine-${i}`, tapped: false });
+  }
+  rendre();
+  const reine = jouerParFiche("reine-test");
+  const larves = jeu().player.board.filter((u) => u.id === "parasite-larve");
+  verifier(reine.active, "La Reine Parasite est jouable avec 8 terrains verts");
+  verifier(larves.length === 2, "La Reine Parasite fait éclore deux Parasite Larve", `${larves.length}`);
+  verifier(debug.validate().length === 0, "L'état reste valide après l'éclosion", debug.validate().join(" / "));
+}
+
+// ======================================================================
 section("Mode local à deux joueurs");
 {
   await lancerPartie("pvp");

@@ -26,7 +26,7 @@
       "deep": "#2a160d"
     },
     "texteEchelle": 0.97,
-    "numero": "001/168"
+    "numero": "001/198"
   },
   {
     "id": "familliers",
@@ -54,7 +54,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "002/168"
+    "numero": "002/198"
   },
   {
     "id": "griffon",
@@ -82,7 +82,7 @@
       "secondary": "#f1d88a",
       "deep": "#2e2112"
     },
-    "numero": "003/168"
+    "numero": "003/198"
   },
   {
     "id": "johanna",
@@ -110,7 +110,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "004/168"
+    "numero": "004/198"
   },
   {
     "id": "terreur-mers-iguis",
@@ -138,7 +138,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "005/168"
+    "numero": "005/198"
   },
   {
     "id": "valerius",
@@ -166,7 +166,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "006/168"
+    "numero": "006/198"
   },
   {
     "id": "noxis",
@@ -194,7 +194,7 @@
       "secondary": "#ff6f4a",
       "deep": "#18090a"
     },
-    "numero": "007/168"
+    "numero": "007/198"
   },
   {
     "id": "amrin",
@@ -222,7 +222,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "008/168"
+    "numero": "008/198"
   },
   {
     "id": "dyklanne",
@@ -250,7 +250,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "009/168"
+    "numero": "009/198"
   },
   {
     "id": "bebe-dragon",
@@ -278,7 +278,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "010/168"
+    "numero": "010/198"
   },
   {
     "id": "uldrid",
@@ -307,7 +307,7 @@
       "deep": "#112513"
     },
     "texteEchelle": 0.98,
-    "numero": "011/168"
+    "numero": "011/198"
   },
   {
     "id": "chevalier-sans-espoir",
@@ -336,7 +336,7 @@
       "deep": "#12080d"
     },
     "texteEchelle": 0.95,
-    "numero": "012/168"
+    "numero": "012/198"
   },
   {
     "id": "nilith",
@@ -364,7 +364,7 @@
       "secondary": "#d5448a",
       "deep": "#120711"
     },
-    "numero": "013/168"
+    "numero": "013/198"
   },
   {
     "id": "diablotins",
@@ -395,7 +395,7 @@
       "fit": "cover",
       "position": "50% 42%"
     },
-    "numero": "014/168"
+    "numero": "014/198"
   },
   {
     "id": "golem-pierre",
@@ -423,7 +423,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "015/168"
+    "numero": "015/198"
   },
   {
     "id": "magiciens-exiles",
@@ -451,7 +451,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "016/168"
+    "numero": "016/198"
   },
   {
     "id": "morts-vivants",
@@ -478,7 +478,7 @@
       "secondary": "#a4b37c",
       "deep": "#151a12"
     },
-    "numero": "017/168"
+    "numero": "017/198"
   },
   {
     "id": "orcs",
@@ -505,7 +505,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "018/168"
+    "numero": "018/198"
   },
   {
     "id": "roi-des-mers",
@@ -533,7 +533,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "019/168"
+    "numero": "019/198"
   },
   {
     "id": "ragast",
@@ -561,7 +561,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "020/168"
+    "numero": "020/198"
   },
   {
     "id": "trios-heros",
@@ -589,7 +589,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "021/168"
+    "numero": "021/198"
   },
   {
     "id": "aldia",
@@ -638,7 +638,7 @@
         }
       ]
     },
-    "numero": "022/168"
+    "numero": "022/198"
   },
   {
     "id": "roi-sorcier-connor",
@@ -668,7 +668,7 @@
       "deep": "#2b170f"
     },
     "deckCopies": 1,
-    "numero": "023/168"
+    "numero": "023/198"
   },
   {
     "id": "chevalier-errant",
@@ -699,7 +699,7 @@
       "fit": "cover",
       "position": "50% 32%"
     },
-    "numero": "024/168"
+    "numero": "024/198"
   },
   {
     "id": "fee",
@@ -728,7 +728,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "025/168"
+    "numero": "025/198"
   },
   {
     "id": "protecteurs-nature",
@@ -760,7 +760,7 @@
       "fit": "cover",
       "position": "50% 26%"
     },
-    "numero": "026/168"
+    "numero": "026/198"
   },
   {
     "id": "kraken",
@@ -789,7 +789,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "027/168"
+    "numero": "027/198"
   },
   {
     "id": "pirates",
@@ -816,7 +816,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "028/168"
+    "numero": "028/198"
   },
   {
     "id": "umi",
@@ -856,7 +856,7 @@
         }
       ]
     },
-    "numero": "029/168"
+    "numero": "029/198"
   },
   {
     "id": "ulgod",
@@ -896,7 +896,7 @@
         }
       ]
     },
-    "numero": "030/168"
+    "numero": "030/198"
   },
   {
     "id": "zombie-villageois",
@@ -924,7 +924,7 @@
       "deep": "#151a12"
     },
     "texteEchelle": 0.98,
-    "numero": "031/168"
+    "numero": "031/198"
   },
   {
     "id": "rena",
@@ -969,7 +969,7 @@
       ]
     },
     "texteEchelle": 0.97,
-    "numero": "032/168"
+    "numero": "032/198"
   },
   {
     "id": "bhaal",
@@ -1013,7 +1013,7 @@
       ]
     },
     "texteEchelle": 0.95,
-    "numero": "033/168"
+    "numero": "033/198"
   },
   {
     "id": "chevalier-froussard",
@@ -1041,7 +1041,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "034/168"
+    "numero": "034/198"
   },
   {
     "id": "tigre-zombie",
@@ -1069,7 +1069,7 @@
       "secondary": "#a4b37c",
       "deep": "#151a12"
     },
-    "numero": "035/168"
+    "numero": "035/198"
   },
   {
     "id": "homme-flammes",
@@ -1096,7 +1096,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "036/168"
+    "numero": "036/198"
   },
   {
     "id": "poisson-mangeur",
@@ -1123,7 +1123,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "037/168"
+    "numero": "037/198"
   },
   {
     "id": "ours-hibou",
@@ -1155,7 +1155,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "038/168"
+    "numero": "038/198"
   },
   {
     "id": "noxis-bhaal-fusion",
@@ -1208,7 +1208,7 @@
       "position": "50% 50%"
     },
     "texteEchelle": 0.95,
-    "numero": "039/168"
+    "numero": "039/198"
   },
   {
     "id": "heritage-heros",
@@ -1264,7 +1264,7 @@
       "position": "50% 50%"
     },
     "texteEchelle": 0.9,
-    "numero": "040/168"
+    "numero": "040/198"
   },
   {
     "id": "apocalypse-umi",
@@ -1316,7 +1316,7 @@
       "position": "50% 50%"
     },
     "texteEchelle": 0.9,
-    "numero": "041/168"
+    "numero": "041/198"
   },
   {
     "id": "aventurier",
@@ -1348,7 +1348,7 @@
       "fit": "cover",
       "position": "50% 42%"
     },
-    "numero": "042/168"
+    "numero": "042/198"
   },
   {
     "id": "envoye-bhaal",
@@ -1380,7 +1380,7 @@
       "fit": "cover",
       "position": "50% 40%"
     },
-    "numero": "043/168"
+    "numero": "043/198"
   },
   {
     "id": "homme-requin",
@@ -1413,7 +1413,7 @@
       "position": "50% 42%"
     },
     "texteEchelle": 0.97,
-    "numero": "044/168"
+    "numero": "044/198"
   },
   {
     "id": "hero-rena",
@@ -1447,7 +1447,7 @@
       "position": "50% 38%"
     },
     "texteEchelle": 0.97,
-    "numero": "045/168"
+    "numero": "045/198"
   },
   {
     "id": "chevalier-parasite",
@@ -1479,7 +1479,7 @@
       "fit": "cover",
       "position": "50% 42%"
     },
-    "numero": "046/168"
+    "numero": "046/198"
   },
   {
     "id": "gardien-parasite",
@@ -1512,7 +1512,7 @@
       "fit": "cover",
       "position": "50% 42%"
     },
-    "numero": "047/168"
+    "numero": "047/198"
   },
   {
     "id": "orc-contamine",
@@ -1545,7 +1545,7 @@
       "position": "50% 44%"
     },
     "texteEchelle": 0.97,
-    "numero": "048/168"
+    "numero": "048/198"
   },
   {
     "id": "zombie-parasite",
@@ -1565,7 +1565,7 @@
       "Horde"
     ],
     "abilityName": "Éclosion funèbre",
-    "abilityText": "Quand cette créature meurt, crée une Larve parasite 1/1.",
+    "abilityText": "Quand cette créature meurt, une Parasite Larve 1/1 éclot de sa dépouille et prend sa place.",
     "flavor": "Pour la ruche, la mort n'est qu'une porte ouverte.",
     "image": "Images/Zombie parasité.PNG",
     "palette": {
@@ -1577,7 +1577,7 @@
       "fit": "cover",
       "position": "50% 43%"
     },
-    "numero": "049/168"
+    "numero": "049/198"
   },
   {
     "id": "reine-parasite",
@@ -1598,7 +1598,7 @@
       "Défenseur"
     ],
     "abilityName": "Ponte souveraine",
-    "abilityText": "Quand cette carte arrive sur le champ de bataille, crée jusqu'à deux Larves parasites 1/1.",
+    "abilityText": "Quand cette carte arrive sur le champ de bataille, elle fait éclore jusqu'à deux Parasite Larve 1/1.",
     "flavor": "Sous ses racines, la vengeance apprend à respirer.",
     "image": "Images/Reine Parasite.PNG",
     "palette": {
@@ -1611,7 +1611,7 @@
       "fit": "cover",
       "position": "50% 46%"
     },
-    "numero": "050/168"
+    "numero": "050/198"
   },
   {
     "id": "parasite",
@@ -1646,7 +1646,7 @@
       "position": "50% 44%"
     },
     "texteEchelle": 0.97,
-    "numero": "051/168"
+    "numero": "051/198"
   },
   {
     "id": "terreur-rena",
@@ -1681,7 +1681,7 @@
       "position": "50% 44%"
     },
     "texteEchelle": 0.98,
-    "numero": "052/168"
+    "numero": "052/198"
   },
   {
     "id": "aventurier-mythique-daemon",
@@ -1715,7 +1715,7 @@
       "fit": "cover",
       "position": "66% 46%"
     },
-    "numero": "053/168"
+    "numero": "053/198"
   },
   {
     "id": "robot-antique-aigle",
@@ -1749,7 +1749,7 @@
       "position": "55% 44%"
     },
     "texteEchelle": 0.97,
-    "numero": "054/168"
+    "numero": "054/198"
   },
   {
     "id": "robot-antique-mage",
@@ -1783,7 +1783,7 @@
       "position": "50% 45%"
     },
     "texteEchelle": 0.97,
-    "numero": "055/168"
+    "numero": "055/198"
   },
   {
     "id": "robot-antique-maitre-haches",
@@ -1817,7 +1817,7 @@
       "position": "50% 45%"
     },
     "texteEchelle": 0.97,
-    "numero": "056/168"
+    "numero": "056/198"
   },
   {
     "id": "robot-antique-creation-divine",
@@ -1852,7 +1852,7 @@
       "position": "50% 43%"
     },
     "texteEchelle": 0.97,
-    "numero": "057/168"
+    "numero": "057/198"
   },
   {
     "id": "robot-antique-chien",
@@ -1885,7 +1885,7 @@
       "position": "65% 48%"
     },
     "texteEchelle": 0.97,
-    "numero": "058/168"
+    "numero": "058/198"
   },
   {
     "id": "robot-antique-gardien",
@@ -1919,7 +1919,7 @@
       "position": "55% 44%"
     },
     "texteEchelle": 0.97,
-    "numero": "059/168"
+    "numero": "059/198"
   },
   {
     "id": "robot-antique-fleau-flammes",
@@ -1953,7 +1953,7 @@
       "position": "53% 45%"
     },
     "texteEchelle": 0.97,
-    "numero": "060/168"
+    "numero": "060/198"
   },
   {
     "id": "robot-antique-chasseur",
@@ -1985,7 +1985,7 @@
       "fit": "cover",
       "position": "62% 45%"
     },
-    "numero": "061/168"
+    "numero": "061/198"
   },
   {
     "id": "robot-antique-petit-compagnon",
@@ -2018,7 +2018,7 @@
       "position": "42% 50%"
     },
     "texteEchelle": 0.97,
-    "numero": "062/168"
+    "numero": "062/198"
   },
   {
     "id": "robot-antique-argonien",
@@ -2050,7 +2050,7 @@
       "fit": "cover",
       "position": "32% 48%"
     },
-    "numero": "063/168"
+    "numero": "063/198"
   },
   {
     "id": "robot-antique-khajiit",
@@ -2083,7 +2083,7 @@
       "position": "35% 48%"
     },
     "texteEchelle": 0.97,
-    "numero": "064/168"
+    "numero": "064/198"
   },
   {
     "id": "mage-supreme-claudia",
@@ -2116,7 +2116,7 @@
       "fit": "cover",
       "position": "38% 47%"
     },
-    "numero": "065/168"
+    "numero": "065/198"
   },
   {
     "id": "mage-supreme-dominica",
@@ -2150,7 +2150,7 @@
       "position": "50% 48%"
     },
     "texteEchelle": 0.97,
-    "numero": "066/168"
+    "numero": "066/198"
   },
   {
     "id": "comte-thaelion",
@@ -2184,7 +2184,7 @@
       "position": "42% 48%",
       "svgFit": "cover"
     },
-    "numero": "067/168"
+    "numero": "067/198"
   },
   {
     "id": "diplomate-aethran",
@@ -2219,7 +2219,7 @@
       "svgFit": "cover"
     },
     "texteEchelle": 0.95,
-    "numero": "068/168"
+    "numero": "068/198"
   },
   {
     "id": "centaure",
@@ -2250,7 +2250,7 @@
       "fit": "cover",
       "position": "45% 40%"
     },
-    "numero": "069/168"
+    "numero": "069/198"
   },
   {
     "id": "sirenes",
@@ -2282,7 +2282,7 @@
       "position": "50% 42%"
     },
     "texteEchelle": 0.97,
-    "numero": "070/168"
+    "numero": "070/198"
   },
   {
     "id": "tueur-requin",
@@ -2314,7 +2314,7 @@
       "fit": "cover",
       "position": "42% 38%"
     },
-    "numero": "071/168"
+    "numero": "071/198"
   },
   {
     "id": "robot-saccageur",
@@ -2345,7 +2345,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "072/168"
+    "numero": "072/198"
   },
   {
     "id": "creation-obscure",
@@ -2377,7 +2377,7 @@
       "fit": "cover",
       "position": "45% 38%"
     },
-    "numero": "073/168"
+    "numero": "073/198"
   },
   {
     "id": "parasite-larve",
@@ -2404,7 +2404,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "074/168"
+    "numero": "074/198"
   },
   {
     "id": "robot-antique-drone",
@@ -2430,7 +2430,7 @@
       "secondary": "#c3d0dc",
       "deep": "#141a20"
     },
-    "numero": "075/168"
+    "numero": "075/198"
   },
   {
     "id": "archer-squelette",
@@ -2457,7 +2457,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "076/168"
+    "numero": "076/198"
   },
   {
     "id": "guerrier-squelette",
@@ -2482,7 +2482,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "077/168"
+    "numero": "077/198"
   },
   {
     "id": "guerrier-lapin",
@@ -2509,7 +2509,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "078/168"
+    "numero": "078/198"
   },
   {
     "id": "petit-elementaire-eau",
@@ -2534,7 +2534,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "079/168"
+    "numero": "079/198"
   },
   {
     "id": "petit-elementaire-feu",
@@ -2559,6 +2559,261 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "080/168"
+    "numero": "080/198"
+  },
+  {
+    "id": "ninja-toits",
+    "name": "Ninja des toits",
+    "subtitle": "Ombre au-dessus de la cité",
+    "family": "Noir",
+    "type": "Créature - Ninja",
+    "cost": 3,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 1
+    },
+    "attack": 2,
+    "life": 2,
+    "keywords": [
+      "Célérité",
+      "Contact mortel"
+    ],
+    "abilityName": "Lame silencieuse",
+    "abilityText": "Célérité : il attaque dès son arrivée. Contact mortel : toute créature qu'il blesse est détruite.",
+    "flavor": "On ne le voit qu'une fois. Rarement deux.",
+    "image": "Images/Ninja des toits.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "081/198"
+  },
+  {
+    "id": "horreur-fosses",
+    "name": "Horreur des fosses",
+    "subtitle": "Ce qui dort sous les arènes",
+    "family": "Multicolore",
+    "colors": [
+      "Rouge",
+      "Noir"
+    ],
+    "type": "Créature légendaire - Horreur",
+    "cost": 6,
+    "manaCost": {
+      "Noir": 1,
+      "Rouge": 1,
+      "generic": 4
+    },
+    "attack": 7,
+    "life": 6,
+    "deckCopies": 1,
+    "keywords": [
+      "Imposant",
+      "Contact mortel"
+    ],
+    "abilityName": "Étreinte des profondeurs",
+    "abilityText": "Contact mortel : toute créature blessée par cette horreur est détruite, quelle que soit sa taille.",
+    "flavor": "Les armes plantées autour d'elle ont toutes eu un porteur.",
+    "image": "Images/Horreur des fosses.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#d54454",
+      "deep": "#180809"
+    },
+    "numero": "082/198"
+  },
+  {
+    "id": "defenseur-des-mers",
+    "name": "Défenseur des mers",
+    "subtitle": "Le dernier rempart du port",
+    "family": "Bleu",
+    "type": "Créature - Guerrier dragon",
+    "cost": 2,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 4,
+    "keywords": [
+      "Défenseur",
+      "Garde"
+    ],
+    "abilityName": "Mur d'écailles",
+    "abilityText": "Défenseur : l'adversaire doit l'abattre avant de frapper quoi que ce soit d'autre. Il ne part jamais à l'attaque.",
+    "flavor": "La cité est tombée. Lui, non.",
+    "image": "Images/Défenseur des mers.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "083/198"
+  },
+  {
+    "id": "mort-vivant-bouclier",
+    "name": "Mort Vivant au Bouclier",
+    "subtitle": "Garde qui a oublié de mourir",
+    "family": "Noir",
+    "type": "Créature - Zombie",
+    "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 4,
+    "keywords": [
+      "Défenseur",
+      "Horde"
+    ],
+    "abilityName": "Garde obstinée",
+    "abilityText": "Défenseur : l'adversaire doit l'abattre avant de frapper quoi que ce soit d'autre. Il ne part jamais à l'attaque.",
+    "flavor": "On lui a donné un ordre il y a cent ans. Il le tient encore.",
+    "image": "Images/Mort Vivant au Bouclier.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "084/198"
+  },
+  {
+    "id": "parasite-renard",
+    "name": "Parasite Renard",
+    "subtitle": "La colonie apprend à courir",
+    "family": "Vert",
+    "type": "Créature - Parasite",
+    "cost": 2,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 0
+    },
+    "attack": 2,
+    "life": 2,
+    "keywords": [
+      "Parasite",
+      "Célérité"
+    ],
+    "abilityName": "Course contaminée",
+    "abilityText": "Célérité : il attaque dès son arrivée, sans attendre un tour.",
+    "flavor": "Il garde la vitesse du renard. Le reste appartient à la ruche.",
+    "image": "Images/Parasite Renard.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "numero": "085/198"
+  },
+  {
+    "id": "petit-chevalier-aligator",
+    "name": "Petit Chevalier Aligator",
+    "subtitle": "Une épée deux fois trop lourde",
+    "family": "Blanc",
+    "type": "Créature - Chevalier",
+    "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
+    "attack": 3,
+    "life": 1,
+    "keywords": [
+      "Vaillance"
+    ],
+    "abilityName": "Trop grande lame",
+    "abilityText": "Il frappe fort et encaisse mal : une seule blessure suffit à l'arrêter.",
+    "flavor": "Personne n'a osé lui dire qu'elle était trop grande.",
+    "image": "Images/Petit Chevalier Aligator.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "086/198"
+  },
+  {
+    "id": "petit-elementaire-obscur",
+    "name": "Petit élémentaire obscur",
+    "subtitle": "Une ombre qui a pris forme",
+    "family": "Noir",
+    "type": "Créature - Élémentaire",
+    "cost": 1,
+    "manaCost": {
+      "Noir": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 2,
+    "keywords": [
+      "Esprit"
+    ],
+    "abilityName": "Éclat d'ombre",
+    "abilityText": "Petite créature d'ombre : elle occupe le terrain dès le premier tour.",
+    "flavor": "Le noir se replie parfois sur lui-même, et il en reste ça.",
+    "image": "Images/Petit élémentaire obscur.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "087/198"
+  },
+  {
+    "id": "petit-elementaire-blanc",
+    "name": "Petit élémentaire blanc",
+    "subtitle": "Une lueur qui a pris forme",
+    "family": "Blanc",
+    "type": "Créature - Élémentaire",
+    "cost": 1,
+    "manaCost": {
+      "Blanc": 1,
+      "generic": 0
+    },
+    "attack": 1,
+    "life": 2,
+    "keywords": [
+      "Divin"
+    ],
+    "abilityName": "Éclat de lumière",
+    "abilityText": "Petite créature de lumière : elle occupe le terrain dès le premier tour.",
+    "flavor": "Il ne réchauffe pas. Il rassure, et c'est déjà beaucoup.",
+    "image": "Images/Petit élémentaire blanc.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "088/198"
+  },
+  {
+    "id": "petit-chat-flammes",
+    "name": "Petit chat des flammes",
+    "subtitle": "Braise sur quatre pattes",
+    "family": "Rouge",
+    "type": "Créature - Élémentaire",
+    "cost": 1,
+    "manaCost": {
+      "Rouge": 1,
+      "generic": 0
+    },
+    "attack": 2,
+    "life": 1,
+    "keywords": [
+      "Célérité",
+      "Feu"
+    ],
+    "abilityName": "Bond ardent",
+    "abilityText": "Célérité : il attaque dès son arrivée, sans attendre un tour.",
+    "flavor": "Il dort près du feu. Il est le feu.",
+    "image": "Images/Petit chat des flammes.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "numero": "089/198"
   }
 ]

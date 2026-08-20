@@ -30,7 +30,7 @@
       "fit": "cover",
       "position": "50% 42%"
     },
-    "numero": "081/168"
+    "numero": "090/198"
   },
   {
     "id": "malediction-ulgod",
@@ -59,7 +59,7 @@
       "deep": "#2b0d08"
     },
     "effect": "dealAllEnemies2",
-    "numero": "082/168"
+    "numero": "091/198"
   },
   {
     "id": "pitie-aldia",
@@ -88,7 +88,7 @@
       "deep": "#3d3520"
     },
     "effect": "restoreTeam",
-    "numero": "083/168"
+    "numero": "092/198"
   },
   {
     "id": "benediction-du-heros",
@@ -117,7 +117,7 @@
       "deep": "#3d3520"
     },
     "effect": "buffTeam1",
-    "numero": "084/168"
+    "numero": "093/198"
   },
   {
     "id": "vengeance-uldrid",
@@ -147,7 +147,7 @@
     },
     "effect": "vengeanceUldrid",
     "texteEchelle": 0.98,
-    "numero": "085/168"
+    "numero": "094/198"
   },
   {
     "id": "pierre-norne",
@@ -175,7 +175,7 @@
       "deep": "#17140f"
     },
     "effect": "drawOneGainOne",
-    "numero": "086/168"
+    "numero": "095/198"
   },
   {
     "id": "sceptre-rena",
@@ -204,7 +204,7 @@
       "deep": "#112513"
     },
     "effect": "createGuardian",
-    "numero": "087/168"
+    "numero": "096/198"
   },
   {
     "id": "confiance-aldia",
@@ -233,7 +233,7 @@
       "deep": "#3d3520"
     },
     "effect": "toughTeam",
-    "numero": "088/168"
+    "numero": "097/198"
   },
   {
     "id": "protection-umi",
@@ -262,7 +262,7 @@
       "deep": "#0d2231"
     },
     "effect": "freezeAll",
-    "numero": "089/168"
+    "numero": "098/198"
   },
   {
     "id": "courroux-ulgod",
@@ -291,7 +291,7 @@
       "deep": "#2b0d08"
     },
     "effect": "dealHero3",
-    "numero": "090/168"
+    "numero": "099/198"
   },
   {
     "id": "retour-vie",
@@ -320,7 +320,7 @@
       "deep": "#120711"
     },
     "effect": "reanimate",
-    "numero": "091/168"
+    "numero": "100/198"
   },
   {
     "id": "abysses",
@@ -353,7 +353,7 @@
       "fit": "cover",
       "position": "50% 38%"
     },
-    "numero": "092/168"
+    "numero": "101/198"
   },
   {
     "id": "amour-rena",
@@ -386,7 +386,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "093/168"
+    "numero": "102/198"
   },
   {
     "id": "repos-heros",
@@ -419,7 +419,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "094/168"
+    "numero": "103/198"
   },
   {
     "id": "reincarnation-divine",
@@ -453,7 +453,7 @@
       "position": "50% 42%"
     },
     "texteEchelle": 0.97,
-    "numero": "095/168"
+    "numero": "104/198"
   },
   {
     "id": "damnation",
@@ -486,7 +486,7 @@
       "fit": "cover",
       "position": "50% 44%"
     },
-    "numero": "096/168"
+    "numero": "105/198"
   },
   {
     "id": "menace-abysses",
@@ -519,7 +519,7 @@
       "fit": "cover",
       "position": "50% 50%"
     },
-    "numero": "097/168"
+    "numero": "106/198"
   },
   {
     "id": "passe-naturel",
@@ -552,7 +552,7 @@
       "fit": "cover",
       "position": "50% 50%"
     },
-    "numero": "098/168"
+    "numero": "107/198"
   },
   {
     "id": "couronne-ulgod",
@@ -585,7 +585,7 @@
       "fit": "cover",
       "position": "50% 50%"
     },
-    "numero": "099/168"
+    "numero": "108/198"
   },
   {
     "id": "ancien-corps-bhaal",
@@ -618,7 +618,7 @@
       "fit": "cover",
       "position": "50% 50%"
     },
-    "numero": "100/168"
+    "numero": "109/198"
   },
   {
     "id": "esprits-vengeurs",
@@ -651,7 +651,7 @@
       "fit": "cover",
       "position": "50% 50%"
     },
-    "numero": "101/168"
+    "numero": "110/198"
   },
   {
     "id": "ego-des-hommes",
@@ -684,7 +684,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "102/168"
+    "numero": "111/198"
   },
   {
     "id": "aucune-limite",
@@ -717,7 +717,7 @@
       "fit": "cover",
       "position": "50% 44%"
     },
-    "numero": "103/168"
+    "numero": "112/198"
   },
   {
     "id": "sommeil-menacant",
@@ -750,7 +750,7 @@
       "fit": "cover",
       "position": "58% 48%"
     },
-    "numero": "104/168"
+    "numero": "113/198"
   },
   {
     "id": "terrible-decouverte",
@@ -783,7 +783,7 @@
       "fit": "cover",
       "position": "53% 48%"
     },
-    "numero": "105/168"
+    "numero": "114/198"
   },
   {
     "id": "generateur-antique",
@@ -816,7 +816,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "106/168"
+    "numero": "115/198"
   },
   {
     "id": "conseil-des-sages",
@@ -849,7 +849,7 @@
       "fit": "cover",
       "position": "50% 47%"
     },
-    "numero": "107/168"
+    "numero": "116/198"
   },
   {
     "id": "rivalite-au-dela-du-temps",
@@ -889,7 +889,7 @@
       "position": "50% 50%",
       "svgFit": "cover"
     },
-    "numero": "108/168"
+    "numero": "117/198"
   },
   {
     "id": "la-verite",
@@ -923,7 +923,7 @@
       "position": "50% 48%",
       "svgFit": "cover"
     },
-    "numero": "109/168"
+    "numero": "118/198"
   },
   {
     "id": "assassinat",
@@ -957,7 +957,7 @@
       "position": "42% 47%",
       "svgFit": "cover"
     },
-    "numero": "110/168"
+    "numero": "119/198"
   },
   {
     "id": "pacte-maudit",
@@ -991,7 +991,7 @@
       "position": "50% 46%",
       "svgFit": "cover"
     },
-    "numero": "111/168"
+    "numero": "120/198"
   },
   {
     "id": "trident-umi",
@@ -1024,7 +1024,7 @@
       "fit": "cover",
       "position": "50% 40%"
     },
-    "numero": "112/168"
+    "numero": "121/198"
   },
   {
     "id": "desolation",
@@ -1063,7 +1063,7 @@
       "fit": "cover",
       "position": "55% 50%"
     },
-    "numero": "113/168"
+    "numero": "122/198"
   },
   {
     "id": "livre-claudia",
@@ -1096,7 +1096,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "114/168"
+    "numero": "123/198"
   },
   {
     "id": "rencontre-agreable",
@@ -1129,7 +1129,7 @@
       "fit": "cover",
       "position": "62% 45%"
     },
-    "numero": "115/168"
+    "numero": "124/198"
   },
   {
     "id": "eclair-divin",
@@ -1153,7 +1153,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "116/168"
+    "numero": "125/198"
   },
   {
     "id": "tornade-umi",
@@ -1177,7 +1177,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "117/168"
+    "numero": "126/198"
   },
   {
     "id": "piege-obscur",
@@ -1201,7 +1201,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "118/168"
+    "numero": "127/198"
   },
   {
     "id": "explosion-celeste",
@@ -1225,6 +1225,344 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "119/168"
+    "numero": "128/198"
+  },
+  {
+    "id": "chute",
+    "name": "Chute",
+    "subtitle": "Le vide sous les pas",
+    "family": "Blanc",
+    "type": "Rituel - Sort d'exil",
+    "cost": 3,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 1
+    },
+    "effect": "destroyTappedOrWeakest",
+    "slot": "offense",
+    "keywords": [
+      "Destruction",
+      "Divin"
+    ],
+    "abilityName": "Précipice",
+    "abilityText": "Exile la créature adverse engagée la plus puissante, ou la plus faible si aucune n'est engagée.",
+    "flavor": "Il n'y eut pas de cri. Seulement l'absence.",
+    "image": "Images/Chute.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "129/198"
+  },
+  {
+    "id": "portail-antique",
+    "name": "Portail antique",
+    "subtitle": "Seuil des machines endormies",
+    "family": "Incolore",
+    "type": "Artefact légendaire - Portail",
+    "cost": 4,
+    "manaCost": {
+      "generic": 4
+    },
+    "deckCopies": 1,
+    "effect": "createAncientDrones",
+    "slot": "upgrade",
+    "keywords": [
+      "Antique",
+      "Robot antique"
+    ],
+    "abilityName": "Appel du réseau",
+    "abilityText": "Ouvre le passage : deux Drones antiques 1/1 franchissent le portail et te rejoignent.",
+    "flavor": "La porte ne s'ouvre que pour ceux qui savent encore compter.",
+    "image": "Images/Portail antique.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "numero": "130/198"
+  },
+  {
+    "id": "pierre-cupidite",
+    "name": "Pierre de la cupidité",
+    "subtitle": "Le savoir contre le sang",
+    "family": "Incolore",
+    "type": "Artefact légendaire - Relique",
+    "cost": 4,
+    "manaCost": {
+      "generic": 4
+    },
+    "deckCopies": 1,
+    "effect": "livreClaudia",
+    "slot": "draw",
+    "keywords": [
+      "Artefact",
+      "Savoir"
+    ],
+    "abilityName": "Prix du savoir",
+    "abilityText": "Pioche trois cartes, puis perds 2 points de vie : la pierre réclame toujours sa part.",
+    "flavor": "Elle donne tout. Elle reprend toujours un peu plus.",
+    "image": "Images/Pierre de la cupidité.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "numero": "131/198"
+  },
+  {
+    "id": "don-des-dieux",
+    "name": "Don des dieux",
+    "subtitle": "L'anneau que tous convoitent",
+    "family": "Incolore",
+    "type": "Artefact légendaire - Amélioration",
+    "cost": 4,
+    "manaCost": {
+      "generic": 4
+    },
+    "deckCopies": 1,
+    "effect": "buffTeamAttack1",
+    "slot": "upgrade",
+    "keywords": [
+      "Artefact",
+      "Bénédiction"
+    ],
+    "abilityName": "Faveur partagée",
+    "abilityText": "Donne 1 point de force à chacune de tes créatures en jeu, définitivement.",
+    "flavor": "Chaque peuple jure l'avoir forgé. Aucun ne sait le rendre.",
+    "image": "Images/Don des dieux.png",
+    "palette": {
+      "primary": "#6c7683",
+      "secondary": "#c3d0dc",
+      "deep": "#141a20"
+    },
+    "numero": "132/198"
+  },
+  {
+    "id": "intervention-aldia",
+    "name": "Intervention d'Aldia",
+    "subtitle": "La main qui descend du ciel",
+    "family": "Blanc",
+    "type": "Rituel - Sort de jugement",
+    "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
+    "effect": "weakenAllEnemies",
+    "slot": "defense",
+    "keywords": [
+      "Divin",
+      "Zone"
+    ],
+    "abilityName": "Verdict d'en haut",
+    "abilityText": "Chaque créature adverse perd 1 point de force, définitivement.",
+    "flavor": "Elle n'a pas frappé. Elle a seulement montré la ville du doigt.",
+    "image": "Images/Intervention d'Aldia.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "133/198"
+  },
+  {
+    "id": "seconde-chance",
+    "deckCopies": 1,
+    "name": "Seconde Chance",
+    "subtitle": "Relevé au bord de la fin",
+    "family": "Blanc",
+    "type": "Rituel - Sort de résurrection",
+    "cost": 2,
+    "manaCost": {
+      "Blanc": 2,
+      "generic": 0
+    },
+    "effect": "reanimateRandom",
+    "slot": "upgrade",
+    "keywords": [
+      "Réanimation",
+      "Grâce"
+    ],
+    "abilityName": "Souffle rendu",
+    "abilityText": "Une créature tirée au hasard dans ton cimetière revient en jeu. Tu ne choisis pas laquelle.",
+    "flavor": "La lumière ne demande pas si tu la mérites.",
+    "image": "Images/Seconde Chance.png",
+    "palette": {
+      "primary": "#c78135",
+      "secondary": "#f3d183",
+      "deep": "#2a160d"
+    },
+    "numero": "134/198"
+  },
+  {
+    "id": "bulle-revigorante",
+    "name": "Bulle Revigorante",
+    "subtitle": "Un répit suspendu",
+    "family": "Bleu",
+    "type": "Rituel - Sort de soin",
+    "cost": 2,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 0
+    },
+    "effect": "healMostWounded",
+    "slot": "defense",
+    "keywords": [
+      "Soin",
+      "Vague"
+    ],
+    "abilityName": "Cocon des profondeurs",
+    "abilityText": "Rends toutes ses blessures à ta créature la plus amochée : elle repart intacte.",
+    "flavor": "Le temps s'arrête à l'intérieur. Dehors, la bataille continue.",
+    "image": "Images/Bulle Revigorante.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "135/198"
+  },
+  {
+    "id": "jamais-abandonner",
+    "name": "Jamais abandonner",
+    "subtitle": "Se relever sous la pluie",
+    "family": "Bleu",
+    "type": "Rituel - Sort de résurrection",
+    "cost": 2,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 0
+    },
+    "effect": "reanimateRandom",
+    "slot": "upgrade",
+    "keywords": [
+      "Réanimation",
+      "Vague"
+    ],
+    "abilityName": "Deuxième souffle",
+    "abilityText": "Une créature tirée au hasard dans ton cimetière revient en jeu. Tu ne choisis pas laquelle.",
+    "flavor": "Il reste toujours un genou pour se relever.",
+    "image": "Images/Jamais abandonner.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "136/198"
+  },
+  {
+    "id": "regeneration-du-mal",
+    "name": "Régénération du mal",
+    "subtitle": "Le prix de tenir debout",
+    "family": "Noir",
+    "type": "Rituel - Sort de pacte",
+    "cost": 2,
+    "manaCost": {
+      "Noir": 2,
+      "generic": 0
+    },
+    "effect": "evilRegeneration",
+    "slot": "defense",
+    "keywords": [
+      "Soin",
+      "Pacte"
+    ],
+    "abilityName": "Chair recousue",
+    "abilityText": "Referme toutes les blessures de tes créatures, puis prélève 1 point de vie à ton commandant.",
+    "flavor": "Rien ne se répare. Tout se déplace.",
+    "image": "Images/Régénération du mal.png",
+    "palette": {
+      "primary": "#7f1524",
+      "secondary": "#d54454",
+      "deep": "#12080d"
+    },
+    "numero": "137/198"
+  },
+  {
+    "id": "flamme-purificatrice",
+    "name": "Flamme Purificatrice",
+    "subtitle": "Brûler pour tenir la ligne",
+    "family": "Rouge",
+    "type": "Rituel - Sort de purification",
+    "cost": 3,
+    "manaCost": {
+      "Rouge": 2,
+      "generic": 1
+    },
+    "effect": "purifyingFlame",
+    "slot": "upgrade",
+    "deckCopies": 1,
+    "keywords": [
+      "Feu",
+      "Garde"
+    ],
+    "abilityName": "Braise protectrice",
+    "abilityText": "Régénère entièrement ta créature la plus blessée et lui donne Défenseur : l'adversaire devra l'abattre en premier.",
+    "flavor": "Le feu ne l'a pas consumé. Il l'a recuit.",
+    "image": "Images/Flamme Purificatrice.png",
+    "palette": {
+      "primary": "#b34120",
+      "secondary": "#ffb45a",
+      "deep": "#2b0d08"
+    },
+    "numero": "138/198"
+  },
+  {
+    "id": "bain-de-soleil",
+    "name": "Bain de soleil",
+    "subtitle": "Une sieste qui répare tout",
+    "family": "Vert",
+    "type": "Rituel - Sort de croissance",
+    "cost": 2,
+    "manaCost": {
+      "Vert": 2,
+      "generic": 0
+    },
+    "effect": "toughTeam",
+    "slot": "defense",
+    "keywords": [
+      "Croissance",
+      "Nature"
+    ],
+    "abilityName": "Sève rechargée",
+    "abilityText": "Donne 2 points de vie à chacune de tes créatures, définitivement.",
+    "flavor": "Elle n'a rien fait de la journée. C'était le plan.",
+    "image": "Images/Bain de soleil.png",
+    "palette": {
+      "primary": "#3f8a45",
+      "secondary": "#a9d778",
+      "deep": "#112513"
+    },
+    "numero": "139/198"
+  },
+  {
+    "id": "ultime-vengeur",
+    "name": "Ultime Vengeur",
+    "subtitle": "Le dernier debout sur l'épave",
+    "family": "Bleu",
+    "type": "Rituel - Sort de vengeance",
+    "cost": 2,
+    "manaCost": {
+      "Bleu": 2,
+      "generic": 0
+    },
+    "effect": "purifyingFlame",
+    "slot": "defense",
+    "keywords": [
+      "Vengeance",
+      "Garde"
+    ],
+    "abilityName": "Serment de l'orage",
+    "abilityText": "Régénère entièrement ta créature la plus blessée et lui donne Défenseur : l'adversaire devra l'abattre en premier.",
+    "flavor": "Ils ont brûlé sa flotte. Ils auraient dû le brûler, lui.",
+    "image": "Images/Ultime Vengeur.png",
+    "palette": {
+      "primary": "#176b8c",
+      "secondary": "#67d3ff",
+      "deep": "#081d2a"
+    },
+    "numero": "140/198"
   }
 ]

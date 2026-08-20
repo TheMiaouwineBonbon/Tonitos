@@ -54,7 +54,7 @@ section("Chargement de la page d'impression");
 verifier(Boolean(API), "La page expose sa géométrie pour les tests");
 verifier(API?.COLONNES === 3 && API?.LIGNES === 3, "Disposition 3 × 3");
 verifier(API?.PAR_FEUILLE === 9, "9 cartes par feuille A4");
-verifier(API?.cartes === 168, `Les 168 cartes du jeu sont détectées`, String(API?.cartes));
+verifier(API?.cartes === 198, `Les 198 cartes du jeu sont détectées`, String(API?.cartes));
 
 // ======================================================================
 section("Format physique");
@@ -111,11 +111,11 @@ section("Quantités et feuilles");
 
   const feuilles = (n) => Math.ceil(n / API.PAR_FEUILLE);
   verifier(feuilles(60) === 7, "Un deck de 60 cartes tient sur 7 feuilles");
-  verifier(feuilles(168) === 19, "Le catalogue complet tient sur 19 feuilles");
+  verifier(feuilles(198) === 22, "Le catalogue complet tient sur 22 feuilles");
   verifier(feuilles(9) === 1 && feuilles(10) === 2, "Le passage de feuille se fait au bon endroit");
   verifier(feuilles(1) === 1, "Une seule carte occupe quand même une feuille");
   verifier(60 % API.PAR_FEUILLE === 6, "La dernière feuille d'un deck porte 6 cartes");
-  verifier(168 % API.PAR_FEUILLE === 6, "La dernière feuille du catalogue porte 6 cartes");
+  verifier(198 % API.PAR_FEUILLE === 0, "Le catalogue tombe juste : la dernière feuille est pleine");
 
   // Un deck contient bien jusqu a 4 exemplaires d une meme carte.
   const exemple = deckPrintList(DECKS[1], catalogue);
@@ -144,7 +144,7 @@ section("Rendu des cartes");
   }
   verifier(sansIllustration === 0, "Chaque carte imprimée porte son illustration");
   verifier(identifiantsPartages === 0, "Deux cartes voisines ne partagent aucun identifiant SVG");
-  verifier(toutes.length === 168, "168 cartes différentes au catalogue", String(toutes.length));
+  verifier(toutes.length === 198, "198 cartes différentes au catalogue", String(toutes.length));
 }
 
 // ======================================================================

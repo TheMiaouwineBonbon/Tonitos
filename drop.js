@@ -30,13 +30,17 @@ export const DROP_CONFIG = {
   // Poids sur 10 000. Ils ne se lisent pas seuls : ce qui compte pour le
   // joueur, c'est la probabilite d'obtenir UNE carte precise, soit le poids
   // divise par l'effectif de la rarete. Les poids sont donc calibres sur les
-  // effectifs reels (63 / 47 / 35 / 20 / 3 cartes) pour que cette proba
+  // effectifs reels (80 / 53 / 35 / 26 / 3 cartes) pour que cette proba
   // decroisse strictement du commun au legendaire :
-  //   commune    4530 / 63 = 0,7190 % par carte
-  //   peuCommune 3102 / 47 = 0,6600 %
+  //   commune    4661 / 80 = 0,5826 % par carte
+  //   peuCommune 2900 / 53 = 0,5472 %
   //   rare       1576 / 35 = 0,4503 %
-  //   epique      709 / 20 = 0,3545 %
+  //   epique      780 / 26 = 0,3000 %
   //   legendaire   83 /  3 = 0,2767 %
+  //
+  // Ces poids dependent des EFFECTIFS : chaque lot de cartes ajoute deplace
+  // les seaux et peut retourner la hierarchie. C'est exactement ce que
+  // assertRarityHierarchy() detecte, et il faut alors recalibrer ici.
   //
   // L'ancienne repartition (6000/2500/1000/400/100) donnait 0,0211 % pour une
   // epique contre 0,0333 % pour une legendaire : une legendaire tombait
@@ -44,13 +48,16 @@ export const DROP_CONFIG = {
   // partageaient le seau legendaire. assertRarityHierarchy() interdit
   // desormais ce retournement.
   //
-  // L'ecart entre la carte la plus frequente et la plus rare passe de 5,3x a
-  // 3,6x : une epique demande environ 290 tirages au lieu de 475.
+  // L'ecart entre la carte la plus frequente et la plus rare est aujourd'hui
+  // de 2,1x. Il se resserre a chaque lot : le seau legendaire ne contient que
+  // 3 cartes quand l'epique en compte 26, donc la marge de manoeuvre est
+  // mince. Pour le rouvrir, il faudra classer plus de cartes en legendaire
+  // plutot que forcer les poids.
   weights: {
-    commune: 4530,
-    peuCommune: 3102,
+    commune: 4661,
+    peuCommune: 2900,
     rare: 1576,
-    epique: 709,
+    epique: 780,
     legendaire: 83
   },
 

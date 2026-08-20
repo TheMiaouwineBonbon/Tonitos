@@ -2005,32 +2005,36 @@ function createAncientDrone(owner) {
   };
 }
 
+// La ruche fait éclore la VRAIE carte « Parasite Larve », avec son
+// illustration, son texte et son numéro de collection. Elle était autrefois
+// recopiée à la main ici, sous un autre nom et avec l'image du Parasite
+// adulte : la carte existe désormais, c'est elle qui fait foi.
+// `token: true` marque seulement qu'elle n'est pas venue de la main.
 function createParasiteLarva(owner) {
-  const source = state.cards.find((card) => card.id === "parasite");
+  const source = state.cards.find((card) => card.id === "parasite-larve");
+  if (source) return { ...createUnit(source, owner), token: true };
+
+  // Repli si le catalogue n'a pas été chargé : la ruche doit pondre quand même.
   return {
-    id: "larve-parasite",
+    id: "parasite-larve",
     kind: "creature",
     uid: `${owner}-parasite-larva-${crypto.randomUUID()}`,
     owner,
-    name: "Larve parasite",
+    name: "Parasite Larve",
     subtitle: "Progéniture de la ruche",
     family: "Vert",
-    type: "Créature - Larve Parasite",
-    cost: 0,
+    type: "Créature - Parasite",
+    cost: 1,
     attack: 1,
     life: 1,
     maxLife: 1,
     currentLife: 1,
     keywords: ["Parasite"],
-    abilityName: "Éclosion",
-    abilityText: "Jeton créé par la ruche de Rena.",
+    abilityName: "Sang de la colonie",
+    abilityText: "Parasite : la ruche la compte parmi les siens.",
     flavor: "",
-    image: "Images/Parasite.PNG",
-    palette: source?.palette || {
-      primary: "#4e6a35",
-      secondary: "#c1d77d",
-      deep: "#0f170b"
-    },
+    image: "Images/Parasite Larve.png",
+    palette: { primary: "#4e6a35", secondary: "#c1d77d", deep: "#0f170b" },
     tapped: false,
     stunTurns: 0,
     createdTurn: state.turn,
@@ -2271,6 +2275,48 @@ function applySpellEffect(card, side) {
     logEvent(`${card.name} soigne ${healed} créature(s).`);
   }
 
+  if (card.effect === "healMostWounded") {
+    const target = mostWoundedCreature(side.board);
+    if (target) {
+      const rendus = target.maxLife - target.currentLife;
+      target.currentLife = target.maxLife;
+      pushVisualEffect("buff", side.side, `+${rendus}`);
+      logEvent(`${card.name} remet ${target.name} sur pied (${rendus} point(s) de vie rendus).`);
+    } else {
+      logEvent(`${card.name} ne trouve aucune blessure à refermer.`);
+    }
+  }
+
+  // La régénération noire soigne tout le camp, mais le commandant en paye le
+  // prix : c'est ce qui la distingue de « restoreTeam », deux fois plus chère.
+  if (card.effect === "evilRegeneration") {
+    let healed = 0;
+    for (const ally of side.board) {
+      if (ally.currentLife < ally.maxLife) {
+        ally.currentLife = ally.maxLife;
+        healed += 1;
+      }
+    }
+    side.life -= 1;
+    pushVisualEffect("hit", side.side, "-1");
+    logEvent(`${card.name} referme ${healed} blessure(s) et prélève 1 point de vie à son invocateur.`);
+  }
+
+  // Défenseur + soin complet : la créature choisie devient le mur du camp.
+  if (card.effect === "purifyingFlame") {
+    const target = mostWoundedCreature(side.board) || strongestCreature(side.board);
+    if (target) {
+      target.currentLife = target.maxLife;
+      if (!hasKeyword(target, "Défenseur")) {
+        target.keywords = [...(Array.isArray(target.keywords) ? target.keywords : []), "Défenseur"];
+      }
+      pushVisualEffect("buff", side.side, "Défenseur");
+      logEvent(`${card.name} régénère ${target.name} et lui donne Défenseur.`);
+    } else {
+      logEvent(`${card.name} brûle sans personne à purifier.`);
+    }
+  }
+
   if (card.effect === "toughTeam") {
     buffTeam(side.board, 0, 2);
     pushVisualEffect("buff", side.side, "+0/+2");
@@ -2362,9 +2408,10 @@ function applySpellEffect(card, side) {
     );
   }
 
-  if (card.effect === "reanimate" || card.effect === "reanimateTwo") {
+  if (card.effect === "reanimate" || card.effect === "reanimateTwo" || card.effect === "reanimateRandom") {
     const amount = card.effect === "reanimateTwo" ? 2 : 1;
-    const returned = reanimateBestCreatures(side, amount);
+    const choisir = card.effect === "reanimateRandom" ? creatureAuHasard : plusGrosseCreature;
+    const returned = reanimateBestCreatures(side, amount, choisir);
     if (returned.length === 0) {
       const reason = side.board.length >= MAX_BOARD ? "le champ de bataille est plein" : "aucune créature n'attend au cimetière";
       logEvent(`${card.name} échoue : ${reason}.`);
@@ -2375,14 +2422,16 @@ function applySpellEffect(card, side) {
   }
 }
 
-function reanimateBestCreatures(side, amount) {
+// `choisir` désigne la créature à ramener parmi celles du cimetière. Par
+// défaut la plus chère ; les sorts bon marché passent un tirage au hasard,
+// c'est ce qui justifie leur coût réduit.
+function reanimateBestCreatures(side, amount, choisir = plusGrosseCreature) {
   const returned = [];
   while (returned.length < amount && side.board.length < MAX_BOARD) {
     const buried = (side.graveyard || []).filter((entry) => entry.kind === "creature");
     if (buried.length === 0) break;
-    const best = [...buried].sort(
-      (a, b) => (b.cost || 0) - (a.cost || 0) || (b.attack || 0) - (a.attack || 0)
-    )[0];
+    const best = choisir(buried);
+    if (!best) break;
     const index = side.graveyard.indexOf(best);
     if (index >= 0) side.graveyard.splice(index, 1);
     const source = state.cards.find((entry) => entry.id === best.id) || best;
@@ -2392,6 +2441,16 @@ function reanimateBestCreatures(side, amount) {
     triggerOnPlay(unit, side);
   }
   return returned;
+}
+
+function plusGrosseCreature(buried) {
+  return [...buried].sort(
+    (a, b) => (b.cost || 0) - (a.cost || 0) || (b.attack || 0) - (a.attack || 0)
+  )[0];
+}
+
+function creatureAuHasard(buried) {
+  return buried[Math.floor(Math.random() * buried.length)];
 }
 
 function triggerOnPlay(unit, side) {
@@ -2691,7 +2750,7 @@ function triggerOnPlay(unit, side) {
     }
     if (larvae > 0) {
       pushVisualEffect("summon", side.side, `${larvae} larve${larvae > 1 ? "s" : ""}`);
-      logEvent(`La Reine Parasite fait éclore ${larvae} Larve${larvae > 1 ? "s" : ""} parasite${larvae > 1 ? "s" : ""}.`);
+      logEvent(`La Reine Parasite fait éclore ${larvae} Parasite${larvae > 1 ? "s" : ""} Larve${larvae > 1 ? "s" : ""} 1/1.`);
     }
   }
 
@@ -3269,7 +3328,13 @@ function isSpellWorthCasting(card, side, opponent) {
     case "cursedPact":
       return side.deck.length > 0 && side.life > 1;
     case "restoreTeam":
+    case "healMostWounded":
       return side.board.some((unit) => unit.currentLife < unit.maxLife);
+    // Coûte 1 point de vie : à ne lancer que s'il y a vraiment à soigner.
+    case "evilRegeneration":
+      return side.life > 1 && side.board.some((unit) => unit.currentLife < unit.maxLife);
+    case "purifyingFlame":
+      return side.board.length > 0;
     case "buffTeam1":
     case "buffTeamAttack1":
     case "toughTeam":
@@ -3283,6 +3348,7 @@ function isSpellWorthCasting(card, side, opponent) {
       return side.board.length < MAX_BOARD;
     case "reanimate":
     case "reanimateTwo":
+    case "reanimateRandom":
     case "bhaalVessel":
       return (
         side.board.length < MAX_BOARD &&
@@ -3360,6 +3426,21 @@ function strongestCreature(board) {
   return [...board].sort((a, b) => b.attack - a.attack || b.currentLife - a.currentLife)[0] || null;
 }
 
+// Cible des soins : celle qui a perdu le plus de points de vie. À blessure
+// égale, la plus grosse, parce que c'est elle qu'on veut garder debout.
+function mostWoundedCreature(board) {
+  return (
+    [...board]
+      .filter((unit) => unit.currentLife < unit.maxLife)
+      .sort(
+        (a, b) =>
+          b.maxLife - b.currentLife - (a.maxLife - a.currentLife) ||
+          b.maxLife - a.maxLife ||
+          b.attack - a.attack
+      )[0] || null
+  );
+}
+
 function freezeCreature(unit) {
   if (!unit) return;
   unit.tapped = true;
@@ -3412,7 +3493,7 @@ function cleanupBoards() {
       if (unit.id === "zombie-parasite" && !unit.exiled && side.board.length < MAX_BOARD) {
         side.board.push(createParasiteLarva(side.side));
         pushVisualEffect("summon", side.side, "Éclosion");
-        logEvent("Le Zombie parasité éclot et laisse une Larve parasite 1/1.");
+        logEvent("Le Zombie parasité éclot et laisse une Parasite Larve 1/1.");
       }
     }
   }

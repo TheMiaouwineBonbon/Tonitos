@@ -746,7 +746,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 80 créatures", Array.isArray(cards) && cards.length === 80);
+  check("cards.json = 89 créatures", Array.isArray(cards) && cards.length === 89);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -906,7 +906,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("39 sorts avec illustrations autonomes", spells.length === 39);
+  check("51 sorts avec illustrations autonomes", spells.length === 51);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -972,7 +972,7 @@ async function main() {
 
   res = await fetch(`${base}/data/lands.json`);
   const lands = await res.json();
-  check("lands.json = 49 terrains", lands.length === 49);
+  check("lands.json = 58 terrains", lands.length === 58);
   check(
     "Entrée et Nid de la ruche = terrains verts",
     ["entree-ruche", "nid-ruche"].every((id) => lands.find((land) => land.id === id)?.family === "Vert")
