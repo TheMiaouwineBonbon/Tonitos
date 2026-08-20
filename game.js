@@ -1937,6 +1937,42 @@ function createZombie(owner) {
   };
 }
 
+function createUlgodSkeleton(owner) {
+  const source = state.spells.find((card) => card.id === "largage-ulgod");
+  return {
+    id: "squelette-ulgod",
+    kind: "creature",
+    uid: `${owner}-ulgod-skeleton-${crypto.randomUUID()}`,
+    owner,
+    name: "Squelette d'Ulgod",
+    subtitle: "Renfort tombé des enfers",
+    family: "Rouge",
+    type: "Créature - Squelette",
+    cost: 0,
+    attack: 1,
+    life: 1,
+    maxLife: 1,
+    currentLife: 1,
+    keywords: ["Horde"],
+    abilityName: "Légion larguée",
+    abilityText: "Jeton créé par Largage d'Ulgod.",
+    flavor: "",
+    image: "Images/Largage d'Ulgod.png",
+    palette: source?.palette || {
+      primary: "#b34120",
+      secondary: "#ffb45a",
+      deep: "#2b0d08"
+    },
+    tapped: false,
+    stunTurns: 0,
+    createdTurn: state.turn,
+    attacking: false,
+    blocking: null,
+    blockedBy: null,
+    token: true
+  };
+}
+
 function createGuardian(owner) {
   const source = state.cards.find((card) => card.id === "protecteurs-nature");
   return {
@@ -2129,6 +2165,18 @@ function applySpellEffect(card, side) {
       created += 1;
     }
     if (created > 0) logEvent(`${card.name} crée ${created} Zombie(s) 1/1.`);
+  }
+
+  if (card.effect === "createTwoSkeletons") {
+    let created = 0;
+    while (created < 2 && side.board.length < MAX_BOARD) {
+      side.board.push(createUlgodSkeleton(side.side));
+      created += 1;
+    }
+    if (created > 0) {
+      pushVisualEffect("summon", side.side, `${created} squelette${created > 1 ? "s" : ""}`);
+      logEvent(`${card.name} crée ${created} Squelette(s) d'Ulgod 1/1.`);
+    }
   }
 
   if (card.effect === "freezeStrongest") {
@@ -3343,6 +3391,7 @@ function isSpellWorthCasting(card, side, opponent) {
     case "limitlessAssault":
       return side.board.length > 0;
     case "createTwoZombies":
+    case "createTwoSkeletons":
     case "createGuardian":
     case "createAncientDrones":
       return side.board.length < MAX_BOARD;

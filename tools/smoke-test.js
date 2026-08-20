@@ -748,7 +748,7 @@ async function main() {
 
   res = await fetch(`${base}/data/cards.json`);
   const cards = await res.json();
-  check("cards.json = 89 créatures", Array.isArray(cards) && cards.length === 89);
+  check("cards.json = 91 créatures", Array.isArray(cards) && cards.length === 91);
   const connor = cards.find((c) => c.id === "roi-sorcier-connor");
   check(
     "Roi Sorcier Connor = Blanc 1/2 à croissance",
@@ -908,7 +908,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("51 sorts avec illustrations autonomes", spells.length === 51);
+  check("52 sorts avec illustrations autonomes", spells.length === 52);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -964,6 +964,25 @@ async function main() {
       spells.find((spell) => spell.id === "pacte-maudit")?.family === "Noir" &&
       spells.find((spell) => spell.id === "pacte-maudit")?.cost === 2 &&
       spells.find((spell) => spell.id === "pacte-maudit")?.effect === "cursedPact"
+  );
+  const gardienEnflamme = cards.find((card) => card.id === "gardien-enflamme");
+  const animalBhaal = cards.find((card) => card.id === "animal-bhaal");
+  const largageUlgod = spells.find((spell) => spell.id === "largage-ulgod");
+  check(
+    "Les nouvelles cartes Rouge/Noir respectent leurs coûts de mana",
+    gardienEnflamme?.family === "Rouge" &&
+      gardienEnflamme?.cost === 2 &&
+      gardienEnflamme?.manaCost?.Rouge === 1 &&
+      gardienEnflamme?.manaCost?.generic === 1 &&
+      animalBhaal?.family === "Noir" &&
+      animalBhaal?.cost === 1 &&
+      animalBhaal?.manaCost?.Noir === 1 &&
+      animalBhaal?.manaCost?.generic === 0 &&
+      largageUlgod?.family === "Rouge" &&
+      largageUlgod?.cost === 2 &&
+      largageUlgod?.manaCost?.Rouge === 1 &&
+      largageUlgod?.manaCost?.generic === 1 &&
+      largageUlgod?.effect === "createTwoSkeletons"
   );
 
   const implementedEffects = new Set([
@@ -1114,6 +1133,35 @@ async function main() {
         const card = whiteGreenNonlands.find((entry) => entry.id === id);
         return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
       })
+  );
+
+  const redBlackSpec = deckModule.getDeckSpec("rouge-noir");
+  const redBlackCards = deckModule.buildDeck(redBlackSpec, { cards, spells, lands });
+  const redBlackDeck = {
+    lands: redBlackCards.filter((card) => landIds.has(card.id)),
+    creatures: redBlackCards.filter((card) => !landIds.has(card.id) && !spellIds.has(card.id)),
+    spells: redBlackCards.filter((card) => spellIds.has(card.id))
+  };
+  const redBlackNonlands = [...redBlackDeck.creatures, ...redBlackDeck.spells];
+  const redBlackCopies = redBlackNonlands.reduce((counts, card) => {
+    counts.set(card.id, (counts.get(card.id) || 0) + 1);
+    return counts;
+  }, new Map());
+  check(
+    "Le deck Rouge/Noir definitif contient exactement 24 terrains, 22 creatures et 14 sorts",
+    redBlackDeck.lands.length === 24 &&
+      redBlackDeck.creatures.length === 22 &&
+      redBlackDeck.spells.length === 14
+  );
+  check(
+    "Le deck Rouge/Noir definitif respecte couleurs, unicite legendaire et quatre copies",
+    redBlackNonlands.every((card) => deckModule.cardFitsDeckColors(card, redBlackSpec.colors)) &&
+      [...redBlackCopies.entries()].every(([id, copies]) => {
+        const card = redBlackNonlands.find((entry) => entry.id === id);
+        return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
+      }) &&
+      redBlackCopies.get("animal-bhaal") === 4 &&
+      redBlackCopies.get("largage-ulgod") === 4
   );
 
   await fetch(`${base}/api/room/reset`, json({ code: "1234" }));

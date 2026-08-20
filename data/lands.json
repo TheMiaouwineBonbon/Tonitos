@@ -27,7 +27,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "141/198"
+    "numero": "144/201"
   },
   {
     "id": "chateau-luxurieux",
@@ -57,7 +57,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "142/198"
+    "numero": "145/201"
   },
   {
     "id": "monde-au-dessus",
@@ -87,7 +87,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "143/198"
+    "numero": "146/201"
   },
   {
     "id": "monde-celeste-azure",
@@ -121,7 +121,7 @@
       "fit": "cover",
       "position": "58% 46%"
     },
-    "numero": "144/198"
+    "numero": "147/201"
   },
   {
     "id": "oceania-cite-sous-marine",
@@ -151,7 +151,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "145/198"
+    "numero": "148/201"
   },
   {
     "id": "ruines-sous-marine",
@@ -181,7 +181,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "146/198"
+    "numero": "149/201"
   },
   {
     "id": "lac-bleu",
@@ -211,7 +211,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "147/198"
+    "numero": "150/201"
   },
   {
     "id": "tempete-bleue",
@@ -241,7 +241,7 @@
       "secondary": "#83d8ff",
       "deep": "#0d2231"
     },
-    "numero": "148/198"
+    "numero": "151/201"
   },
   {
     "id": "cimetiere",
@@ -271,7 +271,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "149/198"
+    "numero": "152/201"
   },
   {
     "id": "lac-putride",
@@ -301,7 +301,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "150/198"
+    "numero": "153/201"
   },
   {
     "id": "manoir-dracul",
@@ -331,7 +331,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "151/198"
+    "numero": "154/201"
   },
   {
     "id": "laboratoire-noir",
@@ -361,7 +361,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "152/198"
+    "numero": "155/201"
   },
   {
     "id": "royaume-noxis",
@@ -391,7 +391,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "153/198"
+    "numero": "156/201"
   },
   {
     "id": "village-demoniaque",
@@ -421,7 +421,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "154/198"
+    "numero": "157/201"
   },
   {
     "id": "forge-elfique-volcanique",
@@ -451,7 +451,7 @@
       "secondary": "#e3a55c",
       "deep": "#28140a"
     },
-    "numero": "155/198"
+    "numero": "158/201"
   },
   {
     "id": "volcan-infinie",
@@ -481,7 +481,7 @@
       "secondary": "#e3a55c",
       "deep": "#28140a"
     },
-    "numero": "156/198"
+    "numero": "159/201"
   },
   {
     "id": "riviere-toukamon",
@@ -511,7 +511,7 @@
       "secondary": "#e3a55c",
       "deep": "#28140a"
     },
-    "numero": "157/198"
+    "numero": "160/201"
   },
   {
     "id": "volcan-rouge",
@@ -541,7 +541,7 @@
       "secondary": "#e3a55c",
       "deep": "#28140a"
     },
-    "numero": "158/198"
+    "numero": "161/201"
   },
   {
     "id": "paradis-uldrid",
@@ -571,7 +571,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "159/198"
+    "numero": "162/201"
   },
   {
     "id": "riviere-manhil",
@@ -601,7 +601,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "160/198"
+    "numero": "163/201"
   },
   {
     "id": "sentier-uldrid",
@@ -631,7 +631,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "161/198"
+    "numero": "164/201"
   },
   {
     "id": "champ-coquelicots",
@@ -661,7 +661,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "162/198"
+    "numero": "165/201"
   },
   {
     "id": "prairie-verte",
@@ -691,7 +691,7 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "163/198"
+    "numero": "166/201"
   },
   {
     "id": "entree-ruche",
@@ -726,7 +726,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "164/198"
+    "numero": "167/201"
   },
   {
     "id": "nid-ruche",
@@ -761,7 +761,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "165/198"
+    "numero": "168/201"
   },
   {
     "id": "temple-antique-desert",
@@ -796,7 +796,7 @@
       "fit": "cover",
       "position": "56% 48%"
     },
-    "numero": "166/198"
+    "numero": "169/201"
   },
   {
     "id": "temple-antique-naturel",
@@ -831,7 +831,7 @@
       "fit": "cover",
       "position": "54% 48%"
     },
-    "numero": "167/198"
+    "numero": "170/201"
   },
   {
     "id": "temple-antique-mers",
@@ -866,7 +866,7 @@
       "fit": "cover",
       "position": "55% 48%"
     },
-    "numero": "168/198"
+    "numero": "171/201"
   },
   {
     "id": "temple-antique-aube-polaire",
@@ -901,7 +901,7 @@
       "fit": "cover",
       "position": "55% 48%"
     },
-    "numero": "169/198"
+    "numero": "172/201"
   },
   {
     "id": "capitale-mythalor",
@@ -937,7 +937,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "170/198"
+    "numero": "173/201"
   },
   {
     "id": "capitale-gronnak",
@@ -973,7 +973,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "171/198"
+    "numero": "174/201"
   },
   {
     "id": "capitale-madorr",
@@ -1009,7 +1009,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "172/198"
+    "numero": "175/201"
   },
   {
     "id": "ville-enneigee",
@@ -1045,7 +1045,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "173/198"
+    "numero": "176/201"
   },
   {
     "id": "royaume-paisible",
@@ -1082,7 +1082,7 @@
       "position": "50% 45%"
     },
     "texteEchelle": 0.98,
-    "numero": "174/198"
+    "numero": "177/201"
   },
   {
     "id": "empire-bhaal",
@@ -1118,7 +1118,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "175/198"
+    "numero": "178/201"
   },
   {
     "id": "gouffre-namor",
@@ -1155,7 +1155,7 @@
       "position": "50% 45%"
     },
     "texteEchelle": 0.97,
-    "numero": "176/198"
+    "numero": "179/201"
   },
   {
     "id": "village-cache",
@@ -1189,7 +1189,7 @@
       "fit": "cover",
       "position": "50% 48%"
     },
-    "numero": "177/198"
+    "numero": "180/201"
   },
   {
     "id": "royaume-celeste",
@@ -1228,7 +1228,7 @@
       "fit": "cover",
       "position": "50% 45%"
     },
-    "numero": "178/198"
+    "numero": "181/201"
   },
   {
     "id": "sanctuaire-merveilleux",
@@ -1258,7 +1258,7 @@
       "deep": "#2a160d"
     },
     "kind": "land",
-    "numero": "179/198"
+    "numero": "182/201"
   },
   {
     "id": "temple-anormal",
@@ -1290,7 +1290,7 @@
       "deep": "#2a160d"
     },
     "kind": "land",
-    "numero": "180/198"
+    "numero": "183/201"
   },
   {
     "id": "ile-marees",
@@ -1320,7 +1320,7 @@
       "deep": "#081d2a"
     },
     "kind": "land",
-    "numero": "181/198"
+    "numero": "184/201"
   },
   {
     "id": "port-gronnak",
@@ -1350,7 +1350,7 @@
       "deep": "#081d2a"
     },
     "kind": "land",
-    "numero": "182/198"
+    "numero": "185/201"
   },
   {
     "id": "muraille-nazeroth",
@@ -1380,7 +1380,7 @@
       "deep": "#12080d"
     },
     "kind": "land",
-    "numero": "183/198"
+    "numero": "186/201"
   },
   {
     "id": "portail-autre-monde",
@@ -1412,7 +1412,7 @@
       "deep": "#12080d"
     },
     "kind": "land",
-    "numero": "184/198"
+    "numero": "187/201"
   },
   {
     "id": "avant-poste-desertique",
@@ -1442,7 +1442,7 @@
       "deep": "#2b0d08"
     },
     "kind": "land",
-    "numero": "185/198"
+    "numero": "188/201"
   },
   {
     "id": "premier-arbre",
@@ -1472,7 +1472,7 @@
       "deep": "#112513"
     },
     "kind": "land",
-    "numero": "186/198"
+    "numero": "189/201"
   },
   {
     "id": "jardin-sureleve",
@@ -1504,7 +1504,7 @@
       "deep": "#112513"
     },
     "kind": "land",
-    "numero": "187/198"
+    "numero": "190/201"
   },
   {
     "id": "champ-deux-couronnes",
@@ -1536,7 +1536,7 @@
       "deep": "#2a160d"
     },
     "kind": "land",
-    "numero": "188/198"
+    "numero": "191/201"
   },
   {
     "id": "forge-du-mal",
@@ -1568,7 +1568,7 @@
       "deep": "#2b0d08"
     },
     "kind": "land",
-    "numero": "189/198"
+    "numero": "192/201"
   },
   {
     "id": "foret-oceanique",
@@ -1600,7 +1600,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "190/198"
+    "numero": "193/201"
   },
   {
     "id": "temple-englouti",
@@ -1632,7 +1632,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "191/198"
+    "numero": "194/201"
   },
   {
     "id": "volcan-marin",
@@ -1664,7 +1664,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "192/198"
+    "numero": "195/201"
   },
   {
     "id": "cathedrale-unite",
@@ -1696,7 +1696,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "193/198"
+    "numero": "196/201"
   },
   {
     "id": "conseil-des-heros",
@@ -1726,7 +1726,7 @@
       "secondary": "#f3d183",
       "deep": "#2a160d"
     },
-    "numero": "194/198"
+    "numero": "197/201"
   },
   {
     "id": "trone-des-mers",
@@ -1756,7 +1756,7 @@
       "secondary": "#67d3ff",
       "deep": "#081d2a"
     },
-    "numero": "195/198"
+    "numero": "198/201"
   },
   {
     "id": "grotte-du-mal",
@@ -1786,7 +1786,7 @@
       "secondary": "#d54454",
       "deep": "#12080d"
     },
-    "numero": "196/198"
+    "numero": "199/201"
   },
   {
     "id": "lac-ulgod",
@@ -1816,7 +1816,7 @@
       "secondary": "#ffb45a",
       "deep": "#2b0d08"
     },
-    "numero": "197/198"
+    "numero": "200/201"
   },
   {
     "id": "montagnes-merveilleuses",
@@ -1846,6 +1846,6 @@
       "secondary": "#a9d778",
       "deep": "#112513"
     },
-    "numero": "198/198"
+    "numero": "201/201"
   }
 ]

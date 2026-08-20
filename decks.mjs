@@ -66,7 +66,41 @@ export const DECKS = [
     name: "Rouge / Noir - Pacte des Cendres",
     shortName: "Pacte des Cendres",
     colors: ["Rouge", "Noir"],
-    theme: "dégâts rapides, drain de vie et destruction"
+    theme: "dégâts rapides, drain de vie et destruction",
+    // Même cahier des charges que le deck Blanc/Vert définitif : 24 terrains,
+    // 22 créatures, 14 sorts et une courbe volontairement concentrée à 1-3.
+    deckList: {
+      lands: [
+        { id: "cimetiere", copies: 4 },
+        { id: "royaume-noxis", copies: 4 },
+        { id: "lac-ulgod", copies: 4 },
+        { id: "volcan-rouge", copies: 4 },
+        { id: "capitale-madorr", copies: 2 },
+        { id: "temple-antique-desert", copies: 2 },
+        { id: "empire-bhaal", copies: 2 },
+        { id: "forge-du-mal", copies: 2 }
+      ],
+      creatures: [
+        { id: "animal-bhaal", copies: 4 },
+        { id: "petit-elementaire-feu", copies: 3 },
+        { id: "petit-elementaire-obscur", copies: 3 },
+        { id: "gardien-enflamme", copies: 3 },
+        { id: "diablotins", copies: 2 },
+        { id: "mort-vivant-bouclier", copies: 2 },
+        { id: "magiciens-exiles", copies: 2 },
+        { id: "comte-thaelion", copies: 1 },
+        { id: "diplomate-aethran", copies: 1 },
+        { id: "noxis", copies: 1 }
+      ],
+      spells: [
+        { id: "largage-ulgod", copies: 4 },
+        { id: "pacte-maudit", copies: 3 },
+        { id: "assassinat", copies: 2 },
+        { id: "explosion-celeste", copies: 2 },
+        { id: "piege-obscur", copies: 2 },
+        { id: "flamme-purificatrice", copies: 1 }
+      ]
+    }
   },
   {
     id: "bleu-vert",

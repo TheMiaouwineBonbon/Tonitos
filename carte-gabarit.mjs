@@ -590,8 +590,7 @@ function medaillonIllustre(cx, cy, r, piece, valeur, image) {
     ${logement}
     <image href="${image(piece.fichier)}" x="${cx - rayon}" y="${cy - rayon}" width="${rayon * 2}" height="${rayon * 2}"/>
     <circle cx="${cx}" cy="${cy}" r="${r + 2}" fill="none" stroke="${MATIERE.or}" stroke-width="1.5" opacity="0.55"/>
-    ${plaque}
-    ${texte}
+${plaque ? `    ${plaque}\n` : ""}${texte ? `    ${texte}\n` : ""}
   </g>`;
 }
 

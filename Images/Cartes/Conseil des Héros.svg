@@ -65,8 +65,7 @@
     <circle cx="116" cy="98" r="42" fill="none" stroke="#8a6526" stroke-width="2"/>
     <image href="../Medaillons/Terrain.png" x="76" y="58" width="80" height="80"/>
     <circle cx="116" cy="98" r="42" fill="none" stroke="#e8c477" stroke-width="1.5" opacity="0.55"/>
-    
-    
+
   </g>
   <image href="../Types/Lumieres.png" x="622" y="64" width="68" height="68"/>
 
@@ -142,6 +141,6 @@
   <rect x="38" y="1005" width="668" height="2" rx="1" fill="#e8c477" opacity="0.55"/>
   <g>
     <rect x="320" y="996" width="104" height="18" rx="6" fill="#0b0a0c"/>
-    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">194/198</text>
+    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">197/201</text>
   </g>
 </svg>

@@ -157,6 +157,7 @@
     <circle cx="96" cy="950" r="42" fill="none" stroke="#e8c477" stroke-width="1.5" opacity="0.55"/>
     <circle cx="100.56" cy="947.04" r="39" fill="#0d0907" opacity="0.55"/>
     <text x="100.56" y="962.79" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">3</text>
+
   </g>
   <g>
     <circle cx="648" cy="950" r="49" fill="#140d0b" opacity="0.92"/>
@@ -167,12 +168,13 @@
     <circle cx="648" cy="950" r="42" fill="none" stroke="#e8c477" stroke-width="1.5" opacity="0.55"/>
     <circle cx="647.924" cy="941.26" r="39" fill="#0d0907" opacity="0.52"/>
     <text x="647.924" y="957.01" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">4</text>
+
   </g>
   <rect x="32" y="1004" width="680" height="10" rx="5" fill="url(#cadreBois)"/>
   <rect x="32" y="1004" width="680" height="10" rx="5" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
   <rect x="38" y="1005" width="668" height="2" rx="1" fill="#e8c477" opacity="0.55"/>
   <g>
     <rect x="320" y="996" width="104" height="18" rx="6" fill="#0b0a0c"/>
-    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">046/198</text>
+    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">046/201</text>
   </g>
 </svg>
