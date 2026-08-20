@@ -1015,15 +1015,12 @@
     },
     "divine": {
       "difficulty": 2,
-      "text": "Invocation divine : Noxis Drathis ou Valerius Dracul sur ton champ de bataille, et Retour à la vie déjà lancé.",
+      "text": "Invocation divine : Noxis Drathis ou Valerius Dracul doit être sur ton champ de bataille.",
       "any": [
         {
           "boardAny": [
             "noxis",
             "valerius"
-          ],
-          "cast": [
-            "retour-vie"
           ]
         }
       ]

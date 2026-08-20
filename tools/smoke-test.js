@@ -1137,6 +1137,7 @@ async function main() {
 
   const redBlackSpec = deckModule.getDeckSpec("rouge-noir");
   const redBlackCards = deckModule.buildDeck(redBlackSpec, { cards, spells, lands });
+  const redBlackExtraCards = deckModule.buildExtraCards(redBlackSpec, { cards, spells, lands });
   const redBlackDeck = {
     lands: redBlackCards.filter((card) => landIds.has(card.id)),
     creatures: redBlackCards.filter((card) => !landIds.has(card.id) && !spellIds.has(card.id)),
@@ -1161,7 +1162,16 @@ async function main() {
         return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
       }) &&
       redBlackCopies.get("animal-bhaal") === 4 &&
-      redBlackCopies.get("largage-ulgod") === 4
+      redBlackCopies.get("largage-ulgod") === 4 &&
+      redBlackCopies.get("magiciens-exiles") === 1 &&
+      redBlackCopies.get("bhaal") === 1
+  );
+  check(
+    "Noxis Bhaal reste une invocation divine hors des 60 cartes",
+    redBlackCards.length === 60 &&
+      !redBlackCards.some((card) => card.id === "noxis-bhaal-fusion") &&
+      redBlackExtraCards.length === 1 &&
+      redBlackExtraCards[0].id === "noxis-bhaal-fusion"
   );
 
   await fetch(`${base}/api/room/reset`, json({ code: "1234" }));

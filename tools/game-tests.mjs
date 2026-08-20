@@ -172,6 +172,42 @@ verifier(els.startMenu.hidden === true, "Le menu se referme au lancement");
 verifier(debug.validate().length === 0, "L'état de départ est valide", debug.validate().join(" / "));
 
 // ======================================================================
+section("Réserve divine Noir/Rouge");
+{
+  const cote = jeu().enemy;
+  const fusionId = "noxis-bhaal-fusion";
+  verifier(cote.invocations?.length === 1 && cote.invocations[0].card.id === fusionId, "La Fusion est placée dans la réserve divine");
+  verifier(!cote.deck.some((c) => c.id === fusionId) && !cote.hand.some((c) => c.id === fusionId), "La Fusion ne compte pas dans les 60 cartes et ne rejoint pas la main au départ");
+
+  const uniteDivine = (id) => {
+    const carte = jeu().cards.find((c) => c.id === id);
+    return {
+      ...carte,
+      uid: `test-${id}`,
+      owner: "enemy",
+      maxLife: carte.life,
+      currentLife: carte.life,
+      tapped: false,
+      stunTurns: 0,
+      createdTurn: 0,
+      survivedTurns: 0,
+      hasAttacked: false
+    };
+  };
+  cote.board.push(uniteDivine("noxis"), uniteDivine("bhaal"));
+  const mainAvant = cote.hand.length;
+  rendre();
+  verifier(cote.hand.length === mainAvant + 1 && cote.hand.some((c) => c.id === fusionId), "Noxis et Bhaal débloquent la Fusion dans la main");
+  rendre();
+  verifier(cote.hand.filter((c) => c.id === fusionId).length === 1, "La Fusion n'est accordée qu'une seule fois");
+
+  cote.board = cote.board.filter((unit) => !["test-noxis", "test-bhaal"].includes(unit.uid));
+  cote.hand = cote.hand.filter((card) => card.id !== fusionId);
+  cote.invocations[0].granted = false;
+  rendre();
+}
+
+// ======================================================================
 section("Règles du tour");
 {
   // Le mélange peut servir une main sans terrain : le scénario porte sur la

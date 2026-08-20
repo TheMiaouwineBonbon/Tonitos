@@ -87,10 +87,11 @@ export const DECKS = [
         { id: "gardien-enflamme", copies: 3 },
         { id: "diablotins", copies: 2 },
         { id: "mort-vivant-bouclier", copies: 2 },
-        { id: "magiciens-exiles", copies: 2 },
+        { id: "magiciens-exiles", copies: 1 },
         { id: "comte-thaelion", copies: 1 },
         { id: "diplomate-aethran", copies: 1 },
-        { id: "noxis", copies: 1 }
+        { id: "noxis", copies: 1 },
+        { id: "bhaal", copies: 1, allowDivine: true }
       ],
       spells: [
         { id: "largage-ulgod", copies: 4 },
@@ -100,7 +101,9 @@ export const DECKS = [
         { id: "piege-obscur", copies: 2 },
         { id: "flamme-purificatrice", copies: 1 }
       ]
-    }
+    },
+    // Réserve divine : ces invocations ne font pas partie des 60 cartes.
+    extraCards: ["noxis-bhaal-fusion"]
   },
   {
     id: "bleu-vert",
@@ -268,7 +271,9 @@ function expandExplicitSection(deckSpec, sectionName, pool, expectedCount) {
 
     const copies = Math.max(0, Math.trunc(Number(entry.copies) || 0));
     if (sectionName !== "lands") {
-      if (card.divine) throw new Error(`${card.name} est une invocation conditionnelle et ne peut pas être mise dans le deck.`);
+      if (card.divine && entry.allowDivine !== true) {
+        throw new Error(`${card.name} est une invocation conditionnelle et ne peut pas être mise dans le deck.`);
+      }
       const cardLimit = isLegendaryCard(card)
         ? 1
         : Math.min(MAX_NONLAND_COPIES, Number(card.deckCopies) || MAX_NONLAND_COPIES);
@@ -295,6 +300,28 @@ function buildExplicitDeck(deckSpec, catalogue) {
     ...expandExplicitSection(deckSpec, "creatures", catalogue.cards, DECK_SIZE - DECK_LANDS - DECK_SPELLS),
     ...expandExplicitSection(deckSpec, "spells", catalogue.spells, DECK_SPELLS)
   ];
+}
+
+// Les invocations spéciales sont conservées hors du deck construit. Elles ne
+// modifient donc ni les 60 cartes, ni les compteurs de bibliothèque.
+export function buildExtraCards(deckSpec, catalogue) {
+  const ids = deckSpec.extraCards || [];
+  const catalogueById = new Map(
+    [...catalogue.cards, ...catalogue.spells].map((card) => [card.id, card])
+  );
+  const seen = new Set();
+
+  return ids.map((id) => {
+    if (seen.has(id)) throw new Error(`${deckSpec.name} répète l'invocation spéciale ${id}.`);
+    seen.add(id);
+    const card = catalogueById.get(id);
+    if (!card) throw new Error(`${deckSpec.name} référence une invocation absente : ${id}.`);
+    if (!card.divine) throw new Error(`${card.name} doit être une invocation conditionnelle.`);
+    if (!cardFitsDeckColors(card, deckSpec.colors)) {
+      throw new Error(`${card.name} n'appartient pas à l'identité ${deckSpec.colors.join("/")}.`);
+    }
+    return card;
+  });
 }
 
 // Les 60 cartes d un deck, dans l ordre de construction et SANS identifiant

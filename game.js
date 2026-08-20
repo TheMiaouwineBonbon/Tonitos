@@ -45,10 +45,11 @@ import {
   DECK_SPELLS,
   MAX_NONLAND_COPIES,
   buildDeck,
+  buildExtraCards,
   cardFitsDeckColors,
   getDeckComposition as composerDeck,
   getDeckSpec
-} from "./decks.mjs?v=20260819-impression-1";
+} from "./decks.mjs?v=20260820-invocations-1";
 import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260820-couts-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -840,6 +841,7 @@ function createSide(side, deckSpec, profile = {}) {
     profile: normalizeClientProfile(side, profile),
     life: STARTING_LIFE,
     deck: shuffle(makeDeck(side, deckSpec)),
+    invocations: makeInvocations(side, deckSpec),
     hand: [],
     board: [],
     lands: [],
@@ -1522,6 +1524,14 @@ function isLocalOnlineController() {
 function makeDeck(side, deckSpec) {
   const deck = buildDeck(deckSpec, { cards: state.cards, lands: state.lands, spells: state.spells });
   return deck.map((card, index) => withUid(card, side, index));
+}
+
+function makeInvocations(side, deckSpec) {
+  const cards = buildExtraCards(deckSpec, { cards: state.cards, lands: state.lands, spells: state.spells });
+  return cards.map((card, index) => ({
+    card: withUid(card, `${side}-invocation`, index),
+    granted: false
+  }));
 }
 
 function withUid(card, side, copy) {
@@ -3648,6 +3658,18 @@ function isDivineUnlocked(side, card) {
   return card.divine.any.some((clause) => divineClauseMet(side, clause));
 }
 
+function grantUnlockedInvocations(side) {
+  side.invocations ||= [];
+  for (const invocation of side.invocations) {
+    if (invocation.granted || !isDivineUnlocked(side, invocation.card)) continue;
+    invocation.granted = true;
+    side.hand.push(invocation.card);
+    logEvent(`${invocation.card.name} rejoint la main de ${sideDisplayName(side.side)} depuis la réserve divine.`);
+    debugEvent("DIVINE_INVOCATION_UNLOCKED", { side: side.side, cardId: invocation.card.id });
+    markOnlineDirty();
+  }
+}
+
 // Détail lisible de la condition, pour la fiche de carte.
 function describeDivineClause(side, clause) {
   const board = side.board || [];
@@ -3753,6 +3775,8 @@ function render() {
   state.enemy.graveyard ||= [];
   state.player.exile ||= [];
   state.enemy.exile ||= [];
+  grantUnlockedInvocations(state.player);
+  grantUnlockedInvocations(state.enemy);
   const handSide = getVisibleHandSide();
   els.playerName.textContent = sideDisplayName("player");
   els.enemyName.textContent = sideDisplayName("enemy");
