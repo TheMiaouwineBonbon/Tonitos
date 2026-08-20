@@ -49,7 +49,7 @@ import {
   getDeckComposition as composerDeck,
   getDeckSpec
 } from "./decks.mjs?v=20260819-impression-1";
-import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260818-gabarit-1";
+import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260820-numero-3";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
 const PHASES = {

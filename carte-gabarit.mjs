@@ -520,18 +520,26 @@ function badges(mots, x, y, teinte) {
 // un cadre lui-meme dore : illisible sur les teintes claires, et perdu au
 // scan une fois la carte imprimee. Il est desormais pose sur une pastille
 // noire, en jaune franc, avec la meme lisibilite sur les six couleurs.
-const NUMERO = { taille: 15, interlettre: 2, marge: 12, garde: 3 };
+// `remontee` est une fraction de la hauteur de carte, pas un nombre de
+// pixels : le numero garde la meme place relative quelle que soit la
+// definition du gabarit. A 2 % la pastille quitte le bord bas et vient se
+// poser SUR la barre de pied, comme un onglet - elle est donc dessinee
+// apres elle, et s'arrete au-dessus des medaillons d'attaque et de vie.
+const NUMERO = {
+  taille: 15,
+  interlettre: 2,
+  marge: 12,
+  garde: 3,
+  hauteur: 18,
+  remontee: 0.02
+};
 
 function numeroCollection(numero) {
   const texte = String(numero ?? "");
   if (!texte) return "";
 
-  // La pastille vit dans la bande laissee libre sous la barre de pied, sans
-  // la mordre et sans toucher le bord : une carte se massicote, ce qui rogne
-  // toujours un peu. Elle prend toute cette bande, garde comprise.
-  const hautBande = G.H - G.marge;
-  const y = hautBande + NUMERO.garde;
-  const hauteur = G.H - NUMERO.garde - y;
+  const hauteur = NUMERO.hauteur;
+  const y = G.H - NUMERO.garde - Math.round(G.H * NUMERO.remontee) - hauteur;
 
   // Georgia gras : la meme table de largeurs que les titres. L'interlettre
   // s'ajoute apres chaque glyphe, il compte donc dans la largeur du fond.
@@ -759,10 +767,10 @@ function dessinerCarte(card, contexte) {
 
   ${barre(G.socle, matiereCadre)}
   ${socle}
-  ${numeroCollection(card.numero)}
   <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="${matiereCadre}"/>
   <rect x="${G.marge + 8}" y="${G.H - G.marge - 10}" width="${G.W - (G.marge + 8) * 2}" height="10" rx="5" fill="none" stroke="${MATIERE.orSombre}" stroke-width="1.5" opacity="0.9"/>
   <rect x="${G.marge + 14}" y="${G.H - G.marge - 9}" width="${G.W - (G.marge + 14) * 2}" height="2" rx="1" fill="${MATIERE.or}" opacity="0.55"/>
+  ${numeroCollection(card.numero)}
 </svg>`;
 }
 

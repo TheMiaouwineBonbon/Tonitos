@@ -10,7 +10,7 @@
 // document isole, qui n a pas le droit d aller chercher les illustrations
 // externes. Inline, elles s affichent et restent vectorielles.
 // =====================================================================
-import { cardSvg } from "./carte-gabarit.mjs?v=20260819-impression-1";
+import { cardSvg } from "./carte-gabarit.mjs?v=20260820-numero-3";
 import { DECKS, deckPrintList, getDeckSpec } from "./decks.mjs?v=20260819-impression-1";
 
 const COLONNES = 3;

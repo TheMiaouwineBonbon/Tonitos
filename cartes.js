@@ -57,7 +57,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
-const SVG_ASSET_VERSION = "20260820-numero-1";
+const SVG_ASSET_VERSION = "20260820-numero-3";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
