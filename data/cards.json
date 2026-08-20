@@ -118,10 +118,10 @@
     "subtitle": "Monstre des abysses",
     "family": "Bleu",
     "type": "Créature - Léviathan",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Bleu": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 5,
     "life": 7,
@@ -146,10 +146,10 @@
     "subtitle": "Comte vampire lié à la Mort",
     "family": "Noir",
     "type": "Créature légendaire - Vampire Noble",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 4,
     "life": 6,
@@ -174,10 +174,10 @@
     "subtitle": "Incarnation du dieu Bhaal",
     "family": "Noir",
     "type": "Créature légendaire - Avatar Divin",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Noir": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 7,
     "life": 6,
@@ -202,10 +202,10 @@
     "subtitle": "Souverain des cendres",
     "family": "Rouge",
     "type": "Créature légendaire - Démon",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Rouge": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 6,
     "life": 5,
@@ -286,10 +286,10 @@
     "subtitle": "Ancien du paradis vert",
     "family": "Vert",
     "type": "Créature légendaire - Sylve Ancien",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Vert": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 2,
     "life": 7,
@@ -344,10 +344,10 @@
     "subtitle": "Souveraine du voile noir",
     "family": "Noir",
     "type": "Créature légendaire - Déesse",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Noir": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 5,
     "life": 7,
@@ -513,10 +513,10 @@
     "subtitle": "Monarque des abysses",
     "family": "Bleu",
     "type": "Créature légendaire - Noble Léviathan",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 4,
     "life": 6,
@@ -541,10 +541,10 @@
     "subtitle": "Héritier de la fournaise",
     "family": "Rouge",
     "type": "Créature légendaire - Démon Noble",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Rouge": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 6,
     "life": 4,
@@ -569,10 +569,10 @@
     "subtitle": "Serment de trois maisons",
     "family": "Blanc",
     "type": "Créature légendaire - Héros",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Blanc": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 4,
     "life": 5,
@@ -597,10 +597,10 @@
     "subtitle": "Divinité des serments solaires",
     "family": "Blanc",
     "type": "Créature légendaire - Déesse",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Blanc": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 6,
     "life": 9,
@@ -768,10 +768,10 @@
     "subtitle": "Fléau des profondeurs",
     "family": "Bleu",
     "type": "Créature - Kraken",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Bleu": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 7,
     "life": 8,
@@ -824,10 +824,10 @@
     "subtitle": "Divinité des marées premières",
     "family": "Bleu",
     "type": "Créature légendaire - Dieu",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Bleu": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 5,
     "life": 8,
@@ -864,10 +864,10 @@
     "subtitle": "Divinité de la fournaise",
     "family": "Rouge",
     "type": "Créature légendaire - Dieu",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Rouge": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 9,
     "life": 8,
@@ -932,10 +932,10 @@
     "subtitle": "Souveraine des bois vivants",
     "family": "Vert",
     "type": "Créature légendaire - Déesse",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Vert": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 8,
     "life": 10,
@@ -977,10 +977,10 @@
     "subtitle": "Faucheur des champs de bataille",
     "family": "Noir",
     "type": "Créature légendaire - Dieu",
-    "cost": 8,
+    "cost": 7,
     "manaCost": {
       "Noir": 2,
-      "generic": 6
+      "generic": 5
     },
     "attack": 9,
     "life": 8,
@@ -1388,10 +1388,10 @@
     "subtitle": "Prédateur des cités noyées",
     "family": "Bleu",
     "type": "Créature - Requin Guerrier",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 5,
     "life": 5,
@@ -1421,10 +1421,10 @@
     "subtitle": "Champion de la déesse nature",
     "family": "Vert",
     "type": "Créature légendaire - Chevalier de Rena",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Vert": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 5,
     "life": 6,
@@ -1585,10 +1585,10 @@
     "subtitle": "Matrice souveraine de la ruche",
     "family": "Vert",
     "type": "Créature légendaire - Reine Parasite",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Vert": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 7,
     "life": 9,
@@ -1619,10 +1619,10 @@
     "subtitle": "Vengeance vivante de Rena",
     "family": "Vert",
     "type": "Créature légendaire - Avatar Parasite",
-    "cost": 8,
+    "cost": 7,
     "manaCost": {
       "Vert": 2,
-      "generic": 6
+      "generic": 5
     },
     "attack": 9,
     "life": 10,
@@ -1654,10 +1654,10 @@
     "subtitle": "Châtiment de la nature blessée",
     "family": "Vert",
     "type": "Créature légendaire - Colosse de Rena",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Vert": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 8,
     "life": 9,
@@ -1791,10 +1791,10 @@
     "subtitle": "Titan des clairières englouties",
     "family": "Vert",
     "type": "Créature - Robot antique Guerrier",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Vert": 2,
-      "generic": 4
+      "generic": 3
     },
     "attack": 6,
     "life": 7,
@@ -1825,10 +1825,10 @@
     "subtitle": "Premier ouvrage des dieux",
     "family": "Blanc",
     "type": "Créature légendaire - Robot antique Divin",
-    "cost": 8,
+    "cost": 7,
     "manaCost": {
       "Blanc": 2,
-      "generic": 6
+      "generic": 5
     },
     "attack": 9,
     "life": 11,
@@ -1893,10 +1893,10 @@
     "subtitle": "Rempart de la porte immobile",
     "family": "Blanc",
     "type": "Créature - Robot antique Gardien",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Blanc": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 3,
     "life": 8,
@@ -1927,10 +1927,10 @@
     "subtitle": "Moissonneur de la fournaise",
     "family": "Rouge",
     "type": "Créature - Robot antique Colosse",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Rouge": 2,
-      "generic": 5
+      "generic": 4
     },
     "attack": 8,
     "life": 7,
@@ -1961,10 +1961,10 @@
     "subtitle": "Traqueur des cols gelés",
     "family": "Bleu",
     "type": "Créature - Robot antique Chasseur",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 5,
     "life": 5,
@@ -2091,10 +2091,10 @@
     "subtitle": "Gardienne des archives célestes",
     "family": "Bleu",
     "type": "Créature légendaire - Mage suprême",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 3,
     "life": 6,
@@ -2124,10 +2124,10 @@
     "subtitle": "Méditante du voile pourpre",
     "family": "Noir",
     "type": "Créature légendaire - Mage suprême",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 4,
     "life": 5,
@@ -2290,10 +2290,10 @@
     "subtitle": "Bourreau des bas-fonds",
     "family": "Bleu",
     "type": "Créature - Requin Bourreau",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "attack": 5,
     "life": 4,
@@ -2322,9 +2322,9 @@
     "subtitle": "Lames jumelles des ruines",
     "family": "Incolore",
     "type": "Artefact - Robot antique",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
-      "generic": 5
+      "generic": 4
     },
     "attack": 5,
     "life": 3,
@@ -2353,9 +2353,9 @@
     "subtitle": "Somme des cinq magies",
     "family": "Incolore",
     "type": "Créature légendaire - Aberration",
-    "cost": 8,
+    "cost": 7,
     "manaCost": {
-      "generic": 8
+      "generic": 7
     },
     "attack": 8,
     "life": 8,
@@ -2599,11 +2599,11 @@
       "Noir"
     ],
     "type": "Créature légendaire - Horreur",
-    "cost": 6,
+    "cost": 5,
     "manaCost": {
       "Noir": 1,
       "Rouge": 1,
-      "generic": 4
+      "generic": 3
     },
     "attack": 7,
     "life": 6,

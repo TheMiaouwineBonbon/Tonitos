@@ -30,11 +30,11 @@ export const DROP_CONFIG = {
   // Poids sur 10 000. Ils ne se lisent pas seuls : ce qui compte pour le
   // joueur, c'est la probabilite d'obtenir UNE carte precise, soit le poids
   // divise par l'effectif de la rarete. Les poids sont donc calibres sur les
-  // effectifs reels (80 / 53 / 35 / 26 / 3 cartes) pour que cette proba
+  // effectifs reels (81 / 73 / 15 / 26 / 3 cartes) pour que cette proba
   // decroisse strictement du commun au legendaire :
-  //   commune    4661 / 80 = 0,5826 % par carte
-  //   peuCommune 2900 / 53 = 0,5472 %
-  //   rare       1576 / 35 = 0,4503 %
+  //   commune    5737 / 81 = 0,7083 % par carte
+  //   peuCommune 2900 / 73 = 0,3973 %
+  //   rare        500 / 15 = 0,3333 %
   //   epique      780 / 26 = 0,3000 %
   //   legendaire   83 /  3 = 0,2767 %
   //
@@ -54,9 +54,9 @@ export const DROP_CONFIG = {
   // mince. Pour le rouvrir, il faudra classer plus de cartes en legendaire
   // plutot que forcer les poids.
   weights: {
-    commune: 4661,
+    commune: 5737,
     peuCommune: 2900,
-    rare: 1576,
+    rare: 500,
     epique: 780,
     legendaire: 83
   },

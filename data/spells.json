@@ -6,10 +6,10 @@
     "subtitle": "Jugement des océans",
     "family": "Bleu",
     "type": "Rituel - Sort offensif",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -126,10 +126,10 @@
     "subtitle": "Soulèvement de la sylve",
     "family": "Vert",
     "type": "Rituel - Sort offensif",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Vert": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -300,10 +300,10 @@
     "subtitle": "Pacte de réanimation",
     "family": "Noir",
     "type": "Rituel - Réanimation",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "upgrade",
     "keywords": [
@@ -428,10 +428,10 @@
     "subtitle": "Retour des élus",
     "family": "Noir",
     "type": "Rituel - Réanimation",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Noir": 2,
-      "generic": 5
+      "generic": 4
     },
     "slot": "upgrade",
     "keywords": [
@@ -462,10 +462,10 @@
     "subtitle": "Sentence de lave",
     "family": "Rouge",
     "type": "Rituel - Sort offensif",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Rouge": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -495,10 +495,10 @@
     "subtitle": "Terreur sous la surface",
     "family": "Bleu",
     "type": "Rituel - Sort de contrôle",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -627,10 +627,10 @@
     "subtitle": "Cortège des oubliés",
     "family": "Noir",
     "type": "Rituel - Sort offensif",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -660,10 +660,10 @@
     "subtitle": "La tour qui voulut toucher les dieux",
     "family": "Noir",
     "type": "Rituel - Sort de destruction",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -726,10 +726,10 @@
     "subtitle": "Le titan sous les abysses",
     "family": "Bleu",
     "type": "Rituel - Sort de contrôle",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "defense",
     "keywords": [
@@ -825,10 +825,10 @@
     "subtitle": "Délibération au-dessus des nuages",
     "family": "Bleu",
     "type": "Rituel - Pioche",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "draw",
     "keywords": [
@@ -862,11 +862,11 @@
       "Noir"
     ],
     "type": "Rituel multicolore - Duel",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Blanc": 1,
       "Noir": 1,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "deckCopies": 1,
@@ -898,10 +898,10 @@
     "subtitle": "Une révélation que l'esprit ne peut contenir",
     "family": "Noir",
     "type": "Rituel - Révélation",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Noir": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -1000,10 +1000,10 @@
     "subtitle": "Colère des profondeurs",
     "family": "Bleu",
     "type": "Rituel - Sort offensif",
-    "cost": 5,
+    "cost": 4,
     "manaCost": {
       "Bleu": 2,
-      "generic": 3
+      "generic": 2
     },
     "slot": "offense",
     "keywords": [
@@ -1037,11 +1037,11 @@
       "Noir"
     ],
     "type": "Rituel - Sort de ruine",
-    "cost": 7,
+    "cost": 6,
     "manaCost": {
       "Noir": 1,
       "Rouge": 1,
-      "generic": 5
+      "generic": 4
     },
     "slot": "offense",
     "keywords": [

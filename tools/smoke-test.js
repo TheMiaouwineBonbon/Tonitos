@@ -951,7 +951,7 @@ async function main() {
   check(
     "La vérité = rituel noir de défausse réellement pris en charge",
     spells.find((spell) => spell.id === "la-verite")?.family === "Noir" &&
-      spells.find((spell) => spell.id === "la-verite")?.cost === 5 &&
+      spells.find((spell) => spell.id === "la-verite")?.cost === 4 &&
       spells.find((spell) => spell.id === "la-verite")?.effect === "unbearableTruth"
   );
   check(
