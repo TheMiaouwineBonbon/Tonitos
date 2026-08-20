@@ -189,6 +189,14 @@
     "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures à toutes les créatures adverses. Chaque mort lui donne +1 force.",
     "flavor": "Le silence après son passage est encore une menace.",
     "image": "Images/Noxis Drathis_sans_watermark.jpg",
+    "art": {
+      "fit": "cover",
+      "position": "50% 40%",
+      "dimensions": {
+        "largeur": 1024,
+        "hauteur": 765
+      }
+    },
     "palette": {
       "primary": "#9d201c",
       "secondary": "#ff6f4a",
@@ -473,6 +481,14 @@
     "abilityText": "Quand cette carte arrive sur le champ de bataille, crée un Zombie 1/1.",
     "flavor": "Une tombe vide est rarement une bonne nouvelle.",
     "image": "Images/Morts vivants.PNG",
+    "art": {
+      "fit": "cover",
+      "position": "50% 40%",
+      "dimensions": {
+        "largeur": 1402,
+        "hauteur": 1122
+      }
+    },
     "palette": {
       "primary": "#566048",
       "secondary": "#a4b37c",

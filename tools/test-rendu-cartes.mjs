@@ -199,6 +199,21 @@ test("la zone d illustration et le rayon viennent de la grille", () => {
   assert.ok(RAYON_CARTE.x > 0 && RAYON_CARTE.y > 0, "rayon de carte non defini");
 });
 
+test("art.position applique un cadrage identique dans tous les rendus SVG", () => {
+  const carteCadree = {
+    ...creature,
+    uid: "u-cadrage",
+    art: { fit: "cover", position: "50% 40%", dimensions: { largeur: 1000, hauteur: 1000 } }
+  };
+  const svg = cardSvg(carteCadree, contexte("cadre"));
+  const attenduY = Number((G.art.y + (G.art.h - G.art.w) * 0.4).toFixed(3));
+  assert.ok(svg.includes(`x="${G.art.x}" y="${attenduY}" width="${G.art.w}" height="${G.art.w}"`));
+  assert.ok(svg.includes('preserveAspectRatio="none"'), "le positionnement calcule ne doit pas etre recentre par SVG");
+
+  const repli = cardSvg({ ...creature, uid: "u-repli" }, contexte("repli"));
+  assert.ok(repli.includes('preserveAspectRatio="xMidYMid slice"'), "le rendu historique reste disponible sans dimensions");
+});
+
 test("les cartes reelles passent toutes le gabarit sans erreur", () => {
   const cartes = [
     ...lire("cards.json").map((c) => ({ ...c, kind: "creature" })),

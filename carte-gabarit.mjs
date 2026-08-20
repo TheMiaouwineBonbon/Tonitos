@@ -613,6 +613,54 @@ const SYMBOLE_VIE = `<path d="M0 8 C-12 -2 -10 -13 -4 -13 C-1 -13 0 -11 0 -9 C0 
 const SYMBOLE_MANA = `<path d="M0 -13 C7 -5 11 0 11 4 A11 11 0 0 1 -11 4 C-11 0 -7 -5 0 -13 Z" fill="#e8f2ff"/>`;
 const SYMBOLE_SORT = `<path d="M0 -14 L3.6 -4.4 L14 -4.4 L5.6 2 L9 12 L0 6 L-9 12 L-5.6 2 L-14 -4.4 L-3.6 -4.4 Z" fill="#ffeec4"/>`;
 
+function positionArt(valeur, repli = 0.5) {
+  const texte = String(valeur ?? "").trim().toLowerCase();
+  if (texte === "left" || texte === "top") return 0;
+  if (texte === "center") return 0.5;
+  if (texte === "right" || texte === "bottom") return 1;
+  const resultat = texte.match(/^(-?\d+(?:\.\d+)?)%$/);
+  if (!resultat) return repli;
+  return Math.max(0, Math.min(1, Number(resultat[1]) / 100));
+}
+
+function arrondirSvg(valeur) {
+  return Number(valeur.toFixed(3));
+}
+
+function geometrieIllustration(card, ajustement) {
+  const dimensions = card.art?.dimensions;
+  const largeurSource = Number(dimensions?.largeur ?? dimensions?.width);
+  const hauteurSource = Number(dimensions?.hauteur ?? dimensions?.height);
+
+  // Sans dimensions fiables, conserver strictement le comportement historique.
+  if (!(largeurSource > 0) || !(hauteurSource > 0)) {
+    return {
+      x: G.art.x,
+      y: G.art.y,
+      largeur: G.art.w,
+      hauteur: G.art.h,
+      preserveAspectRatio: ajustement === "contain" ? "xMidYMid meet" : "xMidYMid slice"
+    };
+  }
+
+  const echelle = ajustement === "contain"
+    ? Math.min(G.art.w / largeurSource, G.art.h / hauteurSource)
+    : Math.max(G.art.w / largeurSource, G.art.h / hauteurSource);
+  const largeur = largeurSource * echelle;
+  const hauteur = hauteurSource * echelle;
+  const morceaux = String(card.art?.position || "50% 50%").trim().split(/\s+/);
+  const positionX = positionArt(morceaux[0], 0.5);
+  const positionY = positionArt(morceaux[1], 0.5);
+
+  return {
+    x: arrondirSvg(G.art.x + (G.art.w - largeur) * positionX),
+    y: arrondirSvg(G.art.y + (G.art.h - hauteur) * positionY),
+    largeur: arrondirSvg(largeur),
+    hauteur: arrondirSvg(hauteur),
+    preserveAspectRatio: "none"
+  };
+}
+
 function dessinerCarte(card, contexte) {
   const { elements: ELEMENTS, image } = contexte;
   const isLand = card.kind === "land";
@@ -626,7 +674,7 @@ function dessinerCarte(card, contexte) {
   // Remplir le cadre est la regle ; contain reste possible au cas par cas
   // pour une illustration qu'un recadrage mutilerait.
   const artFit = card.art?.svgFit || card.art?.fit || "cover";
-  const artAspectRatio = artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice";
+  const art = geometrieIllustration(card, artFit);
 
   // Composition unique du panneau : lignes, tailles et plan vertical
   // viennent de `composerPanneau`, la meme fonction que les verificateurs
@@ -745,7 +793,7 @@ function dessinerCarte(card, contexte) {
 
   <rect x="${G.art.x - 10}" y="${G.art.y - 10}" width="${G.art.w + 20}" height="${G.art.h + 20}" rx="10" fill="${MATIERE.fond}" opacity="0.9"/>
   <rect x="${G.art.x - 6}" y="${G.art.y - 6}" width="${G.art.w + 12}" height="${G.art.h + 12}" rx="8" fill="url(#orBrosse)"/>
-  <image href="${artHref}" x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" preserveAspectRatio="${artAspectRatio}" clip-path="url(#clipArt)"/>
+  <image href="${artHref}" x="${art.x}" y="${art.y}" width="${art.largeur}" height="${art.hauteur}" preserveAspectRatio="${art.preserveAspectRatio}" clip-path="url(#clipArt)"/>
   <rect x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" rx="6" fill="none" stroke="#000000" stroke-width="6" opacity="0.26"/>
   <rect x="${G.art.x}" y="${G.art.y}" width="${G.art.w}" height="${G.art.h}" rx="6" fill="none" stroke="${teinteClaire}" stroke-width="2" opacity="0.85"/>
   ${equerre(G.art.x + 7, G.art.y + 7, 1, 1, MATIERE.or)}

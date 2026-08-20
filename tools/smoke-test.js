@@ -241,7 +241,8 @@ async function main() {
   );
   check(
     "Les illustrations remplissent leur cadre par defaut",
-    gabaritSource.includes('artFit === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
+    gabaritSource.includes('preserveAspectRatio: ajustement === "contain" ? "xMidYMid meet" : "xMidYMid slice"') &&
+      gabaritSource.includes('preserveAspectRatio="${art.preserveAspectRatio}"') &&
       gameSource.includes("article.dataset.artFit")
   );
   check(
