@@ -2298,6 +2298,41 @@ function applySpellEffect(card, side) {
     }
   }
 
+  if (card.effect === "ancientRobotShot") {
+    const robots = ancientRobotAllies(side);
+    if (robots.length === 0) {
+      logEvent(`${card.name} ne trouve aucun Robot antique pour synchroniser le tir.`);
+    } else {
+      const target = strongestCreature(opponent.board);
+      if (target) target.currentLife -= 3;
+      opponent.life -= 1;
+      pushVisualEffect("hit", opponent.side, target ? "Tir antique" : "-1");
+      logEvent(
+        target
+          ? `${card.name} inflige 3 blessures à ${target.name} et 1 au héros adverse.`
+          : `${card.name} inflige 1 blessure au héros adverse.`
+      );
+    }
+  }
+
+  if (card.effect === "ancientRobotShield") {
+    const target = strongestCreature(
+      side.board.filter(
+        (unit) => hasKeyword(unit, "Robot antique") || unit.id === "aventurier-mythique-daemon"
+      )
+    );
+    if (target) {
+      buffTeam([target], 0, 2);
+      if (!hasKeyword(target, "Vigilance")) {
+        target.keywords = [...(target.keywords || []), "Vigilance"];
+      }
+      pushVisualEffect("buff", side.side, "+0/+2");
+      logEvent(`${card.name} donne +0/+2 et Vigilance à ${target.name}.`);
+    } else {
+      logEvent(`${card.name} ne trouve ni Robot antique ni Daemon à protéger.`);
+    }
+  }
+
   if (card.effect === "buffTeam1") {
     buffTeam(side.board, 1, 1);
     logEvent(`${card.name} donne +1/+1 aux créatures alliées.`);
@@ -3405,6 +3440,12 @@ function isSpellWorthCasting(card, side, opponent) {
     case "createGuardian":
     case "createAncientDrones":
       return side.board.length < MAX_BOARD;
+    case "ancientRobotShot":
+      return ancientRobotAllies(side).length > 0;
+    case "ancientRobotShield":
+      return side.board.some(
+        (unit) => hasKeyword(unit, "Robot antique") || unit.id === "aventurier-mythique-daemon"
+      );
     case "reanimate":
     case "reanimateTwo":
     case "reanimateRandom":

@@ -914,6 +914,57 @@ section("Sorts de résilience");
   jouerParFiche(uidJamais);
   verifier(jeu().player.board.length === 0, "Jamais abandonner sur cimetière vide ne pose aucune créature");
   verifier(debug.validate().length === 0, "L'état reste valide après un sort de réanimation sans cible", debug.validate().join(" / "));
+
+  // --- Arsenal des Robots antiques -----------------------------------
+  await lancerPartie("pve", { playerDeckId: "blanc-bleu" });
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().enemy.board.length = 0;
+  const compagnon = jeu().cards.find((carte) => carte.id === "robot-antique-petit-compagnon");
+  const cible = jeu().cards.find((carte) => carte.id === "robot-antique-gardien");
+  jeu().player.board.push({
+    ...compagnon,
+    uid: "robot-tireur",
+    owner: "player",
+    maxLife: compagnon.life,
+    currentLife: compagnon.life,
+    tapped: false
+  });
+  jeu().enemy.board.push({
+    ...cible,
+    uid: "cible-tir-antique",
+    owner: "enemy",
+    maxLife: 8,
+    currentLife: 8,
+    attack: 6,
+    tapped: false
+  });
+  const vieAdverseAvantTir = jeu().enemy.life;
+  rendre();
+  const tir = jouerParFiche(mettreEnMain("tir-robot"));
+  const cibleApresTir = jeu().enemy.board.find((unite) => unite.uid === "cible-tir-antique");
+  verifier(tir.active, "Tir de robot est jouable avec un Robot antique en réseau");
+  verifier(cibleApresTir?.currentLife === 5, "Tir de robot inflige 3 blessures à la créature la plus puissante", `${cibleApresTir?.currentLife}/8`);
+  verifier(jeu().enemy.life === vieAdverseAvantTir - 1, "Tir de robot inflige aussi 1 blessure au héros adverse");
+
+  await lancerPartie("pve", { playerDeckId: "blanc-bleu" });
+  approvisionner();
+  jeu().player.board.length = 0;
+  jeu().player.board.push({
+    ...compagnon,
+    uid: "robot-protege",
+    owner: "player",
+    maxLife: compagnon.life,
+    currentLife: compagnon.life,
+    keywords: ["Robot antique"],
+    tapped: false
+  });
+  rendre();
+  const bouclier = jouerParFiche(mettreEnMain("bouclier-antique"));
+  const protege = jeu().player.board.find((unite) => unite.uid === "robot-protege");
+  verifier(bouclier.active, "Bouclier antique est jouable sur un Robot antique");
+  verifier(protege?.maxLife === compagnon.life + 2 && protege?.currentLife === compagnon.life + 2, "Bouclier antique donne définitivement +0/+2");
+  verifier((protege?.keywords || []).includes("Vigilance"), "Bouclier antique ajoute Vigilance");
 }
 
 // ======================================================================

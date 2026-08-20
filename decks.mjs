@@ -128,10 +128,37 @@ export const DECKS = [
   },
   {
     id: "blanc-bleu",
-    name: "Blanc / Bleu - Concile des Marées",
-    shortName: "Concile des Marées",
+    name: "Blanc / Bleu - Héritage des Anciens",
+    shortName: "Héritage des Anciens",
     colors: ["Blanc", "Bleu"],
-    theme: "protection, pioche et contrôle des abysses"
+    theme: "Robots antiques, protection et savoir de Daemon",
+    deckList: {
+      lands: [
+        { id: "chateau-bordeciel", copies: 4 },
+        { id: "monde-au-dessus", copies: 4 },
+        { id: "temple-antique-aube-polaire", copies: 4 },
+        { id: "temple-antique-mers", copies: 4 },
+        { id: "ile-marees", copies: 4 },
+        { id: "oceania-cite-sous-marine", copies: 4 }
+      ],
+      creatures: [
+        { id: "robot-antique-petit-compagnon", copies: 4 },
+        { id: "robot-antique-chien", copies: 4 },
+        { id: "robot-antique-argonien", copies: 4 },
+        { id: "robot-antique-gardien", copies: 3 },
+        { id: "robot-antique-chasseur", copies: 3 },
+        { id: "robot-saccageur", copies: 2 },
+        { id: "aventurier-mythique-daemon", copies: 1 },
+        { id: "robot-antique-creation-divine", copies: 1 }
+      ],
+      spells: [
+        { id: "tir-robot", copies: 4 },
+        { id: "bouclier-antique", copies: 4 },
+        { id: "generateur-antique", copies: 2 },
+        { id: "terrible-decouverte", copies: 2 },
+        { id: "bulle-revigorante", copies: 2 }
+      ]
+    }
   }
 ];
 

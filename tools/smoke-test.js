@@ -908,7 +908,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("52 sorts avec illustrations autonomes", spells.length === 52);
+  check("54 sorts avec illustrations autonomes", spells.length === 54);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))
@@ -936,6 +936,18 @@ async function main() {
     "Générateur antique = artefact incolore créateur de Robots",
     spells.find((spell) => spell.id === "generateur-antique")?.family === "Incolore" &&
       spells.find((spell) => spell.id === "generateur-antique")?.effect === "createAncientDrones"
+  );
+  check(
+    "Tir de robot = artillerie incolore à 2 manas",
+    spells.find((spell) => spell.id === "tir-robot")?.family === "Incolore" &&
+      spells.find((spell) => spell.id === "tir-robot")?.cost === 2 &&
+      spells.find((spell) => spell.id === "tir-robot")?.effect === "ancientRobotShot"
+  );
+  check(
+    "Bouclier antique = protection incolore à 2 manas",
+    spells.find((spell) => spell.id === "bouclier-antique")?.family === "Incolore" &&
+      spells.find((spell) => spell.id === "bouclier-antique")?.cost === 2 &&
+      spells.find((spell) => spell.id === "bouclier-antique")?.effect === "ancientRobotShield"
   );
   check(
     "Conseil des sages = sort bleu de pioche",
@@ -1133,6 +1145,42 @@ async function main() {
         const card = whiteGreenNonlands.find((entry) => entry.id === id);
         return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
       })
+  );
+
+  const whiteBlueSpec = deckModule.getDeckSpec("blanc-bleu");
+  const whiteBlueCards = deckModule.buildDeck(whiteBlueSpec, { cards, spells, lands });
+  const whiteBlueDeck = {
+    lands: whiteBlueCards.filter((card) => landIds.has(card.id)),
+    creatures: whiteBlueCards.filter((card) => !landIds.has(card.id) && !spellIds.has(card.id)),
+    spells: whiteBlueCards.filter((card) => spellIds.has(card.id))
+  };
+  const whiteBlueNonlands = [...whiteBlueDeck.creatures, ...whiteBlueDeck.spells];
+  const whiteBlueCopies = whiteBlueNonlands.reduce((counts, card) => {
+    counts.set(card.id, (counts.get(card.id) || 0) + 1);
+    return counts;
+  }, new Map());
+  check(
+    "Le deck Robots antiques de Daemon contient exactement 24 terrains, 22 creatures et 14 sorts",
+    whiteBlueDeck.lands.length === 24 &&
+      whiteBlueDeck.creatures.length === 22 &&
+      whiteBlueDeck.spells.length === 14
+  );
+  check(
+    "Daemon est l'unique creature non-robot du deck Blanc/Bleu",
+    whiteBlueCopies.get("aventurier-mythique-daemon") === 1 &&
+      whiteBlueDeck.creatures.every(
+        (card) => card.id === "aventurier-mythique-daemon" || card.keywords?.includes("Robot antique")
+      )
+  );
+  check(
+    "Le deck Robots antiques respecte couleurs, legendaires et quatre copies",
+    whiteBlueNonlands.every((card) => deckModule.cardFitsDeckColors(card, whiteBlueSpec.colors)) &&
+      [...whiteBlueCopies.entries()].every(([id, copies]) => {
+        const card = whiteBlueNonlands.find((entry) => entry.id === id);
+        return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
+      }) &&
+      whiteBlueCopies.get("tir-robot") === 4 &&
+      whiteBlueCopies.get("bouclier-antique") === 4
   );
 
   const redBlackSpec = deckModule.getDeckSpec("rouge-noir");
