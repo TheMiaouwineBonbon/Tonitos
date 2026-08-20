@@ -4,6 +4,7 @@
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const { pathToFileURL } = require("url");
 
 const PORT = 4188;
 const base = `http://localhost:${PORT}`;
@@ -1083,6 +1084,36 @@ async function main() {
     const creatureCount = 60 - 24 - spellCount;
     return spellCount >= 8 && spellPool.length * 4 >= spellCount && creaturePool.length * 4 >= creatureCount;
   }));
+
+  const deckModule = await import(pathToFileURL(path.join(__dirname, "..", "decks.mjs")).href);
+  const whiteGreenSpec = deckModule.getDeckSpec("blanc-vert");
+  const whiteGreenCards = deckModule.buildDeck(whiteGreenSpec, { cards, spells, lands });
+  const landIds = new Set(lands.map((card) => card.id));
+  const spellIds = new Set(spells.map((card) => card.id));
+  const whiteGreenDeck = {
+    lands: whiteGreenCards.filter((card) => landIds.has(card.id)),
+    creatures: whiteGreenCards.filter((card) => !landIds.has(card.id) && !spellIds.has(card.id)),
+    spells: whiteGreenCards.filter((card) => spellIds.has(card.id))
+  };
+  const whiteGreenNonlands = [...whiteGreenDeck.creatures, ...whiteGreenDeck.spells];
+  const whiteGreenCopies = whiteGreenNonlands.reduce((counts, card) => {
+    counts.set(card.id, (counts.get(card.id) || 0) + 1);
+    return counts;
+  }, new Map());
+  check(
+    "Le deck Blanc/Vert definitif contient exactement 24 terrains, 22 creatures et 14 sorts",
+    whiteGreenDeck.lands.length === 24 &&
+      whiteGreenDeck.creatures.length === 22 &&
+      whiteGreenDeck.spells.length === 14
+  );
+  check(
+    "Le deck Blanc/Vert definitif respecte couleurs, unicite legendaire et quatre copies",
+    whiteGreenNonlands.every((card) => deckModule.cardFitsDeckColors(card, whiteGreenSpec.colors)) &&
+      [...whiteGreenCopies.entries()].every(([id, copies]) => {
+        const card = whiteGreenNonlands.find((entry) => entry.id === id);
+        return copies <= (deckModule.isLegendaryCard(card) ? 1 : 4);
+      })
+  );
 
   await fetch(`${base}/api/room/reset`, json({ code: "1234" }));
 

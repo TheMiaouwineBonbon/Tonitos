@@ -9,7 +9,7 @@
 // Le jeu ET la page d impression appellent ce module : il n existe donc
 // qu une seule definition des decks, impossible de les voir diverger.
 // =====================================================================
-import { landProduces } from "./engine-core.mjs";
+import { landProduces, manaRequirements, normalizedCost } from "./engine-core.mjs";
 
 export const DECK_SIZE = 60;
 export const DECK_LANDS = 24;
@@ -22,7 +22,44 @@ export const DECKS = [
     name: "Blanc / Vert - Serment de la Canopée",
     shortName: "Serment de la Canopée",
     colors: ["Blanc", "Vert"],
-    theme: "défense, soins et renforts naturels"
+    theme: "défense, soins et renforts naturels",
+    // Liste construite volontairement : contrairement aux decks historiques,
+    // Blanc/Vert n'est jamais rempli par l'ordre alphabétique du catalogue.
+    deckList: {
+      lands: [
+        { id: "chateau-bordeciel", copies: 4 },
+        { id: "monde-au-dessus", copies: 3 },
+        { id: "sanctuaire-merveilleux", copies: 3 },
+        { id: "sentier-uldrid", copies: 4 },
+        { id: "paradis-uldrid", copies: 3 },
+        { id: "temple-antique-naturel", copies: 3 },
+        { id: "champ-deux-couronnes", copies: 2 },
+        { id: "royaume-paisible", copies: 2 }
+      ],
+      creatures: [
+        { id: "chevalier-froussard", copies: 4 },
+        { id: "guerrier-lapin", copies: 2 },
+        { id: "robot-antique-drone", copies: 1 },
+        { id: "fee", copies: 3 },
+        { id: "dyklanne", copies: 1 },
+        { id: "protecteurs-nature", copies: 3 },
+        { id: "marinehote", copies: 1 },
+        { id: "centaure", copies: 1 },
+        { id: "ours-hibou", copies: 2 },
+        { id: "johanna", copies: 1 },
+        { id: "trios-heros", copies: 1 },
+        { id: "uldrid", copies: 1 },
+        { id: "terreur-rena", copies: 1 }
+      ],
+      spells: [
+        { id: "eclair-divin", copies: 3 },
+        { id: "pierre-norne", copies: 3 },
+        { id: "chute", copies: 3 },
+        { id: "benediction-du-heros", copies: 2 },
+        { id: "vengeance-uldrid", copies: 2 },
+        { id: "generateur-antique", copies: 1 }
+      ]
+    }
   },
   {
     id: "rouge-noir",
@@ -72,6 +109,14 @@ export function cardFitsDeckColors(card, colors) {
 }
 
 export function getDeckComposition(deckSpec, catalogue) {
+  if (deckSpec.deckList) {
+    const total = (section) => section.reduce((sum, entry) => sum + Number(entry.copies || 0), 0);
+    return {
+      lands: total(deckSpec.deckList.lands),
+      creatures: total(deckSpec.deckList.creatures),
+      spells: total(deckSpec.deckList.spells)
+    };
+  }
   const spellPool = catalogue.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const spells = Math.min(DECK_SPELLS, spellPool.length * MAX_NONLAND_COPIES);
   return {
@@ -159,10 +204,71 @@ export function pickSpells(pool, count) {
   return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
 }
 
+function normalizedType(card) {
+  return String(card?.type || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+export function isLegendaryCard(card) {
+  const type = normalizedType(card);
+  return type.includes("legendaire") || type.includes("divine");
+}
+
+function expandExplicitSection(deckSpec, sectionName, pool, expectedCount) {
+  const entries = deckSpec.deckList?.[sectionName] || [];
+  const catalogueById = new Map(pool.map((card) => [card.id, card]));
+  const seen = new Set();
+  const cards = [];
+
+  for (const entry of entries) {
+    if (seen.has(entry.id)) throw new Error(`${deckSpec.name} répète ${entry.id} dans sa liste ${sectionName}.`);
+    seen.add(entry.id);
+
+    const card = catalogueById.get(entry.id);
+    if (!card) throw new Error(`${deckSpec.name} référence une carte absente : ${entry.id}.`);
+    if (!cardFitsDeckColors(card, deckSpec.colors)) {
+      throw new Error(`${card.name} n'appartient pas à l'identité ${deckSpec.colors.join("/")}.`);
+    }
+
+    const copies = Math.max(0, Math.trunc(Number(entry.copies) || 0));
+    if (sectionName !== "lands") {
+      if (card.divine) throw new Error(`${card.name} est une invocation conditionnelle et ne peut pas être mise dans le deck.`);
+      const cardLimit = isLegendaryCard(card)
+        ? 1
+        : Math.min(MAX_NONLAND_COPIES, Number(card.deckCopies) || MAX_NONLAND_COPIES);
+      if (copies > cardLimit) throw new Error(`${card.name} dépasse sa limite de ${cardLimit} exemplaire(s).`);
+
+      const requirements = manaRequirements(card);
+      if (!requirements || requirements.total !== normalizedCost(card)) {
+        throw new Error(`${card.name} possède un coût incohérent avec le moteur de mana.`);
+      }
+    }
+
+    for (let copy = 0; copy < copies; copy += 1) cards.push(card);
+  }
+
+  if (cards.length !== expectedCount) {
+    throw new Error(`${deckSpec.name} exige ${expectedCount} ${sectionName}, mais sa liste en contient ${cards.length}.`);
+  }
+  return cards;
+}
+
+function buildExplicitDeck(deckSpec, catalogue) {
+  return [
+    ...expandExplicitSection(deckSpec, "lands", catalogue.lands, DECK_LANDS),
+    ...expandExplicitSection(deckSpec, "creatures", catalogue.cards, DECK_SIZE - DECK_LANDS - DECK_SPELLS),
+    ...expandExplicitSection(deckSpec, "spells", catalogue.spells, DECK_SPELLS)
+  ];
+}
+
 // Les 60 cartes d un deck, dans l ordre de construction et SANS identifiant
 // d instance : c est la liste de reference, celle qu on imprime.
 // `catalogue` = { cards, lands, spells }, tel que le jeu les charge.
 export function buildDeck(deckSpec, catalogue) {
+  if (deckSpec.deckList) return buildExplicitDeck(deckSpec, catalogue);
+
   const landsProducing = (color) => catalogue.lands.filter((land) => landProduces(land, color));
   const lands = [
     ...pickCopies(landsProducing(deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
