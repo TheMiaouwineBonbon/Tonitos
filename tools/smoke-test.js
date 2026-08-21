@@ -41,7 +41,55 @@ const json = (body) => ({
   body: JSON.stringify(body)
 });
 
+// --- Clés de cache des imports ---------------------------------------
+// Les modules sont importés avec un `?v=` écrit à la main. Si on modifie un
+// module sans toucher sa clé, le navigateur d'un joueur déjà venu continue de
+// servir l'ancienne copie : le jeu tourne alors avec un moteur périmé, sans
+// aucun signe visible. Deux règles suffisent à l'éviter, et elles se
+// vérifient sans réseau, à partir de la seule date du dernier commit.
+function verifierClesDeCache() {
+  const { execSync } = require("child_process");
+  const racine = path.join(__dirname, "..");
+  const fichiers = ["game.js", "cartes.js", "impression.js", "carte-gabarit.mjs", "decks.mjs"];
+  const motif = /["'`]\.\/([A-Za-z0-9_.-]+\.m?js)\?v=(\d{8})[^"'`]*["'`]/g;
+  const clesParModule = new Map();
+
+  for (const fichier of fichiers) {
+    const chemin = path.join(racine, fichier);
+    if (!fs.existsSync(chemin)) continue;
+    const source = fs.readFileSync(chemin, "utf8");
+    for (const [, module, date] of source.matchAll(motif)) {
+      const cible = path.join(racine, module);
+      if (!fs.existsSync(cible)) continue;
+      const modifie = execSync(`git log -1 --format=%cd --date=format:%Y%m%d -- ${module}`, {
+        cwd: racine
+      })
+        .toString()
+        .trim();
+      check(
+        `${fichier} : la clé de cache de ${module} couvre sa dernière modification`,
+        !modifie || date >= modifie,
+        `clé ${date}, module modifié le ${modifie} — incrémente le \`?v=\` de ${module} dans ${fichier}`
+      );
+      const connues = clesParModule.get(module) || new Set();
+      connues.add(date);
+      clesParModule.set(module, connues);
+    }
+  }
+
+  // Deux clés différentes pour un même module font télécharger et exécuter
+  // deux copies distinctes : les états divergent en silence.
+  for (const [module, cles] of clesParModule) {
+    check(
+      `${module} est importé avec une seule clé de cache`,
+      cles.size === 1,
+      cles.size > 1 ? `clés trouvées : ${[...cles].join(", ")}` : ""
+    );
+  }
+}
+
 async function main() {
+  verifierClesDeCache();
   await waitForServer();
 
   let res = await fetch(`${base}/`);

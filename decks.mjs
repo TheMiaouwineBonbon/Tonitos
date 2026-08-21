@@ -1,10 +1,21 @@
 // =====================================================================
 // Spellaho - Construction des decks
 // ---------------------------------------------------------------------
-// Module pur : ni DOM ni etat global. La composition d un deck est une
-// fonction deterministe du catalogue de cartes et de la paire de couleurs
-// choisie - le tri se fait par cout puis par nom, aucun hasard n intervient.
-// Seul l ORDRE de pioche est melange, plus tard, par `game.js`.
+// Module pur : ni DOM ni etat global. Trois decks ont une liste ecrite a la
+// main ; les autres sont construits ici, a partir du catalogue et de la paire
+// de couleurs.
+//
+// Le constructeur automatique souffrait de deux defauts qui se cumulaient :
+//   - il departageait les cartes de meme cout par ORDRE ALPHABETIQUE, ce qui
+//     figeait pour toujours les memes elues et laissait 52 cartes du
+//     catalogue inutilisees ;
+//   - il servait UN exemplaire par carte avant d en reprendre un deuxieme,
+//     produisant des decks de 57 cartes differentes sur 60, la ou les listes
+//     ecrites a la main en comptent 19 a 27.
+// Il tire desormais par paquets, et departage par une cle aleatoire tiree
+// d une graine. Voir `buildDeck` pour le controle de cette graine.
+//
+// L ORDRE de pioche, lui, est melange plus tard par `game.js`.
 //
 // Le jeu ET la page d impression appellent ce module : il n existe donc
 // qu une seule definition des decks, impossible de les voir diverger.
@@ -198,20 +209,61 @@ export function countCopies(cards) {
   return counts;
 }
 
-function tirer(pool, count, maxCopies, existing, strict) {
-  const picks = [];
-  const sorted = [...pool].sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name, "fr"));
-  let guard = 0;
+// Nombre d exemplaires vise pour une carte retenue. Un deck jouable repose
+// sur des cartes qu on revoit : les listes ecrites a la main tiennent en
+// 19 a 27 cartes differentes, pas en 58.
+export const COPIES_CIBLE = 4;
 
-  while (picks.length < count && sorted.length > 0 && guard < count * sorted.length * 8) {
-    const card = sorted[guard % sorted.length];
-    const used = existing.get(card.id) || 0;
-    const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
-    if (used < cardLimit) {
-      picks.push(card);
-      existing.set(card.id, used + 1);
+// Generateur reproductible (mulberry32). A graine egale, meme deck : la page
+// d impression et les tests gardent des listes stables.
+export function creerAlea(graine) {
+  let a = Number(graine) >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Graine derivee d un texte : l identifiant du deck suffit a fixer sa liste.
+export function graineDeTexte(texte) {
+  let empreinte = 0x811c9dc5;
+  for (const caractere of String(texte)) {
+    empreinte ^= caractere.codePointAt(0);
+    empreinte = Math.imul(empreinte, 0x01000193) >>> 0;
+  }
+  return empreinte >>> 0;
+}
+
+// Le cout reste le critere principal - c est lui qui tient la courbe. Seul
+// le DEPARTAGE change : il etait alphabetique, ce qui figeait a jamais les
+// memes cartes en tete de chaque cout. Une cle tiree au sort le remplace.
+function ordonner(pool, alea) {
+  if (!alea) return [...pool].sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name, "fr"));
+  const cles = new Map(pool.map((card) => [card, alea()]));
+  return [...pool].sort((a, b) => a.cost - b.cost || cles.get(a) - cles.get(b));
+}
+
+function tirer(pool, count, maxCopies, existing, strict, alea) {
+  const picks = [];
+  const ordre = ordonner(pool, alea);
+
+  // Premiere passe par paquets, seconde a l unite pour tomber juste. Le
+  // round-robin precedent servait UN exemplaire par carte avant d en
+  // reprendre : il produisait des decks presque entierement singleton.
+  for (const parPassage of [COPIES_CIBLE, 1]) {
+    for (const card of ordre) {
+      if (picks.length >= count) break;
+      const cardLimit = Math.min(maxCopies, Number(card.deckCopies) || maxCopies);
+      const used = existing.get(card.id) || 0;
+      const aPoser = Math.min(cardLimit - used, count - picks.length, parPassage);
+      if (!(aPoser > 0)) continue;
+      for (let copie = 0; copie < aPoser; copie += 1) picks.push(card);
+      existing.set(card.id, used + aPoser);
     }
-    guard += 1;
+    if (picks.length >= count) break;
   }
 
   if (strict && picks.length < count) {
@@ -220,33 +272,36 @@ function tirer(pool, count, maxCopies, existing, strict) {
   return picks;
 }
 
-export function pickCopies(pool, count, maxCopies, existing = new Map()) {
-  return tirer(pool, count, maxCopies, existing, true);
+export function pickCopies(pool, count, maxCopies, existing = new Map(), alea = null) {
+  return tirer(pool, count, maxCopies, existing, true, alea);
 }
 
-export function pickCopiesSoft(pool, count, maxCopies, existing = new Map()) {
-  return tirer(pool, count, maxCopies, existing, false);
+export function pickCopiesSoft(pool, count, maxCopies, existing = new Map(), alea = null) {
+  return tirer(pool, count, maxCopies, existing, false, alea);
 }
 
-export function fillToCount(current, pool, count, maxCopies) {
+export function fillToCount(current, pool, count, maxCopies, alea = null) {
   if (current.length >= count) return current.slice(0, count);
-  return [...current, ...pickCopies(pool, count - current.length, maxCopies, countCopies(current))];
+  return [
+    ...current,
+    ...pickCopies(pool, count - current.length, maxCopies, countCopies(current), alea)
+  ];
 }
 
-export function pickCreatures(pool, count) {
+export function pickCreatures(pool, count, alea = null) {
   const signatureCards = pool.filter((card) => Number(card.deckCopies) === 1);
   const counts = countCopies(signatureCards);
   const picks = [
     ...signatureCards,
-    ...pickCopiesSoft(pool.filter((card) => card.cost <= 2), 8, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost === 3), 6, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost >= 4 && card.cost <= 5), 6, MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(pool.filter((card) => card.cost >= 6), 2, MAX_NONLAND_COPIES, counts)
+    ...pickCopiesSoft(pool.filter((card) => card.cost <= 2), 8, MAX_NONLAND_COPIES, counts, alea),
+    ...pickCopiesSoft(pool.filter((card) => card.cost === 3), 6, MAX_NONLAND_COPIES, counts, alea),
+    ...pickCopiesSoft(pool.filter((card) => card.cost >= 4 && card.cost <= 5), 6, MAX_NONLAND_COPIES, counts, alea),
+    ...pickCopiesSoft(pool.filter((card) => card.cost >= 6), 2, MAX_NONLAND_COPIES, counts, alea)
   ];
-  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
+  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES, alea);
 }
 
-export function pickSpells(pool, count) {
+export function pickSpells(pool, count, alea = null) {
   const signatureCards = pool.filter((card) => Number(card.deckCopies) === 1);
   const signatureIds = new Set(signatureCards.map((card) => card.id));
   const interactive = pool.filter(
@@ -262,10 +317,10 @@ export function pickSpells(pool, count) {
   const counts = countCopies(signatureCards);
   const picks = [
     ...signatureCards,
-    ...pickCopiesSoft(interactive, Math.max(0, 10 - signatureInteractive), MAX_NONLAND_COPIES, counts),
-    ...pickCopiesSoft(utility, Math.max(0, 4 - signatureUtility), MAX_NONLAND_COPIES, counts)
+    ...pickCopiesSoft(interactive, Math.max(0, 10 - signatureInteractive), MAX_NONLAND_COPIES, counts, alea),
+    ...pickCopiesSoft(utility, Math.max(0, 4 - signatureUtility), MAX_NONLAND_COPIES, counts, alea)
   ];
-  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES);
+  return fillToCount(picks, pool, count, MAX_NONLAND_COPIES, alea);
 }
 
 function normalizedType(card) {
@@ -354,21 +409,33 @@ export function buildExtraCards(deckSpec, catalogue) {
 // Les 60 cartes d un deck, dans l ordre de construction et SANS identifiant
 // d instance : c est la liste de reference, celle qu on imprime.
 // `catalogue` = { cards, lands, spells }, tel que le jeu les charge.
-export function buildDeck(deckSpec, catalogue) {
+// `options.seed` fixe le tirage. Sans graine explicite, elle est derivee de
+// l identifiant du deck : la liste reste donc la meme d un appel a l autre,
+// ce dont dependent la page d impression et les tests. Passer une graine
+// changeante (l heure, le numero de partie) donne un deck different a chaque
+// fois, dans les memes quotas de courbe.
+export function buildDeck(deckSpec, catalogue, options = {}) {
   if (deckSpec.deckList) return buildExplicitDeck(deckSpec, catalogue);
 
+  const graine = options.seed === undefined ? graineDeTexte(deckSpec.id) : options.seed;
+  const alea = creerAlea(graine);
+
+  // Compteur PARTAGE entre les deux couleurs : un terrain bicolore figure
+  // dans les deux listes, et deux compteurs separes le laissaient etre pris
+  // quatre fois de chaque cote, soit huit exemplaires du meme terrain.
   const landsProducing = (color) => catalogue.lands.filter((land) => landProduces(land, color));
+  const terrainsPris = new Map();
   const lands = [
-    ...pickCopies(landsProducing(deckSpec.colors[0]), DECK_LANDS / 2, Infinity),
-    ...pickCopies(landsProducing(deckSpec.colors[1]), DECK_LANDS / 2, Infinity)
+    ...pickCopies(landsProducing(deckSpec.colors[0]), DECK_LANDS / 2, MAX_NONLAND_COPIES, terrainsPris, alea),
+    ...pickCopies(landsProducing(deckSpec.colors[1]), DECK_LANDS / 2, MAX_NONLAND_COPIES, terrainsPris, alea)
   ];
   const creaturePool = catalogue.cards.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const spellPool = catalogue.spells.filter((card) => cardFitsDeckColors(card, deckSpec.colors));
   const composition = getDeckComposition(deckSpec, catalogue);
   const deck = [
     ...lands,
-    ...pickCreatures(creaturePool, composition.creatures),
-    ...pickSpells(spellPool, composition.spells)
+    ...pickCreatures(creaturePool, composition.creatures, alea),
+    ...pickSpells(spellPool, composition.spells, alea)
   ];
 
   if (deck.length !== DECK_SIZE) {
@@ -379,8 +446,8 @@ export function buildDeck(deckSpec, catalogue) {
 
 // Liste imprimable : une entree par carte DIFFERENTE, avec son nombre
 // d exemplaires. C est ce que la page d impression multiplie.
-export function deckPrintList(deckSpec, catalogue) {
-  const deck = buildDeck(deckSpec, catalogue);
+export function deckPrintList(deckSpec, catalogue, options = {}) {
+  const deck = buildDeck(deckSpec, catalogue, options);
   const parId = new Map();
   for (const carte of deck) {
     const entree = parId.get(carte.id);

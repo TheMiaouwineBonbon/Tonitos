@@ -36,8 +36,8 @@ import {
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260817-mana-1";
-import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260815-debug-1";
+} from "./engine-core.mjs?v=20260819-mana-1";
+import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260819-debug-2";
 import {
   DECKS,
   DECK_LANDS,
@@ -49,7 +49,7 @@ import {
   cardFitsDeckColors,
   getDeckComposition as composerDeck,
   getDeckSpec
-} from "./decks.mjs?v=20260820-invocations-1";
+} from "./decks.mjs?v=20260821-constructeur-1";
 import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260820-couts-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -138,6 +138,11 @@ function scheduleGameTask(callback, delay, matchId = state.matchId) {
   const timer = window.setTimeout(() => {
     pendingGameTimers.delete(timer);
     if (gameplayPaused || (matchId && state.matchId !== matchId)) return;
+    // Une partie terminée ne laisse plus rien s'exécuter : `clearGameTimers()`
+    // purge les minuteries déjà posées, mais un enchaînement en cours peut en
+    // planifier une après coup. Ce garde ferme ce dernier interstice, sans
+    // bloquer l'habillage de fin de partie, qui n'est pas du gameplay.
+    if (state.phase === PHASES.OVER && !callback.horsGameplay) return;
     callback();
   }, delay);
   pendingGameTimers.add(timer);
@@ -1287,6 +1292,25 @@ function applyOnlineState(snapshot, version, room) {
     setOnlineStatus("État distant invalide ignoré. Nouvelle synchronisation en attente...", true);
     return false;
   }
+
+  // Une partie terminée ne se rouvre pas. Un état distant plus ancien peut
+  // encore décrire un héros vivant : l'appliquer le ressusciterait, et la
+  // partie repartirait avec un vainqueur déjà désigné. Seule une nouvelle
+  // manche, reconnaissable à son identifiant de partie, a le droit de
+  // remplacer un état terminal.
+  const memeManche = Boolean(snapshot.matchId) && snapshot.matchId === state.matchId;
+  if (state.phase === PHASES.OVER && memeManche && snapshot.phase !== PHASES.OVER) {
+    debugEvent("ONLINE_STATE_REJECTED", { version, reason: "ressusciterait une partie terminée" });
+    return false;
+  }
+
+  // Le mode local fait autorité chez lui : une réponse réseau arrivée en
+  // retard, après le passage à une partie contre l'IA, ne doit pas écraser
+  // la table en cours.
+  if (state.started && state.mode !== "online") {
+    debugEvent("ONLINE_STATE_REJECTED", { version, reason: `partie locale en cours (${state.mode})` });
+    return false;
+  }
   const network = { ...state.network, suppressPublish: true, version, dirty: false };
   const incomingMatchId = snapshot.matchId || "";
   const remoteArrivals =
@@ -1633,7 +1657,11 @@ function untapPermanents(side) {
 }
 
 function draw(side, amount, options = {}) {
-  const events = drawFromDeck(side, amount);
+  // La perte de vie de la fatigue passe par le point de mutation unique :
+  // mourir de bibliothèque vide ferme la partie comme n'importe quel coup.
+  const events = drawFromDeck(side, amount, {
+    onFatigue: (degats) => changeLife(side, -degats, "fatigue")
+  });
   let drawIndex = 0;
   for (const event of events) {
     if (event.type === "fatigue") {
@@ -2096,7 +2124,7 @@ function applySpellEffect(card, side) {
   debugEvent("EFFECT_TRIGGERED", { source: card.id, effect: card.effect, controller: side.side });
 
   if (card.effect === "dealHero3") {
-    opponent.life -= 3;
+    changeLife(opponent, -(3), "dealHero3");
     logEvent(`${card.name} inflige 3 blessures au héros adverse.`);
   }
 
@@ -2112,7 +2140,7 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "tridentUmi") {
     for (const target of opponent.board) target.currentLife -= 3;
-    opponent.life -= 2;
+    changeLife(opponent, -(2), "tridentUmi");
     pushVisualEffect("hit", opponent.side, "-2");
     logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses et 2 au commandant adverse.`);
   }
@@ -2131,7 +2159,7 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "livreClaudia") {
     draw(side, 3);
-    side.life -= 2;
+    changeLife(side, -(2), "livreClaudia");
     pushVisualEffect("hit", side.side, "-2");
     logEvent(`${card.name} livre trois pages de savoir et réclame 2 points de vie.`);
   }
@@ -2142,8 +2170,8 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "drainHero2") {
-    opponent.life -= 2;
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(opponent, -(2), "drainHero2");
+    changeLife(side, 2, "drainHero2");
     logEvent(`${card.name} draine 2 points de vie.`);
   }
 
@@ -2159,7 +2187,7 @@ function applySpellEffect(card, side) {
     const creatures = opponent.board.length;
     const target = strongestCreature(opponent.board);
     if (target) target.currentLife = 0;
-    opponent.life -= creatures;
+    changeLife(opponent, -(creatures), "hubrisFall");
     if (creatures > 0) pushVisualEffect("hit", opponent.side, `-${creatures}`);
     logEvent(
       target
@@ -2236,7 +2264,7 @@ function applySpellEffect(card, side) {
       animateGraveyardArrival(opponent.side, removed, 220 + index * 120);
     }
 
-    opponent.life -= 2;
+    changeLife(opponent, -(2), "unbearableTruth");
     pushVisualEffect("hit", opponent.side, "-2");
     logEvent(
       discarded.length > 0
@@ -2246,7 +2274,7 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "cursedPact") {
-    side.life -= 1;
+    changeLife(side, -(1), "cursedPact");
     pushVisualEffect("hit", side.side, "-1");
     draw(side, 2);
     logEvent(`${card.name} réclame 1 point de vie et fait piocher deux cartes.`);
@@ -2259,12 +2287,12 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "gainLife4") {
-    side.life = Math.min(MAX_LIFE, side.life + 4);
+    changeLife(side, 4, "gainLife4");
     logEvent(`${card.name} rend 4 points de vie.`);
   }
 
   if (card.effect === "restHero") {
-    side.life = Math.min(MAX_LIFE, side.life + 3);
+    changeLife(side, 3, "restHero");
     draw(side, 1);
     pushVisualEffect("buff", side.side, "Repos");
     logEvent(`${card.name} rend 3 points de vie et fait piocher une carte.`);
@@ -2305,7 +2333,7 @@ function applySpellEffect(card, side) {
     } else {
       const target = strongestCreature(opponent.board);
       if (target) target.currentLife -= 3;
-      opponent.life -= 1;
+      changeLife(opponent, -(1), "ancientRobotShot");
       pushVisualEffect("hit", opponent.side, target ? "Tir antique" : "-1");
       logEvent(
         target
@@ -2352,7 +2380,7 @@ function applySpellEffect(card, side) {
   if (card.effect === "drawOneGainOne") {
     draw(side, 1);
     if (state.phase === PHASES.OVER) return;
-    side.life = Math.min(MAX_LIFE, side.life + 1);
+    changeLife(side, 1, "drawOneGainOne");
     logEvent(`${card.name} fait piocher une carte et rend 1 point de vie.`);
   }
 
@@ -2390,7 +2418,7 @@ function applySpellEffect(card, side) {
         healed += 1;
       }
     }
-    side.life -= 1;
+    changeLife(side, -(1), "evilRegeneration");
     pushVisualEffect("hit", side.side, "-1");
     logEvent(`${card.name} referme ${healed} blessure(s) et prélève 1 point de vie à son invocateur.`);
   }
@@ -2417,7 +2445,7 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "damageHero2") {
-    opponent.life -= 2;
+    changeLife(opponent, -(2), "damageHero2");
     pushVisualEffect("hit", opponent.side, "-2");
     logEvent(`${card.name} inflige 2 blessures au héros adverse.`);
   }
@@ -2454,21 +2482,21 @@ function applySpellEffect(card, side) {
   if (card.effect === "naturalMemory") {
     draw(side, 2);
     if (state.phase === PHASES.OVER) return;
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(side, 2, "naturalMemory");
     pushVisualEffect("buff", side.side, "+2 vie");
     logEvent(`${card.name} fait piocher deux cartes et rend 2 points de vie.`);
   }
 
   if (card.effect === "crownUlgod") {
     for (const ally of side.board) ally.attack += 1;
-    opponent.life -= 2;
+    changeLife(opponent, -(2), "crownUlgod");
     pushVisualEffect("buff", side.side, "+1 force");
     pushVisualEffect("hit", opponent.side, "-2");
     logEvent(`${card.name} renforce tes créatures et inflige 2 blessures au héros adverse.`);
   }
 
   if (card.effect === "bhaalVessel") {
-    side.life -= 2;
+    changeLife(side, -(2), "bhaalVessel");
     const returned = reanimateBestCreatures(side, 1);
     pushVisualEffect("hit", side.side, "-2");
     if (returned.length > 0) {
@@ -2481,8 +2509,8 @@ function applySpellEffect(card, side) {
 
   if (card.effect === "vengefulSpirits") {
     for (const target of opponent.board) target.currentLife -= 2;
-    opponent.life -= 2;
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(opponent, -(2), "vengefulSpirits");
+    changeLife(side, 2, "vengefulSpirits");
     pushVisualEffect("hit", opponent.side, "-2");
     pushVisualEffect("buff", side.side, "+2 vie");
     logEvent(`${card.name} frappe toutes les créatures adverses et draine 2 points de vie.`);
@@ -2556,12 +2584,12 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "familliers") {
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(side, 2, "familliers");
     logEvent(`Les Familiers d'Elturel font gagner 2 points de vie à ${sideDisplayName(side.side)}.`);
   }
 
   if (unit.id === "bebe-dragon") {
-    opponent.life -= 1;
+    changeLife(opponent, -(1), "bebe-dragon");
     logEvent("Bébé Dragon souffle une étincelle et inflige 1 blessure au héros adverse.");
   }
 
@@ -2597,8 +2625,8 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "chevalier-sans-espoir") {
-    opponent.life -= 1;
-    side.life = Math.min(MAX_LIFE, side.life + 1);
+    changeLife(opponent, -(1), "chevalier-sans-espoir");
+    changeLife(side, 1, "chevalier-sans-espoir");
     logEvent(`${unit.name} draine 1 point de vie au héros adverse.`);
   }
 
@@ -2611,7 +2639,7 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "diablotins") {
-    opponent.life -= 1;
+    changeLife(opponent, -(1), "diablotins");
     logEvent("Les Diablotins lancent leurs petites flammes et infligent 1 blessure au héros adverse.");
   }
 
@@ -2653,7 +2681,7 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "aldia") {
-    side.life = Math.min(MAX_LIFE, side.life + 6);
+    changeLife(side, 6, "aldia");
     const allies = side.board.filter((ally) => ally.uid !== unit.uid);
     buffTeam(allies, 1, 1);
     pushVisualEffect("buff", side.side, "Aurore");
@@ -2679,7 +2707,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "pirates") {
     draw(side, 1);
     if (state.phase === PHASES.OVER) return;
-    side.life -= 1;
+    changeLife(side, -(1), "pirates");
     logEvent("Les Pirates pillent une carte, puis leur audace coûte 1 point de vie.");
   }
 
@@ -2689,13 +2717,13 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "ulgod") {
-    opponent.life -= 5;
+    changeLife(opponent, -(5), "ulgod");
     pushVisualEffect("hit", opponent.side, "-5");
     logEvent("Ulgod inflige 5 blessures au héros adverse.");
   }
 
   if (unit.id === "zombie-villageois") {
-    opponent.life -= 1;
+    changeLife(opponent, -(1), "zombie-villageois");
     logEvent("Le Zombie villageois griffe le héros adverse pour 1 point de vie.");
   }
 
@@ -2726,7 +2754,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "rena") {
     const allies = side.board.filter((ally) => ally.uid !== unit.uid);
     buffTeam(allies, 2, 2);
-    side.life = Math.min(MAX_LIFE, side.life + 5);
+    changeLife(side, 5, "rena");
     pushVisualEffect("buff", side.side, "+2/+2");
     logEvent(`Rena éveille la canopée : +2/+2 aux autres créatures et 5 points de vie pour ${sideDisplayName(side.side)}.`);
   }
@@ -2737,7 +2765,7 @@ function triggerOnPlay(unit, side) {
       target.currentLife = 0;
       logEvent(`Bhaal fauche ${target.name}.`);
     }
-    opponent.life -= 3;
+    changeLife(opponent, -(3), "bhaal");
     pushVisualEffect("hit", opponent.side, "-3");
     logEvent("Bhaal inflige 3 blessures au héros adverse.");
   }
@@ -2745,7 +2773,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "noxis-bhaal-fusion") {
     const destroyed = opponent.board.length;
     for (const enemy of opponent.board) enemy.currentLife = 0;
-    opponent.life -= 5;
+    changeLife(opponent, -(5), "noxis-bhaal-fusion");
     pushVisualEffect("hit", opponent.side, "-5");
     pushVisualEffect("summon", side.side, "Apothéose");
     logEvent(
@@ -2756,7 +2784,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "heritage-heros") {
     const allies = side.board.filter((ally) => ally.uid !== unit.uid);
     buffTeam(allies, 2, 2);
-    side.life = Math.min(MAX_LIFE, side.life + 6);
+    changeLife(side, 6, "heritage-heros");
     pushVisualEffect("buff", side.side, "Héritage");
     logEvent(
       `${unit.name} rend 6 points de vie et donne +2/+2 à ${allies.length} autre(s) créature(s) alliée(s).`
@@ -2765,7 +2793,7 @@ function triggerOnPlay(unit, side) {
 
   if (unit.id === "apocalypse-umi") {
     for (const target of opponent.board) freezeCreature(target);
-    opponent.life -= 5;
+    changeLife(opponent, -(5), "apocalypse-umi");
     pushVisualEffect("freeze", opponent.side, "Déluge");
     pushVisualEffect("hit", opponent.side, "-5");
     logEvent(
@@ -2774,7 +2802,7 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "chevalier-froussard") {
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(side, 2, "chevalier-froussard");
     logEvent(`Le Chevalier Froussard se met à l'abri : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
   }
 
@@ -2796,14 +2824,14 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "aventurier") {
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(side, 2, "aventurier");
     pushVisualEffect("buff", side.side, "+2 vie");
     logEvent(`L'Aventurier apporte des soins : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
   }
 
   if (unit.id === "envoye-bhaal") {
-    opponent.life -= 2;
-    side.life -= 1;
+    changeLife(opponent, -(2), "envoye-bhaal");
+    changeLife(side, -(1), "envoye-bhaal");
     pushVisualEffect("hit", opponent.side, "-2");
     logEvent("L'Envoyé de Bhaal inflige 2 blessures au héros adverse et réclame 1 point de vie à son maître.");
   }
@@ -2875,7 +2903,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "robot-antique-creation-divine") {
     const allies = ancientRobotAllies(side, unit.uid);
     buffTeam(allies, 1, 1);
-    side.life = Math.min(MAX_LIFE, side.life + 3);
+    changeLife(side, 3, "robot-antique-creation-divine");
     pushVisualEffect("buff", side.side, "Commandement divin");
     logEvent(`${unit.name} renforce ${allies.length} autre(s) Robot(s) antique(s) et rend 3 points de vie.`);
   }
@@ -2883,7 +2911,7 @@ function triggerOnPlay(unit, side) {
   if (unit.id === "robot-antique-chien") {
     const allies = ancientRobotAllies(side, unit.uid);
     if (allies.length > 0) {
-      side.life = Math.min(MAX_LIFE, side.life + 2);
+      changeLife(side, 2, "robot-antique-chien");
       pushVisualEffect("buff", side.side, "+2 vie");
       logEvent(`${unit.name} reconnaît un ancien allié et rend 2 points de vie.`);
     }
@@ -2910,7 +2938,7 @@ function triggerOnPlay(unit, side) {
     const target = strongestCreature(ancientRobotAllies(side, unit.uid));
     if (target) {
       buffTeam([target], 0, 1);
-      side.life = Math.min(MAX_LIFE, side.life + 1);
+      changeLife(side, 1, "robot-antique-petit-compagnon");
       pushVisualEffect("buff", side.side, "+0/+1");
       logEvent(`${unit.name} encourage ${target.name}, qui gagne +0/+1, et rend 1 point de vie.`);
     }
@@ -2941,8 +2969,8 @@ function triggerOnPlay(unit, side) {
   }
 
   if (unit.id === "mage-supreme-dominica") {
-    opponent.life -= 2;
-    side.life = Math.min(MAX_LIFE, side.life + 2);
+    changeLife(opponent, -(2), "mage-supreme-dominica");
+    changeLife(side, 2, "mage-supreme-dominica");
     pushVisualEffect("hit", opponent.side, "-2");
     pushVisualEffect("buff", side.side, "+2 vie");
     logEvent(`${unit.name} draine 2 points de vie au héros adverse.`);
@@ -2953,14 +2981,14 @@ function triggerOnPlay(unit, side) {
       (ally) => ally.uid !== unit.uid && ally.id === "diplomate-aethran" && ally.currentLife > 0
     );
     if (alliedAethran) {
-      opponent.life -= 2;
+      changeLife(opponent, -(2), "comte-thaelion");
       pushVisualEffect("hit", opponent.side, "-2");
       logEvent(`${unit.name} honore le pacte d'Aethran et inflige 2 blessures au héros adverse.`);
     }
   }
 
   if (unit.id === "diplomate-aethran") {
-    opponent.life -= 1;
+    changeLife(opponent, -(1), "diplomate-aethran");
     pushVisualEffect("hit", opponent.side, "-1");
     const alliedThaelion = side.board.some(
       (ally) => ally.uid !== unit.uid && ally.id === "comte-thaelion" && ally.currentLife > 0
@@ -3201,7 +3229,7 @@ function resolveSingleAttack(attacker, target, attackingSide, defendingSide) {
 
   if (!target) {
     const damage = Math.max(0, finiteNumber(attacker.attack));
-    defendingSide.life -= damage;
+    changeLife(defendingSide, -(damage), "resolveSingleAttack");
     gainLifeFromDamage(attacker, attackingSide, damage);
     pushVisualEffect("attack", attackingSide.side, "Assaut");
     pushVisualEffect("hit", defendingSide.side, `-${damage}`);
@@ -3484,9 +3512,10 @@ function finishEnemyTurn() {
 
 function gainLifeFromDamage(unit, side, amount) {
   if (amount <= 0 || !hasKeyword(unit, "Lien de vie")) return;
-  side.life = Math.min(MAX_LIFE, side.life + amount);
-  debugEvent("HEAL", { source: unit.uid, target: side.side, amount });
-  logEvent(`${sideDisplayName(side.side)} gagne ${amount} point${amount > 1 ? "s" : ""} de vie grâce à ${unit.name}.`);
+  const gagne = changeLife(side, amount, `lien de vie ${unit.id}`);
+  if (gagne <= 0) return;
+  debugEvent("HEAL", { source: unit.uid, target: side.side, amount: gagne });
+  logEvent(`${sideDisplayName(side.side)} gagne ${gagne} point${gagne > 1 ? "s" : ""} de vie grâce à ${unit.name}.`);
 }
 
 function canAttack(unit) {
@@ -3758,6 +3787,41 @@ function describeDivineClause(side, clause) {
   return parts;
 }
 
+// --- Point de passage unique des points de vie ------------------------
+// Dégâts, soins, drain, lien de vie, fatigue : toute variation de PV passe
+// par ici. La fonction borne la valeur, journalise sa source, puis constate
+// la mort dans la foulée.
+//
+// Auparavant chaque effet écrivait `side.life` de son côté et comptait sur
+// l'appelant pour penser à `checkVictory()`. Il suffisait qu'un chemin
+// l'oublie pour que la partie continue avec un héros à 0 : le premier soin
+// venu le ramenait alors au-dessus de zéro, et le joueur devenait immortel.
+// Un point de passage unique retire la question du « qui doit y penser ».
+//
+// Renvoie la variation réellement appliquée — 0 si la partie est déjà finie.
+function changeLife(side, delta, source = "inconnu") {
+  if (!side) return 0;
+  // Un état terminal est définitif : plus aucune écriture n'est acceptée,
+  // pas même un soin déjà engagé par un effet en cours de résolution.
+  if (state.phase === PHASES.OVER) {
+    debugEvent("LIFE_REJECTED", { side: side.side, delta, source, reason: "partie terminée" });
+    return 0;
+  }
+  const avant = finiteNumber(side.life);
+  const vise = avant + finiteNumber(delta);
+  // Les soins plafonnent à MAX_LIFE ; les dégâts n'ont pas de plancher, le
+  // dépassement distinguant une mort nette d'une mort de justesse.
+  const apres = delta > 0 ? Math.min(MAX_LIFE, vise) : vise;
+  if (apres === avant) return 0;
+  side.life = apres;
+  debugEvent("LIFE", { side: side.side, from: avant, to: apres, delta: apres - avant, source });
+  checkVictory();
+  return apres - avant;
+}
+
+// Idempotente : une fois le vainqueur désigné, tout appel suivant sort
+// immédiatement. Ni double écran, ni double récompense, ni changement de
+// vainqueur.
 function checkVictory() {
   if (state.phase === PHASES.OVER || !state.player || !state.enemy) return;
   const winner = determineWinner(state.player, state.enemy);
@@ -3769,7 +3833,10 @@ function checkVictory() {
   isAnimating = false;
   sound.play("hero.death");
   const soundWinner = state.winner;
-  scheduleGameTask(() => sound.play(soundWinner === "player" ? "game.victory" : "game.defeat"), 320);
+  // Habillage sonore, pas du gameplay : il doit franchir le verrou de fin.
+  const jingleFin = () => sound.play(soundWinner === "player" ? "game.victory" : "game.defeat");
+  jingleFin.horsGameplay = true;
+  scheduleGameTask(jingleFin, 320);
   if (state.winner === "draw") {
     logEvent("Les deux héros tombent en même temps : égalité !");
   } else {
