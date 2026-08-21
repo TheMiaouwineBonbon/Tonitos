@@ -190,7 +190,11 @@ export function canTakeMainAction(game, sideName) {
   );
 }
 
-export function drawFromDeck(side, amount, { fatigueDamage = 1 } = {}) {
+// `onFatigue` permet à l'appelant d'appliquer lui-même la perte de vie, pour
+// la faire passer par son point de mutation unique. Sans lui, la fatigue
+// écrivait directement dans `side.life` : la mort par bibliothèque vide
+// échappait alors au constat de fin de partie.
+export function drawFromDeck(side, amount, { fatigueDamage = 1, onFatigue = null } = {}) {
   if (!side || !Array.isArray(side.deck) || !Array.isArray(side.hand)) {
     throw new TypeError("La pioche exige un côté avec un deck et une main.");
   }
@@ -206,7 +210,8 @@ export function drawFromDeck(side, amount, { fatigueDamage = 1 } = {}) {
       side.hand.push(card);
       events.push({ type: "draw", card });
     } else {
-      side.life -= damage;
+      if (typeof onFatigue === "function") onFatigue(damage);
+      else side.life -= damage;
       events.push({ type: "fatigue", damage });
     }
   }
@@ -450,6 +455,16 @@ export function makeTurnStartKey(matchId, turn, sideName) {
 export function validateGameState(game, { maxBoard = 7 } = {}) {
   const errors = [];
   if (!game || typeof game !== "object") return ["Etat de jeu absent."];
+
+  // Invariant central : un héros à 0 point de vie ou moins ferme la partie.
+  // Tant que la phase n'est pas terminale, le jeu accepterait encore une
+  // action, une pioche ou un soin — et le mort reviendrait à la vie.
+  const winner = determineWinner(game.player, game.enemy);
+  if (winner && game.phase !== "over") {
+    errors.push(
+      `Un héros est à ${winner === "enemy" ? finiteNumber(game.player?.life) : finiteNumber(game.enemy?.life)} PV mais la partie est en phase "${game.phase}" au lieu de "over".`
+    );
+  }
 
   const seen = new Set();
   for (const sideName of ["player", "enemy"]) {
