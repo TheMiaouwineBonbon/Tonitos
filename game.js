@@ -49,7 +49,7 @@ import {
   cardFitsDeckColors,
   getDeckComposition as composerDeck,
   getDeckSpec
-} from "./decks.mjs?v=20260821-constructeur-1";
+} from "./decks.mjs?v=20260822-daemon-1";
 import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260820-couts-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -2046,32 +2046,36 @@ function createGuardian(owner) {
   };
 }
 
+// Le Générateur antique fait sortir la VRAIE carte « Robot antique drone »,
+// avec son illustration et son numéro de collection. Le jeton recopié ici
+// portait l'image du Générateur lui-même : sur le champ de bataille, deux
+// drones affichaient donc la machine qui les avait produits.
+// `token: true` marque seulement qu'ils ne viennent pas de la main.
 function createAncientDrone(owner) {
-  const source = state.spells.find((card) => card.id === "generateur-antique");
+  const source = state.cards.find((card) => card.id === "robot-antique-drone");
+  if (source) return { ...createUnit(source, owner), token: true };
+
+  // Repli si le catalogue n'est pas chargé : la chaîne doit produire quand même.
   return {
-    id: "drone-antique",
+    id: "robot-antique-drone",
     kind: "creature",
     uid: `${owner}-ancient-drone-${crypto.randomUUID()}`,
     owner,
-    name: "Drone antique",
-    subtitle: "Serviteur de la chaîne d'assemblage",
+    name: "Robot antique drone",
+    subtitle: "Éclaireur du réseau oublié",
     family: "Incolore",
-    type: "Créature-artefact - Robot antique Drone",
-    cost: 0,
+    type: "Créature - Robot antique",
+    cost: 1,
     attack: 1,
     life: 1,
     maxLife: 1,
     currentLife: 1,
     keywords: ["Robot antique"],
-    abilityName: "Protocole auxiliaire",
-    abilityText: "Jeton créé par le Générateur antique.",
+    abilityName: "Signal du réseau",
+    abilityText: "Robot antique : les autres Robots antiques le reconnaissent.",
     flavor: "",
-    image: "Images/Artefact Générateur antique.jpg",
-    palette: source?.palette || {
-      primary: "#4f6672",
-      secondary: "#54cfff",
-      deep: "#07131b"
-    },
+    image: "Images/Robot antique drone.png",
+    palette: { primary: "#6c7683", secondary: "#c3d0dc", deep: "#141a20" },
     tapped: false,
     stunTurns: 0,
     createdTurn: state.turn,
@@ -2141,25 +2145,28 @@ function applySpellEffect(card, side) {
     logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses.`);
   }
 
-  // Pile ou face repete : chaque face relance une salve, le premier pile
-  // arrete tout. L'esperance est d'une seule salve, mais l'ecart est large -
-  // c'est le pari qui fait la carte. La borne dure n'est pas une regle du
-  // jeu : elle interdit seulement qu'une piece deraille en boucle infinie.
+  // Quatre lancers, ni plus ni moins - le premier pile n'interrompt rien.
+  // Chaque face ajoute 2 blessures, sur les creatures ADVERSES seulement.
+  // Esperance : deux faces, donc 4 blessures, avec 6 % de coup blanc et
+  // 6 % de balayage a 8.
   if (card.effect === "impactStellaire") {
-    const MAX_SALVES = 20;
-    let salves = 0;
-    while (salves < MAX_SALVES && Math.random() < 0.5) salves += 1;
+    const LANCERS = 4;
+    let faces = 0;
+    for (let jet = 0; jet < LANCERS; jet += 1) {
+      if (Math.random() < 0.5) faces += 1;
+    }
 
-    const degats = salves * 2;
+    const degats = faces * 2;
+    animerPieceStellaire(faces, LANCERS);
     if (degats > 0) {
       for (const target of opponent.board) target.currentLife -= degats;
       pushVisualEffect("hit", opponent.side, `-${degats}`);
     }
-    debugEvent("EFFECT_TRIGGERED", { source: card.id, effect: "impactStellaire", salves });
+    debugEvent("EFFECT_TRIGGERED", { source: card.id, effect: "impactStellaire", faces, degats });
     logEvent(
-      salves === 0
-        ? `${card.name} : pile du premier coup, le ciel reste silencieux.`
-        : `${card.name} : ${salves} face(s) d'affilée, ${degats} blessures à toutes les créatures adverses.`
+      faces === 0
+        ? `${card.name} : quatre piles, le ciel reste silencieux.`
+        : `${card.name} : ${faces} face(s) sur ${LANCERS}, ${degats} blessures à toutes les créatures adverses.`
     );
   }
 
@@ -2408,6 +2415,18 @@ function applySpellEffect(card, side) {
   if (card.effect === "buffTeam1") {
     buffTeam(side.board, 1, 1);
     logEvent(`${card.name} donne +1/+1 aux créatures alliées.`);
+  }
+
+  // Résonnance : le renfort touche tout ce qui est DÉJÀ posé, pas ce qui
+  // arrivera ensuite - c'est ce qui en fait une carte de milieu de partie.
+  if (card.effect === "resonnance") {
+    buffTeam(side.board, 2, 2);
+    if (side.board.length > 0) {
+      pushVisualEffect("buff", side.side, "+2/+2");
+      logEvent(`${card.name} fait résonner ${side.board.length} carte(s) alliée(s) : +2/+2 définitifs.`);
+    } else {
+      logEvent(`${card.name} résonne dans le vide : aucune carte posée.`);
+    }
   }
 
   if (card.effect === "limitlessAssault") {
@@ -3503,6 +3522,7 @@ function isSpellWorthCasting(card, side, opponent) {
       return side.board.length > 0;
     case "buffTeam1":
     case "buffTeamAttack1":
+    case "resonnance":
     case "toughTeam":
     case "vengeanceUldrid":
     case "crownUlgod":
@@ -5555,6 +5575,32 @@ function ensureCinematicFxLayer() {
   layer.setAttribute("aria-hidden", "true");
   document.body.append(layer);
   return layer;
+}
+
+// La piece d'Impact stellaire. Elle tourne, puis s'arrete sur le resultat
+// deja tire par le moteur : l'animation RACONTE le tirage, elle ne le
+// decide pas - sinon l'image et les degats pourraient se contredire.
+function animerPieceStellaire(faces, lancers) {
+  if (!state.started || prefersReducedEffects()) return;
+
+  const piece = document.createElement("div");
+  piece.className = "piece-stellaire";
+  // Un tour complet par lancer : la piece tourne le temps des quatre jets.
+  piece.style.setProperty("--piece-tours", String(lancers));
+  piece.style.setProperty("--piece-duree", `${900 + lancers * 120}ms`);
+
+  const verdict = document.createElement("span");
+  verdict.className = "piece-stellaire-verdict";
+  verdict.textContent = `${faces}/${lancers}`;
+  piece.append(verdict);
+
+  const legende = document.createElement("small");
+  legende.className = "piece-stellaire-legende";
+  legende.textContent = faces === 0 ? "aucune face" : `face${faces > 1 ? "s" : ""}`;
+  piece.append(legende);
+
+  ensureCinematicFxLayer().append(piece);
+  window.setTimeout(() => piece.remove(), 2000 + lancers * 120);
 }
 
 function clearCinematicEffects() {

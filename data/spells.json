@@ -1217,7 +1217,7 @@
     "effect": "impactStellaire",
     "slot": "offense",
     "abilityName": "Impact stellaire",
-    "abilityText": "Lance une pièce. À chaque face, inflige 2 blessures à toutes les créatures adverses et relance. Le premier pile arrête tout.",
+    "abilityText": "Lance une pièce quatre fois. Chaque face inflige 2 blessures à toutes les créatures adverses.",
     "flavor": "Le ciel aussi sait perdre patience.",
     "image": "Images/Explosion céleste.png",
     "palette": {
@@ -1262,8 +1262,8 @@
   },
   {
     "id": "portail-antique",
-    "name": "Portail antique",
-    "subtitle": "Seuil des machines endormies",
+    "name": "Portail Universel",
+    "subtitle": "Seuil où tout se répond",
     "family": "Incolore",
     "type": "Artefact légendaire - Portail",
     "cost": 4,
@@ -1271,15 +1271,15 @@
       "generic": 4
     },
     "deckCopies": 1,
-    "effect": "createAncientDrones",
+    "effect": "resonnance",
     "slot": "upgrade",
     "keywords": [
       "Antique",
-      "Robot antique"
+      "Résonnance"
     ],
-    "abilityName": "Appel du réseau",
-    "abilityText": "Ouvre le passage : deux Drones antiques 1/1 franchissent le portail et te rejoignent.",
-    "flavor": "La porte ne s'ouvre que pour ceux qui savent encore compter.",
+    "abilityName": "Résonnance",
+    "abilityText": "Toutes les cartes que tu as déjà posées gagnent définitivement +2 force et +2 points de vie.",
+    "flavor": "Ce qui passe la porte n'en revient jamais tout à fait pareil.",
     "image": "Images/Portail antique.png",
     "palette": {
       "primary": "#6c7683",

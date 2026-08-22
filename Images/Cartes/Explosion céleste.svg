@@ -115,10 +115,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#2b0d08" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#2b0d08">Impact stellaire</text>
-  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Lance une pièce. À chaque face, inflige 2 blessures à</text>
-  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">toutes les créatures adverses et relance. Le premier</text>
-  <text x="84" y="768" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">pile arrête tout.</text>
+  <text x="84" y="671" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#2b0d08">Impact stellaire</text>
+  <text x="84" y="705" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Lance une pièce quatre fois. Chaque face inflige 2</text>
+  <text x="84" y="737" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">blessures à toutes les créatures adverses.</text>
   <g>
     <rect x="84" y="798" width="62.400000000000006" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="798" width="62.400000000000006" height="36" rx="8" fill="none" stroke="#2b0d08" stroke-width="1.6" opacity="0.8"/>

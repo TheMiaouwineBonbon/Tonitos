@@ -968,6 +968,63 @@ section("Sorts de résilience");
 }
 
 // ======================================================================
+// Le Generateur antique sort la VRAIE carte, et le Portail ne cree plus
+// rien : il fait resonner ce qui est deja pose.
+section("Réseau antique");
+{
+  function poserTerrains(nombre = 6) {
+    jeu().player.lands.length = 0;
+    for (let i = 0; i < nombre; i += 1) {
+      const terrain = jeu().lands.find((t) => (t.manaProduction?.colors || []).length === 1);
+      jeu().player.lands.push({ ...terrain, uid: `terrain-reseau-${i}`, tapped: false });
+    }
+  }
+
+  await lancerPartie("pve");
+  poserTerrains();
+  jeu().player.board.length = 0;
+  const generateur = jeu().spells.find((s) => s.id === "generateur-antique");
+  jeu().player.hand.push({ ...generateur, uid: "sort-generateur" });
+  rendre();
+  jouerParFiche("sort-generateur");
+  const drones = jeu().player.board.filter((u) => u.id === "robot-antique-drone");
+  verifier(drones.length === 2, "Le Générateur antique sort deux Robot antique drone", `${drones.length}`);
+  verifier(
+    drones.every((u) => u.image === "Images/Robot antique drone.png"),
+    "Ils portent l'illustration de leur carte, pas celle du Générateur",
+    drones.map((u) => u.image).join(" / ")
+  );
+
+  // Résonnance : +2/+2 sur ce qui est DÉJÀ posé.
+  await lancerPartie("pve");
+  poserTerrains();
+  const modele = jeu().cards[0];
+  jeu().player.board.length = 0;
+  jeu().player.board.push(
+    { ...modele, uid: "pose-a", owner: "player", attack: 2, maxLife: 3, currentLife: 3, tapped: false },
+    { ...modele, uid: "pose-b", owner: "player", attack: 1, maxLife: 1, currentLife: 1, tapped: false }
+  );
+  const portail = jeu().spells.find((s) => s.id === "portail-antique");
+  jeu().player.hand.push({ ...portail, uid: "sort-portail" });
+  rendre();
+  const lancePortail = jouerParFiche("sort-portail");
+  const a = jeu().player.board.find((u) => u.uid === "pose-a");
+  const b = jeu().player.board.find((u) => u.uid === "pose-b");
+  verifier(lancePortail.active, "Portail Universel est jouable");
+  verifier(portail.name === "Portail Universel", "La carte s'appelle Portail Universel", portail.name);
+  verifier(portail.abilityName === "Résonnance", "Sa capacité s'appelle Résonnance", portail.abilityName);
+  verifier(
+    a?.attack === 4 && a?.maxLife === 5 && b?.attack === 3 && b?.maxLife === 3,
+    "Résonnance donne +2/+2 à toutes les cartes posées",
+    `${a?.attack}/${a?.maxLife} et ${b?.attack}/${b?.maxLife}`
+  );
+  verifier(
+    jeu().player.board.filter((u) => u.id === "robot-antique-drone").length === 0,
+    "Le Portail ne crée plus de drone"
+  );
+}
+
+// ======================================================================
 // Les jetons doivent avoir LEUR illustration, pas celle du sort qui les
 // invoque : deux squelettes affichaient l'image du Largage.
 section("Squelettes d'Ulgod");
@@ -1029,8 +1086,12 @@ section("Impact stellaire");
     const cible = jeu().cards[0];
     jeu().enemy.board.length = 0;
     jeu().enemy.board.push(
-      { ...cible, uid: "cible-a", owner: "enemy", maxLife: 12, currentLife: 12, attack: 1, tapped: false },
-      { ...cible, uid: "cible-b", owner: "enemy", maxLife: 12, currentLife: 12, attack: 1, tapped: false }
+      { ...cible, uid: "cible-a", owner: "enemy", maxLife: 12, currentLife: 12, attack: 1, tapped: false }
+    );
+    // Une créature de notre côté sert de témoin : elle ne doit PAS être touchée.
+    jeu().player.board.length = 0;
+    jeu().player.board.push(
+      { ...cible, uid: "alliee", owner: "player", maxLife: 12, currentLife: 12, attack: 1, tapped: false }
     );
     const sort = jeu().spells.find((s) => s.id === "explosion-celeste");
     jeu().player.hand.push({ ...sort, uid: "sort-impact" });
@@ -1038,24 +1099,49 @@ section("Impact stellaire");
     piper(suite);
     const lance = jouerParFiche("sort-impact");
     Math.random = hasardOrigine;
-    return { lance, plateau: jeu().enemy.board };
+    return {
+      lance,
+      adverse: jeu().enemy.board.find((u) => u.uid === "cible-a"),
+      alliee: jeu().player.board.find((u) => u.uid === "alliee")
+    };
   }
 
-  // 0.4 = face, 0.9 = pile. Deux faces puis pile -> deux salves de 2.
-  const deuxFaces = await lancerImpact([0.4, 0.4, 0.9]);
+  // 0.4 = face, 0.9 = pile. Toujours QUATRE lancers : ici deux faces -> 4.
+  const deuxFaces = await lancerImpact([0.4, 0.9, 0.4, 0.9]);
   verifier(deuxFaces.lance.active, "Explosion céleste est jouable");
   verifier(
-    deuxFaces.plateau.every((u) => u.currentLife === 8),
-    "Deux faces infligent 4 blessures à TOUTES les créatures adverses",
-    deuxFaces.plateau.map((u) => u.currentLife).join(" / ")
+    deuxFaces.adverse?.currentLife === 8,
+    "Deux faces sur quatre infligent 4 blessures à l'adversaire",
+    `${deuxFaces.adverse?.currentLife}/12`
+  );
+  verifier(
+    deuxFaces.alliee?.currentLife === 12,
+    "MES créatures ne sont PAS touchées",
+    `${deuxFaces.alliee?.currentLife}/12`
   );
 
-  // Pile du premier coup : aucune blessure.
-  const pileDirect = await lancerImpact([0.9]);
+  // Quatre faces : le maximum, 8 blessures en face, rien chez moi.
+  const quatreFaces = await lancerImpact([0.1, 0.2, 0.3, 0.4]);
   verifier(
-    pileDirect.plateau.every((u) => u.currentLife === 12),
-    "Un pile immédiat ne fait aucune blessure",
-    pileDirect.plateau.map((u) => u.currentLife).join(" / ")
+    quatreFaces.adverse?.currentLife === 4 && quatreFaces.alliee?.currentLife === 12,
+    "Quatre faces infligent 8 blessures, à l'adversaire seul",
+    `adverse ${quatreFaces.adverse?.currentLife} / alliée ${quatreFaces.alliee?.currentLife}`
+  );
+
+  // Quatre piles : aucune blessure. Le sort ne s'arrête plus au premier pile,
+  // il lance bien les quatre fois.
+  const aucuneFace = await lancerImpact([0.9, 0.9, 0.9, 0.9]);
+  verifier(
+    aucuneFace.adverse?.currentLife === 12 && aucuneFace.alliee?.currentLife === 12,
+    "Quatre piles ne font aucune blessure",
+    `${aucuneFace.adverse?.currentLife} / ${aucuneFace.alliee?.currentLife}`
+  );
+  // Un pile en premier n'interrompt plus rien : les trois jets suivants comptent.
+  const pilePuisFaces = await lancerImpact([0.9, 0.4, 0.4, 0.4]);
+  verifier(
+    pilePuisFaces.adverse?.currentLife === 6,
+    "Un pile initial n'interrompt pas les lancers suivants",
+    `${pilePuisFaces.adverse?.currentLife}/12`
   );
   verifier(debug.validate().length === 0, "L'état reste valide après l'impact", debug.validate().join(" / "));
   Math.random = hasardOrigine;

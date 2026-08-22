@@ -167,7 +167,7 @@ export const DECKS = [
         { id: "bouclier-antique", copies: 4 },
         { id: "generateur-antique", copies: 2 },
         { id: "terrible-decouverte", copies: 2 },
-        { id: "bulle-revigorante", copies: 2 }
+        { id: "auto-reparation", copies: 2 }
       ]
     }
   }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="744" height="1038" viewBox="0 0 744 1038" role="img" aria-label="Portail antique">
+<svg xmlns="http://www.w3.org/2000/svg" width="744" height="1038" viewBox="0 0 744 1038" role="img" aria-label="Portail Universel">
   <defs>
     <linearGradient id="cadreBois" x1="0" y1="0" x2="0.4" y2="1">
       <stop offset="0%" stop-color="#c3d0dc" stop-opacity="0.55"/>
@@ -56,7 +56,7 @@
   <rect x="210" y="58" width="380" height="80" rx="8" fill="url(#parchemin)"/>
   <rect x="210" y="58" width="380" height="80" rx="8" fill="url(#creuxHaut)" opacity="0.28"/>
   <rect x="214" y="62" width="372" height="72" rx="5" fill="none" stroke="#141a20" stroke-width="1.5" opacity="0.45"/>
-  <text x="400" y="112" text-anchor="middle" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="40" font-weight="700" fill="#1d120c">Portail antique</text>
+  <text x="400" y="112" text-anchor="middle" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="40" font-weight="700" fill="#1d120c">Portail Universel</text>
 
   <g>
     <circle cx="116" cy="98" r="21" fill="#140d0b" opacity="0.9"/>
@@ -105,9 +105,9 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#141a20" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#141a20">Appel du réseau</text>
-  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Ouvre le passage : deux Drones antiques 1/1</text>
-  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">franchissent le portail et te rejoignent.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#141a20">Résonnance</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Toutes les cartes que tu as déjà posées gagnent</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">définitivement +2 force et +2 points de vie.</text>
   <g>
     <rect x="84" y="773" width="113.60000000000001" height="36" rx="8" fill="#f4e5c8"/>
     <rect x="84" y="773" width="113.60000000000001" height="36" rx="8" fill="none" stroke="#141a20" stroke-width="1.6" opacity="0.8"/>
@@ -115,14 +115,14 @@
     <text x="140.8" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Antique</text>
   </g>
   <g>
-    <rect x="208.60000000000002" y="773" width="190.4" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="208.60000000000002" y="773" width="190.4" height="36" rx="8" fill="none" stroke="#141a20" stroke-width="1.6" opacity="0.8"/>
-    <rect x="210.60000000000002" y="775" width="186.4" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="303.8" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Robot antique</text>
+    <rect x="208.60000000000002" y="773" width="152" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="208.60000000000002" y="773" width="152" height="36" rx="8" fill="none" stroke="#141a20" stroke-width="1.6" opacity="0.8"/>
+    <rect x="210.60000000000002" y="775" width="148" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="284.6" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Résonnance</text>
   </g>
   <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">La porte ne s'ouvre que pour ceux qui savent encore</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">compter.</text>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Ce qui passe la porte n'en revient jamais tout à fait</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">pareil.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>

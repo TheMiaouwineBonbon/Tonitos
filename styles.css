@@ -7319,3 +7319,71 @@ body.phone-portrait-blocked .orientation-gate {
     0 0 8px rgba(224, 166, 48, 0.88),
     0 2px 3px rgba(0, 0, 0, 0.95);
 }
+
+/* --- Piece d'Impact stellaire ---------------------------------------
+   Elle tourne le temps du tirage, puis s'immobilise sur le verdict deja
+   decide par le moteur. Purement decorative : aucun degat n'en depend. */
+.piece-stellaire {
+  position: fixed;
+  top: 38%;
+  left: 50%;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  margin: -46px 0 0 -46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ffe9a8, #e0a630 58%, #8a5a12);
+  box-shadow:
+    0 0 0 3px rgba(255, 231, 165, 0.55),
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    inset 0 -6px 14px rgba(120, 70, 10, 0.6);
+  transform-style: preserve-3d;
+  animation:
+    piece-stellaire-tour var(--piece-duree, 900ms) cubic-bezier(0.16, 0.7, 0.24, 1) forwards,
+    piece-stellaire-sortie 420ms ease-in forwards;
+  animation-delay: 0ms, calc(var(--piece-duree, 900ms) + 420ms);
+  pointer-events: none;
+}
+
+.piece-stellaire-verdict {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #3a2405;
+  text-shadow: 0 1px 0 rgba(255, 245, 210, 0.85);
+}
+
+@keyframes piece-stellaire-tour {
+  from {
+    transform: rotateY(0deg) scale(0.55);
+  }
+  to {
+    transform: rotateY(calc(var(--piece-tours, 1) * 720deg)) scale(1);
+  }
+}
+
+@keyframes piece-stellaire-sortie {
+  to {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piece-stellaire {
+    display: none;
+  }
+}
+
+.piece-stellaire-legende {
+  font-family: Inter, "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #5a3a08;
+  opacity: 0.85;
+}
