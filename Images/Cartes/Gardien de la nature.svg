@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="744" height="1038" viewBox="0 0 744 1038" role="img" aria-label="Robot antique Chien">
+<svg xmlns="http://www.w3.org/2000/svg" width="744" height="1038" viewBox="0 0 744 1038" role="img" aria-label="Gardien de la nature">
   <defs>
     <linearGradient id="cadreBois" x1="0" y1="0" x2="0.4" y2="1">
-      <stop offset="0%" stop-color="#e9dcba" stop-opacity="0.55"/>
-      <stop offset="18%" stop-color="#c8b987"/>
-      <stop offset="55%" stop-color="#191711"/>
-      <stop offset="100%" stop-color="#c8b987" stop-opacity="0.9"/>
+      <stop offset="0%" stop-color="#a9d778" stop-opacity="0.55"/>
+      <stop offset="18%" stop-color="#3f8a45"/>
+      <stop offset="55%" stop-color="#112513"/>
+      <stop offset="100%" stop-color="#3f8a45" stop-opacity="0.9"/>
     </linearGradient>
     <linearGradient id="cadrePierre" x1="0" y1="0" x2="0.25" y2="1">
       <stop offset="0%" stop-color="#8d8377"/>
-      <stop offset="24%" stop-color="#c8b987"/>
-      <stop offset="62%" stop-color="#191711"/>
+      <stop offset="24%" stop-color="#3f8a45"/>
+      <stop offset="62%" stop-color="#112513"/>
       <stop offset="100%" stop-color="#6d6459"/>
     </linearGradient>
     <linearGradient id="orBrosse" x1="0" y1="0" x2="0.3" y2="1">
@@ -55,41 +55,31 @@
   <rect x="610" y="58" width="92" height="80" rx="11" fill="none" stroke="#8a6526" stroke-width="1.4" opacity="0.75"/>
   <rect x="210" y="58" width="380" height="80" rx="8" fill="url(#parchemin)"/>
   <rect x="210" y="58" width="380" height="80" rx="8" fill="url(#creuxHaut)" opacity="0.28"/>
-  <rect x="214" y="62" width="372" height="72" rx="5" fill="none" stroke="#191711" stroke-width="1.5" opacity="0.45"/>
-  <text x="400" y="109.2" text-anchor="middle" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="32" font-weight="700" fill="#1d120c">Robot antique Chien</text>
+  <rect x="214" y="62" width="372" height="72" rx="5" fill="none" stroke="#112513" stroke-width="1.5" opacity="0.45"/>
+  <text x="400" y="109.2" text-anchor="middle" font-family="Georgia, 'Palatino Linotype', 'Book Antiqua', serif" font-size="32" font-weight="700" fill="#1d120c">Gardien de la nature</text>
 
   <g>
-    <circle cx="91.5" cy="98" r="21" fill="#140d0b" opacity="0.9"/>
-    <circle cx="91.5" cy="98" r="20" fill="url(#orBrosse)"/>
-    <circle cx="91.5" cy="98" r="18" fill="none" stroke="#8a6526" stroke-width="2"/>
-    <circle cx="91.5" cy="98" r="17" fill="#f6ecd2"/>
-    <circle cx="91.5" cy="98" r="17" fill="url(#pierre)"/>
-    <circle cx="91.5" cy="98" r="17" fill="none" stroke="#c9b073" stroke-width="2" opacity="0.75"/>
-    <ellipse cx="91.5" cy="90.86" rx="8.84" ry="5.1" fill="#ffffff" opacity="0.2"/>
-    <image href="../Types/Lumieres.png" x="80" y="86.5" width="23" height="23" opacity="0.95"/>
+    <circle cx="116" cy="98" r="21" fill="#140d0b" opacity="0.9"/>
+    <circle cx="116" cy="98" r="20" fill="url(#orBrosse)"/>
+    <circle cx="116" cy="98" r="18" fill="none" stroke="#8a6526" stroke-width="2"/>
+    <circle cx="116" cy="98" r="17" fill="#b3ac9c"/>
+    <circle cx="116" cy="98" r="17" fill="url(#pierre)"/>
+    <circle cx="116" cy="98" r="17" fill="none" stroke="#e9e2ce" stroke-width="2" opacity="0.75"/>
+    <ellipse cx="116" cy="90.86" rx="8.84" ry="5.1" fill="#ffffff" opacity="0.2"/>
+    <text x="116" y="105.7" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" fill="#2a251c">0</text>
   </g>
-  <g>
-    <circle cx="140.5" cy="98" r="21" fill="#140d0b" opacity="0.9"/>
-    <circle cx="140.5" cy="98" r="20" fill="url(#orBrosse)"/>
-    <circle cx="140.5" cy="98" r="18" fill="none" stroke="#8a6526" stroke-width="2"/>
-    <circle cx="140.5" cy="98" r="17" fill="#f6ecd2"/>
-    <circle cx="140.5" cy="98" r="17" fill="url(#pierre)"/>
-    <circle cx="140.5" cy="98" r="17" fill="none" stroke="#c9b073" stroke-width="2" opacity="0.75"/>
-    <ellipse cx="140.5" cy="90.86" rx="8.84" ry="5.1" fill="#ffffff" opacity="0.2"/>
-    <image href="../Types/Lumieres.png" x="129" y="86.5" width="23" height="23" opacity="0.95"/>
-  </g>
-  <image href="../Types/Lumieres.png" x="622" y="64" width="68" height="68"/>
+  <image href="../Types/Plantes.png" x="622" y="64" width="68" height="68"/>
 
   <rect x="90" y="158" width="564" height="60" rx="9" fill="url(#orBrosse)" opacity="0.92"/>
   <rect x="96" y="162" width="552" height="52" rx="6" fill="url(#parchemin)"/>
   <rect x="96" y="162" width="552" height="52" rx="6" fill="url(#creuxHaut)" opacity="0.26"/>
-  <text x="372" y="195.2" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="700" letter-spacing="0.8" fill="#4a3524">CRÉATURE - ROBOT ANTIQUE CHIEN</text>
+  <text x="372" y="196.64" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="24" font-weight="700" letter-spacing="0.8" fill="#4a3524">JETON - GARDIEN</text>
 
   <rect x="46" y="216" width="652" height="410" rx="10" fill="#140d0b" opacity="0.9"/>
   <rect x="50" y="220" width="644" height="402" rx="8" fill="url(#orBrosse)"/>
-  <image href="../Robot%20antique%20Chien.jpg" x="56" y="226" width="632" height="390" preserveAspectRatio="xMidYMid slice" clip-path="url(#clipArt)"/>
+  <image href="../Prot%C3%A9cteurs%20de%20la%20nature.PNG" x="56" y="173.899" width="632" height="505.78" preserveAspectRatio="none" clip-path="url(#clipArt)"/>
   <rect x="56" y="226" width="632" height="390" rx="6" fill="none" stroke="#000000" stroke-width="6" opacity="0.26"/>
-  <rect x="56" y="226" width="632" height="390" rx="6" fill="none" stroke="#e9dcba" stroke-width="2" opacity="0.85"/>
+  <rect x="56" y="226" width="632" height="390" rx="6" fill="none" stroke="#a9d778" stroke-width="2" opacity="0.85"/>
   <g transform="translate(63 233) scale(1 1)" fill="none" stroke="#e8c477" stroke-width="3" opacity="0.9">
     <path d="M0 24 L0 6 Q0 0 6 0 L24 0"/>
     <path d="M7 32 L7 13 Q7 7 13 7 L32 7" opacity="0.5"/>
@@ -114,25 +104,24 @@
   <rect x="50" y="622" width="644" height="272" rx="10" fill="url(#orBrosse)" opacity="0.92"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
-  <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#191711" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#191711">Fidélité programmée</text>
-  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.3" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille, si tu</text>
-  <text x="84" y="732" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21.3" font-weight="400" fill="#1d120c">contrôles un autre Robot antique, gagne 2 points de vie.</text>
+  <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#112513" stroke-width="1.4" opacity="0.4"/>
+  <text x="84" y="671" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#112513">Garde vivante</text>
+  <text x="84" y="705" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Créé par le Sceptre de Rena. Portée : il intercepte aussi</text>
+  <text x="84" y="737" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">les créatures avec le vol.</text>
   <g>
-    <rect x="84" y="773" width="190.4" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="773" width="190.4" height="36" rx="8" fill="none" stroke="#191711" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="775" width="186.4" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="179.2" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Robot antique</text>
+    <rect x="84" y="798" width="100.80000000000001" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="798" width="100.80000000000001" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="800" width="96.80000000000001" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="134.4" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Portée</text>
   </g>
   <g>
-    <rect x="285.4" y="773" width="139.2" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="285.4" y="773" width="139.2" height="36" rx="8" fill="none" stroke="#191711" stroke-width="1.6" opacity="0.8"/>
-    <rect x="287.4" y="775" width="135.2" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="355" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Vigilance</text>
+    <rect x="195.8" y="798" width="88" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="195.8" y="798" width="88" height="36" rx="8" fill="none" stroke="#112513" stroke-width="1.6" opacity="0.8"/>
+    <rect x="197.8" y="800" width="84" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="239.8" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Jeton</text>
   </g>
-  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Il attend toujours le retour de maîtres disparus depuis</text>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">des millénaires.</text>
+  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">La forêt ne délègue qu'à ceux qui savent attendre.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>
@@ -164,7 +153,7 @@
   <rect x="32" y="1004" width="680" height="10" rx="5" fill="none" stroke="#8a6526" stroke-width="1.5" opacity="0.9"/>
   <rect x="38" y="1005" width="668" height="2" rx="1" fill="#e8c477" opacity="0.55"/>
   <g>
-    <rect x="320" y="996" width="104" height="18" rx="6" fill="#0b0a0c"/>
-    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">058/204</text>
+    <rect x="338" y="996" width="69" height="18" rx="6" fill="#0b0a0c"/>
+    <text x="372" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="700" letter-spacing="2" fill="#ffd84a">J4/4</text>
   </g>
 </svg>

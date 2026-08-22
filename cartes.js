@@ -3,12 +3,17 @@
 // que le jeu applique.
 import { describeLandProduction, describeManaCost } from "./engine-core.mjs?v=20260821-mort-1";
 
-const DATA_URLS = ["cards", "lands", "spells"];
+// Les jetons ferment la liste : ils ne font pas partie des 204 cartes du
+// set - ils ont leur propre numerotation - mais il faut pouvoir les
+// consulter et surtout les imprimer, sans quoi rien ne materialise sur la
+// table les squelettes que Largage d Ulgod fait tomber.
+const DATA_URLS = ["cards", "lands", "spells", "tokens"];
 const CATEGORY_LABELS = {
   all: "Toutes les cartes",
   creature: "Créatures",
   spell: "Sorts",
-  land: "Terrains"
+  land: "Terrains",
+  token: "Jetons"
 };
 const FALLBACK_ACCENT = "#d3ad63";
 
@@ -57,7 +62,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
-const SVG_ASSET_VERSION = "20260822-envoye-1";
+const SVG_ASSET_VERSION = "20260822-jetons-1";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
@@ -114,12 +119,14 @@ function safeAccent(value) {
 function categoryFromIndex(index) {
   if (index === 0) return "creature";
   if (index === 1) return "land";
-  return "spell";
+  if (index === 2) return "spell";
+  return "token";
 }
 
 function categorySingular(category) {
   if (category === "creature") return "Créature";
   if (category === "land") return "Terrain";
+  if (category === "token") return "Jeton";
   return "Sort";
 }
 

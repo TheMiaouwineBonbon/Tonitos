@@ -148,7 +148,7 @@
     <image href="../Medaillons/Coeur.png" x="610" y="912" width="76" height="76"/>
     <circle cx="648" cy="950" r="42" fill="none" stroke="#e8c477" stroke-width="1.5" opacity="0.55"/>
     <circle cx="647.924" cy="941.26" r="39" fill="#0d0907" opacity="0.52"/>
-    <text x="647.924" y="957.01" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">2</text>
+    <text x="647.924" y="957.01" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">1</text>
 
   </g>
   <rect x="32" y="1004" width="680" height="10" rx="5" fill="url(#cadreBois)"/>

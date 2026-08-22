@@ -1132,7 +1132,10 @@ async function main() {
   // un chiffre de cout.
   check("Aucun terrain n'a de coût non nul", lands.every((land) => Number(land.cost || 0) === 0));
 
-  const allCards = [...cards, ...lands, ...spells];
+  // Les jetons ont leur propre fichier et leur propre numerotation, mais ils
+  // sont imprimes comme les autres : leur SVG doit exister lui aussi.
+  const tokens = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "tokens.json"), "utf8"));
+  const allCards = [...cards, ...lands, ...spells, ...tokens];
   const svgFileName = (name) => `${name}.svg`.replace(/[<>:"/\\|?*]/g, "-");
   const generatedSvgFiles = fs.readdirSync(path.join(__dirname, "..", "Images", "Cartes"))
     .filter((file) => file.toLowerCase().endsWith(".svg"));

@@ -78,6 +78,8 @@ const state = {
   cards: [],
   lands: [],
   spells: [],
+  // Jetons : creatures fabriquees par d autres cartes, jamais dans un deck.
+  tokens: [],
   elements: {},
   player: null,
   enemy: null,
@@ -289,16 +291,21 @@ init().catch(handleInitializationError);
 async function init() {
   if (!els.startMenu) return;
   const dataVersion = Date.now();
-  const [cardsResponse, landsResponse, spellsResponse, elementsResponse] = await Promise.all([
-    fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }),
-    fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }),
-    fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" }),
-    fetch(`./data/elements.json?v=${dataVersion}`, { cache: "no-store" })
-  ]);
+  const [cardsResponse, landsResponse, spellsResponse, elementsResponse, tokensResponse] =
+    await Promise.all([
+      fetch(`./data/cards.json?v=${dataVersion}`, { cache: "no-store" }),
+      fetch(`./data/lands.json?v=${dataVersion}`, { cache: "no-store" }),
+      fetch(`./data/spells.json?v=${dataVersion}`, { cache: "no-store" }),
+      fetch(`./data/elements.json?v=${dataVersion}`, { cache: "no-store" }),
+      // Les jetons vivent a part : jamais dans un deck, mais le moteur y lit
+      // leurs statistiques au lieu de les recopier a la main.
+      fetch(`./data/tokens.json?v=${dataVersion}`, { cache: "no-store" })
+    ]);
   state.cards = (await cardsResponse.json()).map((card) => ({ ...card, kind: "creature" }));
   state.lands = await landsResponse.json();
   state.spells = (await spellsResponse.json()).map((card) => ({ ...card, kind: "spell" }));
   state.elements = await elementsResponse.json();
+  state.tokens = (await tokensResponse.json()).map((card) => ({ ...card, kind: "creature" }));
   preloadImages();
   applyPlaymats();
   populateDeckMenu();
@@ -1910,7 +1917,20 @@ function createUnit(card, owner) {
   };
 }
 
+// Fabrique commune aux jetons : leur fiche vit dans data/tokens.json, comme
+// n'importe quelle carte, et le moteur la lit au lieu de la recopier. Le
+// repli conserve le comportement si le fichier manque.
+function creerJeton(id, owner, repli) {
+  const modele = state.tokens.find((carte) => carte.id === id);
+  if (modele) return { ...createUnit(modele, owner), token: true };
+  return repli();
+}
+
 function createToken(owner) {
+  return creerJeton("familier-aile", owner, () => createTokenRepli(owner));
+}
+
+function createTokenRepli(owner) {
   const source = state.cards.find((card) => card.id === "marinehote");
   const familiarImage = "Images/Familliers.png";
   return {
@@ -1944,6 +1964,10 @@ function createToken(owner) {
 }
 
 function createZombie(owner) {
+  return creerJeton("zombie-ressuscite", owner, () => createZombieRepli(owner));
+}
+
+function createZombieRepli(owner) {
   const source = state.cards.find((card) => card.id === "morts-vivants");
   return {
     id: "zombie-ressuscite",
@@ -1976,6 +2000,10 @@ function createZombie(owner) {
 }
 
 function createUlgodSkeleton(owner) {
+  return creerJeton("squelette-ulgod", owner, () => createUlgodSkeletonRepli(owner));
+}
+
+function createUlgodSkeletonRepli(owner) {
   const source = state.spells.find((card) => card.id === "largage-ulgod");
   return {
     id: "squelette-ulgod",
@@ -2015,6 +2043,10 @@ function createUlgodSkeleton(owner) {
 }
 
 function createGuardian(owner) {
+  return creerJeton("gardien-nature", owner, () => createGuardianRepli(owner));
+}
+
+function createGuardianRepli(owner) {
   const source = state.cards.find((card) => card.id === "protecteurs-nature");
   return {
     id: "gardien-nature",

@@ -13,7 +13,9 @@ const ELEMENTS = lire("elements.json");
 const cards = [
   ...lire("cards.json").map((card) => ({ ...card, kind: "creature" })),
   ...lire("lands.json"),
-  ...lire("spells.json").map((card) => ({ ...card, kind: "spell" }))
+  ...lire("spells.json").map((card) => ({ ...card, kind: "spell" })),
+  // Les jetons ne font pas partie du set, mais il faut pouvoir les imprimer.
+  ...lire("tokens.json").map((card) => ({ ...card, kind: "creature" }))
 ];
 
 // Les SVG vivent dans Images/Cartes : leurs references pointent donc vers

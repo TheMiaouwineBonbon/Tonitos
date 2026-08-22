@@ -1879,7 +1879,7 @@
       "generic": 0
     },
     "attack": 2,
-    "life": 3,
+    "life": 2,
     "keywords": [
       "Robot antique",
       "Vigilance"
@@ -1912,7 +1912,7 @@
       "generic": 2
     },
     "attack": 3,
-    "life": 8,
+    "life": 5,
     "keywords": [
       "Robot antique",
       "Défenseur",
@@ -1979,8 +1979,8 @@
       "Bleu": 2,
       "generic": 2
     },
-    "attack": 5,
-    "life": 5,
+    "attack": 3,
+    "life": 4,
     "keywords": [
       "Robot antique",
       "Gel"
@@ -2012,7 +2012,7 @@
       "generic": 0
     },
     "attack": 1,
-    "life": 2,
+    "life": 1,
     "keywords": [
       "Robot antique",
       "Vigilance"
@@ -2045,7 +2045,7 @@
       "generic": 1
     },
     "attack": 2,
-    "life": 4,
+    "life": 3,
     "keywords": [
       "Robot antique",
       "Gel"
