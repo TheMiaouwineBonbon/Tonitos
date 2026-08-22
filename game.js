@@ -49,7 +49,7 @@ import {
   cardFitsDeckColors,
   getDeckComposition as composerDeck,
   getDeckSpec
-} from "./decks.mjs?v=20260822-daemon-1";
+} from "./decks.mjs?v=20260822-envoye-1";
 import { cardSvg, ZONE_ART, RAYON_CARTE, G as GRILLE_CARTE } from "./carte-gabarit.mjs?v=20260820-couts-1";
 
 const COLORS = ["Blanc", "Bleu", "Noir", "Rouge", "Vert"];
@@ -2347,8 +2347,9 @@ function applySpellEffect(card, side) {
   }
 
   if (card.effect === "createAncientDrones") {
+    const VOULUS = 3;
     let created = 0;
-    while (created < 2 && side.board.length < MAX_BOARD) {
+    while (created < VOULUS && side.board.length < MAX_BOARD) {
       side.board.push(createAncientDrone(side.side));
       created += 1;
     }
@@ -2892,11 +2893,22 @@ function triggerOnPlay(unit, side) {
     logEvent(`L'Aventurier apporte des soins : ${sideDisplayName(side.side)} gagne 2 points de vie.`);
   }
 
+  // L'Envoyé affaiblit ce qui se tient DÉJÀ en face. Le moteur ne connaît
+  // pas d'aura permanente : toutes les capacités du jeu se déclenchent à un
+  // instant précis, celle-ci à l'arrivée. Les créatures adverses posées
+  // ensuite ne sont donc pas touchées.
   if (unit.id === "envoye-bhaal") {
-    changeLife(opponent, -(2), "envoye-bhaal");
-    changeLife(side, -(1), "envoye-bhaal");
-    pushVisualEffect("hit", opponent.side, "-2");
-    logEvent("L'Envoyé de Bhaal inflige 2 blessures au héros adverse et réclame 1 point de vie à son maître.");
+    const cibles = [...opponent.board];
+    if (cibles.length === 0) {
+      logEvent("L'Envoyé de Bhaal ne trouve personne à affaiblir.");
+    } else {
+      buffTeam(cibles, -1, -1);
+      // Une force négative n'a pas de sens à l'affichage, et le combat la
+      // ramènerait de toute façon à zéro.
+      for (const cible of cibles) cible.attack = Math.max(0, cible.attack);
+      pushVisualEffect("freeze", opponent.side, "-1/-1");
+      logEvent(`L'Envoyé de Bhaal réduit ${cibles.length} créature(s) adverse(s) de 1 force et 1 point de vie.`);
+    }
   }
 
   if (unit.id === "homme-requin") {

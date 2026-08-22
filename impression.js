@@ -11,7 +11,7 @@
 // externes. Inline, elles s affichent et restent vectorielles.
 // =====================================================================
 import { cardSvg } from "./carte-gabarit.mjs?v=20260820-couts-1";
-import { DECKS, deckPrintList, getDeckSpec } from "./decks.mjs?v=20260822-daemon-1";
+import { DECKS, deckPrintList, getDeckSpec } from "./decks.mjs?v=20260822-envoye-1";
 
 const COLONNES = 3;
 const LIGNES = 3;

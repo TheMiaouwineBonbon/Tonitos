@@ -803,7 +803,7 @@
       "Invocation"
     ],
     "abilityName": "Chaîne d'assemblage",
-    "abilityText": "Crée jusqu'à deux Drones antiques 1/1.",
+    "abilityText": "Assemble trois Robot antique drone 1/1 et les envoie rejoindre le réseau.",
     "flavor": "Son cœur continue de battre pour une armée dont les maîtres ont disparu.",
     "image": "Images/Artefact Générateur antique.jpg",
     "palette": {

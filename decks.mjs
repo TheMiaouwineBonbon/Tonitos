@@ -98,7 +98,7 @@ export const DECKS = [
         { id: "gardien-enflamme", copies: 3 },
         { id: "diablotins", copies: 2 },
         { id: "mort-vivant-bouclier", copies: 2 },
-        { id: "magiciens-exiles", copies: 1 },
+        { id: "envoye-bhaal", copies: 1 },
         { id: "comte-thaelion", copies: 1 },
         { id: "diplomate-aethran", copies: 1 },
         { id: "noxis", copies: 1 },

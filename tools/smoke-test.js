@@ -1277,7 +1277,7 @@ async function main() {
       }) &&
       redBlackCopies.get("animal-bhaal") === 4 &&
       redBlackCopies.get("largage-ulgod") === 4 &&
-      redBlackCopies.get("magiciens-exiles") === 1 &&
+      redBlackCopies.get("envoye-bhaal") === 1 &&
       redBlackCopies.get("bhaal") === 1
   );
   check(

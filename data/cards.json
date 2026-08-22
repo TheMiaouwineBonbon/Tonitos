@@ -1369,20 +1369,20 @@
     "subtitle": "Héraut du dieu meurtrier",
     "family": "Noir",
     "type": "Créature - Avatar Assassin",
-    "cost": 4,
+    "cost": 3,
     "manaCost": {
       "Noir": 2,
-      "generic": 2
+      "generic": 1
     },
     "attack": 4,
-    "life": 3,
+    "life": 4,
     "keywords": [
       "Contact mortel",
       "Pacte"
     ],
-    "abilityName": "Message sanglant",
-    "abilityText": "Quand cette carte arrive sur le champ de bataille, inflige 2 blessures au héros adverse et 1 blessure à ton héros.",
-    "flavor": "Son arrivée est une sentence, jamais une invitation.",
+    "abilityName": "Présage funeste",
+    "abilityText": "Quand cette carte arrive, chaque créature adverse déjà en jeu perd 1 force et 1 point de vie.",
+    "flavor": "Là où il pose le pied, les autres se tiennent un peu moins droit.",
     "image": "Images/Envoyé de Bhaal.PNG",
     "palette": {
       "primary": "#6d2637",

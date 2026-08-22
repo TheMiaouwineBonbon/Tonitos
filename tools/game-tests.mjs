@@ -968,6 +968,55 @@ section("Sorts de résilience");
 }
 
 // ======================================================================
+// L Envoye de Bhaal affaiblit ce qui est DEJA pose en face. Le moteur n a
+// pas d aura : ce qui arrive apres lui n est pas touche.
+section("Envoyé de Bhaal");
+{
+  await lancerPartie("pve");
+  jeu().player.lands.length = 0;
+  for (let i = 0; i < 5; i += 1) {
+    const terrain = jeu().lands.find(
+      (t) => (t.manaProduction?.colors || [])[0] === "Noir" && t.manaProduction.colors.length === 1
+    );
+    jeu().player.lands.push({ ...terrain, uid: `terrain-envoye-${i}`, tapped: false });
+  }
+  const modele = jeu().cards[0];
+  jeu().enemy.board.length = 0;
+  jeu().enemy.board.push(
+    { ...modele, uid: "ennemi-gros", owner: "enemy", attack: 5, maxLife: 6, currentLife: 6, tapped: false },
+    { ...modele, uid: "ennemi-fragile", owner: "enemy", attack: 0, maxLife: 2, currentLife: 2, tapped: false }
+  );
+  jeu().player.board.length = 0;
+  jeu().player.board.push(
+    { ...modele, uid: "mien", owner: "player", attack: 3, maxLife: 3, currentLife: 3, tapped: false }
+  );
+  const envoye = jeu().cards.find((c) => c.id === "envoye-bhaal");
+  jeu().player.hand.push({ ...envoye, uid: "creature-envoye" });
+  rendre();
+  const pose = jouerParFiche("creature-envoye");
+  const gros = jeu().enemy.board.find((u) => u.uid === "ennemi-gros");
+  const fragile = jeu().enemy.board.find((u) => u.uid === "ennemi-fragile");
+  const mien = jeu().player.board.find((u) => u.uid === "mien");
+
+  verifier(pose.active, "Envoyé de Bhaal est jouable pour 2 noirs et 1 générique");
+  verifier(envoye.attack === 4 && envoye.life === 4, "Il est en 4/4", `${envoye.attack}/${envoye.life}`);
+  verifier(envoye.cost === 3, "Il coûte 3", String(envoye.cost));
+  verifier(
+    gros?.attack === 4 && gros?.currentLife === 5,
+    "Les créatures adverses perdent 1 force et 1 point de vie",
+    `${gros?.attack}/${gros?.currentLife}`
+  );
+  verifier(mien?.attack === 3 && mien?.currentLife === 3, "Mes créatures ne bougent pas", `${mien?.attack}/${mien?.currentLife}`);
+  // Une force à 0 ne doit pas passer sous zéro.
+  verifier(
+    !fragile || fragile.attack >= 0,
+    "Une force déjà nulle ne devient pas négative",
+    String(fragile?.attack)
+  );
+  verifier(debug.validate().length === 0, "L'état reste valide", debug.validate().join(" / "));
+}
+
+// ======================================================================
 // Le Generateur antique sort la VRAIE carte, et le Portail ne cree plus
 // rien : il fait resonner ce qui est deja pose.
 section("Réseau antique");
@@ -988,7 +1037,7 @@ section("Réseau antique");
   rendre();
   jouerParFiche("sort-generateur");
   const drones = jeu().player.board.filter((u) => u.id === "robot-antique-drone");
-  verifier(drones.length === 2, "Le Générateur antique sort deux Robot antique drone", `${drones.length}`);
+  verifier(drones.length === 3, "Le Générateur antique sort trois Robot antique drone", `${drones.length}`);
   verifier(
     drones.every((u) => u.image === "Images/Robot antique drone.png"),
     "Ils portent l'illustration de leur carte, pas celle du Générateur",

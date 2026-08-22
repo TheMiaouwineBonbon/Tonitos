@@ -86,7 +86,7 @@
     <circle cx="165" cy="98" r="17" fill="url(#pierre)"/>
     <circle cx="165" cy="98" r="17" fill="none" stroke="#e9e2ce" stroke-width="2" opacity="0.75"/>
     <ellipse cx="165" cy="90.86" rx="8.84" ry="5.1" fill="#ffffff" opacity="0.2"/>
-    <text x="165" y="105.7" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" fill="#2a251c">2</text>
+    <text x="165" y="105.7" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" fill="#2a251c">1</text>
   </g>
   <image href="../Types/Tenebres.png" x="622" y="64" width="68" height="68"/>
 
@@ -125,24 +125,24 @@
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#parchemin)"/>
   <rect x="56" y="628" width="632" height="260" rx="7" fill="url(#creuxHaut)" opacity="0.24"/>
   <rect x="61" y="633" width="622" height="250" rx="5" fill="none" stroke="#14080d" stroke-width="1.4" opacity="0.4"/>
-  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#14080d">Message sanglant</text>
-  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Quand cette carte arrive sur le champ de bataille,</text>
-  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">inflige 2 blessures au héros adverse et 1 blessure à</text>
-  <text x="84" y="768" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">ton héros.</text>
+  <text x="84" y="670" font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#14080d">Présage funeste</text>
+  <text x="84" y="704" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">Quand cette carte arrive, chaque créature adverse</text>
+  <text x="84" y="736" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#1d120c">déjà en jeu perd 1 force et 1 point de vie.</text>
   <g>
-    <rect x="84" y="798" width="203.20000000000002" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="84" y="798" width="203.20000000000002" height="36" rx="8" fill="none" stroke="#14080d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="86" y="800" width="199.20000000000002" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="185.60000000000002" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Contact mortel</text>
+    <rect x="84" y="773" width="203.20000000000002" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="84" y="773" width="203.20000000000002" height="36" rx="8" fill="none" stroke="#14080d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="86" y="775" width="199.20000000000002" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="185.60000000000002" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Contact mortel</text>
   </g>
   <g>
-    <rect x="298.20000000000005" y="798" width="88" height="36" rx="8" fill="#f4e5c8"/>
-    <rect x="298.20000000000005" y="798" width="88" height="36" rx="8" fill="none" stroke="#14080d" stroke-width="1.6" opacity="0.8"/>
-    <rect x="300.20000000000005" y="800" width="84" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
-    <text x="342.20000000000005" y="823" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Pacte</text>
+    <rect x="298.20000000000005" y="773" width="88" height="36" rx="8" fill="#f4e5c8"/>
+    <rect x="298.20000000000005" y="773" width="88" height="36" rx="8" fill="none" stroke="#14080d" stroke-width="1.6" opacity="0.8"/>
+    <rect x="300.20000000000005" y="775" width="84" height="32" rx="6" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+    <text x="342.20000000000005" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#4a3524">Pacte</text>
   </g>
-  <line x1="84" y1="846" x2="660" y2="846" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
-  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Son arrivée est une sentence, jamais une invitation.</text>
+  <line x1="84" y1="821" x2="660" y2="821" stroke="#4a3524" stroke-width="1.2" opacity="0.3"/>
+  <text x="372" y="847" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">Là où il pose le pied, les autres se tiennent un peu</text>
+  <text x="372" y="872" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-style="italic" fill="#4a3524">moins droit.</text>
 
   <rect x="29" y="897" width="686" height="106" rx="17" fill="#140d0b" opacity="0.85"/>
   <rect x="32" y="900" width="680" height="100" rx="14" fill="url(#cadreBois)"/>
@@ -167,7 +167,7 @@
     <image href="../Medaillons/Coeur.png" x="610" y="912" width="76" height="76"/>
     <circle cx="648" cy="950" r="42" fill="none" stroke="#e8c477" stroke-width="1.5" opacity="0.55"/>
     <circle cx="647.924" cy="941.26" r="39" fill="#0d0907" opacity="0.52"/>
-    <text x="647.924" y="957.01" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">3</text>
+    <text x="647.924" y="957.01" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="45" font-weight="700" fill="#ffffff" stroke="#0a0705" stroke-width="6" stroke-linejoin="round" paint-order="stroke">4</text>
 
   </g>
   <rect x="32" y="1004" width="680" height="10" rx="5" fill="url(#cadreBois)"/>
