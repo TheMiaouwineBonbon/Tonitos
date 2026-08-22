@@ -1,7 +1,7 @@
 // Le coût et la production affichés dans la fiche viennent du moteur, pas
 // d'une lecture directe des données : la Collection dit donc exactement ce
 // que le jeu applique.
-import { describeLandProduction, describeManaCost } from "./engine-core.mjs?v=20260819-mana-1";
+import { describeLandProduction, describeManaCost } from "./engine-core.mjs?v=20260821-mort-1";
 
 const DATA_URLS = ["cards", "lands", "spells"];
 const CATEGORY_LABELS = {
@@ -57,7 +57,7 @@ const elements = {
 };
 
 const svgCards = new WeakMap();
-const SVG_ASSET_VERSION = "20260820-couts-1";
+const SVG_ASSET_VERSION = "20260821-auto-reparation-1";
 
 const svgObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {

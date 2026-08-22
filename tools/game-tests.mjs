@@ -968,6 +968,91 @@ section("Sorts de résilience");
 }
 
 // ======================================================================
+// Impact stellaire relance tant que la piece fait face. On remplace le
+// tirage le temps du scenario : sans cela le test dependrait du hasard.
+section("Impact stellaire");
+{
+  const hasardOrigine = Math.random;
+  const piper = (suite) => {
+    let index = 0;
+    Math.random = () => (index < suite.length ? suite[index++] : 0.99);
+  };
+
+  async function lancerImpact(suite) {
+    await lancerPartie("pve");
+    jeu().player.lands.length = 0;
+    for (let i = 0; i < 4; i += 1) {
+      const terrain = jeu().lands.find(
+        (t) => (t.manaProduction?.colors || [])[0] === "Rouge" && t.manaProduction.colors.length === 1
+      );
+      jeu().player.lands.push({ ...terrain, uid: `terrain-impact-${i}`, tapped: false });
+    }
+    const cible = jeu().cards[0];
+    jeu().enemy.board.length = 0;
+    jeu().enemy.board.push(
+      { ...cible, uid: "cible-a", owner: "enemy", maxLife: 12, currentLife: 12, attack: 1, tapped: false },
+      { ...cible, uid: "cible-b", owner: "enemy", maxLife: 12, currentLife: 12, attack: 1, tapped: false }
+    );
+    const sort = jeu().spells.find((s) => s.id === "explosion-celeste");
+    jeu().player.hand.push({ ...sort, uid: "sort-impact" });
+    rendre();
+    piper(suite);
+    const lance = jouerParFiche("sort-impact");
+    Math.random = hasardOrigine;
+    return { lance, plateau: jeu().enemy.board };
+  }
+
+  // 0.4 = face, 0.9 = pile. Deux faces puis pile -> deux salves de 2.
+  const deuxFaces = await lancerImpact([0.4, 0.4, 0.9]);
+  verifier(deuxFaces.lance.active, "Explosion céleste est jouable");
+  verifier(
+    deuxFaces.plateau.every((u) => u.currentLife === 8),
+    "Deux faces infligent 4 blessures à TOUTES les créatures adverses",
+    deuxFaces.plateau.map((u) => u.currentLife).join(" / ")
+  );
+
+  // Pile du premier coup : aucune blessure.
+  const pileDirect = await lancerImpact([0.9]);
+  verifier(
+    pileDirect.plateau.every((u) => u.currentLife === 12),
+    "Un pile immédiat ne fait aucune blessure",
+    pileDirect.plateau.map((u) => u.currentLife).join(" / ")
+  );
+  verifier(debug.validate().length === 0, "L'état reste valide après l'impact", debug.validate().join(" / "));
+  Math.random = hasardOrigine;
+}
+
+// ======================================================================
+// Auto-reparation ne remet en etat QUE les Robots antiques : une creature
+// de chair blessee a cote doit rester blessee.
+section("Auto-réparation");
+{
+  await lancerPartie("pve");
+  jeu().player.lands.length = 0;
+  for (let i = 0; i < 4; i += 1) {
+    const terrain = jeu().lands.find((t) => (t.manaProduction?.colors || []).length === 1);
+    jeu().player.lands.push({ ...terrain, uid: `terrain-repar-${i}`, tapped: false });
+  }
+  const robot = jeu().cards.find((c) => (c.keywords || []).includes("Robot antique"));
+  const chair = jeu().cards.find((c) => !(c.keywords || []).includes("Robot antique"));
+  jeu().player.board.length = 0;
+  jeu().player.board.push(
+    { ...robot, uid: "robot-abime", owner: "player", maxLife: 6, currentLife: 2, attack: 2, tapped: false },
+    { ...chair, uid: "chair-blessee", owner: "player", maxLife: 5, currentLife: 1, attack: 2, tapped: false }
+  );
+  const sortSource = jeu().spells.find((s) => s.id === "auto-reparation");
+  jeu().player.hand.push({ ...sortSource, uid: "sort-reparation" });
+  rendre();
+  const lance = jouerParFiche("sort-reparation");
+  const machine = jeu().player.board.find((u) => u.uid === "robot-abime");
+  const vivant = jeu().player.board.find((u) => u.uid === "chair-blessee");
+  verifier(lance.active, "Auto-réparation est jouable pour 2 manas");
+  verifier(machine?.currentLife === 6, "Le Robot antique retrouve tous ses points de vie", `${machine?.currentLife}/6`);
+  verifier(vivant?.currentLife === 1, "La créature de chair n'est PAS soignée", `${vivant?.currentLife}/5`);
+  verifier(debug.validate().length === 0, "L'état reste valide après la réparation", debug.validate().join(" / "));
+}
+
+// ======================================================================
 // La ruche doit faire eclore la VRAIE carte Parasite Larve, pas un jeton
 // recopie a la main : c'est ce qui lui donne son illustration et son
 // numero de collection.

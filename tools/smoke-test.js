@@ -956,7 +956,7 @@ async function main() {
 
   res = await fetch(`${base}/data/spells.json`);
   const spells = await res.json();
-  check("54 sorts avec illustrations autonomes", spells.length === 54);
+  check("55 sorts avec illustrations autonomes", spells.length === 55);
   check(
     "Aucun sort ne réutilise une image de créature ou de terrain",
     spells.every((spell) => !cards.some((c) => c.image === spell.image))

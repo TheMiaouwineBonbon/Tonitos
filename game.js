@@ -36,7 +36,7 @@ import {
   unitHasKeyword,
   untappedLandsForCard,
   validateGameState
-} from "./engine-core.mjs?v=20260819-mana-1";
+} from "./engine-core.mjs?v=20260821-mort-1";
 import { debugCheckpoint, debugEvent, installDebugApi } from "./game-debug.mjs?v=20260819-debug-2";
 import {
   DECKS,
@@ -2138,6 +2138,28 @@ function applySpellEffect(card, side) {
     logEvent(`${card.name} inflige 3 blessures à toutes les créatures adverses.`);
   }
 
+  // Pile ou face repete : chaque face relance une salve, le premier pile
+  // arrete tout. L'esperance est d'une seule salve, mais l'ecart est large -
+  // c'est le pari qui fait la carte. La borne dure n'est pas une regle du
+  // jeu : elle interdit seulement qu'une piece deraille en boucle infinie.
+  if (card.effect === "impactStellaire") {
+    const MAX_SALVES = 20;
+    let salves = 0;
+    while (salves < MAX_SALVES && Math.random() < 0.5) salves += 1;
+
+    const degats = salves * 2;
+    if (degats > 0) {
+      for (const target of opponent.board) target.currentLife -= degats;
+      pushVisualEffect("hit", opponent.side, `-${degats}`);
+    }
+    debugEvent("EFFECT_TRIGGERED", { source: card.id, effect: "impactStellaire", salves });
+    logEvent(
+      salves === 0
+        ? `${card.name} : pile du premier coup, le ciel reste silencieux.`
+        : `${card.name} : ${salves} face(s) d'affilée, ${degats} blessures à toutes les créatures adverses.`
+    );
+  }
+
   if (card.effect === "tridentUmi") {
     for (const target of opponent.board) target.currentLife -= 3;
     changeLife(opponent, -(2), "tridentUmi");
@@ -2358,6 +2380,25 @@ function applySpellEffect(card, side) {
       logEvent(`${card.name} donne +0/+2 et Vigilance à ${target.name}.`);
     } else {
       logEvent(`${card.name} ne trouve ni Robot antique ni Daemon à protéger.`);
+    }
+  }
+
+  // Réparation de l'archétype : elle ne touche QUE les Robots antiques -
+  // ni les alliés de chair, ni Daemon, que le Bouclier antique protège lui.
+  // C'est cette condition qui la paye à 2 manas, là où un soin d'équipe sans
+  // condition en coûte 4.
+  if (card.effect === "ancientRobotRepair") {
+    const machines = ancientRobotAllies(side);
+    const abimees = machines.filter((unit) => unit.currentLife < unit.maxLife);
+    for (const unit of abimees) unit.currentLife = unit.maxLife;
+
+    if (machines.length === 0) {
+      logEvent(`${card.name} ne trouve aucune machine à remettre en état.`);
+    } else if (abimees.length === 0) {
+      logEvent(`${card.name} balaie le réseau : aucune machine n'est endommagée.`);
+    } else {
+      pushVisualEffect("buff", side.side, "Réparation");
+      logEvent(`${card.name} remet ${abimees.length} machine(s) en état de marche.`);
     }
   }
 
@@ -3423,6 +3464,7 @@ function isSpellWorthCasting(card, side, opponent) {
   switch (card.effect) {
     case "dealAllEnemies2":
     case "dealAllEnemies3":
+    case "impactStellaire":
     case "weakenAllEnemies":
     case "freezeAll":
     case "abyssThreat":
@@ -3474,6 +3516,9 @@ function isSpellWorthCasting(card, side, opponent) {
       return side.board.some(
         (unit) => hasKeyword(unit, "Robot antique") || unit.id === "aventurier-mythique-daemon"
       );
+    // Inutile de réparer ce qui est intact : l'IA attend un robot blessé.
+    case "ancientRobotRepair":
+      return ancientRobotAllies(side).some((unit) => unit.currentLife < unit.maxLife);
     case "reanimate":
     case "reanimateTwo":
     case "reanimateRandom":
