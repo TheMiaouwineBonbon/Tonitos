@@ -968,6 +968,45 @@ section("Sorts de résilience");
 }
 
 // ======================================================================
+// Les jetons doivent avoir LEUR illustration, pas celle du sort qui les
+// invoque : deux squelettes affichaient l'image du Largage.
+section("Squelettes d'Ulgod");
+{
+  await lancerPartie("pve");
+  jeu().player.lands.length = 0;
+  for (let i = 0; i < 4; i += 1) {
+    const terrain = jeu().lands.find(
+      (t) => (t.manaProduction?.colors || [])[0] === "Rouge" && t.manaProduction.colors.length === 1
+    );
+    jeu().player.lands.push({ ...terrain, uid: `terrain-largage-${i}`, tapped: false });
+  }
+  jeu().player.board.length = 0;
+  const largage = jeu().spells.find((s) => s.id === "largage-ulgod");
+  jeu().player.hand.push({ ...largage, uid: "sort-largage" });
+  rendre();
+  const lance = jouerParFiche("sort-largage");
+  const squelettes = jeu().player.board.filter((u) => u.id === "squelette-ulgod");
+  verifier(lance.active, "Largage d'Ulgod est jouable");
+  verifier(squelettes.length === 2, "Il crée bien deux Squelettes d'Ulgod", `${squelettes.length}`);
+  verifier(
+    squelettes.every((u) => u.image === "Images/Squelette.png"),
+    "Les squelettes portent leur propre illustration",
+    squelettes.map((u) => u.image).join(" / ")
+  );
+  verifier(
+    squelettes.every((u) => u.attack === 1 && u.maxLife === 1),
+    "Ils sortent en 1/1",
+    squelettes.map((u) => `${u.attack}/${u.maxLife}`).join(" ")
+  );
+  // Le sort, lui, garde son propre fond.
+  verifier(
+    largage.image === "Images/Largage d'Ulgod.png",
+    "Le sort conserve son illustration d'origine",
+    largage.image
+  );
+}
+
+// ======================================================================
 // Impact stellaire relance tant que la piece fait face. On remplace le
 // tirage le temps du scenario : sans cela le test dependrait du hasard.
 section("Impact stellaire");

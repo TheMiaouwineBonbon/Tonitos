@@ -1591,7 +1591,7 @@
     "abilityName": "Pluie d'ossements",
     "abilityText": "Crée deux Squelettes 1/1 sur ton champ de bataille.",
     "flavor": "Quand Ulgod promet des renforts, personne ne demande d'où ils tombent.",
-    "image": "Images/Squelette.png",
+    "image": "Images/Largage d'Ulgod.png",
     "palette": {
       "primary": "#b34120",
       "secondary": "#ffb45a",
@@ -1599,11 +1599,7 @@
     },
     "art": {
       "fit": "cover",
-      "position": "50% 45%",
-      "dimensions": {
-        "largeur": 1672,
-        "hauteur": 941
-      }
+      "position": "50% 45%"
     },
     "numero": "143/204"
   },

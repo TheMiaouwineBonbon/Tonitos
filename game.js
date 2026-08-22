@@ -1995,7 +1995,10 @@ function createUlgodSkeleton(owner) {
     abilityName: "Légion larguée",
     abilityText: "Jeton créé par Largage d'Ulgod.",
     flavor: "",
-    image: "Images/Largage d'Ulgod.png",
+    // Le jeton portait l'illustration du SORT qui l'invoque : sur le champ
+    // de bataille, deux squelettes affichaient donc l'image du largage.
+    // Ils ont maintenant la leur.
+    image: "Images/Squelette.png",
     palette: source?.palette || {
       primary: "#b34120",
       secondary: "#ffb45a",
