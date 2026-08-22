@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#06040c" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Spellaho — tapis mobile</title>
+<style>
+  /* ------------------------------------------------------------------ */
+  /* Jetons de design : une seule source de vérité pour les couleurs.    */
+  /* ------------------------------------------------------------------ */
+  :root {
+    --gold-lit:   #f6d891;
+    --gold:       #d8a84a;
+    --gold-mid:   #9a6320;
+    --gold-deep:  #40200a;
+    --gold-black: #1a0d05;
+
+    --foe-lit:  #6a2478;
+    --foe:      #3a1442;
+    --foe-deep: #1a0a20;
+
+    --ally-lit:  #1d5a97;
+    --ally:      #0d3159;
+    --ally-deep: #061428;
+
+    --arcane:  #b46bff;
+    --tide:    #4fa8ff;
+    --ember:   #ff6a4a;
+    --ink:     #06040c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--ink);
+    color: #f4e6c8;
+    font-family: Georgia, "Times New Roman", serif;
+    /* Pas de sélection ni de zoom accidentel sur mobile. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+
+  /* Décor ambiant : prolonge le tapis pour qu'aucune bande noire
+     n'apparaisse, quel que soit le ratio du téléphone. */
+  body {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding:
+      max(6px, env(safe-area-inset-top))
+      max(6px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+    background:
+      radial-gradient(120% 80% at 50% 0%,   #2a1030 0%, transparent 60%),
+      radial-gradient(120% 80% at 50% 100%, #0b2340 0%, transparent 60%),
+      radial-gradient(90% 60% at 50% 50%,   #140a1c 0%, #06040c 100%);
+  }
+
+  /* Le tapis occupe le maximum de place en gardant son ratio. */
+  .mat {
+    width: min(100%, calc((100dvh - 12px) * 2.162));
+    aspect-ratio: 1600 / 740;
+    position: relative;
+    filter: drop-shadow(0 14px 34px rgba(0, 0, 0, .75));
+  }
+
+  svg.mat-svg { display: block; width: 100%; height: 100%; }
+
+  /* ------------------------------------------------------------------ */
+  /* Zones tactiles : invisibles, mais dimensionnées pour le doigt.      */
+  /* ------------------------------------------------------------------ */
+  .hit {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2;
+    cursor: pointer;
+  }
+  .hit.is-armed {
+    stroke: var(--gold-lit);
+    stroke-width: 3;
+  }
+  body.debug .hit { stroke: #45f0ff; stroke-width: 2; fill: rgba(69, 240, 255, .09); }
+
+  /* ------------------------------------------------------------------ */
+  /* Typographie du tapis : dimensionnée en unités viewBox pour rester   */
+  /* lisible une fois réduite à la taille d'un téléphone.                */
+  /* ------------------------------------------------------------------ */
+  .lbl {
+    fill: #e8cd93;
+    text-anchor: middle;
+    font-weight: 700;
+    letter-spacing: 2px;
+    paint-order: stroke;
+    stroke: #2a1405;
+    stroke-width: 3px;
+  }
+  .lbl-sm  { font-size: 22px; }
+  .lbl-md  { font-size: 27px; }
+  .lbl-num { font-family: system-ui, -apple-system, sans-serif; font-size: 34px; letter-spacing: 0; fill: #fff6df; }
+  /* Calibré pour tenir dans le bouton de 242 unités avec une marge interne. */
+  .lbl-btn { font-size: 25px; letter-spacing: 1.5px; fill: #2a1405; stroke: none; }
+
+  .rune  { fill: none; stroke: #a8804a; stroke-opacity: .38; }
+  .hair  { fill: none; stroke: var(--gold); stroke-opacity: .55; }
+
+  /* Motes de poussière magique : transform uniquement (GPU). */
+  .mote { animation: mote-rise 9s linear infinite; transform-box: fill-box; }
+  @keyframes mote-rise {
+    from { transform: translateY(14px); opacity: 0; }
+    25%  { opacity: .85; }
+    to   { transform: translateY(-46px); opacity: 0; }
+  }
+  .pulse { animation: pulse 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mote, .pulse { animation: none; }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Portrait : un tapis de cartes se joue en paysage.                   */
+  /* ------------------------------------------------------------------ */
+  .rotate-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    background: radial-gradient(60% 50% at 50% 45%, #1d1030, #06040c 78%);
+  }
+  .rotate-gate p { margin: 18px 0 0; font-size: 17px; color: #d9c39a; }
+  .rotate-gate .phone {
+    width: 62px; height: 104px;
+    border: 3px solid var(--gold);
+    border-radius: 10px;
+    animation: tip 2.4s ease-in-out infinite;
+  }
+  @keyframes tip { 0%, 55% { transform: rotate(0); } 75%, 100% { transform: rotate(-90deg); } }
+
+  @media (orientation: portrait) {
+    .mat { display: none; }
+    .rotate-gate { display: grid; }
+  }
+
+  .tip {
+    position: fixed;
+    right: 10px; bottom: 6px;
+    font: 11px/1 system-ui, sans-serif;
+    color: #ffffff40;
+  }
+</style>
+</head>
+<body>
+
+<div class="mat" id="mat">
+<svg class="mat-svg" viewBox="0 0 1600 740" role="img"
+     aria-label="Tapis de jeu Spellaho : deux camps, rangées de créatures, héros, terrains et pioches">
+<defs>
+  <!-- Or : dégradé à double reflet, plus riche qu'un simple linear. -->
+  <linearGradient id="gold" x1="0" y1="0" x2=".35" y2="1">
+    <stop offset="0"    stop-color="#3d1d07"/>
+    <stop offset=".18"  stop-color="#e8bd63"/>
+    <stop offset=".36"  stop-color="#8a5418"/>
+    <stop offset=".58"  stop-color="#f6d891"/>
+    <stop offset=".78"  stop-color="#7c4713"/>
+    <stop offset="1"    stop-color="#2c1405"/>
+  </linearGradient>
+  <linearGradient id="goldSoft" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f6d891" stop-opacity=".9"/>
+    <stop offset="1" stop-color="#8a5418" stop-opacity=".7"/>
+  </linearGradient>
+
+  <!-- Surfaces des deux camps. -->
+  <radialGradient id="foeFelt" cx=".5" cy="-.05" r="1.05">
+    <stop offset="0"   stop-color="#5b2168"/>
+    <stop offset=".45" stop-color="#2c1033"/>
+    <stop offset="1"   stop-color="#120716"/>
+  </radialGradient>
+  <radialGradient id="allyFelt" cx=".5" cy="1.05" r="1.05">
+    <stop offset="0"   stop-color="#17558f"/>
+    <stop offset=".45" stop-color="#0a2846"/>
+    <stop offset="1"   stop-color="#050f1e"/>
+  </radialGradient>
+
+  <!-- Portails des héros. -->
+  <radialGradient id="foePortal">
+    <stop offset="0"   stop-color="#f5c8ff"/>
+    <stop offset=".14" stop-color="#a03fe0"/>
+    <stop offset=".52" stop-color="#33064f"/>
+    <stop offset="1"   stop-color="#12002099"/>
+  </radialGradient>
+  <radialGradient id="allyPortal">
+    <stop offset="0"   stop-color="#cfe9ff"/>
+    <stop offset=".14" stop-color="#2f8bff"/>
+    <stop offset=".52" stop-color="#062a63"/>
+    <stop offset="1"   stop-color="#00102899"/>
+  </radialGradient>
+
+  <!-- Emplacements de créature : creux dans le feutre. -->
+  <linearGradient id="slotFoe" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#08040c" stop-opacity=".72"/>
+    <stop offset="1" stop-color="#43175000" stop-opacity=".18"/>
+  </linearGradient>
+  <linearGradient id="slotAlly" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#04080f" stop-opacity=".72"/>
+    <stop offset="1" stop-color="#0d3a6a00" stop-opacity=".18"/>
+  </linearGradient>
+
+  <!-- Bouton de fin de tour. -->
+  <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0"   stop-color="#ffe6a6"/>
+    <stop offset=".5"  stop-color="#d9a341"/>
+    <stop offset="1"   stop-color="#8a5214"/>
+  </linearGradient>
+
+  <!-- Grain discret : casse l'aspect « aplat vectoriel ». -->
+  <pattern id="grain" width="120" height="120" patternUnits="userSpaceOnUse">
+    <circle cx="11" cy="17" r="1.1" fill="#fff" opacity=".05"/>
+    <circle cx="72" cy="29" r=".9"  fill="#fff" opacity=".06"/>
+    <circle cx="99" cy="88" r=".8"  fill="#fff" opacity=".05"/>
+    <circle cx="38" cy="103" r="1"  fill="#fff" opacity=".04"/>
+    <path d="M0 58 Q30 42 62 62 T120 55" fill="none" stroke="#fff" opacity=".018"/>
+    <path d="M16 0 Q36 38 22 74 T40 120" fill="none" stroke="#fff" opacity=".015"/>
+  </pattern>
+
+  <!-- Un seul filtre de lueur, réutilisé : les filtres coûtent cher sur mobile. -->
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="7" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+
+  <clipPath id="matClip"><rect x="10" y="10" width="1580" height="720" rx="26"/></clipPath>
+
+  <!-- Symboles réutilisés : un seul dessin, plusieurs instances. -->
+  <symbol id="slotRune" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="34" class="rune"/>
+    <circle cx="50" cy="50" r="24" class="rune"/>
+    <path d="M50 16 76 84 24 84Z" class="rune"/>
+    <path d="M50 84 76 16 24 16Z" class="rune"/>
+  </symbol>
+
+  <!-- Le viewBox du symbole impose de donner width/height sur chaque <use>,
+       sinon il se dessine à 100 % du canvas et déborde du cadre. -->
+  <symbol id="deckPile" viewBox="0 0 120 168">
+    <rect x="12" y="14" width="96" height="140" rx="7" fill="#0d0812" stroke="#6b4318" stroke-width="3"/>
+    <rect x="8"  y="9"  width="96" height="140" rx="7" fill="#150c1d" stroke="#7d4f1c" stroke-width="3"/>
+    <rect x="4"  y="4"  width="96" height="140" rx="7" fill="#1c1026" stroke="url(#gold)" stroke-width="4"/>
+    <path d="M52 46 76 74 52 102 28 74Z" fill="none" stroke="#c99a41" stroke-width="3.5"/>
+    <circle cx="52" cy="74" r="8" fill="#b46bff" opacity=".85"/>
+  </symbol>
+</defs>
+
+<!-- ============================== SURFACES ============================== -->
+<g clip-path="url(#matClip)">
+  <rect x="10" y="10"  width="1580" height="360" fill="url(#foeFelt)"/>
+  <rect x="10" y="370" width="1580" height="360" fill="url(#allyFelt)"/>
+
+  <!-- Rais de lumière : donne de la profondeur au feutre. -->
+  <g opacity=".16">
+    <path d="M300 10 L560 10 L250 730 L60 730Z" fill="#c68bff"/>
+    <path d="M1180 10 L1420 10 L1560 730 L1330 730Z" fill="#6fb6ff"/>
+  </g>
+
+  <!-- Cercles arcaniques, un par camp, derrière les rangées. -->
+  <g class="rune" transform="translate(800 186)">
+    <circle r="150"/><circle r="126"/><circle r="86"/>
+    <path d="M0-126 109 63-109 63Z"/><path d="M0 126 109-63-109-63Z"/>
+    <path d="M-126 0 63-109 63 109Z"/>
+  </g>
+  <g class="rune" transform="translate(800 554)">
+    <circle r="150"/><circle r="126"/><circle r="86"/>
+    <path d="M0-126 109 63-109 63Z"/><path d="M0 126 109-63-109-63Z"/>
+    <path d="M-126 0 63-109 63 109Z"/>
+  </g>
+
+  <rect x="10" y="10" width="1580" height="720" fill="url(#grain)"/>
+  <g id="motes"></g>
+
+  <!-- Vignette : assombrit les bords, concentre l'œil au centre. -->
+  <radialGradient id="vig" cx=".5" cy=".5" r=".78">
+    <stop offset=".55" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1"   stop-color="#000" stop-opacity=".62"/>
+  </radialGradient>
+  <rect x="10" y="10" width="1580" height="720" fill="url(#vig)"/>
+</g>
+
+<!-- ============================== CADRE ============================== -->
+<rect x="12" y="12" width="1576" height="716" rx="24" fill="none" stroke="var(--gold-black)" stroke-width="22"/>
+<rect x="20" y="20" width="1560" height="700" rx="18" fill="none" stroke="url(#gold)" stroke-width="7"/>
+<rect x="28" y="28" width="1544" height="684" rx="13" fill="none" stroke="#3a1c08" stroke-width="4"/>
+<rect x="33" y="33" width="1534" height="674" rx="11" fill="none" stroke="#bf8330" stroke-width="1.6"/>
+
+<!-- Filigranes d'angle -->
+<g fill="none" stroke="url(#goldSoft)" stroke-width="3" stroke-linecap="round">
+  <path d="M40 96 Q40 40 96 40 M40 124 Q52 52 124 40 M40 150 Q64 62 150 40"/>
+  <path d="M1560 96 Q1560 40 1504 40 M1560 124 Q1548 52 1476 40 M1560 150 Q1536 62 1450 40"/>
+  <path d="M40 644 Q40 700 96 700 M40 616 Q52 688 124 700 M40 590 Q64 678 150 700"/>
+  <path d="M1560 644 Q1560 700 1504 700 M1560 616 Q1548 688 1476 700 M1560 590 Q1536 678 1450 700"/>
+</g>
+
+<!-- ============================ LIGNE CENTRALE ============================ -->
+<path d="M34 370 H1566" stroke="#0a0510" stroke-width="16"/>
+<path d="M34 366 H1566" stroke="url(#gold)" stroke-width="4"/>
+<path d="M34 374 H1566" stroke="#3f1f0a" stroke-width="2.5"/>
+<g transform="translate(800 370)">
+  <rect x="-26" y="-26" width="52" height="52" transform="rotate(45)" fill="#160726" stroke="url(#gold)" stroke-width="4.5"/>
+  <rect x="-12" y="-12" width="24" height="24" transform="rotate(45)" fill="#8a2fd6" class="pulse"/>
+</g>
+
+<!-- ===================== BANDEAU ADVERSAIRE (haut) ===================== -->
+<!-- Héros adverse : cible principale, au centre pour être atteignable. -->
+<g transform="translate(800 92)">
+  <circle r="60" fill="#0b0510" stroke="var(--gold-black)" stroke-width="13"/>
+  <circle r="53" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <circle r="44" fill="url(#foePortal)"/>
+  <circle r="44" fill="none" stroke="#a03fe0" stroke-width="2.5" opacity=".8"/>
+  <circle r="30" fill="none" stroke="#e2a8ff" stroke-opacity=".3" class="pulse"/>
+  <!-- Vie : orbe rouge, lecture immédiate -->
+  <g transform="translate(0 62)">
+    <circle r="24" fill="#5c0e14" stroke="url(#gold)" stroke-width="4"/>
+    <text y="12" class="lbl lbl-num" id="foeLife">20</text>
+  </g>
+</g>
+<!-- Pas de libellé « ADVERSAIRE » : la moitié violette et le portail suffisent,
+     et le haut du cadre ne laisse pas la place pour du texte lisible. -->
+
+<!-- Pioche adverse (droite) et cimetière adverse (gauche) -->
+<g transform="translate(1396 40)"><use href="#deckPile" width="120" height="168" transform="scale(.72)"/></g>
+<g transform="translate(1472 150)">
+  <circle r="24" fill="#160b1d" stroke="url(#gold)" stroke-width="3.5"/>
+  <text y="12" class="lbl lbl-num" id="foeDeck">30</text>
+</g>
+<g transform="translate(132 96)">
+  <rect x="-40" y="-52" width="80" height="104" rx="8" fill="#0e0714" stroke="#6f4519" stroke-width="3"/>
+  <!-- Silhouette de cartes empilées : lisible comme « défausse ». -->
+  <path d="M-24-30 H16 M-24-14 H16 M-24 2 H16 M-24 18 H16" stroke="#8a5a24" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+  <text y="76" class="lbl lbl-sm">CIMETIÈRE</text>
+</g>
+
+<!-- ==================== RANGÉE DE CRÉATURES ADVERSE ==================== -->
+<g id="foeRow"></g>
+
+<!-- ==================== RANGÉE DE CRÉATURES JOUEUR ==================== -->
+<g id="allyRow"></g>
+
+<!-- ====================== BANDEAU JOUEUR (bas) ====================== -->
+<!-- Héros du joueur, à gauche pour laisser le centre à la main. -->
+<g transform="translate(148 632)">
+  <circle r="58" fill="#04080f" stroke="var(--gold-black)" stroke-width="13"/>
+  <circle r="51" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <circle r="42" fill="url(#allyPortal)"/>
+  <circle r="42" fill="none" stroke="#2f8bff" stroke-width="2.5" opacity=".8"/>
+  <circle r="29" fill="none" stroke="#a8d8ff" stroke-opacity=".3" class="pulse"/>
+  <g transform="translate(46 44)">
+    <circle r="23" fill="#5c0e14" stroke="url(#gold)" stroke-width="4"/>
+    <text y="12" class="lbl lbl-num" id="allyLife">20</text>
+  </g>
+</g>
+
+<!-- Terrains = mana, avec gemmes colorées par couleur de terrain.
+     Résout visuellement la règle de mana coloré du jeu. -->
+<g transform="translate(268 596)">
+  <rect x="0" y="0" width="516" height="72" rx="10" fill="#040a14" fill-opacity=".72" stroke="url(#goldSoft)" stroke-width="2.5"/>
+  <text x="258" y="-12" class="lbl lbl-sm">TERRAINS</text>
+  <g id="manaRow"></g>
+</g>
+
+<!-- Pioche joueur + compteur -->
+<g transform="translate(1396 528)"><use href="#deckPile" width="120" height="168" transform="scale(.72)"/></g>
+<g transform="translate(1472 638)">
+  <circle r="24" fill="#0a1424" stroke="url(#gold)" stroke-width="3.5"/>
+  <text y="12" class="lbl lbl-num" id="allyDeck">30</text>
+</g>
+
+<!-- Bouton de fin de tour : élargi pour que le texte tienne à l'intérieur. -->
+<g id="endTurn" transform="translate(1076 596)">
+  <rect x="0" y="0" width="252" height="74" rx="13" fill="#1b0f06" stroke="var(--gold-black)" stroke-width="7"/>
+  <rect x="5" y="5" width="242" height="64" rx="10" fill="url(#btn)"/>
+  <text x="126" y="47" class="lbl lbl-btn">FIN DU TOUR</text>
+</g>
+
+<!-- ============================ ZONES TACTILES ============================ -->
+<!-- Toutes dimensionnées ≥ 44 px réels sur un téléphone en paysage. -->
+<g id="hits">
+  <circle class="hit" cx="800" cy="92"  r="76" data-zone="hero-foe"  data-label="Héros adverse"/>
+  <circle class="hit" cx="148" cy="632" r="72" data-zone="hero-ally" data-label="Ton héros"/>
+  <rect class="hit" x="1370" y="30"  width="190" height="150" rx="12" data-zone="deck-foe"  data-label="Pioche adverse"/>
+  <rect class="hit" x="1370" y="518" width="190" height="152" rx="12" data-zone="deck-ally" data-label="Ta pioche"/>
+  <rect class="hit" x="84"   y="36"  width="96"  height="152" rx="10" data-zone="grave-foe" data-label="Cimetière adverse"/>
+  <rect class="hit" x="268"  y="576" width="516" height="96"  rx="10" data-zone="lands"     data-label="Tes terrains"/>
+  <rect class="hit" x="1070" y="590" width="264" height="86"  rx="13" data-zone="end-turn"  data-label="Fin du tour"/>
+</g>
+</svg>
+</div>
+
+<div class="rotate-gate">
+  <div>
+    <div class="phone" style="margin:0 auto"></div>
+    <p>Tourne ton téléphone<br>pour entrer dans l'arène</p>
+  </div>
+</div>
+
+<div class="tip">D : zones · T : tour</div>
+
+<script>
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.querySelector("svg");
+const el = (tag, attrs = {}) => {
+  const node = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+};
+
+/* ------------------------------------------------------------------ */
+/* Géométrie des rangées : 7 emplacements par camp, centrés.           */
+/* Un emplacement fait 150 unités de large -> ~79 px sur un iPhone en   */
+/* paysage, soit la taille d'un serviteur Hearthstone.                  */
+/* ------------------------------------------------------------------ */
+const SLOTS = 7;
+const SLOT_W = 150;
+const SLOT_H = 158;
+const ROW_Y = { foe: 196, ally: 396 };
+
+function buildRow(side) {
+  const group = document.getElementById(side === "foe" ? "foeRow" : "allyRow");
+  const totalW = SLOTS * SLOT_W;
+  const startX = 800 - totalW / 2;
+  const y = ROW_Y[side];
+
+  for (let i = 0; i < SLOTS; i++) {
+    const x = startX + i * SLOT_W + 8;
+    const w = SLOT_W - 16;
+
+    const slot = el("g", { class: "slot", transform: `translate(${x} ${y})` });
+    // Creux dans le feutre + liseré or discret : lisible sans surcharger.
+    slot.append(
+      el("rect", {
+        x: 0, y: 0, width: w, height: SLOT_H, rx: 10,
+        fill: side === "foe" ? "url(#slotFoe)" : "url(#slotAlly)",
+        stroke: "#7c5220", "stroke-width": 2, "stroke-opacity": ".55"
+      })
+    );
+    const rune = el("use", {
+      href: "#slotRune",
+      x: (w - 78) / 2, y: (SLOT_H - 78) / 2, width: 78, height: 78,
+      opacity: ".5"
+    });
+    slot.append(rune);
+    group.append(slot);
+
+    // Zone tactile généreuse, alignée sur l'emplacement.
+    const hit = el("rect", {
+      class: "hit", x, y, width: w, height: SLOT_H, rx: 10,
+      "data-zone": `${side}-slot-${i}`,
+      "data-label": `${side === "foe" ? "Créature adverse" : "Ta créature"} ${i + 1}`
+    });
+    document.getElementById("hits").append(hit);
+  }
+}
+buildRow("foe");
+buildRow("ally");
+
+/* ------------------------------------------------------------------ */
+/* Terrains : 10 gemmes, colorées par couleur de mana disponible.       */
+/* ------------------------------------------------------------------ */
+const MANA_COLORS = {
+  Blanc: "#f4e3b6", Bleu: "#4fa8ff", Noir: "#a86bd0", Rouge: "#ff6a4a", Vert: "#79c96b"
+};
+function renderMana(pool) {
+  const row = document.getElementById("manaRow");
+  row.textContent = "";
+  const max = 10;
+  const gap = 516 / max;
+  for (let i = 0; i < max; i++) {
+    const cx = gap * i + gap / 2;
+    const filled = pool[i];
+    const gem = el("g", { transform: `translate(${cx} 36)` });
+    gem.append(el("path", {
+      d: "M0-17 14 0 0 17-14 0Z",
+      fill: filled ? MANA_COLORS[filled] || "#4fa8ff" : "#0b1220",
+      stroke: filled ? "#ffeec2" : "#4a3a22",
+      "stroke-width": filled ? 2.2 : 1.6,
+      opacity: filled ? 1 : .5
+    }));
+    if (filled) {
+      gem.append(el("path", { d: "M-5-6 0-11 5-6 0-1Z", fill: "#fff", opacity: ".55" }));
+    }
+    row.append(gem);
+  }
+}
+// Exemple : 2 terrains verts et 2 blancs dégagés.
+renderMana(["Vert", "Vert", "Blanc", "Blanc"]);
+
+/* ------------------------------------------------------------------ */
+/* Motes de poussière magique : peu nombreuses, animation transform.    */
+/* ------------------------------------------------------------------ */
+const rng = (seed) => () =>
+  (seed = Math.imul(seed ^ (seed >>> 15), 1 | seed) + 0x6d2b79f5 | 0,
+   ((seed ^ (seed >>> 7)) >>> 0) / 4294967296);
+const rand = rng(20260726);
+const motes = document.getElementById("motes");
+for (let i = 0; i < 26; i++) {
+  const top = rand() < .5;
+  motes.append(el("circle", {
+    class: "mote",
+    cx: 60 + rand() * 1480,
+    cy: top ? 40 + rand() * 300 : 400 + rand() * 300,
+    r: .8 + rand() * 1.9,
+    fill: top ? "#d9a6ff" : "#a8d8ff",
+    opacity: .5,
+    style: `animation-delay:${(rand() * 9).toFixed(2)}s`
+  }));
+}
+
+/* ------------------------------------------------------------------ */
+/* Interactions : un seul écouteur délégué, retour haptique.           */
+/* ------------------------------------------------------------------ */
+let myTurn = true;
+
+svg.addEventListener("pointerdown", (event) => {
+  const hit = event.target.closest(".hit");
+  if (!hit) return;
+  hit.classList.add("is-armed");
+  if (navigator.vibrate) navigator.vibrate(8);
+});
+svg.addEventListener("pointerup", (event) => {
+  const hit = event.target.closest(".hit");
+  document.querySelectorAll(".hit.is-armed").forEach((n) => n.classList.remove("is-armed"));
+  if (!hit) return;
+  const zone = hit.dataset.zone;
+  if (zone === "end-turn") toggleTurn();
+  // Point d'accroche pour ton moteur :
+  document.dispatchEvent(new CustomEvent("mat:zone", { detail: { zone, label: hit.dataset.label } }));
+});
+svg.addEventListener("pointercancel", () =>
+  document.querySelectorAll(".hit.is-armed").forEach((n) => n.classList.remove("is-armed"))
+);
+
+function toggleTurn() {
+  myTurn = !myTurn;
+  const btn = document.getElementById("endTurn");
+  btn.style.opacity = myTurn ? "1" : ".45";
+  document.querySelector("#endTurn text").textContent = myTurn ? "FIN DU TOUR" : "TOUR ADVERSE";
+}
+
+// Aides de développement : D = zones tactiles, T = bascule de tour.
+document.addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+  if (k === "d") document.body.classList.toggle("debug");
+  if (k === "t") toggleTurn();
+});
+
+// Journalise les zones touchées pour vérifier le câblage.
+document.addEventListener("mat:zone", (e) => console.log("zone :", e.detail.zone));
+</script>
+</body>
+</html>

@@ -47,11 +47,29 @@ const json = (body) => ({
 // servir l'ancienne copie : le jeu tourne alors avec un moteur périmé, sans
 // aucun signe visible. Deux règles suffisent à l'éviter, et elles se
 // vérifient sans réseau, à partir de la seule date du dernier commit.
+//
+// Les pages HTML comptent autant que les modules. Elles ont d'ailleurs été
+// l'angle mort : `cartes.html` réclamait `cartes.js?v=20260820` alors que
+// `cartes.js` avait changé deux jours plus tard. Le fichier en ligne était
+// bien à jour, mais aucun navigateur déjà venu ne le retéléchargeait — donc
+// la Collection continuait d'afficher les anciennes cartes. Cinq références
+// étaient périmées de cette façon, sur les trois pages.
 function verifierClesDeCache() {
   const { execSync } = require("child_process");
   const racine = path.join(__dirname, "..");
-  const fichiers = ["game.js", "cartes.js", "impression.js", "carte-gabarit.mjs", "decks.mjs"];
-  const motif = /["'`]\.\/([A-Za-z0-9_.-]+\.m?js)\?v=(\d{8})[^"'`]*["'`]/g;
+  const fichiers = [
+    "game.js",
+    "cartes.js",
+    "impression.js",
+    "carte-gabarit.mjs",
+    "decks.mjs",
+    "index.html",
+    "cartes.html",
+    "impression.html"
+  ];
+  // Couvre les imports ES (`from "./x.mjs?v=..."`) comme les attributs des
+  // pages (`src=` / `href=`), et les feuilles de style autant que les scripts.
+  const motif = /["'`]\.\/([A-Za-z0-9_.-]+\.(?:m?js|css))\?v=(\d{8})[^"'`]*["'`]/g;
   const clesParModule = new Map();
 
   for (const fichier of fichiers) {
